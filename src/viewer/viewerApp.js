@@ -12,17 +12,18 @@ import { renderFatherTemplate } from './templates/fatherTemplate.js';
 import { renderSisterTemplate } from './templates/sisterTemplate.js';
 import { renderBrotherTemplate } from './templates/brotherTemplate.js';
 
-export function renderViewerApp(container, templateId, data) {
+export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
   const lockStatus = checkCountdownLock(data);
+  const isMakerReview = isMakerReviewParam || lockStatus.isMakerReview || false;
 
-  if (lockStatus.isLocked) {
+  if (lockStatus.isLocked && !isMakerReview) {
     // Show countdown lock gate
-    renderCountdownGate(container, data, (isMakerReview) => {
-      renderUnlockedWebsite(container, templateId, data, isMakerReview);
+    renderCountdownGate(container, data, (unlockedReview) => {
+      renderUnlockedWebsite(container, templateId, data, unlockedReview);
     });
   } else {
     // Render full site directly
-    renderUnlockedWebsite(container, templateId, data, lockStatus.isMakerReview);
+    renderUnlockedWebsite(container, templateId, data, isMakerReview);
   }
 }
 
@@ -39,8 +40,7 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
 
   if (isMakerReview) {
     container.querySelector('#btnBackToStudio')?.addEventListener('click', () => {
-      window.location.hash = "";
-      window.location.reload();
+      window.location.href = window.location.origin + window.location.pathname;
     });
   }
 

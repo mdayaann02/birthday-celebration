@@ -15,9 +15,14 @@ export function checkCountdownLock(data) {
     return { isLocked: false };
   }
 
-  // Check if maker review flag is active in query / session
+  // Check if maker review flag is active in query / hash / session
   const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get("review") === "true" || sessionStorage.getItem("maker_review_unlocked") === "true") {
+  const hash = window.location.hash || '';
+  if (
+    urlParams.get("review") === "true" ||
+    hash.includes("review=true") ||
+    sessionStorage.getItem("maker_review_unlocked") === "true"
+  ) {
     return { isLocked: false, isMakerReview: true };
   }
 
