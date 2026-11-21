@@ -109,6 +109,14 @@ export function renderVisualEditor(container, templateId, data, onChange) {
   const specificBox = container.querySelector('#templateSpecificFields');
 
   if (templateId === 'blossom') {
+    const blossomCards = (data.cards && data.cards.length > 0) ? data.cards : [
+      { image: "/images/blossom/memory_1.jpg", caption: "Sweet moments with you" },
+      { image: "/images/blossom/memory_2.jpg", caption: "Adventures in cold snow" },
+      { image: "/images/blossom/memory_3.jpg", caption: "Campfire songs & warmth" },
+      { image: "/images/blossom/memory_4.jpg", caption: "Painting our memories together" },
+      { image: "/images/blossom/memory_5.jpg", caption: "Riding into the sunset" }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">🌸 Blossom Romance Details (Viral Pastel Story)</div>
       <div class="editor-grid-2">
@@ -140,6 +148,35 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       <div class="form-group">
         <label class="form-label">Scene 8 Love Letter Body (Typewriter)</label>
         <textarea rows="6" class="form-textarea" id="edBlossomLetter">${data.letterBody || ''}</textarea>
+      </div>
+
+      <!-- Scene 5 Memory Photo Cards Editor -->
+      <div style="margin-top:20px; border-top:1px dashed #fbcfe8; padding-top:16px;">
+        <label class="form-label" style="font-weight:700; color:var(--primary); font-size:15px;">📸 Scene 6 Memory Photo Cards (Swipeable Gallery)</label>
+        <div class="editor-help-text" style="margin-bottom:12px;">
+          Add or edit the pictures and romantic captions shown in the 3D swipeable memory deck.
+        </div>
+        <div id="blossomCardsList">
+          ${blossomCards.map((c, i) => `
+            <div class="sub-card-editor blossom-card-row" data-card-idx="${i}" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px; background:rgba(255,255,255,0.85); border:1px solid #fbcfe8; border-radius:12px; padding:12px;">
+              <div style="display:flex; gap:10px; align-items:center;">
+                <img src="${c.image}" class="bcard-thumb" id="bcardThumb_${i}" style="width:48px; height:48px; border-radius:8px; object-fit:cover; border:2px solid #f472b6; flex-shrink:0;" onerror="this.src='/images/sunset.jpg'" />
+                <div style="flex:1; display:flex; gap:6px;">
+                  <input type="text" class="form-input bcard-img" data-i="${i}" value="${c.image}" placeholder="Image URL" style="font-size:12px;" />
+                  <label class="btn-file-upload-sm" title="Upload from phone">
+                    📷
+                    <input type="file" class="file-upload-blossom-card" data-i="${i}" accept="image/*" style="display:none;" />
+                  </label>
+                </div>
+                <button type="button" class="btn-del-blossom-card" data-i="${i}" style="background:#fee2e2; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#dc2626;" title="Delete Card">🗑️</button>
+              </div>
+              <input type="text" class="form-input bcard-cap" data-i="${i}" value="${c.caption || ''}" placeholder="Card Caption (e.g. Sweet moments with you)" style="font-size:13px;" />
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" class="btn-file-upload" id="btnAddBlossomCard" style="margin-top:6px; display:inline-flex; width:auto; font-size:13px;">
+          ➕ Add Another Memory Card
+        </button>
       </div>
     `;
   } else if (templateId === 'birthday') {
@@ -257,6 +294,54 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     });
   });
 
+  // Blossom memory card photo uploads
+  container.querySelectorAll('.file-upload-blossom-card').forEach(fileInput => {
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const idx = fileInput.getAttribute('data-i');
+      const textInput = container.querySelector(`.bcard-img[data-i="${idx}"]`);
+      const thumb = container.querySelector(`#bcardThumb_${idx}`);
+      if (textInput) textInput.value = "Uploading photo...";
+      const res = await uploadFile(file);
+      if (res.success) {
+        if (textInput) textInput.value = res.url;
+        if (thumb) thumb.src = res.url;
+        emitChange();
+      }
+    });
+  });
+
+  const btnAddBCard = container.querySelector('#btnAddBlossomCard');
+  btnAddBCard?.addEventListener('click', () => {
+    data.cards = (data.cards && data.cards.length > 0) ? [...data.cards] : [
+      { image: "/images/blossom/memory_1.jpg", caption: "Sweet moments with you" },
+      { image: "/images/blossom/memory_2.jpg", caption: "Adventures in cold snow" },
+      { image: "/images/blossom/memory_3.jpg", caption: "Campfire songs & warmth" },
+      { image: "/images/blossom/memory_4.jpg", caption: "Painting our memories together" },
+      { image: "/images/blossom/memory_5.jpg", caption: "Riding into the sunset" }
+    ];
+    data.cards.push({ image: "/images/sunset.jpg", caption: "Our unforgettable moment" });
+    renderVisualEditor(container, templateId, data, onChange);
+    onChange(data);
+  });
+
+  container.querySelectorAll('.btn-del-blossom-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-i'), 10);
+      data.cards = (data.cards && data.cards.length > 0) ? [...data.cards] : [
+        { image: "/images/blossom/memory_1.jpg", caption: "Sweet moments with you" },
+        { image: "/images/blossom/memory_2.jpg", caption: "Adventures in cold snow" },
+        { image: "/images/blossom/memory_3.jpg", caption: "Campfire songs & warmth" },
+        { image: "/images/blossom/memory_4.jpg", caption: "Painting our memories together" },
+        { image: "/images/blossom/memory_5.jpg", caption: "Riding into the sunset" }
+      ];
+      data.cards.splice(idx, 1);
+      renderVisualEditor(container, templateId, data, onChange);
+      onChange(data);
+    });
+  });
+
   const uploadTimerBg = container.querySelector('#uploadTimerBgPhoto');
   uploadTimerBg?.addEventListener('change', async (e) => {
     const file = e.target.files[0];
@@ -316,6 +401,23 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (elIn2) updated.introLine2 = elIn2.value;
       if (elCake) updated.cakeHeadline = elCake.value;
       if (elLet) updated.letterBody = elLet.value;
+
+      const bcardRows = container.querySelectorAll('.blossom-card-row');
+      if (bcardRows.length > 0) {
+        const cardsArr = [];
+        bcardRows.forEach(row => {
+          const idx = row.getAttribute('data-card-idx');
+          const imgInp = row.querySelector(`.bcard-img[data-i="${idx}"]`);
+          const capInp = row.querySelector(`.bcard-cap[data-i="${idx}"]`);
+          if (imgInp && imgInp.value.trim()) {
+            cardsArr.push({
+              image: imgInp.value.trim(),
+              caption: capInp ? capInp.value.trim() : ""
+            });
+          }
+        });
+        updated.cards = cardsArr;
+      }
     } else if (templateId === 'birthday') {
       const elAge = container.querySelector('#edAge');
       if (elAge) updated.age = elAge.value;

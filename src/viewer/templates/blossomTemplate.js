@@ -1,6 +1,6 @@
 // src/viewer/templates/blossomTemplate.js - The Viral Pastel Blossom Celebration Experience
 
-import { encodeSiteToUrl } from '../../models/siteStorage.js';
+import { encodeSiteToUrl, uploadFile } from '../../models/siteStorage.js';
 
 export function renderBlossomTemplate(container, initialData = {}, isMakerReview = false) {
   // Ensure default data exists
@@ -8,8 +8,9 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
     recipientName: "my gurll",
     senderName: "Yours",
     passcode: "1234",
-    audioSrc: "/audio/blossom_song.mp3",
-    audioTitle: "Romantic Story",
+    audioSrc: "/audio/alfaaz.mp3",
+    audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+    audioSubtitle: "ROMANTIC SOUNDTRACK",
     blossomPrompt: "Touch the blossom",
     keypadTitle: "For you, my love",
     keypadSubtitle: "I love you",
@@ -51,6 +52,14 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     ...initialData
   };
 
+  const cardsList = (data.cards && data.cards.length > 0) ? data.cards : [
+    { image: "/images/blossom/memory_1.jpg", caption: "Sweet moments with you" },
+    { image: "/images/blossom/memory_2.jpg", caption: "Adventures in cold snow" },
+    { image: "/images/blossom/memory_3.jpg", caption: "Campfire songs & warmth" },
+    { image: "/images/blossom/memory_4.jpg", caption: "Painting our memories together" },
+    { image: "/images/blossom/memory_5.jpg", caption: "Riding into the sunset" }
+  ];
+
   // State
   let currentScene = 0; // 0: Blossom, 1: Keypad, 2: Note, 3: Flame, 4: Cake, 5: Cards, 6: Lamp, 7: Letter
   let currentPin = "";
@@ -60,6 +69,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   let isLetterOpen = false;
   let isEditing = false;
   let audioPlaying = false;
+  let isTransitioning = false;
 
   // Sound Synthesizer via Web Audio API (instant, zero external dependencies)
   let audioCtx = null;
@@ -222,6 +232,29 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
             <label>Scene 5 Cake Headline</label>
             <input type="text" id="edCakeHead" value="${data.cakeHeadline || 'Happy Birthday, My Girl!'}" />
           </div>
+
+          <!-- Scene 6 Memory Photo Cards in Drawer -->
+          <div class="b-field">
+            <label style="font-weight:700; color:#be185d;">📸 Scene 6 Memory Cards (Photos & Captions)</label>
+            <div id="drwCardsList" style="display:flex; flex-direction:column; gap:8px;">
+              ${cardsList.map((c, i) => `
+                <div class="drw-card-row" data-i="${i}" style="display:flex; flex-direction:column; gap:6px; background:#fff; padding:8px; border-radius:8px; border:1px solid #fbcfe8;">
+                  <div style="display:flex; gap:8px; align-items:center;">
+                    <img src="${c.image}" id="drwThumb_${i}" style="width:36px; height:36px; border-radius:6px; object-fit:cover; border:1px solid #f472b6; flex-shrink:0;" onerror="this.src='/images/sunset.jpg'" />
+                    <input type="text" class="drw-card-img" data-i="${i}" value="${c.image}" placeholder="Image URL" style="flex:1; font-size:11px;" />
+                    <label class="btn-file-upload-sm" title="Upload Photo" style="padding:4px 6px;">
+                      📷
+                      <input type="file" class="file-upload-drw-card" data-i="${i}" accept="image/*" style="display:none;" />
+                    </label>
+                    <button type="button" class="btn-del-drw-card" data-i="${i}" style="background:#fee2e2; border:none; border-radius:4px; padding:4px 8px; cursor:pointer; color:#dc2626;" title="Delete">🗑️</button>
+                  </div>
+                  <input type="text" class="drw-card-cap" data-i="${i}" value="${c.caption || ''}" placeholder="Caption (e.g. Sweet moments with you)" style="font-size:11px;" />
+                </div>
+              `).join('')}
+            </div>
+            <button type="button" id="btnAddDrwCard" style="margin-top:6px; background:#fdf2f8; border:1px dashed #f472b6; border-radius:6px; padding:6px; font-size:12px; color:#db2777; cursor:pointer; width:100%;">➕ Add Memory Photo Card</button>
+          </div>
+
           <div class="b-field">
             <label>Scene 8 Love Letter Content</label>
             <textarea id="edLetter" rows="7">${data.letterBody || ''}</textarea>
@@ -250,31 +283,37 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   const shareToast = container.querySelector('#blossomShareToast');
   const bgCanvas = container.querySelector('#blossomBgCanvas');
 
-  // Ambient Sakura Petals Floating Canvas
+  // Ambient Sakura Petals Floating Canvas (High-DPI 3D Fluttering)
   let animFrameId = null;
   const ctx = bgCanvas.getContext('2d');
   let petals = [];
 
   function resizeCanvas() {
-    bgCanvas.width = viewport.clientWidth;
-    bgCanvas.height = viewport.clientHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    bgCanvas.width = viewport.clientWidth * dpr;
+    bgCanvas.height = viewport.clientHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
 
   function initPetals() {
     petals = [];
-    const count = 28;
+    const count = 32;
     for (let i = 0; i < count; i++) {
       petals.push({
-        x: Math.random() * bgCanvas.width,
-        y: Math.random() * bgCanvas.height,
+        x: Math.random() * viewport.clientWidth,
+        y: Math.random() * viewport.clientHeight,
         r: Math.random() * 6 + 4,
-        dx: Math.random() * 1 - 0.5,
-        dy: Math.random() * 1.2 + 0.6,
+        dx: (Math.random() - 0.5) * 0.7,
+        dy: Math.random() * 1.1 + 0.6,
         rot: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.03,
-        alpha: Math.random() * 0.5 + 0.3,
+        rotSpeed: (Math.random() - 0.5) * 0.02,
+        sway: Math.random() * Math.PI * 2,
+        swaySpeed: Math.random() * 0.02 + 0.015,
+        tilt: Math.random() * Math.PI * 2,
+        tiltSpeed: Math.random() * 0.03 + 0.015,
+        alpha: Math.random() * 0.45 + 0.35,
         color: Math.random() > 0.4 ? 'rgba(251, 113, 133, ' : 'rgba(244, 114, 182, '
       });
     }
@@ -282,27 +321,34 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   initPetals();
 
   function renderPetals() {
-    ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    ctx.clearRect(0, 0, viewport.clientWidth, viewport.clientHeight);
     for (let p of petals) {
+      p.sway += p.swaySpeed;
+      p.tilt += p.tiltSpeed;
+      p.x += p.dx + Math.sin(p.sway) * 0.75;
+      p.y += p.dy;
+      p.rot += p.rotSpeed;
+
+      const scaleY = Math.cos(p.tilt);
+
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rot);
+      ctx.scale(1, Math.abs(scaleY) * 0.8 + 0.2);
       ctx.beginPath();
-      // Draw organic petal
-      ctx.ellipse(0, 0, p.r, p.r * 1.6, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, p.r, p.r * 1.5, 0, 0, Math.PI * 2);
       ctx.fillStyle = p.color + p.alpha + ')';
+      ctx.shadowColor = 'rgba(244, 114, 182, 0.35)';
+      ctx.shadowBlur = 6;
       ctx.fill();
       ctx.restore();
 
-      p.x += p.dx;
-      p.y += p.dy;
-      p.rot += p.rotSpeed;
-      if (p.y > bgCanvas.height + 20) {
-        p.y = -20;
-        p.x = Math.random() * bgCanvas.width;
+      if (p.y > viewport.clientHeight + 25) {
+        p.y = -25;
+        p.x = Math.random() * viewport.clientWidth;
       }
-      if (p.x < -20) p.x = bgCanvas.width + 20;
-      if (p.x > bgCanvas.width + 20) p.x = -20;
+      if (p.x < -25) p.x = viewport.clientWidth + 25;
+      if (p.x > viewport.clientWidth + 25) p.x = -25;
     }
     animFrameId = requestAnimationFrame(renderPetals);
   }
@@ -343,6 +389,39 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     editDrawer?.classList.remove('open');
   });
 
+  // Drawer Card Photo Uploads & Actions
+  container.querySelectorAll('.file-upload-drw-card').forEach(fileInput => {
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const idx = fileInput.getAttribute('data-i');
+      const textInput = container.querySelector(`.drw-card-img[data-i="${idx}"]`);
+      const thumb = container.querySelector(`#drwThumb_${idx}`);
+      if (textInput) textInput.value = "Uploading photo...";
+      const res = await uploadFile(file);
+      if (res.success) {
+        if (textInput) textInput.value = res.url;
+        if (thumb) thumb.src = res.url;
+      }
+    });
+  });
+
+  const btnAddDrw = container.querySelector('#btnAddDrwCard');
+  btnAddDrw?.addEventListener('click', () => {
+    data.cards = (data.cards && data.cards.length > 0) ? [...data.cards] : [...cardsList];
+    data.cards.push({ image: "/images/sunset.jpg", caption: "Our sweetest memory" });
+    renderBlossomTemplate(container, data, isMakerReview);
+  });
+
+  container.querySelectorAll('.btn-del-drw-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-i'), 10);
+      data.cards = (data.cards && data.cards.length > 0) ? [...data.cards] : [...cardsList];
+      data.cards.splice(idx, 1);
+      renderBlossomTemplate(container, data, isMakerReview);
+    });
+  });
+
   btnSaveBlossom?.addEventListener('click', () => {
     data.recipientName = container.querySelector('#edRecip').value.trim() || data.recipientName;
     data.passcode = container.querySelector('#edPin').value.trim() || "1234";
@@ -354,6 +433,20 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     data.introLine2 = container.querySelector('#edIntro2').value.trim() || data.introLine2;
     data.cakeHeadline = container.querySelector('#edCakeHead').value.trim() || data.cakeHeadline;
     data.letterBody = container.querySelector('#edLetter').value.trim() || data.letterBody;
+
+    const drwRows = container.querySelectorAll('.drw-card-row');
+    if (drwRows.length > 0) {
+      const updatedCards = [];
+      drwRows.forEach(row => {
+        const idx = row.getAttribute('data-i');
+        const imgVal = row.querySelector(`.drw-card-img[data-i="${idx}"]`)?.value.trim();
+        const capVal = row.querySelector(`.drw-card-cap[data-i="${idx}"]`)?.value.trim() || "";
+        if (imgVal) {
+          updatedCards.push({ image: imgVal, caption: capVal });
+        }
+      });
+      data.cards = updatedCards;
+    }
 
     editDrawer.classList.remove('open');
     renderScene(currentScene);
@@ -375,9 +468,26 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   });
 
   function goToScene(index) {
+    if (isTransitioning) return;
+    isTransitioning = true;
     currentScene = index;
     backBtn.style.visibility = (currentScene > 0 && currentScene < 7) ? 'visible' : 'hidden';
-    renderScene(currentScene);
+
+    // Cinematic smooth cross-dissolve with cubic-bezier
+    stage.style.transition = 'opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1)';
+    stage.style.opacity = '0';
+    stage.style.transform = 'scale(0.97) translateY(6px)';
+
+    setTimeout(() => {
+      renderScene(currentScene);
+      void stage.offsetWidth;
+      stage.style.transition = 'opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1)';
+      stage.style.opacity = '1';
+      stage.style.transform = 'scale(1) translateY(0)';
+      setTimeout(() => {
+        isTransitioning = false;
+      }, 330);
+    }, 220);
   }
 
   // Render Scene Controller
@@ -467,12 +577,21 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       startAutoplayAudio();
 
       // 3. Trigger Full-screen watercolor floral explosion
-      explodeCanvas.width = viewport.clientWidth;
-      explodeCanvas.height = viewport.clientHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      explodeCanvas.width = viewport.clientWidth * dpr;
+      explodeCanvas.height = viewport.clientHeight * dpr;
       const expCtx = explodeCanvas.getContext('2d');
+      expCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       explodeCanvas.style.opacity = '1';
 
-      // 80 Colorful floral explosion petals
+      let sceneSwitched = false;
+      function nextScene() {
+        if (sceneSwitched) return;
+        sceneSwitched = true;
+        goToScene(1);
+      }
+
+      // 90 Colorful floral explosion petals with high-DPI physics
       const flowerColors = [
         '#f43f5e', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', 
         '#8b5cf6', '#e11d48', '#fbbf24', '#ffffff', '#a855f7'
@@ -489,7 +608,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           y: originY,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          size: Math.random() * 18 + 12,
+          size: Math.random() * 16 + 10,
           rot: Math.random() * Math.PI * 2,
           rotSpeed: (Math.random() - 0.5) * 0.1,
           color: flowerColors[Math.floor(Math.random() * flowerColors.length)],
@@ -499,13 +618,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       }
 
       function animateExplosion() {
-        expCtx.clearRect(0, 0, explodeCanvas.width, explodeCanvas.height);
+        expCtx.clearRect(0, 0, viewport.clientWidth, viewport.clientHeight);
         let alive = false;
         for (let p of particles) {
           p.x += p.vx;
           p.y += p.vy;
-          p.vx *= 0.96;
-          p.vy *= 0.96;
+          p.vx *= 0.95;
+          p.vy *= 0.95;
           p.rot += p.rotSpeed;
           p.alpha -= p.decay;
 
@@ -516,7 +635,6 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
             expCtx.rotate(p.rot);
             expCtx.globalAlpha = p.alpha;
             expCtx.beginPath();
-            // Flower petal shape
             expCtx.arc(0, 0, p.size, 0, Math.PI * 2);
             expCtx.fillStyle = p.color;
             expCtx.fill();
@@ -527,16 +645,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         if (alive) {
           requestAnimationFrame(animateExplosion);
         } else {
-          // Fade to next scene
-          goToScene(1);
+          nextScene();
         }
       }
       animateExplosion();
 
       // Fallback transition in 900ms
-      setTimeout(() => {
-        goToScene(1);
-      }, 950);
+      setTimeout(nextScene, 920);
     });
   }
 
@@ -904,21 +1019,31 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         <h2 class="cards-screen-title">${data.memoriesHeading || 'BEAUTIFUL MEMORIES'}</h2>
         <p class="cards-screen-subtitle">${data.memoriesSubtitle || 'Swipe the cards ✨'}</p>
 
-        <!-- 3D Card Stack Container -->
-        <div class="cards-deck-stack" id="cardsDeck">
-          ${cardsList.map((c, i) => `
-            <div class="swipe-photo-card" data-card-idx="${i}" style="z-index: ${cardsList.length - i};">
-              <div class="card-inner-frame">
-                <img src="${c.image}" alt="Memory photo ${i+1}" loading="lazy" />
-                ${c.caption ? `<div class="card-caption">${c.caption}</div>` : ''}
+        <!-- 3D Card Stack Container with Fluid Navigation -->
+        <div class="cards-deck-container">
+          <button class="deck-nav-arrow deck-nav-prev" id="btnPrevCard" title="Previous photo" aria-label="Previous photo">
+            ‹
+          </button>
+
+          <div class="cards-deck-stack" id="cardsDeck">
+            ${cardsList.map((c, i) => `
+              <div class="swipe-photo-card" data-card-idx="${i}" style="z-index: ${cardsList.length - i};">
+                <div class="card-inner-frame">
+                  <img src="${c.image}" alt="Memory photo ${i+1}" loading="lazy" />
+                  ${c.caption ? `<div class="card-caption">${c.caption}</div>` : ''}
+                </div>
               </div>
-            </div>
-          `).join('')}
+            `).join('')}
+          </div>
+
+          <button class="deck-nav-arrow deck-nav-next" id="btnNextCard" title="Next photo" aria-label="Next photo">
+            ›
+          </button>
         </div>
 
-        <!-- Indicators & Reset -->
+        <!-- Indicators -->
         <div class="deck-indicator-row" id="deckDots">
-          ${cardsList.map((_, i) => `<span class="deck-dot ${i === 0 ? 'active' : ''}"></span>`).join('')}
+          ${cardsList.map((_, i) => `<span class="deck-dot ${i === 0 ? 'active' : ''}" data-i="${i}" style="cursor:pointer;"></span>`).join('')}
         </div>
 
         <button class="blossom-circle-arrow-btn" id="btnNextToLamp" aria-label="Next">
@@ -930,25 +1055,42 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     const deck = stage.querySelector('#cardsDeck');
     const dots = stage.querySelectorAll('.deck-dot');
     const cardElements = Array.from(deck.querySelectorAll('.swipe-photo-card'));
+    const btnPrev = stage.querySelector('#btnPrevCard');
+    const btnNext = stage.querySelector('#btnNextCard');
 
-    function updateDeckTransforms() {
+    function updateDeckTransforms(interactiveProgress = 0) {
       cardElements.forEach((card, idx) => {
         if (idx < activeCardIndex) {
-          // Already swiped off
           card.style.display = 'none';
         } else {
           card.style.display = 'block';
           const offset = idx - activeCardIndex;
           if (offset === 0) {
-            card.style.transform = `translate3d(0, 0, 0) scale(1) rotate(0deg)`;
-            card.style.opacity = '1';
+            if (interactiveProgress === 0) {
+              card.style.transition = 'transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
+              card.style.transform = `translate3d(0, 0, 0) scale(1) rotate(0deg)`;
+              card.style.opacity = '1';
+            }
           } else if (offset === 1) {
-            card.style.transform = `translate3d(12px, 8px, -20px) scale(0.96) rotate(4deg)`;
-            card.style.opacity = '0.9';
+            card.style.transition = interactiveProgress !== 0 ? 'none' : 'transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
+            const scale = 0.96 + interactiveProgress * 0.04;
+            const tx = 12 - interactiveProgress * 12;
+            const ty = 8 - interactiveProgress * 8;
+            const rot = 4 - interactiveProgress * 4;
+            const op = 0.9 + interactiveProgress * 0.1;
+            card.style.transform = `translate3d(${tx}px, ${ty}px, -20px) scale(${scale}) rotate(${rot}deg)`;
+            card.style.opacity = `${op}`;
           } else if (offset === 2) {
-            card.style.transform = `translate3d(-10px, 16px, -40px) scale(0.92) rotate(-3deg)`;
-            card.style.opacity = '0.75';
+            card.style.transition = interactiveProgress !== 0 ? 'none' : 'transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
+            const scale = 0.92 + interactiveProgress * 0.04;
+            const tx = -10 + interactiveProgress * 22;
+            const ty = 16 - interactiveProgress * 8;
+            const rot = -3 + interactiveProgress * 7;
+            const op = 0.75 + interactiveProgress * 0.15;
+            card.style.transform = `translate3d(${tx}px, ${ty}px, -40px) scale(${scale}) rotate(${rot}deg)`;
+            card.style.opacity = `${op}`;
           } else {
+            card.style.transition = 'transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
             card.style.transform = `translate3d(0, 22px, -60px) scale(0.88)`;
             card.style.opacity = '0.5';
           }
@@ -959,7 +1101,69 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         dot.classList.toggle('active', idx === activeCardIndex);
       });
     }
-    updateDeckTransforms();
+    updateDeckTransforms(0);
+
+    // Swipe card off smoothly
+    function swipeOffCurrent(direction = 1) {
+      const topCard = cardElements[activeCardIndex];
+      if (!topCard) return;
+
+      const flyX = direction > 0 ? 520 : -520;
+      topCard.style.transition = 'transform 0.44s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s ease';
+      topCard.style.transform = `translate3d(${flyX}px, 20px, 0) rotate(${flyX * 0.08}deg)`;
+      topCard.style.opacity = '0';
+      playSound('blossom');
+
+      setTimeout(() => {
+        activeCardIndex++;
+        if (activeCardIndex >= cardsList.length) {
+          activeCardIndex = 0;
+        }
+        updateDeckTransforms(0);
+        attachSwipeHandler(cardElements[activeCardIndex]);
+      }, 340);
+    }
+
+    // Bring back previous card
+    function showPreviousCard() {
+      if (activeCardIndex <= 0) {
+        activeCardIndex = cardsList.length - 1;
+      } else {
+        activeCardIndex--;
+      }
+
+      const prevCard = cardElements[activeCardIndex];
+      if (prevCard) {
+        prevCard.style.display = 'block';
+        prevCard.style.transition = 'none';
+        prevCard.style.transform = 'translate3d(-380px, -20px, 0) rotate(-16deg)';
+        prevCard.style.opacity = '0';
+
+        requestAnimationFrame(() => {
+          updateDeckTransforms(0);
+          prevCard.style.transition = 'transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
+          prevCard.style.transform = 'translate3d(0, 0, 0) scale(1) rotate(0deg)';
+          prevCard.style.opacity = '1';
+          playSound('click');
+        });
+        attachSwipeHandler(prevCard);
+      }
+    }
+
+    btnNext?.addEventListener('click', () => swipeOffCurrent(1));
+    btnPrev?.addEventListener('click', showPreviousCard);
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const targetIdx = parseInt(dot.getAttribute('data-i'), 10);
+        if (targetIdx !== activeCardIndex) {
+          activeCardIndex = targetIdx;
+          updateDeckTransforms(0);
+          attachSwipeHandler(cardElements[activeCardIndex]);
+          playSound('click');
+        }
+      });
+    });
 
     // Attach Touch and Mouse Drag to top card
     function attachSwipeHandler(topCard) {
@@ -967,6 +1171,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
       let startX = 0, startY = 0, currentX = 0, currentY = 0;
       let isDragging = false;
+      let animId = null;
 
       function onStart(e) {
         isDragging = true;
@@ -981,34 +1186,28 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         const pt = e.touches ? e.touches[0] : e;
         currentX = pt.clientX - startX;
         currentY = pt.clientY - startY;
-        const rot = currentX * 0.08;
-        topCard.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rot}deg)`;
+
+        cancelAnimationFrame(animId);
+        animId = requestAnimationFrame(() => {
+          const rot = currentX * 0.08;
+          topCard.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rot}deg)`;
+          const progress = Math.min(1, Math.abs(currentX) / 130);
+          updateDeckTransforms(progress);
+        });
       }
 
       function onEnd() {
         if (!isDragging) return;
         isDragging = false;
-        topCard.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+        cancelAnimationFrame(animId);
 
-        if (Math.abs(currentX) > 80) {
-          // Swipe off screen
-          const flyX = currentX > 0 ? 500 : -500;
-          topCard.style.transform = `translate3d(${flyX}px, ${currentY}px, 0) rotate(${flyX * 0.1}deg)`;
-          topCard.style.opacity = '0';
-          playSound('blossom');
-
-          setTimeout(() => {
-            activeCardIndex++;
-            if (activeCardIndex >= cardsList.length) {
-              // Loop back or stay on last
-              activeCardIndex = 0;
-            }
-            updateDeckTransforms();
-            attachSwipeHandler(cardElements[activeCardIndex]);
-          }, 350);
+        if (Math.abs(currentX) > 75) {
+          swipeOffCurrent(currentX > 0 ? 1 : -1);
         } else {
-          // Snap back
+          // Snap back with spring recoil
+          topCard.style.transition = 'transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1)';
           topCard.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+          updateDeckTransforms(0);
         }
       }
 
@@ -1108,67 +1307,83 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     function endPull() {
       if (!isPulling) return;
       isPulling = false;
-      pullChain.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+      pullChain.style.transition = 'transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1)';
       pullChain.style.transform = 'translateY(0px)';
 
-      if (dragY > 40) {
-        // Toggle Lamp State!
-        isLampOn = !isLampOn;
+      if (dragY > 35) {
         playSound('click');
-
-        if (!isLampOn) {
-          // Switch to Romantic Twilight!
-          lampWrap.classList.add('twilight-dark');
-          lampGlow.style.opacity = '0';
-          lampPrompt.innerHTML = "✨ You brought the stars to life...";
-          nextBtn.style.visibility = 'visible';
-
-          // Animate floating golden embers in dark
-          twilightCanvas.width = viewport.clientWidth;
-          twilightCanvas.height = viewport.clientHeight;
-          const tCtx = twilightCanvas.getContext('2d');
-          let fireflies = [];
-          for (let i = 0; i < 35; i++) {
-            fireflies.push({
-              x: Math.random() * twilightCanvas.width,
-              y: Math.random() * twilightCanvas.height,
-              r: Math.random() * 3.5 + 1.5,
-              alpha: Math.random() * 0.8 + 0.2,
-              vy: -(Math.random() * 0.8 + 0.3),
-              vx: (Math.random() - 0.5) * 0.5
-            });
-          }
-
-          function drawFireflies() {
-            tCtx.clearRect(0, 0, twilightCanvas.width, twilightCanvas.height);
-            for (let f of fireflies) {
-              tCtx.save();
-              tCtx.beginPath();
-              tCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-              tCtx.fillStyle = `rgba(253, 224, 71, ${f.alpha})`;
-              tCtx.shadowBlur = 10;
-              tCtx.shadowColor = '#facc15';
-              tCtx.fill();
-              tCtx.restore();
-
-              f.y += f.vy;
-              f.x += f.vx;
-              if (f.y < -10) f.y = twilightCanvas.height + 10;
-            }
-            if (!isLampOn && currentScene === 6) requestAnimationFrame(drawFireflies);
-          }
-          drawFireflies();
-
-          // Smoothly reveal letter scene after 1.8s
-          setTimeout(() => {
-            goToScene(7);
-          }, 2000);
-        } else {
-          lampWrap.classList.remove('twilight-dark');
-          lampGlow.style.opacity = '1';
-        }
+        toggleLamp();
       }
     }
+
+    function toggleLamp() {
+      isLampOn = !isLampOn;
+      if (!isLampOn) {
+        // Switch to Romantic Twilight!
+        lampWrap.classList.add('twilight-dark');
+        lampGlow.style.opacity = '0';
+        lampPrompt.innerHTML = "✨ You brought the stars to life...";
+        nextBtn.style.visibility = 'visible';
+
+        // Animate floating golden embers in dark
+        twilightCanvas.width = viewport.clientWidth;
+        twilightCanvas.height = viewport.clientHeight;
+        const tCtx = twilightCanvas.getContext('2d');
+        let fireflies = [];
+        for (let i = 0; i < 40; i++) {
+          fireflies.push({
+            x: Math.random() * twilightCanvas.width,
+            y: Math.random() * twilightCanvas.height,
+            r: Math.random() * 3.5 + 1.5,
+            alpha: Math.random() * 0.8 + 0.2,
+            vy: -(Math.random() * 0.8 + 0.3),
+            vx: (Math.random() - 0.5) * 0.5,
+            phase: Math.random() * Math.PI * 2
+          });
+        }
+
+        function drawFireflies() {
+          tCtx.clearRect(0, 0, twilightCanvas.width, twilightCanvas.height);
+          for (let f of fireflies) {
+            f.phase += 0.03;
+            tCtx.save();
+            tCtx.beginPath();
+            tCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+            tCtx.fillStyle = `rgba(253, 224, 71, ${f.alpha * (0.6 + 0.4 * Math.sin(f.phase))})`;
+            tCtx.shadowBlur = 12;
+            tCtx.shadowColor = '#facc15';
+            tCtx.fill();
+            tCtx.restore();
+
+            f.y += f.vy;
+            f.x += f.vx;
+            if (f.y < -10) f.y = twilightCanvas.height + 10;
+          }
+          if (!isLampOn && currentScene === 6) requestAnimationFrame(drawFireflies);
+        }
+        drawFireflies();
+
+        // Smoothly reveal letter scene after 2.2s
+        setTimeout(() => {
+          goToScene(7);
+        }, 2200);
+      } else {
+        lampWrap.classList.remove('twilight-dark');
+        lampGlow.style.opacity = '1';
+        lampPrompt.innerHTML = data.lampPrompt || 'DRAG THE STRING DOWN TO PULL';
+      }
+    }
+
+    pullBall.onclick = () => {
+      pullChain.style.transition = 'transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1)';
+      pullChain.style.transform = 'translateY(50px)';
+      playSound('click');
+      setTimeout(() => {
+        pullChain.style.transition = 'transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        pullChain.style.transform = 'translateY(0px)';
+        toggleLamp();
+      }, 200);
+    };
 
     pullBall.onmousedown = startPull;
     window.onmousemove = movePull;
@@ -1293,6 +1508,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     }
 
     waxBtn.addEventListener('click', openLetterModal);
+    stage.querySelector('#envelopeWrapper')?.addEventListener('click', openLetterModal);
 
     closeBtn.addEventListener('click', () => {
       modal.classList.remove('show');
