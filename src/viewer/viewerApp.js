@@ -1,6 +1,7 @@
 // src/viewer/viewerApp.js - Recipient Experience Orchestrator (100% Clean Viewer)
 
 import { checkCountdownLock, renderCountdownGate } from './countdownGate.js';
+import { initInteractiveSparkles } from './sparkleEffect.js';
 import { renderBlossomTemplate } from './templates/blossomTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
 import { renderAnniversaryTemplate } from './templates/anniversaryTemplate.js';
@@ -13,6 +14,7 @@ import { renderSisterTemplate } from './templates/sisterTemplate.js';
 import { renderBrotherTemplate } from './templates/brotherTemplate.js';
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
+  initInteractiveSparkles();
   const lockStatus = checkCountdownLock(data);
   const isMakerReview = isMakerReviewParam || lockStatus.isMakerReview || false;
 

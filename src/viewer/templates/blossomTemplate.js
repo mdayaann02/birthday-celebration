@@ -1,5 +1,6 @@
 // src/viewer/templates/blossomTemplate.js - The Viral Pastel Blossom Celebration Experience
 
+import confetti from 'canvas-confetti';
 import { encodeSiteToUrl, uploadFile, saveActiveCelebration, saveLocalDraft } from '../../models/siteStorage.js';
 
 export function renderBlossomTemplate(container, initialData = {}, isMakerReview = false) {
@@ -157,6 +158,23 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           o.start(now + i * 0.06);
           o.stop(now + 0.45 + i * 0.06);
         });
+      } else if (type === 'chomp') {
+        // Playful cake bite munch crunch
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(587, now);
+        osc.frequency.exponentialRampToValueAtTime(220, now + 0.12);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'typewriter') {
+        // Soft mechanical typewriter key tap
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1100 + Math.random() * 300, now);
+        gain.gain.setValueAtTime(0.04, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.start(now);
+        osc.stop(now + 0.04);
       }
     } catch (e) {
       console.warn("Audio playback not yet enabled:", e);
@@ -689,12 +707,12 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         <h2 class="keypad-cursive-title">${data.keypadTitle || 'For you, my love'}</h2>
         <p class="keypad-sub-italic">${data.keypadSubtitle || 'I love you'}</p>
 
-        <!-- 4 Passcode Dots -->
+        <!-- 4 Passcode Heart Dots -->
         <div class="keypad-dots-row" id="pinDots">
-          <span class="pin-dot"></span>
-          <span class="pin-dot"></span>
-          <span class="pin-dot"></span>
-          <span class="pin-dot"></span>
+          <span class="pin-dot">♡</span>
+          <span class="pin-dot">♡</span>
+          <span class="pin-dot">♡</span>
+          <span class="pin-dot">♡</span>
         </div>
 
         <!-- 3x4 Frosted Keypad Grid -->
@@ -707,8 +725,15 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           </button>
         </div>
 
-        <!-- Hint -->
-        <p class="keypad-hint-text">Passcode: <strong>${data.passcode || '1234'}</strong> (or tap any 4 digits)</p>
+        <!-- Playful Hint Toggle -->
+        <div class="keypad-hint-container">
+          <button class="keypad-hint-toggle" id="btnKeypadHint" type="button">
+            💡 Need a hint?
+          </button>
+          <div class="keypad-hint-bubble" id="keypadHintBubble" style="display:none;">
+            <span>Psst... The passcode is <strong>${data.passcode || '1234'}</strong> (or tap any 4 numbers!) 😉</span>
+          </div>
+        </div>
       </div>
 
       <!-- Unlock Pink Ripple Wave -->
@@ -718,13 +743,24 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     const dotsContainer = stage.querySelector('#pinDots');
     const dots = dotsContainer.querySelectorAll('.pin-dot');
     const ripple = stage.querySelector('#unlockRipple');
+    const btnHint = stage.querySelector('#btnKeypadHint');
+    const hintBubble = stage.querySelector('#keypadHintBubble');
+
+    btnHint?.addEventListener('click', () => {
+      playSound('key');
+      const isHidden = hintBubble.style.display === 'none';
+      hintBubble.style.display = isHidden ? 'block' : 'none';
+      btnHint.textContent = isHidden ? '🙈 Hide hint' : '💡 Need a hint?';
+    });
 
     function updateDots() {
       dots.forEach((dot, idx) => {
         if (idx < currentPin.length) {
           dot.classList.add('filled');
+          dot.textContent = '💖';
         } else {
           dot.classList.remove('filled');
+          dot.textContent = '♡';
         }
       });
     }
@@ -736,6 +772,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
       if (isMatch) {
         playSound('unlock');
+        if (navigator.vibrate) navigator.vibrate([40, 60, 80]);
         ripple.classList.add('active');
         setTimeout(() => {
           goToScene(2);
@@ -929,6 +966,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           </div>
         </div>
 
+        <!-- Playful Cake Bite Action -->
+        <div class="cake-action-row" style="margin-top: 14px; text-align: center;">
+          <button class="btn-cake-bite" id="btnTakeBite" style="display:none;">
+            🍰 Take a bite! 😋
+          </button>
+        </div>
+
         <!-- Next Arrow Button -->
         <button class="blossom-circle-arrow-btn" id="btnNextToCards" aria-label="Next">
           <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
@@ -937,15 +981,16 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     `;
 
     const cakeHint = stage.querySelector('#cakeHint');
+    const biteBtn = stage.querySelector('#btnTakeBite');
     const confettiCanvas = stage.querySelector('#cakeConfettiCanvas');
     confettiCanvas.width = viewport.clientWidth;
     confettiCanvas.height = viewport.clientHeight;
     const cCtx = confettiCanvas.getContext('2d');
 
     // Light gentle fluttering confetti
-    let confetti = [];
+    let confettiParticles = [];
     for (let i = 0; i < 40; i++) {
-      confetti.push({
+      confettiParticles.push({
         x: Math.random() * confettiCanvas.width,
         y: Math.random() * confettiCanvas.height,
         w: Math.random() * 8 + 4,
@@ -958,7 +1003,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
     function drawConfetti() {
       cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-      for (let c of confetti) {
+      for (let c of confettiParticles) {
         cCtx.save();
         cCtx.translate(c.x, c.y);
         cCtx.rotate((c.rot * Math.PI) / 180);
@@ -986,15 +1031,63 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           cEl.classList.remove('lit');
           cEl.classList.add('blown');
           playSound('puff');
+          if (navigator.vibrate) navigator.vibrate(20);
 
           // Check if all are blown out
           if (candlesLit.every(c => !c)) {
             playSound('unlock');
-            cakeHint.innerHTML = "✨ All candles blown! Your secret wish is granted! 💖";
+            if (navigator.vibrate) navigator.vibrate([30, 50, 70]);
+            cakeHint.innerHTML = "✨ All candles blown! Your secret wish is coming true! 💖";
             cakeHint.style.color = "#e11d48";
             cakeHint.style.fontWeight = "700";
+
+            // Multi-stage celebratory confetti cannons
+            confetti({
+              particleCount: 80,
+              spread: 70,
+              origin: { y: 0.6 },
+              colors: ['#f43f5e', '#ec4899', '#fbcfe8', '#fbbf24', '#ffffff']
+            });
+
+            setTimeout(() => {
+              confetti({
+                particleCount: 50,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0.1, y: 0.7 },
+                colors: ['#f43f5e', '#fb7185', '#38bdf8']
+              });
+              confetti({
+                particleCount: 50,
+                angle: 120,
+                spread: 55,
+                origin: { x: 0.9, y: 0.7 },
+                colors: ['#f43f5e', '#fb7185', '#a855f7']
+              });
+            }, 260);
+
+            // Reveal interactive bite button
+            if (biteBtn) {
+              biteBtn.style.display = 'inline-flex';
+              biteBtn.classList.add('pop-in-bounce');
+            }
           }
         }
+      });
+    });
+
+    biteBtn?.addEventListener('click', () => {
+      playSound('chomp');
+      if (navigator.vibrate) navigator.vibrate(35);
+      biteBtn.innerHTML = "😋 Nom nom nom! Delicious! ❤️";
+      biteBtn.disabled = true;
+      cakeHint.innerHTML = "🍓 Sweetest birthday for the sweetest person in the world! 🎂✨";
+
+      confetti({
+        particleCount: 45,
+        spread: 60,
+        origin: { y: 0.65 },
+        colors: ['#e11d48', '#fb7185', '#fce7f3', '#facc15']
       });
     });
 
@@ -1033,7 +1126,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
             ${cardsList.map((c, i) => `
               <div class="swipe-photo-card" data-card-idx="${i}" style="z-index: ${cardsList.length - i};">
                 <div class="card-inner-frame">
+                  <div class="card-memory-badge">✨ Memory #${i+1}</div>
                   <img src="${c.image}" alt="Memory photo ${i+1}" loading="lazy" />
+                  <div class="card-heart-hint">Tap twice ♡</div>
                   ${c.caption ? `<div class="card-caption">${c.caption}</div>` : ''}
                 </div>
               </div>
@@ -1166,6 +1261,33 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           attachSwipeHandler(cardElements[activeCardIndex]);
           playSound('click');
         }
+      });
+    });
+
+    // Double-tap on card to trigger heart burst
+    function spawnHeartBurstOnCard(card, clientX, clientY) {
+      const heart = document.createElement('div');
+      heart.className = 'card-doubletap-heart';
+      heart.textContent = '💖';
+      const rect = card.getBoundingClientRect();
+      const x = clientX ? (clientX - rect.left) : (rect.width / 2);
+      const y = clientY ? (clientY - rect.top) : (rect.height / 2);
+      heart.style.left = `${x}px`;
+      heart.style.top = `${y}px`;
+      card.appendChild(heart);
+      setTimeout(() => heart.remove(), 900);
+    }
+
+    cardElements.forEach(card => {
+      let lastTap = 0;
+      card.addEventListener('pointerdown', (e) => {
+        const now = Date.now();
+        if (now - lastTap < 320 && now - lastTap > 0) {
+          playSound('blossom');
+          if (navigator.vibrate) navigator.vibrate(25);
+          spawnHeartBurstOnCard(card, e.clientX, e.clientY);
+        }
+        lastTap = now;
       });
     });
 
@@ -1481,6 +1603,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       isLetterOpen = true;
 
       playSound('letter');
+      if (navigator.vibrate) navigator.vibrate([30, 40]);
       waxBtn.classList.add('cracked');
       flap.classList.add('open');
 
@@ -1504,6 +1627,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           } else {
             typedTextEl.innerHTML += char;
           }
+          if (charIdx % 3 === 0) playSound('typewriter');
           charIdx++;
           setTimeout(typeChar, speed);
         }
@@ -1530,11 +1654,43 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       });
     });
 
+    // Floating reaction emoji shower
+    function launchFloatingEmojiShower(emoji) {
+      const count = 14;
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'floating-reaction-emoji';
+        el.textContent = emoji;
+        const startX = window.innerWidth * (0.2 + Math.random() * 0.6);
+        const startY = window.innerHeight * 0.85;
+        const driftX = (Math.random() - 0.5) * 160;
+        const driftY = -(window.innerHeight * 0.65 + Math.random() * 150);
+        const rot = (Math.random() - 0.5) * 60;
+        const size = Math.random() * 14 + 24;
+
+        el.style.left = `${startX}px`;
+        el.style.top = `${startY}px`;
+        el.style.fontSize = `${size}px`;
+        el.style.opacity = '1';
+        document.body.appendChild(el);
+
+        requestAnimationFrame(() => {
+          el.style.transform = `translate(calc(-50% + ${driftX}px), calc(-50% + ${driftY}px)) rotate(${rot}deg) scale(1.4)`;
+          el.style.opacity = '0';
+        });
+
+        setTimeout(() => el.remove(), 1250);
+      }
+    }
+
     // Reaction emojis
     stage.querySelectorAll('.reaction-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         playSound('blossom');
         btn.classList.add('popped');
+        if (navigator.vibrate) navigator.vibrate(20);
+        const emoji = btn.textContent.trim().split(' ')[0] || '❤️';
+        launchFloatingEmojiShower(emoji);
         setTimeout(() => btn.classList.remove('popped'), 400);
       });
     });

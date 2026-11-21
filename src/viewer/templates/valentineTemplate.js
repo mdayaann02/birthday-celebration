@@ -180,44 +180,85 @@ export function renderValentineTemplate(container, data) {
     });
   });
 
-  // Playful dodging NO button
+  // Playful dodging NO button & Expanding YES button
   const btnNo = container.querySelector('#btnProposalNo');
   const btnYes = container.querySelector('#btnProposalYes');
   const acceptedBanner = container.querySelector('#valAcceptedBanner');
 
   const funnyNoResponses = [
     "No 🙈",
-    "Oops, missed! 😜",
-    "Try again! 😂",
     "Are you sure? 🥺",
-    "Just click YES! 💍",
-    "Still can't click! 💖"
+    "Think again! 😜",
+    "Wrong button! 😂",
+    "You can't catch me! 🏃‍♂️💨",
+    "Just tap YES! 💍",
+    "Look how big YES is! 😍",
+    "Resistance is futile! ❤️",
+    "You have no choice 🥺",
+    "Always YES! 💖"
   ];
   let noIdx = 0;
+  let yesScale = 1.0;
 
-  function dodgeNo() {
-    const rx = (Math.random() - 0.5) * 240;
-    const ry = (Math.random() - 0.5) * 140;
+  function dodgeNo(e) {
+    if (e && e.cancelable) e.preventDefault();
+    if (navigator.vibrate) navigator.vibrate(15);
+
+    const maxW = Math.min(window.innerWidth * 0.35, 160);
+    const rx = (Math.random() - 0.5) * maxW * 2;
+    const ry = (Math.random() - 0.5) * 110;
+
+    btnNo.style.position = 'relative';
+    btnNo.style.transition = 'transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)';
     btnNo.style.transform = `translate(${rx}px, ${ry}px)`;
+
     noIdx = (noIdx + 1) % funnyNoResponses.length;
     btnNo.textContent = funnyNoResponses[noIdx];
+
+    // Grow YES button bigger and more enticing
+    yesScale = Math.min(yesScale + 0.12, 1.85);
+    btnYes.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease';
+    btnYes.style.transform = `scale(${yesScale})`;
+    btnYes.style.boxShadow = `0 10px 32px rgba(244, 63, 94, ${0.45 + (yesScale - 1) * 0.3})`;
   }
 
   btnNo?.addEventListener('mouseover', dodgeNo);
-  btnNo?.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    dodgeNo();
-  });
+  btnNo?.addEventListener('pointerdown', dodgeNo);
+  btnNo?.addEventListener('touchstart', dodgeNo, { passive: false });
 
   btnYes?.addEventListener('click', () => {
+    if (navigator.vibrate) navigator.vibrate([40, 80, 120]);
+
+    // Multi-stage grand celebration fireworks
     confetti({
       particleCount: 140,
-      spread: 100,
+      spread: 90,
       origin: { y: 0.6 },
-      colors: ['#ff3366', '#ff758f', '#ffd166', '#ffffff', '#ec4899']
+      colors: ['#ff3366', '#ff758f', '#ffd166', '#ffffff', '#ec4899', '#a855f7']
     });
+
+    setTimeout(() => {
+      confetti({
+        particleCount: 70,
+        angle: 60,
+        spread: 60,
+        origin: { x: 0.1, y: 0.7 },
+        colors: ['#ff3366', '#ff758f', '#ffffff']
+      });
+      confetti({
+        particleCount: 70,
+        angle: 120,
+        spread: 60,
+        origin: { x: 0.9, y: 0.7 },
+        colors: ['#ff3366', '#ff758f', '#ffffff']
+      });
+    }, 280);
+
     btnNo.style.display = 'none';
     btnYes.style.display = 'none';
-    if (acceptedBanner) acceptedBanner.style.display = 'block';
+    if (acceptedBanner) {
+      acceptedBanner.style.display = 'block';
+      acceptedBanner.classList.add('pop-in-bounce');
+    }
   });
 }
