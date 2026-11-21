@@ -7,6 +7,10 @@ import { renderAnniversaryTemplate } from './templates/anniversaryTemplate.js';
 import { renderSorryTemplate } from './templates/sorryTemplate.js';
 import { renderValentineTemplate } from './templates/valentineTemplate.js';
 import { renderFriendshipTemplate } from './templates/friendshipTemplate.js';
+import { renderMotherTemplate } from './templates/motherTemplate.js';
+import { renderFatherTemplate } from './templates/fatherTemplate.js';
+import { renderSisterTemplate } from './templates/sisterTemplate.js';
+import { renderBrotherTemplate } from './templates/brotherTemplate.js';
 
 export function renderViewerApp(container, templateId, data) {
   const lockStatus = checkCountdownLock(data);
@@ -57,6 +61,18 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
       break;
     case 'friendship':
       renderFriendshipTemplate(root, data);
+      break;
+    case 'mother':
+      renderMotherTemplate(root, data);
+      break;
+    case 'father':
+      renderFatherTemplate(root, data);
+      break;
+    case 'sister':
+      renderSisterTemplate(root, data);
+      break;
+    case 'brother':
+      renderBrotherTemplate(root, data);
       break;
     case 'birthday':
     default:

@@ -259,5 +259,141 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         { title: "Always Having My Back", text: "Knowing exactly what I'm thinking with just one glance." }
       ]
     }
+  },
+
+  mother: {
+    id: "mother",
+    name: "Mother Special (Maa)",
+    badge: "For My Queen 👑🌸",
+    icon: "🌸",
+    description: "Tribute to Maa: Golden lotus sparkles, superpowers of Mom cards, Polaroid memory album, interactive 'Send Virtual Hug' heart shower, and wax-sealed gratitude letter.",
+    defaultTheme: {
+      primary: "#f43f5e",
+      bgGradient: "radial-gradient(circle at 50% 30%, #fff1f2 0%, #fdf2f8 50%, #ffe4e6 100%)",
+      accent: "#f59e0b"
+    },
+    defaultData: {
+      recipientName: "Maa",
+      senderName: "Your Child",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      audioSubtitle: "FOR MY QUEEN",
+      audioSrc: "/audio/alfaaz.mp3",
+      heroTitle: "To My Queen, My Maa ❤️",
+      heroSubtitle: "In your smile lies my entire universe, and in your prayers I find my greatest strength.",
+      letter: `Dear Maa,
+
+No words or songs in this world will ever be enough to thank you for everything you do. 
+
+From sleepless nights when I was sick, to silently sacrificing your own happiness just to see a smile on my face — you have been my angel on earth.
+
+Everything good in me comes from you. I pray Allah blesses you with endless health, peace, and eternal smiles.
+
+I love you more than words could ever describe, Maa! 🌸👑❤️`
+    }
+  },
+
+  father: {
+    id: "father",
+    name: "Father Special (Papa)",
+    badge: "For My Hero 🌟🛡️",
+    icon: "🌟",
+    description: "Tribute to Papa: Deep royal navy & constellation stars, pillars of strength wisdom cards, Best Dad in the World 3D trophy, Polaroid memories, and wax-seal letter.",
+    defaultTheme: {
+      primary: "#3b82f6",
+      bgGradient: "linear-gradient(180deg, #090e1a 0%, #111a2e 100%)",
+      accent: "#fbbf24"
+    },
+    defaultData: {
+      recipientName: "Papa",
+      senderName: "Your Proud Child",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      audioSubtitle: "FOR MY HERO",
+      audioSrc: "/audio/alfaaz.mp3",
+      heroTitle: "To My First Hero, My Father 🌟",
+      heroSubtitle: "A father's love is quiet, yet it moves mountains. Thank you for being my rock and greatest shield.",
+      letter: `Dear Papa,
+
+You worked tirelessly through every storm without ever complaining, just so our future could shine bright.
+
+Whenever I felt lost, your steady guidance was my compass. You showed me what honor, courage, and true sacrifice mean.
+
+Thank you for being my biggest hero and greatest support. I am who I am today because of you.
+
+Happy celebration, Papa! 🌟🛡️❤️`
+    }
+  },
+
+  sister: {
+    id: "sister",
+    name: "Sister Special (Behna)",
+    badge: "Partner in Crime 💅💖",
+    icon: "💅",
+    description: "Pastel lavender aesthetic: Sister survival rules, runaway 'Who is Smarter?' banter button, Polaroid blackmail & candid album, and forever bestie letter.",
+    defaultTheme: {
+      primary: "#c084fc",
+      bgGradient: "radial-gradient(circle at 50% 30%, #faf5ff 0%, #f3e8ff 50%, #ede9fe 100%)",
+      accent: "#f472b6"
+    },
+    defaultData: {
+      recipientName: "Behna",
+      senderName: "Your Crazy Sibling",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      audioSubtitle: "SISTER ANTHEM",
+      audioSrc: "/audio/alfaaz.mp3",
+      heroTitle: "To My Crazy, Annoying, Irreplaceable Sister 💅✨",
+      heroSubtitle: "We fight, we steal each other's clothes, we drive each other insane... but no one has my back like you do!",
+      letter: `Dear Behna,
+
+Even though you steal my things and blame me for everything in front of Mom, I wouldn't trade you for the world!
+
+Thank you for being my secret keeper, my 2 AM gossip buddy, and my forever best friend.
+
+Whatever life throws at us, remember I will always be right by your side (and will still tease you forever).
+
+Love you endlessly, my favourite sister! 💖💅✨`
+    }
+  },
+
+  brother: {
+    id: "brother",
+    name: "Brother Special (Bhai)",
+    badge: "The Living Legend 🤜🤛",
+    icon: "🤜🤛",
+    description: "Electric cobalt & cyan theme: The Sacred Bhai Code, Brotherhood Hall of Fame cards, interactive Fist Bump rumble blast, and heartfelt bro letter.",
+    defaultTheme: {
+      primary: "#06b6d4",
+      bgGradient: "linear-gradient(180deg, #050b14 0%, #0c1829 100%)",
+      accent: "#38bdf8"
+    },
+    defaultData: {
+      recipientName: "Bhai",
+      senderName: "Your Brother in Chaos",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      audioSubtitle: "BROTHERHOOD CODE",
+      audioSrc: "/audio/alfaaz.mp3",
+      heroTitle: "To My Brother in Chaos, The Legend 🤜🤛🔥",
+      heroSubtitle: "From wrestling over the TV remote to standing shoulder-to-shoulder through everything. Brotherhood forever!",
+      letter: `Dear Bhai,
+
+We've broken things, made crazy memories, fought like wild animals, and laughed until our stomachs hurt.
+
+You're not just my brother; you're the one person I can count on anytime, anywhere, with zero questions asked.
+
+Here's to the brotherhood that will never break. Keep being the absolute legend you are!
+
+Fist bump forever, bro! 🤜🤛🔥`
+    }
   }
 };

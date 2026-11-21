@@ -245,6 +245,38 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <textarea rows="2" class="form-textarea" id="edBffReason">${data.awardReason || ''}</textarea>
       </div>
     `;
+  } else if (templateId === 'mother') {
+    specificBox.innerHTML = `
+      <div class="section-title">🌸 Mother Special (Maa) Details</div>
+      <div class="form-group">
+        <label class="form-label">Heartfelt Letter to Maa</label>
+        <textarea rows="5" class="form-textarea" id="edMomLetter">${data.letter || ''}</textarea>
+      </div>
+    `;
+  } else if (templateId === 'father') {
+    specificBox.innerHTML = `
+      <div class="section-title">🌟 Father Special (Papa) Details</div>
+      <div class="form-group">
+        <label class="form-label">Letter of Gratitude & Honor to Papa</label>
+        <textarea rows="5" class="form-textarea" id="edDadLetter">${data.letter || ''}</textarea>
+      </div>
+    `;
+  } else if (templateId === 'sister') {
+    specificBox.innerHTML = `
+      <div class="section-title">💅 Sister Special (Behna) Details</div>
+      <div class="form-group">
+        <label class="form-label">Letter to My Crazy Sister</label>
+        <textarea rows="5" class="form-textarea" id="edSisLetter">${data.letter || ''}</textarea>
+      </div>
+    `;
+  } else if (templateId === 'brother') {
+    specificBox.innerHTML = `
+      <div class="section-title">🤜🤛 Brother Special (Bhai) Details</div>
+      <div class="form-group">
+        <label class="form-label">Letter to My Brother in Chaos</label>
+        <textarea rows="5" class="form-textarea" id="edBroLetter">${data.letter || ''}</textarea>
+      </div>
+    `;
   }
 
   // Bind file upload inputs
@@ -452,6 +484,18 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     } else if (templateId === 'friendship') {
       const elR = container.querySelector('#edBffReason');
       if (elR) updated.awardReason = elR.value;
+    } else if (templateId === 'mother') {
+      const elML = container.querySelector('#edMomLetter');
+      if (elML) updated.letter = elML.value;
+    } else if (templateId === 'father') {
+      const elDL = container.querySelector('#edDadLetter');
+      if (elDL) updated.letter = elDL.value;
+    } else if (templateId === 'sister') {
+      const elSL = container.querySelector('#edSisLetter');
+      if (elSL) updated.letter = elSL.value;
+    } else if (templateId === 'brother') {
+      const elBL = container.querySelector('#edBroLetter');
+      if (elBL) updated.letter = elBL.value;
     }
 
     onChange(updated);

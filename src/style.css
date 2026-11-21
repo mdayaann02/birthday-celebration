@@ -5216,3 +5216,545 @@ body {
   cursor: pointer;
   box-shadow: 0 4px 18px rgba(46, 213, 115, 0.4);
 }
+
+/* ==========================================================================
+   FAMILY OCCASION TEMPLATES: MOTHER, FATHER, SISTER, BROTHER
+   ========================================================================== */
+
+.fam-page-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 24px 16px 80px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Mother Theme */
+.mother-viewport {
+  background: radial-gradient(circle at 50% 25%, #fff1f2 0%, #fdf2f8 45%, #ffe4e6 100%);
+  color: #881337;
+  box-shadow: 0 0 50px rgba(244, 114, 182, 0.25);
+}
+
+/* Father Theme */
+.father-viewport {
+  background: radial-gradient(circle at 50% 20%, #172554 0%, #0f172a 50%, #020617 100%);
+  color: #f8fafc;
+  box-shadow: 0 0 50px rgba(59, 130, 246, 0.2);
+}
+
+/* Sister Theme */
+.sister-viewport {
+  background: radial-gradient(circle at 50% 25%, #faf5ff 0%, #f3e8ff 50%, #ede9fe 100%);
+  color: #581c87;
+  box-shadow: 0 0 50px rgba(192, 132, 252, 0.25);
+}
+
+/* Brother Theme */
+.brother-viewport {
+  background: radial-gradient(circle at 50% 20%, #083344 0%, #0c1829 50%, #020617 100%);
+  color: #f0fdfa;
+  box-shadow: 0 0 50px rgba(6, 182, 212, 0.2);
+}
+
+/* Common Hero Sections */
+.fam-hero-section {
+  text-align: center;
+  padding: 30px 10px 20px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  width: 100%;
+}
+
+.fam-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+.gold-badge {
+  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 100%);
+  color: #78350f;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.blue-gold-badge {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: #fef08a;
+  border: 1px solid rgba(251, 191, 36, 0.5);
+}
+
+.purple-badge {
+  background: linear-gradient(135deg, #f3e8ff 0%, #d8b4fe 100%);
+  color: #6b21a8;
+  border: 1px solid rgba(192, 132, 252, 0.4);
+}
+
+.cyan-badge {
+  background: linear-gradient(135deg, #0e7490 0%, #06b6d4 100%);
+  color: #ecfeff;
+  border: 1px solid rgba(34, 211, 238, 0.5);
+}
+
+.fam-hero-title {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.mother-viewport .fam-hero-title {
+  color: #9f1239;
+  font-family: 'Dancing Script', cursive;
+  font-size: 38px;
+}
+
+.sister-viewport .fam-hero-title {
+  color: #6b21a8;
+  font-family: 'Dancing Script', cursive;
+  font-size: 34px;
+}
+
+.fam-hero-subtitle {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 20px 0;
+  max-width: 380px;
+  opacity: 0.9;
+}
+
+/* Action Buttons */
+.btn-fam-action {
+  border: none;
+  border-radius: 25px;
+  padding: 13px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.btn-fam-action:active {
+  transform: scale(0.94);
+}
+
+.btn-hug-mom {
+  background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+  color: #fff;
+  box-shadow: 0 6px 22px rgba(225, 29, 72, 0.35);
+  animation: pulseButton 2.8s ease-in-out infinite;
+}
+
+@keyframes pulseButton {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); box-shadow: 0 8px 28px rgba(225, 29, 72, 0.45); }
+}
+
+.btn-trophy-dad {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #1e1b4b;
+  box-shadow: 0 6px 22px rgba(245, 158, 11, 0.35);
+}
+
+.btn-sister-smart {
+  background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(147, 51, 234, 0.3);
+}
+
+.btn-sister-me {
+  background: rgba(255, 255, 255, 0.8);
+  color: #6b21a8;
+  border: 1px solid #d8b4fe;
+  border-radius: 20px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease-out;
+}
+
+.btn-sister-share {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  color: #fff;
+}
+
+.btn-fistbump {
+  background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+  color: #fff;
+  box-shadow: 0 6px 22px rgba(6, 182, 212, 0.4);
+}
+
+.fam-feedback-text {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  min-height: 20px;
+}
+
+/* Sections */
+.fam-section {
+  width: 100%;
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.fam-section-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  text-align: center;
+}
+
+.fam-section-sub {
+  font-size: 13px;
+  opacity: 0.8;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+/* Superpowers & Cards Grid */
+.superpowers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+@media (max-width: 360px) {
+  .superpowers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.superpower-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(251, 113, 133, 0.3);
+  border-radius: 16px;
+  padding: 16px 12px;
+  box-shadow: 0 6px 18px rgba(244, 114, 182, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.superpower-card .sp-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.superpower-card h3 {
+  font-size: 13px;
+  font-weight: 800;
+  color: #9f1239;
+  margin: 0 0 6px 0;
+}
+
+.superpower-card p {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #4c0519;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* Father Cards */
+.superpower-card.dad-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.superpower-card.dad-card h3 {
+  color: #93c5fd;
+}
+
+.superpower-card.dad-card p {
+  color: #cbd5e1;
+}
+
+/* Sister Cards */
+.superpower-card.sister-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  box-shadow: 0 6px 18px rgba(192, 132, 252, 0.15);
+}
+
+.superpower-card.sister-card h3 {
+  color: #7e22ce;
+}
+
+.superpower-card.sister-card p {
+  color: #581c87;
+}
+
+/* Brother Cards */
+.superpower-card.bro-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.superpower-card.bro-card h3 {
+  color: #67e8f9;
+}
+
+.superpower-card.bro-card p {
+  color: #94a3b8;
+}
+
+/* Family Polaroids Row */
+.fam-polaroid-row {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 4px 18px 4px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fam-polaroid-card {
+  flex: 0 0 240px;
+  scroll-snap-align: center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 10px 14px 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.fam-pol-img-wrap {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.fam-pol-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fam-pol-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 10px 0 4px 0;
+}
+
+.fam-pol-note {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #475569;
+  margin: 0;
+}
+
+/* Dad Trophy Card */
+.dad-trophy-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 2px solid #fbbf24;
+  border-radius: 20px;
+  padding: 24px 16px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(251, 191, 36, 0.2);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.trophy-icon {
+  font-size: 54px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 4px 12px rgba(251, 191, 36, 0.4));
+}
+
+.trophy-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fbbf24;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.5px;
+}
+
+.trophy-sub {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.trophy-badge {
+  display: inline-block;
+  background: #fbbf24;
+  color: #1e1b4b;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 12px;
+  letter-spacing: 1px;
+}
+
+/* Sister Banter Card */
+.sister-banter-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #d8b4fe;
+  border-radius: 20px;
+  padding: 22px 16px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 10px 24px rgba(192, 132, 252, 0.2);
+}
+
+.banter-emoji {
+  font-size: 38px;
+  margin-bottom: 8px;
+}
+
+.banter-query {
+  font-size: 14px;
+  font-weight: 800;
+  color: #6b21a8;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.5px;
+}
+
+.banter-desc {
+  font-size: 12px;
+  color: #7e22ce;
+  margin: 0 0 16px 0;
+  opacity: 0.85;
+}
+
+.banter-buttons-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 48px;
+}
+
+.banter-result {
+  margin-top: 14px;
+  padding: 10px;
+  background: #fdf4ff;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #701a75;
+  border: 1px dashed #e879f9;
+}
+
+/* Gold Certificate for Maa */
+.luxury-award-certificate.gold-cert {
+  background: #fffdf5;
+  border: 4px solid #f59e0b;
+  box-shadow: 0 12px 36px rgba(245, 158, 11, 0.25);
+  color: #78350f;
+}
+
+.gold-cert .cert-heading {
+  color: #b45309;
+}
+
+.gold-cert .cert-body {
+  color: #92400e;
+}
+
+.gold-cert .cert-stamp {
+  border-color: #f59e0b;
+  color: #b45309;
+}
+
+/* Envelope Theme Overrides */
+.dad-envelope .envelope-front,
+.dad-envelope .envelope-back,
+.dad-envelope .envelope-flap {
+  background: #1e3a8a;
+  border-color: #3b82f6;
+}
+
+.sister-envelope .envelope-front,
+.sister-envelope .envelope-back,
+.sister-envelope .envelope-flap {
+  background: #e9d5ff;
+  border-color: #c084fc;
+}
+
+.bro-envelope .envelope-front,
+.bro-envelope .envelope-back,
+.bro-envelope .envelope-flap {
+  background: #0f172a;
+  border-color: #06b6d4;
+}
+
+.dad-modal {
+  background: #0f172a;
+  color: #f8fafc;
+  border-color: #3b82f6;
+}
+
+.dad-modal .modal-card-title {
+  color: #93c5fd;
+}
+
+.dad-modal .modal-card-sub,
+.dad-modal .modal-card-body {
+  color: #e2e8f0;
+}
+
+.bro-modal {
+  background: #0b1329;
+  color: #f0fdfa;
+  border-color: #06b6d4;
+}
+
+.bro-modal .modal-card-title {
+  color: #67e8f9;
+}
+
+.bro-modal .modal-card-sub,
+.bro-modal .modal-card-body {
+  color: #cbd5e1;
+}
