@@ -1,4 +1,4 @@
-// src/viewer/countdownGate.js - Romantic Countdown Gate Lock Screen with Maker Review
+// src/viewer/countdownGate.js - Romantic Countdown Gate Lock Screen with Background Photo Slideshow & Maker Review
 
 import confetti from 'canvas-confetti';
 
@@ -33,22 +33,41 @@ export function renderCountdownGate(container, data, onUnlock) {
     year: 'numeric'
   });
 
+  // Collect background photos added by creator
+  const bgPhotos = (data.countdownBackgroundImages && data.countdownBackgroundImages.length > 0)
+    ? data.countdownBackgroundImages
+    : (data.cards && data.cards.length > 0)
+      ? data.cards.map(c => c.image)
+      : (data.polaroids && data.polaroids.length > 0)
+        ? data.polaroids.map(p => p.image)
+        : ["/images/sunset.jpg", "/images/always_you.jpg", "/images/beautiful.jpg"];
+
   container.innerHTML = `
     <div class="countdown-gate-wrap" id="countdownGateWrap">
-      <!-- Ambient starry/lantern particles -->
+      <!-- Creator-Added Photo Slideshow with Ken Burns Effect -->
+      <div class="gate-bg-slideshow" id="gateBgSlideshow">
+        ${bgPhotos.map((img, i) => `
+          <div class="gate-bg-slide ${i === 0 ? 'active' : ''}" style="background-image: url('${img}');"></div>
+        `).join('')}
+        <!-- Dreamy frosted dark glass scrim vignette -->
+        <div class="gate-bg-scrim"></div>
+      </div>
+
+      <!-- Ambient floating golden embers & lanterns -->
       <div class="gate-lantern-field" id="gateLanternField"></div>
 
+      <!-- Main Countdown Lock Glass Card -->
       <div class="gate-card">
         <div class="gate-lock-icon">🔒</div>
         <div class="gate-badge">SURPRISE COUNTDOWN LOCKED</div>
-        <h1 class="gate-title">For ${data.recipientName || 'Someone Very Special'}</h1>
+        <h1 class="gate-title">For ${data.recipientName || 'Someone Very Special'} ❤️</h1>
         <p class="gate-desc">
-          A deeply heartfelt birthday website has been created for you.<br />
+          A deeply heartfelt celebration website has been made just for you.<br />
           It will unlock automatically on:
         </p>
         <div class="gate-target-date">✨ ${dateFormatted} ✨</div>
 
-        <!-- Ticking Digital Countdown -->
+        <!-- Ticking Digital Countdown Clock -->
         <div class="countdown-clock" id="countdownClock">
           <div class="clock-unit">
             <span class="clock-num" id="cdDays">00</span>
@@ -71,11 +90,18 @@ export function renderCountdownGate(container, data, onUnlock) {
           </div>
         </div>
 
+        <!-- Photo slideshow indicator dots if multiple photos -->
+        ${bgPhotos.length > 1 ? `
+          <div class="gate-slideshow-dots" id="gateSlideshowDots">
+            ${bgPhotos.map((_, i) => `<span class="gate-dot ${i === 0 ? 'active' : ''}"></span>`).join('')}
+          </div>
+        ` : ''}
+
         <div class="gate-hint">
-          💌 Hold tight! When the clock strikes zero, the surprise unfolds!
+          💌 Hold tight! When the clock strikes zero, your surprise unfolds!
         </div>
 
-        <!-- Maker Review Area -->
+        <!-- Maker Review Area (Bypass for creator) -->
         <div class="maker-review-box">
           <button class="btn-maker-review" id="btnMakerReview">
             👁️ Are you the creator? Review Website
@@ -88,7 +114,7 @@ export function renderCountdownGate(container, data, onUnlock) {
   // Spawn gentle background lanterns
   const lanternField = document.getElementById("gateLanternField");
   if (lanternField) {
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 18; i++) {
       const l = document.createElement("div");
       l.className = "lantern";
       l.style.setProperty("--pos-x", `${Math.random() * 95}%`);
@@ -96,6 +122,23 @@ export function renderCountdownGate(container, data, onUnlock) {
       l.style.setProperty("--delay", `${Math.random() * 12}s`);
       lanternField.appendChild(l);
     }
+  }
+
+  // Crossfade Background Slideshow Loop
+  const slides = container.querySelectorAll('.gate-bg-slide');
+  const dots = container.querySelectorAll('.gate-dot');
+  let currentSlide = 0;
+
+  if (slides.length > 1) {
+    setInterval(() => {
+      slides[currentSlide].classList.remove('active');
+      if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
+
+      currentSlide = (currentSlide + 1) % slides.length;
+
+      slides[currentSlide].classList.add('active');
+      if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+    }, 5500);
   }
 
   // Timer loop
@@ -109,7 +152,7 @@ export function renderCountdownGate(container, data, onUnlock) {
     if (remaining <= 0) {
       clearInterval(timerInterval);
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-      onUnlock();
+      onUnlock(false);
       return;
     }
 

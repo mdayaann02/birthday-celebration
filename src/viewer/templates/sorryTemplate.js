@@ -1,4 +1,4 @@
-// src/viewer/templates/sorryTemplate.js - Sincere Apology Template Viewer
+// src/viewer/templates/sorryTemplate.js - Sincere Apology & Reconciliation Experience
 
 import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
@@ -8,76 +8,88 @@ export function renderSorryTemplate(container, data) {
     <!-- Top Audio Player -->
     <div id="sorryPlayerSlot"></div>
 
-    <section class="sorry-hero">
-      <div class="sorry-emoji-avatar" id="avatarEmoji">🥺</div>
-      <h1 class="hero-title" style="color: #fff;">${data.heroTitle || "I'm Really Sorry"}</h1>
-      <p class="hero-subtitle" style="color: #a5b4fc;">${data.heroSubtitle || "My world feels heavy and empty when we aren't okay 🥺"}</p>
+    <div class="sorry-page-viewport">
+      <!-- Ambient Sparkle Canvas -->
+      <canvas id="sorryCanvas" class="blossom-bg-canvas"></canvas>
 
-      <!-- Heartfelt Apology Card -->
-      <div class="sorry-card">
-        <div class="sorry-recipient">Dearest ${data.recipientName || 'My Love'},</div>
-        <p class="sorry-message">${data.apologyMessage || "I know I made a mistake, and I am genuinely sorry from the bottom of my heart."}</p>
-        <div class="sorry-sign">— Sincerely, ${data.senderName || 'Me'}</div>
-      </div>
-    </section>
+      <!-- Main Section -->
+      <section class="sorry-hero-wrap">
+        <div class="sorry-emoji-display" id="avatarEmoji">🥺</div>
+        <h1 class="sorry-hero-title">${data.heroTitle || "I'm Really Sorry"}</h1>
+        <p class="sorry-hero-sub">${data.heroSubtitle || "My world feels heavy and empty when we aren't okay 🥺"}</p>
 
-    <!-- Interactive Anger Meter / Mood Slider -->
-    <section class="mood-slider-section">
-      <div class="section-tag" style="text-align:center; color:#93c5fd;">CURRENT MOOD CHECK</div>
-      <h2 class="section-heading" style="text-align:center;">Are You Still Mad at Me?</h2>
-
-      <div class="mood-box">
-        <div class="mood-display-emoji" id="moodEmoji">🥺</div>
-        <div class="mood-status-text" id="moodStatusText">Softening a little bit...</div>
-        
-        <input 
-          type="range" 
-          min="1" 
-          max="4" 
-          value="2" 
-          class="mood-range-input" 
-          id="moodSlider" 
-        />
-        
-        <div class="mood-labels">
-          <span>😡 Furious</span>
-          <span>😐 Annoyed</span>
-          <span>🥺 Listening</span>
-          <span>❤️ Forgiven</span>
+        <!-- Apology Frosted Letter Card -->
+        <div class="sorry-glass-card">
+          <div class="sorry-card-greeting">Dearest ${data.recipientName || 'My Love'},</div>
+          <p class="sorry-card-text">${data.apologyMessage || "I know I made a mistake, and I am genuinely sorry from the bottom of my heart. Your happiness means everything to me."}</p>
+          <div class="sorry-card-sign">— Sincerely, ${data.senderName || 'Me'} 🫶</div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Promises & Reasons -->
-    <section class="promises-section">
-      <div class="section-tag" style="text-align:center; color:#93c5fd;">MOVING FORWARD</div>
-      <h2 class="section-heading" style="text-align:center;">My Promises to You</h2>
+      <!-- Interactive Mood Check Slider -->
+      <section class="sorry-section">
+        <div class="sorry-tag">CURRENT MOOD CHECK</div>
+        <h2 class="sorry-section-title">How Mad Are You Right Now?</h2>
 
-      <div class="promises-list">
-        ${(data.promises || []).map((p, i) => `
-          <div class="promise-card">
-            <span class="promise-num">0${i+1}.</span>
-            <p class="promise-text">${p}</p>
+        <div class="sorry-mood-box">
+          <div class="sorry-mood-big-emoji" id="moodEmoji">🥺</div>
+          <div class="sorry-mood-status" id="moodStatusText">Listening and softening up a little...</div>
+          
+          <input 
+            type="range" 
+            min="1" 
+            max="4" 
+            value="2" 
+            class="sorry-range-input" 
+            id="moodSlider" 
+          />
+          
+          <div class="sorry-mood-markers">
+            <span>😡 Furious</span>
+            <span>😐 Upset</span>
+            <span>🥺 Listening</span>
+            <span>❤️ Forgiven</span>
           </div>
-        `).join('')}
-      </div>
-    </section>
+        </div>
+      </section>
 
-    <!-- Interactive Forgiveness Decision with Runaway NO button -->
-    <section class="forgive-decision-section">
-      <h2 class="section-heading" style="text-align:center;">Will You Please Forgive Me? 🥺</h2>
-      <div class="forgive-buttons-wrap">
-        <button class="btn-forgive-yes" id="btnForgiveYes">
-          YES, I Forgive You! ❤️
-        </button>
-        <button class="btn-forgive-no" id="btnForgiveNo">
-          No 😠
-        </button>
-      </div>
-      <div class="forgiveness-success-msg" id="forgiveSuccessMsg" style="display:none;">
-        🎉 You just made my entire universe shine again! I promise to make it up to you every day! Thank you so much! ❤️🥺✨
-      </div>
-    </section>
+      <!-- Sincere Promises -->
+      <section class="sorry-section">
+        <div class="sorry-tag">MOVING FORWARD TOGETHER</div>
+        <h2 class="sorry-section-title">My Promises to You</h2>
+
+        <div class="sorry-promises-list">
+          ${(data.promises || [
+            "To listen first and understand before reacting.",
+            "To never take your patience and love for granted.",
+            "To communicate openly with gentleness and honesty."
+          ]).map((p, i) => `
+            <div class="sorry-promise-item">
+              <span class="promise-badge">0${i+1}</span>
+              <p class="promise-desc">${p}</p>
+            </div>
+          `).join('')}
+        </div>
+      </section>
+
+      <!-- Interactive Forgiveness Decision with Runaway NO button -->
+      <section class="sorry-section" style="padding-bottom: 70px;">
+        <h2 class="sorry-section-title" style="font-size:26px;">Will You Please Forgive Me? 🥺</h2>
+        <div class="sorry-decision-area">
+          <button class="btn-forgive-yes" id="btnForgiveYes">
+            YES, I Forgive You! ❤️
+          </button>
+          <button class="btn-forgive-no" id="btnForgiveNo">
+            No 😠
+          </button>
+        </div>
+        <div class="sorry-success-card" id="forgiveSuccessCard" style="display:none;">
+          <div style="font-size:42px; margin-bottom:8px;">🎉🫂💖</div>
+          <h3>You Just Made My Universe Shine Again!</h3>
+          <p>Thank you for your forgiving heart. I promise to cherish you and love you better every single day!</p>
+        </div>
+      </section>
+    </div>
   `;
 
   // Init Player
@@ -85,63 +97,70 @@ export function renderSorryTemplate(container, data) {
     general: {
       audioTitle: data.audioTitle || "Words From My Heart",
       audioSubtitle: data.audioSubtitle || "I'M SO SORRY",
-      audioSrc: data.audioSrc || "/audio/song.mp3"
+      audioSrc: data.audioSrc || "/audio/blossom_song.mp3"
     },
     photoRibbon: [{ url: "/images/sunset.jpg" }]
   });
 
-  // Mood Slider logic
+  // Mood Slider Logic
   const slider = container.querySelector('#moodSlider');
   const moodEmoji = container.querySelector('#moodEmoji');
   const moodStatus = container.querySelector('#moodStatusText');
   const heroEmoji = container.querySelector('#avatarEmoji');
 
   const moods = {
-    1: { emoji: "😡", text: "Extremely Mad! (I totally understand why...)", hero: "😭" },
-    2: { emoji: "😐", text: "Still annoyed, but willing to hear you out.", hero: "🥺" },
-    3: { emoji: "🥺", text: "Heart is softening... feeling the sincere love.", hero: "🫶" },
-    4: { emoji: "❤️", text: "Forgiven! Let's hug and be happy again! 🥰", hero: "🥰" }
+    1: { emoji: "😡", text: "Extremely Mad! (I completely understand why...)", hero: "😭" },
+    2: { emoji: "😐", text: "Still Annoyed (Taking time to process...)", hero: "🥺" },
+    3: { emoji: "🥺", text: "Softening up and ready to talk...", hero: "🫶" },
+    4: { emoji: "🥰", text: "Ready to forgive and hug it out! ❤️", hero: "💖" }
   };
 
   slider?.addEventListener('input', (e) => {
     const val = e.target.value;
-    const item = moods[val] || moods[2];
-    moodEmoji.textContent = item.emoji;
-    moodStatus.textContent = item.text;
-    heroEmoji.textContent = item.hero;
-    if (val === "4") {
-      confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-    }
+    const m = moods[val];
+    if (moodEmoji) moodEmoji.textContent = m.emoji;
+    if (moodStatus) moodStatus.textContent = m.text;
+    if (heroEmoji) heroEmoji.textContent = m.hero;
   });
 
-  // Runaway NO button logic
+  // Playful Runaway NO button
   const btnNo = container.querySelector('#btnForgiveNo');
   const btnYes = container.querySelector('#btnForgiveYes');
-  const successMsg = container.querySelector('#forgiveSuccessMsg');
+  const successCard = container.querySelector('#forgiveSuccessCard');
 
-  function moveNoButton() {
-    const randX = (Math.random() - 0.5) * 220;
-    const randY = (Math.random() - 0.5) * 120;
-    btnNo.style.transform = `translate(${randX}px, ${randY}px)`;
+  const funnyQuotes = [
+    "No 😠",
+    "Nice try! 😜",
+    "Can't click me! 😂",
+    "You know you love me! 🥰",
+    "Click YES instead! ❤️",
+    "Pleaseee? 🥺"
+  ];
+  let quoteIdx = 0;
+
+  function dodgeNo() {
+    const rx = (Math.random() - 0.5) * 220;
+    const ry = (Math.random() - 0.5) * 140;
+    btnNo.style.transform = `translate(${rx}px, ${ry}px)`;
+    quoteIdx = (quoteIdx + 1) % funnyQuotes.length;
+    btnNo.textContent = funnyQuotes[quoteIdx];
   }
 
-  btnNo?.addEventListener('mouseover', moveNoButton);
+  btnNo?.addEventListener('mouseover', dodgeNo);
   btnNo?.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    moveNoButton();
+    dodgeNo();
   });
 
   btnYes?.addEventListener('click', () => {
-    btnNo.style.display = 'none';
-    btnYes.style.transform = 'scale(1.15)';
-    btnYes.textContent = 'YOU ARE FORGIVEN! ❤️';
-    successMsg.style.display = 'block';
-
     confetti({
       particleCount: 120,
       spread: 90,
-      origin: { y: 0.6 },
-      colors: ['#ff4d6d', '#ff758f', '#a5b4fc', '#ffffff']
+      origin: { y: 0.65 },
+      colors: ['#748ffc', '#f43f5e', '#ffd166', '#fff']
     });
+    btnNo.style.display = 'none';
+    btnYes.style.display = 'none';
+    if (successCard) successCard.style.display = 'block';
   });
 }

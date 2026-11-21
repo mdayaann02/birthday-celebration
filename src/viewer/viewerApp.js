@@ -44,7 +44,7 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
 
   switch (templateId) {
     case 'blossom':
-      renderBlossomTemplate(root, data);
+      renderBlossomTemplate(root, data, isMakerReview);
       break;
     case 'anniversary':
       renderAnniversaryTemplate(root, data);

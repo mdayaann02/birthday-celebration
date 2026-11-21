@@ -1757,6 +1757,59 @@ body {
   overflow: hidden;
 }
 
+/* Creator Background Photo Slideshow */
+.gate-bg-slideshow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.gate-bg-slide {
+  position: absolute;
+  inset: -25px;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 1.8s ease-in-out, transform 7s ease-out;
+}
+
+.gate-bg-slide.active {
+  opacity: 0.65;
+  transform: scale(1.15);
+}
+
+.gate-bg-scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(15, 16, 22, 0.4) 0%, rgba(10, 11, 16, 0.88) 85%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1;
+}
+
+.gate-slideshow-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0 8px 0;
+}
+
+.gate-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s;
+}
+
+.gate-dot.active {
+  background: var(--gold);
+  width: 22px;
+  border-radius: 4px;
+}
+
 .gate-lantern-field {
   position: absolute;
   inset: 0;
@@ -4357,4 +4410,762 @@ body {
 
 @media (max-width: 360px) {
   .hide-on-tiny { display: none; }
+}
+
+/* ==========================================================================
+   ELEVATED TEMPLATE STYLES (ANNIVERSARY, SORRY, VALENTINE, FRIENDSHIP)
+   ========================================================================== */
+
+/* --- ANNIVERSARY ENHANCEMENTS --- */
+.anniversary-page-wrap {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  color: #fff;
+}
+
+.anni-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #f3e5ab;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.anni-main-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(34px, 7vw, 48px);
+  color: #fff;
+  text-align: center;
+  margin: 0 0 8px 0;
+  text-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+}
+
+.anni-sub-title {
+  font-size: 16px;
+  color: #ffb3c1;
+  text-align: center;
+  margin: 0 0 28px 0;
+}
+
+.anni-counter-glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(212, 175, 55, 0.2);
+  text-align: center;
+}
+
+.anni-counter-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #d4af37;
+  margin-bottom: 14px;
+}
+
+.anni-timer-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.anni-timer-unit {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px 14px;
+  min-width: 60px;
+}
+
+.anni-timer-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  display: block;
+}
+
+.anni-timer-lbl {
+  font-size: 9px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.anni-colon {
+  font-size: 22px;
+  font-weight: 700;
+  color: #d4af37;
+}
+
+.anni-counter-note {
+  font-family: 'Caveat', cursive;
+  font-size: 19px;
+  color: #ff99c8;
+  margin-top: 14px;
+}
+
+.anni-section {
+  padding: 50px 20px 20px;
+}
+
+.anni-section-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #d4af37;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.anni-section-head {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #fff;
+  text-align: center;
+  margin: 0 0 30px 0;
+}
+
+.anni-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-left: 2px solid rgba(212, 175, 55, 0.35);
+  margin-left: 16px;
+  padding-left: 24px;
+}
+
+.anni-timeline-item {
+  position: relative;
+}
+
+.anni-timeline-node {
+  position: absolute;
+  left: -37px;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #1e1322;
+  border: 1px solid #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.anni-timeline-content {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.anni-timeline-year {
+  font-size: 12px;
+  font-weight: 700;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.anni-timeline-desc {
+  font-size: 14px;
+  color: #ddd;
+  margin: 4px 0 0 0;
+  line-height: 1.5;
+}
+
+.anni-vows-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.anni-vow-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 117, 143, 0.3);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.anni-vow-icon {
+  font-size: 20px;
+}
+
+.anni-vow-text {
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #fff;
+  margin: 0;
+}
+
+.anni-letter-card {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.anni-letter-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.anni-letter-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: #fff;
+  margin: 0;
+}
+
+.anni-letter-date {
+  font-size: 11px;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.anni-letter-body {
+  font-family: 'Caveat', cursive;
+  font-size: 21px;
+  line-height: 1.6;
+  color: #eee;
+  margin: 16px 0;
+}
+
+.anni-letter-sign {
+  font-size: 14px;
+  color: #ff99c8;
+  text-align: right;
+  margin-top: 14px;
+}
+
+.anni-heart-shower-btn {
+  background: linear-gradient(135deg, #ff4d6d 0%, #d4af37 100%);
+  border: none;
+  border-radius: 24px;
+  color: #fff;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(255, 77, 109, 0.4);
+  transition: transform 0.2s;
+}
+
+.anni-heart-shower-btn:active {
+  transform: scale(0.94);
+}
+
+/* --- SORRY TEMPLATE ENHANCEMENTS --- */
+.sorry-page-viewport {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  color: #fff;
+}
+
+.sorry-hero-wrap {
+  padding: 60px 20px 30px;
+  text-align: center;
+}
+
+.sorry-emoji-display {
+  font-size: 58px;
+  margin-bottom: 10px;
+  animation: floatMini 2.4s ease-in-out infinite alternate;
+}
+
+.sorry-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.sorry-hero-sub {
+  font-size: 15px;
+  color: #a5b4fc;
+  margin: 0 0 24px 0;
+}
+
+.sorry-glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  padding: 24px 20px;
+  text-align: left;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+
+.sorry-card-greeting {
+  font-size: 14px;
+  font-weight: 700;
+  color: #818cf8;
+  margin-bottom: 10px;
+}
+
+.sorry-card-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #e0e7ff;
+}
+
+.sorry-card-sign {
+  font-size: 13px;
+  color: #c7d2fe;
+  text-align: right;
+  margin-top: 14px;
+}
+
+.sorry-section {
+  padding: 30px 20px;
+}
+
+.sorry-tag {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: #93c5fd;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.sorry-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #fff;
+  text-align: center;
+  margin: 0 0 22px 0;
+}
+
+.sorry-mood-box {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 24px 18px;
+  text-align: center;
+}
+
+.sorry-mood-big-emoji {
+  font-size: 46px;
+  margin-bottom: 4px;
+}
+
+.sorry-mood-status {
+  font-size: 14px;
+  color: #c7d2fe;
+  margin-bottom: 18px;
+}
+
+.sorry-range-input {
+  width: 100%;
+  accent-color: #818cf8;
+  margin-bottom: 10px;
+}
+
+.sorry-mood-markers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.sorry-promises-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sorry-promise-item {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.promise-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #818cf8;
+}
+
+.promise-desc {
+  font-size: 14px;
+  line-height: 1.45;
+  color: #e0e7ff;
+  margin: 0;
+}
+
+.sorry-decision-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  position: relative;
+  min-height: 60px;
+}
+
+.btn-forgive-yes {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+.btn-forgive-no {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  color: #f87171;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease-out;
+}
+
+.sorry-success-card {
+  margin-top: 24px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 18px;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.sorry-success-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: #34d399;
+  margin: 0 0 6px 0;
+}
+
+.sorry-success-card p {
+  font-size: 14px;
+  color: #d1fae5;
+  margin: 0;
+}
+
+/* --- VALENTINE ENHANCEMENTS --- */
+.val-page-viewport {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  color: #fff;
+}
+
+.val-hero-wrap {
+  padding: 60px 20px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.val-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #ffd166;
+  margin-bottom: 8px;
+}
+
+.val-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #fff;
+  margin: 0 0 6px 0;
+}
+
+.val-hero-sub {
+  font-size: 15px;
+  color: #ff99c8;
+  margin: 0 0 20px 0;
+}
+
+.val-proposal-section {
+  padding: 30px 20px 70px;
+}
+
+.val-proposal-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 51, 102, 0.35);
+  border-radius: 24px;
+  padding: 34px 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.val-neon-heart {
+  font-size: 54px;
+  margin-bottom: 10px;
+  animation: pulseLock 2s infinite alternate;
+}
+
+.val-proposal-query {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #fff;
+  margin: 0 0 24px 0;
+  line-height: 1.4;
+}
+
+.val-decision-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  position: relative;
+  min-height: 60px;
+}
+
+.btn-val-yes {
+  background: linear-gradient(135deg, #ff3366 0%, #be123c 100%);
+  border: none;
+  border-radius: 22px;
+  color: #fff;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(255, 51, 102, 0.5);
+}
+
+.btn-val-no {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 22px;
+  color: #ff99c8;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease-out;
+}
+
+.val-accepted-banner {
+  margin-top: 24px;
+  background: rgba(255, 51, 102, 0.15);
+  border: 1px solid rgba(255, 51, 102, 0.4);
+  border-radius: 18px;
+  padding: 24px 18px;
+}
+
+.val-accepted-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #ff758f;
+  margin: 0 0 6px 0;
+}
+
+.val-accepted-text {
+  font-size: 14px;
+  color: #ffe4e6;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* --- FRIENDSHIP ENHANCEMENTS --- */
+.bff-page-viewport {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  color: #fff;
+}
+
+.bff-hero-wrap {
+  padding: 60px 20px 30px;
+  text-align: center;
+}
+
+.bff-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #2ed573;
+  margin-bottom: 8px;
+}
+
+.bff-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #fff;
+  margin: 0 0 6px 0;
+}
+
+.bff-hero-sub {
+  font-size: 15px;
+  color: #7bed9f;
+  margin: 0 0 24px 0;
+}
+
+.bff-cert-luxury {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.cert-gold-frame {
+  border: 2px solid #2ed573;
+  border-radius: 16px;
+  padding: 26px 18px;
+  position: relative;
+  text-align: center;
+}
+
+.cert-seal-ribbon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.cert-header-tag {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #7bed9f;
+  margin-bottom: 6px;
+}
+
+.cert-main-name {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  color: #2ed573;
+  letter-spacing: 1.5px;
+  margin: 0 0 10px 0;
+}
+
+.cert-sub-text {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 8px;
+}
+
+.cert-recipient-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 12px;
+  text-decoration: underline;
+  text-decoration-color: #2ed573;
+}
+
+.cert-award-reason {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #ddd;
+  margin: 0 0 20px 0;
+}
+
+.cert-sign-row {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 12px;
+  font-size: 12px;
+}
+
+.cert-sign-label {
+  display: block;
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.cert-sign-val {
+  color: #2ed573;
+}
+
+.bff-memories-section {
+  padding: 30px 20px;
+}
+
+.bff-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: #fff;
+  text-align: center;
+  margin: 0 0 24px 0;
+}
+
+.bff-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bff-chaos-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(46, 213, 115, 0.25);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.bff-card-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #2ed573;
+}
+
+.bff-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin: 4px 0;
+}
+
+.bff-card-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #ccc;
+  margin: 0;
+}
+
+.btn-bff-toast {
+  background: linear-gradient(135deg, #2ed573 0%, #10b981 100%);
+  border: none;
+  border-radius: 22px;
+  color: #fff;
+  padding: 12px 26px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(46, 213, 115, 0.4);
 }

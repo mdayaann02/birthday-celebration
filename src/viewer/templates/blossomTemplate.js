@@ -2,7 +2,7 @@
 
 import { encodeSiteToUrl } from '../../models/siteStorage.js';
 
-export function renderBlossomTemplate(container, initialData = {}) {
+export function renderBlossomTemplate(container, initialData = {}, isMakerReview = false) {
   // Ensure default data exists
   let data = {
     recipientName: "my gurll",
@@ -170,9 +170,11 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
         <div class="blossom-nav-actions">
-          <button class="blossom-edit-btn" id="btnToggleEdit" title="Edit story texts">
-            ✏️ <span class="hide-on-tiny">Edit Story</span>
-          </button>
+          ${isMakerReview ? `
+            <button class="blossom-edit-btn" id="btnToggleEdit" title="Edit story texts">
+              ✏️ <span class="hide-on-tiny">Edit Story</span>
+            </button>
+          ` : ''}
           <button class="blossom-music-pill" id="blossomMusicToggle" title="Toggle Music">
             <span class="blossom-music-icon">🎵</span>
             <div class="blossom-soundbars">
@@ -185,7 +187,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       <!-- Main Story Container -->
       <main class="blossom-stage-wrap" id="blossomStage"></main>
 
-      <!-- Edit Story Drawer (Overlay) -->
+      <!-- Edit Story Drawer (Overlay - Only in Creator Review Mode) -->
+      ${isMakerReview ? `
       <div class="blossom-edit-drawer" id="blossomEditDrawer">
         <div class="blossom-drawer-header">
           <h3>✏️ Edit Blossom Celebration</h3>
@@ -230,6 +233,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           <div id="blossomShareToast" class="blossom-toast">Link copied to clipboard! 📋</div>
         </div>
       </div>
+      ` : ''}
     </div>
   `;
 
@@ -332,14 +336,14 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   });
 
   // Drawer Toggle
-  btnToggleEdit.addEventListener('click', () => {
-    editDrawer.classList.toggle('open');
+  btnToggleEdit?.addEventListener('click', () => {
+    editDrawer?.classList.toggle('open');
   });
-  btnCloseDrawer.addEventListener('click', () => {
-    editDrawer.classList.remove('open');
+  btnCloseDrawer?.addEventListener('click', () => {
+    editDrawer?.classList.remove('open');
   });
 
-  btnSaveBlossom.addEventListener('click', () => {
+  btnSaveBlossom?.addEventListener('click', () => {
     data.recipientName = container.querySelector('#edRecip').value.trim() || data.recipientName;
     data.passcode = container.querySelector('#edPin').value.trim() || "1234";
     data.blossomPrompt = container.querySelector('#edBlossomPrompt').value.trim() || data.blossomPrompt;
@@ -355,7 +359,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     renderScene(currentScene);
   });
 
-  btnShareBlossom.addEventListener('click', () => {
+  btnShareBlossom?.addEventListener('click', () => {
     const shareUrl = encodeSiteToUrl('blossom', data);
     navigator.clipboard.writeText(shareUrl).then(() => {
       shareToast.classList.add('visible');

@@ -52,6 +52,28 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <div class="editor-help-text">
           💡 When locked, the recipient sees a live romantic countdown clock. You can review the unlocked site anytime using your Maker Passcode.
         </div>
+
+        <div style="margin-top:16px;">
+          <label class="form-label" style="font-weight:700; color:var(--primary);">📸 Photos Behind Date Timer (Slideshow):</label>
+          <div class="editor-help-text" style="margin-bottom:8px;">
+            Add photos that will gently float and crossfade behind the countdown timer for a romantic cinematic effect.
+          </div>
+          <div class="countdown-photos-grid" id="cdPhotosGrid">
+            ${((data.countdownBackgroundImages && data.countdownBackgroundImages.length > 0) ? data.countdownBackgroundImages : ["/images/sunset.jpg", "/images/always_you.jpg"]).map((img, i) => `
+              <div class="sub-card-editor" style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                <input type="text" class="form-input cd-bg-input" data-i="${i}" value="${img}" placeholder="Image URL" />
+                <label class="btn-file-upload-sm">
+                  📷
+                  <input type="file" class="file-upload-cd-photo" data-i="${i}" accept="image/*" style="display:none;" />
+                </label>
+              </div>
+            `).join('')}
+          </div>
+          <label class="btn-file-upload" style="margin-top:8px; display:inline-flex;">
+            📷 Add / Upload Timer Background Photo
+            <input type="file" id="uploadTimerBgPhoto" accept="image/*" style="display:none;" />
+          </label>
+        </div>
       </div>
 
       <!-- Section C: Music Player & MP3 Upload -->
@@ -219,6 +241,35 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     });
   });
 
+  // Countdown timer background photos upload
+  container.querySelectorAll('.file-upload-cd-photo').forEach(fileInput => {
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const idx = fileInput.getAttribute('data-i');
+      const textInput = container.querySelector(`.cd-bg-input[data-i="${idx}"]`);
+      if (textInput) textInput.value = "Uploading photo...";
+      const res = await uploadFile(file);
+      if (res.success) {
+        if (textInput) textInput.value = res.url;
+        emitChange();
+      }
+    });
+  });
+
+  const uploadTimerBg = container.querySelector('#uploadTimerBgPhoto');
+  uploadTimerBg?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const res = await uploadFile(file);
+    if (res.success) {
+      data.countdownBackgroundImages = data.countdownBackgroundImages || ["/images/sunset.jpg", "/images/always_you.jpg"];
+      data.countdownBackgroundImages.push(res.url);
+      renderVisualEditor(container, templateId, data, onChange);
+      onChange(data);
+    }
+  });
+
   // Bind text input listeners
   function emitChange() {
     const updated = { ...data };
@@ -243,6 +294,11 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     if (elAudT) updated.audioTitle = elAudT.value;
     if (elAudS) updated.audioSubtitle = elAudS.value;
     if (elAudSrc) updated.audioSrc = elAudSrc.value;
+
+    const cdBgInputs = container.querySelectorAll('.cd-bg-input');
+    if (cdBgInputs.length > 0) {
+      updated.countdownBackgroundImages = Array.from(cdBgInputs).map(i => i.value.trim()).filter(Boolean);
+    }
 
     if (templateId === 'blossom') {
       const elPin = container.querySelector('#edBlossomPin');
