@@ -8,8 +8,8 @@ import { openShareModal } from './shareModal.js';
 import { renderViewerApp } from '../viewer/viewerApp.js';
 
 export function renderStudioApp(root) {
-  let activeTemplateId = "birthday";
-  let activeData = getLocalDraft(activeTemplateId) || JSON.parse(JSON.stringify(TEMPLATES.birthday.defaultData));
+  let activeTemplateId = "blossom";
+  let activeData = getLocalDraft(activeTemplateId) || JSON.parse(JSON.stringify(TEMPLATES.blossom.defaultData));
   let isMobilePreview = false;
 
   root.innerHTML = `
@@ -25,6 +25,9 @@ export function renderStudioApp(root) {
         </div>
 
         <div class="studio-header-actions">
+          <a href="?template=blossom" class="btn-studio-action" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:4px;">
+            🌸 <span>Fullscreen Reel View</span>
+          </a>
           <button class="btn-studio-action btn-preview-toggle" id="btnTogglePreview">
             📱 <span id="previewToggleLabel">Toggle Preview View</span>
           </button>

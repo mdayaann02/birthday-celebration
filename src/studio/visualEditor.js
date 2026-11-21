@@ -86,7 +86,41 @@ export function renderVisualEditor(container, templateId, data, onChange) {
 
   const specificBox = container.querySelector('#templateSpecificFields');
 
-  if (templateId === 'birthday') {
+  if (templateId === 'blossom') {
+    specificBox.innerHTML = `
+      <div class="section-title">🌸 Blossom Romance Details (Viral Pastel Story)</div>
+      <div class="editor-grid-2">
+        <div class="form-group">
+          <label class="form-label">4-Digit Passcode (Keypad)</label>
+          <input type="text" class="form-input" id="edBlossomPin" maxlength="4" value="${data.passcode || '1234'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Keypad Header</label>
+          <input type="text" class="form-input" id="edBlossomKeypadTitle" value="${data.keypadTitle || 'For you, my love'}" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Scene 1 Blossom Prompt</label>
+        <input type="text" class="form-input" id="edBlossomPrompt" value="${data.blossomPrompt || 'Touch the blossom'}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Scene 3 Opening Note (Line 1)</label>
+        <input type="text" class="form-input" id="edBlossomIntro1" value="${data.introLine1 || ''}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Scene 3 Opening Note (Line 2)</label>
+        <input type="text" class="form-input" id="edBlossomIntro2" value="${data.introLine2 || ''}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Scene 5 Cake Headline</label>
+        <input type="text" class="form-input" id="edBlossomCakeHead" value="${data.cakeHeadline || 'Happy Birthday, My Girl!'}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Scene 8 Love Letter Body (Typewriter)</label>
+        <textarea rows="6" class="form-textarea" id="edBlossomLetter">${data.letterBody || ''}</textarea>
+      </div>
+    `;
+  } else if (templateId === 'birthday') {
     specificBox.innerHTML = `
       <div class="section-title">🎂 Birthday Special Content</div>
       <div class="form-group">
@@ -210,7 +244,23 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     if (elAudS) updated.audioSubtitle = elAudS.value;
     if (elAudSrc) updated.audioSrc = elAudSrc.value;
 
-    if (templateId === 'birthday') {
+    if (templateId === 'blossom') {
+      const elPin = container.querySelector('#edBlossomPin');
+      const elKeyTitle = container.querySelector('#edBlossomKeypadTitle');
+      const elPrompt = container.querySelector('#edBlossomPrompt');
+      const elIn1 = container.querySelector('#edBlossomIntro1');
+      const elIn2 = container.querySelector('#edBlossomIntro2');
+      const elCake = container.querySelector('#edBlossomCakeHead');
+      const elLet = container.querySelector('#edBlossomLetter');
+
+      if (elPin) updated.passcode = elPin.value;
+      if (elKeyTitle) updated.keypadTitle = elKeyTitle.value;
+      if (elPrompt) updated.blossomPrompt = elPrompt.value;
+      if (elIn1) updated.introLine1 = elIn1.value;
+      if (elIn2) updated.introLine2 = elIn2.value;
+      if (elCake) updated.cakeHeadline = elCake.value;
+      if (elLet) updated.letterBody = elLet.value;
+    } else if (templateId === 'birthday') {
       const elAge = container.querySelector('#edAge');
       if (elAge) updated.age = elAge.value;
 

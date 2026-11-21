@@ -1,6 +1,75 @@
 // src/models/templateRegistry.js - Templates Registry & Schema
 
 export const TEMPLATES = {
+  blossom: {
+    id: "blossom",
+    name: "Blossom Romance (Viral Reel)",
+    badge: "Trending Reel 🌸",
+    icon: "🌸",
+    description: "The viral pastel aesthetic story: 'Touch the blossom' bloom opener, passcode keypad, birthday note, fire burn-away transition, pixel strawberry cake with blowable candles, 3D swipe cards, hanging pull-lamp with twilight switch, and wax-seal typewriter letter modal.",
+    defaultTheme: {
+      primary: "#f472b6",
+      bgGradient: "radial-gradient(circle at 50% 35%, #fff1f2 0%, #fdf2f8 50%, #ffe4e6 100%)",
+      accent: "#e11d48"
+    },
+    defaultData: {
+      recipientName: "my gurll",
+      senderName: "Yours",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Romantic Story",
+      audioSubtitle: "BLOSSOM LOVE",
+      audioSrc: "/audio/blossom_song.mp3",
+      // Scene 1: Touch the Blossom
+      blossomPrompt: "Touch the blossom",
+      // Scene 2: Passcode Keypad
+      keypadTitle: "For you, my love",
+      keypadSubtitle: "I love you",
+      // Scene 3: Opening Note
+      introHeading: "Hey Baby,",
+      introLine1: "I know this isn't a normal birthday gift...",
+      introLine2: "But I made this just for you.",
+      // Scene 4: Flame button
+      flamePrompt: "Touch the flame to light",
+      // Scene 5: Pixel Cake
+      cakeHeadline: "Happy Birthday, My Girl!",
+      cakeSubtext: "Make a wish and tap the candles 🎂",
+      // Scene 6: 3D Swipe Cards
+      memoriesHeading: "BEAUTIFUL MEMORIES",
+      memoriesSubtitle: "Swipe the cards ✨",
+      cards: [
+        { image: "/images/blossom/memory_1.jpg", caption: "Sweet moments with you" },
+        { image: "/images/blossom/memory_2.jpg", caption: "Adventures in cold snow" },
+        { image: "/images/blossom/memory_3.jpg", caption: "Campfire songs & warmth" },
+        { image: "/images/blossom/memory_4.jpg", caption: "Painting our memories together" },
+        { image: "/images/blossom/memory_5.jpg", caption: "Riding into the sunset" }
+      ],
+      // Scene 7: Hanging Lamp
+      lampPrompt: "DRAG THE STRING DOWN TO PULL",
+      // Scene 8: Letter Modal
+      letterPrompt: "A Letter, Just For You",
+      letterSubprompt: "Tap the envelope to unseal",
+      letterModalTitle: "Happy Birthday ✨",
+      letterModalSub: "Just for you ♡",
+      letterBody: `Happiest birthday my gurll 🧚‍♀️ 🎂
+
+I pray you achieve all your dreams, stay happy, and keep smiling the way you do...
+
+because that smile is my favorite thing 🫶
+
+Everyday is your day because you are the main character... and YOU KNOW IT 🥰
+
+Let's share unlimited laughs, love, fights, and happiness 🧿 🫂
+
+I love you forever and ever and ever
+
+Thankyou for being my partner in every sense, happy 19th darlzzz 🧚‍♀️ 💋
+
+I love you darlzzzz please be with mee chelloo 🥺 🤌`
+    }
+  },
+
   birthday: {
     id: "birthday",
     name: "Birthday Celebration",

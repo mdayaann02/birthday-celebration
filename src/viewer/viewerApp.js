@@ -1,6 +1,7 @@
 // src/viewer/viewerApp.js - Recipient Experience Orchestrator
 
 import { checkCountdownLock, renderCountdownGate } from './countdownGate.js';
+import { renderBlossomTemplate } from './templates/blossomTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
 import { renderAnniversaryTemplate } from './templates/anniversaryTemplate.js';
 import { renderSorryTemplate } from './templates/sorryTemplate.js';
@@ -42,6 +43,9 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   const root = container.querySelector('#templateRoot');
 
   switch (templateId) {
+    case 'blossom':
+      renderBlossomTemplate(root, data);
+      break;
     case 'anniversary':
       renderAnniversaryTemplate(root, data);
       break;
