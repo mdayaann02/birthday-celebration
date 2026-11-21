@@ -1,39 +1,61 @@
-// src/components/polaroidWall.js - Interactive Polaroid Memory Wall with Note Modal
+// src/components/polaroidWall.js - Interactive Polaroid Memory Wall with Realism & Butterflies
 
 export function initPolaroidWall(container, config) {
   const polaroids = config.polaroids || [];
 
   container.innerHTML = `
     <section class="polaroid-section" id="polaroidSection">
-      <!-- Animated Butterflies -->
-      <div class="butterfly" style="top: 15%; left: 8%;">🦋</div>
-      <div class="butterfly" style="top: 25%; right: 12%; animation-delay: -3s;">🦋</div>
-      <div class="butterfly" style="bottom: 20%; left: 22%; animation-delay: -6s;">🦋</div>
-      <div class="butterfly" style="bottom: 15%; right: 28%; animation-delay: -4.5s;">🦋</div>
+      <!-- 3D Fluttering Butterflies -->
+      <div class="butterfly-3d" style="top: 12%; left: 6%;">
+        <div class="wing wing-left">🦋</div>
+        <div class="wing wing-right">🦋</div>
+      </div>
+      <div class="butterfly-3d" style="top: 22%; right: 10%; animation-delay: -3.5s;">
+        <div class="wing wing-left">🦋</div>
+        <div class="wing wing-right">🦋</div>
+      </div>
+      <div class="butterfly-3d" style="bottom: 18%; left: 16%; animation-delay: -7s;">
+        <div class="wing wing-left">🦋</div>
+        <div class="wing wing-right">🦋</div>
+      </div>
+      <div class="butterfly-3d" style="bottom: 14%; right: 20%; animation-delay: -5s;">
+        <div class="wing wing-left">🦋</div>
+        <div class="wing wing-right">🦋</div>
+      </div>
 
-      <div class="section-tag">POLAROID SNAPS</div>
-      <h2 class="section-heading">Pinned With All My Love</h2>
+      <div class="section-tag">POLAROID MEMORY VAULT</div>
+      <h2 class="section-heading">Pinned With All My Heart</h2>
       
       <div class="polaroid-grid" id="polaroidGrid">
         ${polaroids.map((item, idx) => `
-          <div class="polaroid-item" data-index="${idx}" style="--rotate-deg: ${item.angle || (idx % 2 === 0 ? -3 : 3)}deg;">
-            <div class="heart-pin"></div>
+          <div class="polaroid-item" data-index="${idx}" style="--rotate-deg: ${item.angle || (idx % 2 === 0 ? -3.5 : 3.5)}deg;">
+            <!-- Realistic 3D Heart Pin -->
+            <div class="heart-pin-3d"></div>
+            
+            <!-- Diagonal Washi Tape -->
+            <div class="washi-tape ${idx % 2 === 0 ? 'washi-left' : 'washi-right'}"></div>
+
             <div class="polaroid-photo">
               <img src="${item.image || '/images/beautiful.jpg'}" alt="${item.title}" loading="lazy" />
+              <div class="photo-sheen"></div>
             </div>
             <div class="polaroid-caption">${item.title || 'Special Memory'}</div>
+            <div class="polaroid-tap-hint">tap to read note 💌</div>
           </div>
         `).join('')}
       </div>
 
-      <!-- Note Modal Dialog -->
+      <!-- Luxury Frosted Note Modal Dialog -->
       <div class="modal-overlay" id="polaroidModal">
         <div class="polaroid-note-card">
           <div class="note-header">
             <span class="note-badge" id="modalBadge">N° 01</span>
-            <button class="btn-close-note" id="btnCloseModal">CLOSE ✕</button>
+            <button class="btn-close-note" id="btnCloseModal">✕ CLOSE</button>
           </div>
           <p class="note-content" id="modalText"></p>
+          <div class="note-footer">
+            <span class="note-seal">FOREVER YOURS ❤️</span>
+          </div>
         </div>
       </div>
     </section>
@@ -44,7 +66,6 @@ export function initPolaroidWall(container, config) {
   const modalText = document.getElementById("modalText");
   const btnClose = document.getElementById("btnCloseModal");
 
-  // Open note card on click
   container.querySelectorAll(".polaroid-item").forEach((elem) => {
     elem.addEventListener("click", () => {
       const idx = parseInt(elem.getAttribute("data-index"), 10);
@@ -57,7 +78,6 @@ export function initPolaroidWall(container, config) {
     });
   });
 
-  // Close modal
   btnClose.addEventListener("click", () => {
     modal.classList.remove("active");
   });

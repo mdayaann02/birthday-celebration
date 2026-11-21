@@ -1,4 +1,4 @@
-// src/components/scratchCard.js - Interactive Scratch-off Birthday Card
+// src/components/scratchCard.js - Luxury Golden Interactive Scratch Card
 
 import confetti from 'canvas-confetti';
 
@@ -7,8 +7,8 @@ export function initScratchCard(container, config) {
 
   container.innerHTML = `
     <section class="scratch-section" id="scratchSection">
-      <div class="section-tag">A HIDDEN SURPRISE</div>
-      <h2 class="section-heading">Scratch For Your Birthday Wish</h2>
+      <div class="section-tag">A SECRET SURPRISE</div>
+      <h2 class="section-heading">Scratch With Love</h2>
 
       <div class="scratch-card-wrapper" id="scratchCardWrapper">
         <!-- Content revealed beneath -->
@@ -19,11 +19,11 @@ export function initScratchCard(container, config) {
           <div class="scratch-secret">${scratchCard.hiddenSecret || "You make this world so much brighter! ✨"}</div>
         </div>
 
-        <!-- Scratchable foil canvas overlay -->
+        <!-- Scratchable metallic gold foil canvas overlay -->
         <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
       </div>
 
-      <div class="scratch-hint">👆 Rub or scratch the card with your finger/cursor to reveal!</div>
+      <div class="scratch-hint">✨ Rub or scratch with your finger to peel the golden foil! ✨</div>
     </section>
   `;
 
@@ -40,22 +40,34 @@ export function initScratchCard(container, config) {
     canvas.width = rect.width;
     canvas.height = rect.height;
 
-    // Draw shimmering golden foil
+    // Draw luxury metallic brushed gold
     const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    grad.addColorStop(0, "#d4af37");
-    grad.addColorStop(0.3, "#f9e79f");
+    grad.addColorStop(0, "#c59b27");
+    grad.addColorStop(0.25, "#f9e79f");
     grad.addColorStop(0.5, "#d4af37");
-    grad.addColorStop(0.8, "#fcf3cf");
-    grad.addColorStop(1, "#b7950b");
+    grad.addColorStop(0.75, "#fff2b2");
+    grad.addColorStop(1, "#996515");
 
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Subtle golden sparkle text on the foil
-    ctx.fillStyle = "rgba(60, 45, 10, 0.75)";
-    ctx.font = "bold 16px 'Inter', sans-serif";
+    // Decorative foil pattern
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+    ctx.lineWidth = 1.5;
+    for (let x = 0; x < canvas.width; x += 30) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + 20, canvas.height);
+      ctx.stroke();
+    }
+
+    // Golden embossed emblem
+    ctx.fillStyle = "rgba(40, 28, 5, 0.85)";
+    ctx.font = "bold 15px 'Cinzel', serif";
     ctx.textAlign = "center";
-    ctx.fillText("✨ SCRATCH HERE WITH LOVE ✨", canvas.width / 2, canvas.height / 2);
+    ctx.fillText("✨ SCRATCH TO REVEAL ✨", canvas.width / 2, canvas.height / 2 - 8);
+    ctx.font = "12px 'Inter', sans-serif";
+    ctx.fillText("A special wish awaits you", canvas.width / 2, canvas.height / 2 + 16);
   }
 
   initCanvas();
@@ -66,7 +78,7 @@ export function initScratchCard(container, config) {
   function scratch(x, y) {
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
-    ctx.arc(x, y, 28, 0, Math.PI * 2);
+    ctx.arc(x, y, 26, 0, Math.PI * 2);
     ctx.fill();
 
     checkPercentScratched();
@@ -84,7 +96,6 @@ export function initScratchCard(container, config) {
       let transparentCount = 0;
       const totalPixels = pixels.length / 4;
 
-      // Sample every 16th pixel for speed
       for (let i = 3; i < pixels.length; i += 64) {
         if (pixels[i] === 0) transparentCount++;
       }
@@ -92,7 +103,7 @@ export function initScratchCard(container, config) {
       const sampleTotal = totalPixels / 16;
       const percent = (transparentCount / sampleTotal) * 100;
 
-      if (percent > 40 && !scratchedCleaned) {
+      if (percent > 38 && !scratchedCleaned) {
         scratchedCleaned = true;
         canvas.style.opacity = "0";
         setTimeout(() => {
@@ -101,17 +112,17 @@ export function initScratchCard(container, config) {
 
         // Confetti celebration
         confetti({
-          particleCount: 100,
-          spread: 80,
-          origin: { y: 0.6 }
+          particleCount: 120,
+          spread: 85,
+          origin: { y: 0.6 },
+          colors: ['#ffd700', '#ff4d6d', '#ff758f', '#ffffff']
         });
       }
     } catch {
-      // In case of cross-origin or canvas security issue
+      // safe fallback
     }
   }
 
-  // Pointer events
   function handleMove(e) {
     if (!isScratching || scratchedCleaned) return;
     const rect = canvas.getBoundingClientRect();

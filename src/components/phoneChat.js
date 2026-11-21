@@ -1,4 +1,4 @@
-// src/components/phoneChat.js - Interactive iPhone Chat Simulator
+// src/components/phoneChat.js - Interactive iPhone 16 Pro Chat Simulator
 
 import confetti from 'canvas-confetti';
 
@@ -8,18 +8,35 @@ export function initPhoneChat(container, config) {
 
   container.innerHTML = `
     <section class="phone-section" id="phoneSection">
-      <div class="section-tag">PERSONAL MESSAGES</div>
-      <h2 class="section-heading">A Heartfelt Text</h2>
+      <div class="section-tag">A HEARTFELT SURPRISE</div>
+      <h2 class="section-heading">Late Night Messages</h2>
 
-      <div class="iphone-frame" id="iphoneFrame">
-        <div class="dynamic-island"></div>
+      <div class="iphone-16-pro" id="iphoneFrame">
+        <!-- Titanium Frame Reflection Glare -->
+        <div class="phone-glass-glare"></div>
+
+        <!-- Dynamic Island with animated waveform -->
+        <div class="dynamic-island-pro">
+          <div class="di-artwork">
+            <img src="${phoneChat.avatar || '/images/dream_girl.jpg'}" alt="Thumb" />
+          </div>
+          <div class="di-wave">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
 
         <div class="phone-screen">
           <div class="phone-status-bar">
             <span>${phoneChat.time || "7:25 PM"}</span>
-            <div style="display: flex; gap: 4px; align-items: center;">
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <svg width="14" height="11" viewBox="0 0 16 12" fill="currentColor">
+                <rect x="0" y="8" width="3" height="4" rx="1"/>
+                <rect x="4" y="5" width="3" height="7" rx="1"/>
+                <rect x="8" y="2" width="3" height="10" rx="1"/>
+                <rect x="12" y="0" width="3" height="12" rx="1"/>
+              </svg>
               <span>5G</span>
-              <span>100%</span>
+              <div class="battery-pill"><div class="battery-charge"></div></div>
             </div>
           </div>
 
@@ -87,24 +104,30 @@ export function initPhoneChat(container, config) {
     chatInput.value = "";
     scrollToBottom();
 
-    // Trigger celebratory mini-confetti
     confetti({
-      particleCount: 25,
-      spread: 45,
+      particleCount: 30,
+      spread: 50,
       origin: { y: 0.85 }
     });
 
-    // Auto sweet response after 1.5 seconds if sent by user
+    // Realistic typing indicator before reply
+    const typingBubble = document.createElement("div");
+    typingBubble.className = "chat-bubble bubble-them typing-indicator";
+    typingBubble.innerHTML = `<span></span><span></span><span></span>`;
+    messagesArea.appendChild(typingBubble);
+    scrollToBottom();
+
     setTimeout(() => {
+      typingBubble.remove();
       const reply = document.createElement("div");
       reply.className = "chat-bubble bubble-them";
       reply.innerHTML = `
-        <div class="bubble-text">Aww thank you so much! You made my birthday truly unforgettable ❤️🥺</div>
+        <div class="bubble-text">Aww thank you so much! You made my day truly magical ❤️🥺</div>
         <div class="bubble-time">${time}</div>
       `;
       messagesArea.appendChild(reply);
       scrollToBottom();
-    }, 1200);
+    }, 1400);
   }
 
   btnSend.addEventListener("click", sendMessage);
