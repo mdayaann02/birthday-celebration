@@ -1,11 +1,11 @@
-// src/studio/shareModal.js - Share & Export Modal (100% Error-Free & WhatsApp Ready)
+// src/studio/shareModal.js - Share & Export Modal (Backend Short-Links + WhatsApp 1-Tap)
 
 import confetti from 'canvas-confetti';
-import { encodeSiteToUrl } from '../models/siteStorage.js';
+import { encodeSiteToUrl, publishSiteToServer } from '../models/siteStorage.js';
 
 export function openShareModal(templateId, data) {
-  const recipientUrl = encodeSiteToUrl(templateId, data, false);
-  const makerReviewUrl = encodeSiteToUrl(templateId, data, true);
+  let fallbackRecipientUrl = encodeSiteToUrl(templateId, data, false);
+  let makerReviewUrl = encodeSiteToUrl(templateId, data, true);
 
   const existing = document.getElementById("shareModalOverlay");
   if (existing) existing.remove();
@@ -18,6 +18,8 @@ export function openShareModal(templateId, data) {
     day: 'numeric',
     year: 'numeric'
   }) : '';
+
+  let activeRecipientUrl = fallbackRecipientUrl;
 
   const overlay = document.createElement("div");
   overlay.id = "shareModalOverlay";
@@ -35,39 +37,38 @@ export function openShareModal(templateId, data) {
           ${isLocked ? `It is locked with a romantic countdown until <strong>${dateStr}</strong>!` : 'It will open immediately with your music & animations!'}
         </p>
 
-        <!-- Recipient Link -->
+        <!-- Clean Recipient Link -->
         <div class="share-link-group">
-          <label class="share-link-label">🎁 Recipient Celebration Link ${isLocked ? '(Locked with Countdown)' : '(Direct Celebration)'}</label>
+          <label class="share-link-label">
+            🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#22c55e;">(Publishing to server...)</span>
+          </label>
           <div class="share-input-row">
-            <input type="text" class="share-url-input" readonly id="inpRecipientUrl" value="${recipientUrl}" />
+            <input type="text" class="share-url-input" readonly id="inpRecipientUrl" value="${activeRecipientUrl}" />
             <button class="btn-copy-link" id="btnCopyRecipient">Copy</button>
           </div>
-          <div class="share-sub-hint" style="margin-top:6px; font-size:11px; color:#10b981;">
+          <div class="share-sub-hint" id="shareSubHint" style="margin-top:6px; font-size:11px; color:#10b981;">
             ✨ Guaranteed clean viewer mode: No editor controls, no builder bars. Opens pure celebration!
           </div>
-          <div class="share-quick-actions" style="margin-top:10px; display:flex; gap:8px;">
-            <button type="button" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:9px 16px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);">
+          <div class="share-quick-actions" style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35); flex:1; justify-content:center; min-height:44px;">
               💬 Share on WhatsApp
             </button>
+            <a href="${activeRecipientUrl}" target="_blank" class="btn-open-preview" id="linkOpenPreview" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:700; background:#3b82f6; color:#fff; text-decoration:none; min-height:44px;">
+              👁️ Open Website
+            </a>
           </div>
         </div>
 
-        <!-- Maker Review Link -->
-        <div class="share-link-group" style="margin-top:18px;">
-          <label class="share-link-label">👁️ Creator Review Link (Bypasses Lock for Testing)</label>
+        <!-- Creator Early Review -->
+        <div class="share-link-group" style="margin-top:16px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:12px;">
+          <label class="share-link-label" style="color:#94a3b8;">👁️ Creator Early Review Link (Bypasses Countdown)</label>
           <div class="share-input-row">
-            <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="${makerReviewUrl}" />
-            <button class="btn-copy-link" id="btnCopyMaker">Copy</button>
+            <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="${makerReviewUrl}" style="font-size:11px;" />
+            <button class="btn-copy-link" id="btnCopyMaker" style="font-size:11px;">Copy</button>
           </div>
           <div class="share-sub-hint" style="margin-top:4px; font-size:11px; color:#888;">
-            Use this link if you want to bypass the countdown lock yourself. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
+            Use this to verify your celebration before the countdown ends. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
           </div>
-        </div>
-
-        <div class="share-action-buttons" style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
-          <a href="${recipientUrl}" target="_blank" class="btn-open-preview" style="display:inline-flex; align-items:center; gap:6px;">
-            👁️ Open Celebration as Recipient
-          </a>
         </div>
       </div>
     </div>
@@ -76,9 +77,28 @@ export function openShareModal(templateId, data) {
   document.body.appendChild(overlay);
 
   confetti({
-    particleCount: 70,
-    spread: 60,
+    particleCount: 75,
+    spread: 65,
     origin: { y: 0.6 }
+  });
+
+  // Automatically publish to backend server if available to generate clean short link /s/slug
+  const inpRecipient = overlay.querySelector('#inpRecipientUrl');
+  const lblType = overlay.querySelector('#lblLinkType');
+  const linkPreview = overlay.querySelector('#linkOpenPreview');
+
+  publishSiteToServer(templateId, data).then(res => {
+    if (res && (res.fullUrl || res.path)) {
+      const fullUrl = res.fullUrl || `${window.location.origin}${res.path}`;
+      activeRecipientUrl = fullUrl;
+      if (inpRecipient) inpRecipient.value = fullUrl;
+      if (lblType) lblType.innerHTML = `(Permanent Short-Link Active ✨)`;
+      if (linkPreview) linkPreview.href = fullUrl;
+    } else {
+      if (lblType) lblType.innerHTML = `(Direct Celebration Link)`;
+    }
+  }).catch(() => {
+    if (lblType) lblType.innerHTML = `(Direct Celebration Link)`;
   });
 
   // Event handlers
@@ -138,7 +158,8 @@ export function openShareModal(templateId, data) {
   });
 
   overlay.querySelector('#btnShareWhatsapp')?.addEventListener('click', () => {
-    const shareMsg = `I created a special celebration website just for you, ${recipientName}! ❤️✨ Open it here: ${recipientUrl}`;
+    const shareUrl = activeRecipientUrl;
+    const shareMsg = `I made something very special just for you, ${recipientName}! ❤️✨ Open your surprise celebration here: ${shareUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`, '_blank');
   });
 }

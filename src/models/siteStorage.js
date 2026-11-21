@@ -1,4 +1,4 @@
-// src/models/siteStorage.js - URL Sharing, State & Storage (100% Bulletproof, Quota-Safe & Portable)
+// src/models/siteStorage.js - URL Sharing, State & Storage (100% Bulletproof, Quota-Safe, Server-Connected)
 
 import LZString from 'lz-string';
 import { TEMPLATES } from './templateRegistry.js';
@@ -56,7 +56,7 @@ export async function uploadFile(file) {
     const formData = new FormData();
     formData.append('file', file);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
 
     const res = await fetch('/api/upload', {
       method: 'POST',
@@ -81,13 +81,58 @@ export async function uploadFile(file) {
   }
 
   // 3. If audio and no backend server:
-  // MP3 files are 3MB-10MB. Storing them as Base64 crashes localStorage (5MB limit)
-  // and breaks WhatsApp/browser URL limits.
   return {
     success: false,
     isAudio: true,
     error: "Direct MP3 upload requires the backend server. To ensure your website plays reliably on all phones, please select from the built-in romantic tracks (like Alfaaz) or paste a direct MP3 link!"
   };
+}
+
+// Publish site to backend server (returns clean short link e.g. /s/celebration-bday)
+export async function publishSiteToServer(templateId, data, customSlug) {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    const res = await fetch('/api/sites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ templateId, data, customSlug }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) {
+        return json;
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to publish to server, fallback to URL hash:", err);
+  }
+  return null;
+}
+
+// Fetch site from backend server by slug
+export async function fetchSiteBySlug(slug) {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    const res = await fetch(`/api/sites/${slug}`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && json.site) {
+        return json.site;
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to fetch site from server:", err);
+  }
+  return null;
 }
 
 // Get the active celebration template ID

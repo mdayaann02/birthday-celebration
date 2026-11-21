@@ -3147,8 +3147,8 @@ body {
   }
 
   .form-input, .form-textarea, select {
-    font-size: 14px !important;
-    min-height: 42px !important;
+    font-size: 16px !important; /* Prevents auto-zoom on mobile Safari / Chrome */
+    min-height: 44px !important; /* Touch friendly 44px tap target */
     box-sizing: border-box;
     width: 100% !important;
     max-width: 100% !important;
@@ -3161,6 +3161,17 @@ body {
 
   .sub-card-editor {
     padding: 10px 8px !important;
+  }
+
+  .studio-mobile-bottom-bar {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .share-modal-card {
+    padding: 18px 16px !important;
+    border-radius: 16px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
   }
 }
 
