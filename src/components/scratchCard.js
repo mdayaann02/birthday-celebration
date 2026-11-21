@@ -14,7 +14,7 @@ export function initScratchCard(container, config) {
         <!-- Content revealed beneath -->
         <div class="scratch-content-underneath">
           <div class="scratch-badge">${scratchCard.badge || "WISHING YOU THE BEST DAY 💛"}</div>
-          <h3 class="scratch-title">${scratchCard.title || "Happy Birthday"} ${general.recipientName || "Sweety"}</h3>
+          <h3 class="scratch-title">${scratchCard.title || "Happy Birthday"} ${general.recipientName || ""}</h3>
           <p class="scratch-subtitle">${scratchCard.subtitle || "To the most beautiful soul, may your year ahead shine as brightly as your smile."}</p>
           <div class="scratch-secret">${scratchCard.hiddenSecret || "You make this world so much brighter! ✨"}</div>
         </div>

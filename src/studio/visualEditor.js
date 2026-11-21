@@ -11,7 +11,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <div class="editor-grid-2">
           <div class="form-group">
             <label class="form-label">Recipient's Name</label>
-            <input type="text" class="form-input" id="edRecipient" value="${data.recipientName || ''}" placeholder="e.g. Sweety" />
+            <input type="text" class="form-input" id="edRecipient" value="${data.recipientName || ''}" placeholder="e.g. My Special One, Maa, Bhai, Sweetheart" />
           </div>
           <div class="form-group">
             <label class="form-label">Your Name (Creator)</label>
@@ -61,8 +61,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           <div class="countdown-photos-grid" id="cdPhotosGrid">
             ${((data.countdownBackgroundImages && data.countdownBackgroundImages.length > 0) ? data.countdownBackgroundImages : ["/images/sunset.jpg", "/images/always_you.jpg"]).map((img, i) => `
               <div class="sub-card-editor" style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
-                <input type="text" class="form-input cd-bg-input" data-i="${i}" value="${img}" placeholder="Image URL" />
-                <label class="btn-file-upload-sm">
+                <input type="text" class="form-input cd-bg-input" data-i="${i}" value="${img}" placeholder="Image URL" style="flex:1; min-width:0;" />
+                <label class="btn-file-upload-sm" style="flex-shrink:0;">
                   📷
                   <input type="file" class="file-upload-cd-photo" data-i="${i}" accept="image/*" style="display:none;" />
                 </label>
@@ -82,18 +82,18 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <div class="editor-grid-2">
           <div class="form-group">
             <label class="form-label">Song Title</label>
-            <input type="text" class="form-input" id="edAudioTitle" value="${data.audioTitle || ''}" placeholder="e.g. Sweety's Song" />
+            <input type="text" class="form-input" id="edAudioTitle" value="${data.audioTitle || ''}" placeholder="e.g. Alfaaz - Hamza Malik & Zain Zohaib" />
           </div>
           <div class="form-group">
             <label class="form-label">Song Subtitle</label>
-            <input type="text" class="form-input" id="edAudioSub" value="${data.audioSubtitle || ''}" placeholder="e.g. BIRTHDAY PLAYLIST" />
+            <input type="text" class="form-input" id="edAudioSub" value="${data.audioSubtitle || ''}" placeholder="e.g. ROMANTIC SOUNDTRACK" />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Audio URL / Upload MP3</label>
-          <div style="display:flex; gap:8px;">
-            <input type="text" class="form-input" id="edAudioSrc" value="${data.audioSrc || '/audio/song.mp3'}" placeholder="/audio/song.mp3 or https://..." />
-            <label class="btn-file-upload">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <input type="text" class="form-input" id="edAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" placeholder="/audio/alfaaz.mp3 or https://..." style="flex:1; min-width:180px;" />
+            <label class="btn-file-upload" style="flex-shrink:0;">
               📁 Upload Song
               <input type="file" id="fileUploadSong" accept="audio/*" style="display:none;" />
             </label>
@@ -161,14 +161,14 @@ export function renderVisualEditor(container, templateId, data, onChange) {
             <div class="sub-card-editor blossom-card-row" data-card-idx="${i}" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px; background:rgba(255,255,255,0.85); border:1px solid #fbcfe8; border-radius:12px; padding:12px;">
               <div style="display:flex; gap:10px; align-items:center;">
                 <img src="${c.image}" class="bcard-thumb" id="bcardThumb_${i}" style="width:48px; height:48px; border-radius:8px; object-fit:cover; border:2px solid #f472b6; flex-shrink:0;" onerror="this.src='/images/sunset.jpg'" />
-                <div style="flex:1; display:flex; gap:6px;">
-                  <input type="text" class="form-input bcard-img" data-i="${i}" value="${c.image}" placeholder="Image URL" style="font-size:12px;" />
-                  <label class="btn-file-upload-sm" title="Upload from phone">
+                <div style="flex:1; min-width:0; display:flex; gap:6px;">
+                  <input type="text" class="form-input bcard-img" data-i="${i}" value="${c.image}" placeholder="Image URL" style="font-size:12px; min-width:0; flex:1;" />
+                  <label class="btn-file-upload-sm" style="flex-shrink:0;" title="Upload from phone">
                     📷
                     <input type="file" class="file-upload-blossom-card" data-i="${i}" accept="image/*" style="display:none;" />
                   </label>
                 </div>
-                <button type="button" class="btn-del-blossom-card" data-i="${i}" style="background:#fee2e2; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#dc2626;" title="Delete Card">🗑️</button>
+                <button type="button" class="btn-del-blossom-card" data-i="${i}" style="background:#fee2e2; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#dc2626; flex-shrink:0;" title="Delete Card">🗑️</button>
               </div>
               <input type="text" class="form-input bcard-cap" data-i="${i}" value="${c.caption || ''}" placeholder="Card Caption (e.g. Sweet moments with you)" style="font-size:13px;" />
             </div>
@@ -194,8 +194,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           <div class="editor-grid-2">
             <input type="text" class="form-input pol-t" data-i="${i}" value="${p.title}" placeholder="Caption" />
             <div style="display:flex; gap:6px;">
-              <input type="text" class="form-input pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL" />
-              <label class="btn-file-upload-sm">
+              <input type="text" class="form-input pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL" style="flex:1; min-width:0;" />
+              <label class="btn-file-upload-sm" style="flex-shrink:0;">
                 📷
                 <input type="file" class="file-upload-photo" data-i="${i}" accept="image/*" style="display:none;" />
               </label>

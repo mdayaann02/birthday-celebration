@@ -22,7 +22,7 @@ export function initVipLanyard(container, config) {
             <img src="${vipLanyard.photo || '/images/always_you.jpg'}" alt="VIP Photo" />
           </div>
 
-          <div class="vip-recipient-name">${vipLanyard.recipient || "SWEETY"}</div>
+          <div class="vip-recipient-name">${vipLanyard.recipient || "SPECIAL VIP"}</div>
           <div class="vip-access-level">${vipLanyard.accessLevel || "LEVEL: UNLIMITED LOVE & HAPPINESS"}</div>
 
           <div class="vip-barcode">

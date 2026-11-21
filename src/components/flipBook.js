@@ -28,7 +28,7 @@ export function initFlipBook(container, config) {
             <div class="book-page-left">
               <div class="editorial-header">${magazine.coverTag || "LANDSCAPE EDITORIAL"}</div>
               <div class="editorial-chapter">${magazine.chapterTitle || "CHAPTER 01"}</div>
-              <h3 class="editorial-title">${magazine.chapterHeading || "THINGS ABOUT SWEETY"}</h3>
+              <h3 class="editorial-title">${magazine.chapterHeading || "THINGS I ADORE ABOUT YOU"}</h3>
               <div class="editorial-subtitle">${magazine.chapterSubheading || "GET TO KNOW MY SWEETEST GIRL & THE LOVE OF MY LIFE"}</div>
               
               <div class="editorial-img-box">

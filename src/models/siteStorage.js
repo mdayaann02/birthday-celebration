@@ -34,7 +34,7 @@ export async function uploadFile(file) {
   });
 }
 
-// Publish site to backend (returns clean short link e.g. /s/sweety-bday)
+// Publish site to backend (returns clean short link e.g. /s/celebration-bday)
 export async function publishSiteToServer(templateId, data, customSlug) {
   try {
     const res = await fetch('/api/sites', {

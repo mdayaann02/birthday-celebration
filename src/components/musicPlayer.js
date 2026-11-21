@@ -9,8 +9,8 @@ export function initMusicPlayer(container, config) {
         <img src="${config.photoRibbon[0]?.url || '/images/sunset.jpg'}" alt="Cover" />
       </div>
       <div class="track-info">
-        <div class="track-title" id="playerTitle">${audioTitle || "Sweety's Song"}</div>
-        <div class="track-sub" id="playerSub">${audioSubtitle || "BIRTHDAY PLAYLIST"}</div>
+        <div class="track-title" id="playerTitle">${audioTitle || "Alfaaz - Hamza Malik & Zain Zohaib"}</div>
+        <div class="track-sub" id="playerSub">${audioSubtitle || "ROMANTIC SOUNDTRACK"}</div>
       </div>
       <div class="player-controls">
         <button class="btn-play-pause" id="btnPlayPause" aria-label="Play / Pause">
@@ -29,7 +29,7 @@ export function initMusicPlayer(container, config) {
       </div>
     </div>
     <audio id="globalAudio" preload="auto">
-      <source src="${audioSrc || '/audio/song.mp3'}" type="audio/mpeg">
+      <source src="${audioSrc || '/audio/alfaaz.mp3'}" type="audio/mpeg">
     </audio>
   `;
 

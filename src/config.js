@@ -2,12 +2,12 @@
 
 export const DEFAULT_CONFIG = {
   general: {
-    recipientName: "Sweety",
+    recipientName: "My Love",
     age: "15",
     themeColor: "#ff4d6d",
-    audioTitle: "Sweety's Song",
-    audioSubtitle: "BIRTHDAY PLAYLIST",
-    audioSrc: "/audio/song.mp3",
+    audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+    audioSubtitle: "ROMANTIC SOUNDTRACK",
+    audioSrc: "/audio/alfaaz.mp3",
     heroTitle: "Happy Birthday",
     heroSubtitle: "To the most special girl in my universe ✨"
   },
@@ -38,7 +38,7 @@ export const DEFAULT_CONFIG = {
       image: "/images/always_you.jpg",
       angle: 3,
       noteBadge: "N° 02",
-      note: "Is butterfly ki tarah meri har khushi ka raasta bhi aakhir tum tak hi aakar rukta hai, Sweety. 🫶"
+      note: "Is butterfly ki tarah meri har khushi ka raasta bhi aakhir tum tak hi aakar rukta hai. 🫶"
     },
     {
       id: 3,
@@ -77,10 +77,10 @@ export const DEFAULT_CONFIG = {
   magazine: {
     coverTag: "SWEET SIXTEEN EDITION",
     vogueTitle: "VOGUE",
-    issueText: "SWEETY SPECIAL BIRTHDAY ISSUE",
+    issueText: "SPECIAL BIRTHDAY ISSUE",
     coverImage: "/images/vogue_cover.jpg",
     chapterTitle: "CHAPTER 01",
-    chapterHeading: "THINGS ABOUT SWEETY",
+    chapterHeading: "THINGS ABOUT YOU",
     chapterSubheading: "GET TO KNOW MY SWEETEST GIRL & THE LOVE OF MY LIFE",
     editorialQuote: "Being with you makes every ordinary day feel like the sweetest dream come true.",
     editorialPhoto: "/images/sunset.jpg",
@@ -109,7 +109,7 @@ export const DEFAULT_CONFIG = {
 
   vipLanyard: {
     badgeType: "ALL-ACCESS VIP PASS",
-    recipient: "SWEETY",
+    recipient: "SPECIAL VIP",
     edition: "BIRTHDAY EDITION 2026",
     photo: "/images/always_you.jpg",
     accessLevel: "LEVEL: UNLIMITED LOVE & HAPPINESS",
@@ -118,11 +118,11 @@ export const DEFAULT_CONFIG = {
 
   phoneChat: {
     time: "7:25 PM",
-    contactName: "Sweety ❤️",
+    contactName: "My Love ❤️",
     contactStatus: "iMessage • online now",
     avatar: "/images/dream_girl.jpg",
     messages: [
-      { sender: "them", text: "Happppyeeee birthday Sweety ❤️🎂", time: "7:25 PM" },
+      { sender: "them", text: "Happppyeeee birthday! ❤️🎂", time: "7:25 PM" },
       { sender: "them", text: "ik last bday pr ek problem hogyi thi isliye ye wala bilkul special banaya! 🎁✨", time: "7:26 PM" },
       { sender: "them", text: "Hope this brings the biggest smile to your face today! 🥰", time: "7:26 PM" }
     ]

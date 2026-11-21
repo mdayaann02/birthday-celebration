@@ -18,9 +18,9 @@ export const TEMPLATES = {
       eventDate: "2026-11-25T00:00",
       enableCountdownLock: false,
       passcode: "1234",
-      audioTitle: "Romantic Story",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: "BLOSSOM LOVE",
-      audioSrc: "/audio/blossom_song.mp3",
+      audioSrc: "/audio/alfaaz.mp3",
       // Scene 1: Touch the Blossom
       blossomPrompt: "Touch the blossom",
       // Scene 2: Passcode Keypad
@@ -82,27 +82,27 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       accent: "#d4af37"
     },
     defaultData: {
-      recipientName: "Sweety",
+      recipientName: "My Special One",
       senderName: "Yours Truly",
       eventDate: "2026-11-25T00:00",
       enableCountdownLock: true,
       passcode: "1234",
-      audioTitle: "Sweety's Song",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: "BIRTHDAY PLAYLIST",
-      audioSrc: "/audio/song.mp3",
+      audioSrc: "/audio/alfaaz.mp3",
       age: "15",
       heroTitle: "Happy Birthday",
       heroSubtitle: "To the most special girl in my universe ✨",
       polaroids: [
         { title: "Baddie 😎", image: "/images/baddie.jpg", note: "You have that effortless aura and confidence that turns heads everywhere! 🌟" },
-        { title: "Always You 🫶", image: "/images/always_you.jpg", note: "Is butterfly ki tarah meri har khushi ka raasta bhi aakhir tum tak hi aakar rukta hai, Sweety. 🫶" },
+        { title: "Always You 🫶", image: "/images/always_you.jpg", note: "Is butterfly ki tarah meri har khushi ka raasta bhi aakhir tum tak hi aakar rukta hai. 🫶" },
         { title: "Pretty ✨", image: "/images/pretty.jpg", note: "No poetry in this world can ever truly capture how breathtaking you look when you're just being yourself. 🌸" },
         { title: "Beautiful 🌸", image: "/images/beautiful.jpg", note: "Your heart is even more radiant than your smile, and that's saying a lot! ☀️" },
         { title: "Dream Girl 💫", image: "/images/dream_girl.jpg", note: "Before I met you, I thought perfection only existed in storybooks. 💖" },
         { title: "Queen 👑", image: "/images/queen.jpg", note: "May you always wear your invisible crown with happiness, peace, and endless love! 👑" }
       ],
       magazine: {
-        title: "VOGUE SWEETY EDITION",
+        title: "VOGUE SPECIAL EDITION",
         quote: "Being with you makes every ordinary day feel like the sweetest dream come true.",
         photo: "/images/sunset.jpg",
         reasons: [
@@ -115,11 +115,11 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         ]
       },
       scratchWish: {
-        title: "Happy Birthday Sweety!",
+        title: "Happy Birthday!",
         message: "Wishing you the happiest year ahead filled with laughter, dreams achieved, and infinite love. You deserve the galaxy! 🎂✨"
       },
       chatMessages: [
-        "Happppyeeee birthday Sweety ❤️🎂",
+        "Happppyeeee birthday! ❤️🎂",
         "ik last bday pr ek problem hogyi thi isliye ye wala bilkul special banaya! 🎁✨",
         "Hope this brings the biggest smile to your face today! 🥰"
       ]
@@ -144,9 +144,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       anniversaryStartDate: "2023-11-28T00:00",
       enableCountdownLock: true,
       passcode: "2026",
-      audioTitle: "Our Love Symphony",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: "ANNIVERSARY EDITION",
-      audioSrc: "/audio/song.mp3",
+      audioSrc: "/audio/alfaaz.mp3",
       heroTitle: "Happy Anniversary",
       heroSubtitle: "Another year of choosing you, loving you, and growing with you ❤️",
       milestones: [
@@ -182,9 +182,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       eventDate: "2026-11-22T00:00",
       enableCountdownLock: false,
       passcode: "0000",
-      audioTitle: "Words From My Heart",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: "I'M SO SORRY",
-      audioSrc: "/audio/song.mp3",
+      audioSrc: "/audio/alfaaz.mp3",
       heroTitle: "I'm Really Sorry",
       heroSubtitle: "My world feels heavy and empty when we aren't okay 🥺",
       apologyMessage: "I know I messed up, and seeing you upset hurts me more than anything. My intention was never to make you feel hurt or unheard. You mean everything to me, and I take full accountability.",
@@ -219,9 +219,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       eventDate: "2026-11-24T00:00",
       enableCountdownLock: true,
       passcode: "1402",
-      audioTitle: "Can't Help Falling in Love",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: "VALENTINE SPECIAL",
-      audioSrc: "/audio/song.mp3",
+      audioSrc: "/audio/alfaaz.mp3",
       heroTitle: "To the Girl Who Stole My Heart",
       heroSubtitle: "Every love song makes complete sense now that you're in my life 🌹",
       proposalQuestion: "Will You Be My Valentine & Forever? ❤️",
@@ -246,9 +246,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       eventDate: "2026-11-26T00:00",
       enableCountdownLock: false,
       passcode: "9999",
-      audioTitle: "Memories & Laughter",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: "BESTIE ANTHEM",
-      audioSrc: "/audio/song.mp3",
+      audioSrc: "/audio/alfaaz.mp3",
       heroTitle: "Cheers to My Best Friend!",
       heroSubtitle: "To the one who knows all my secrets and still chooses to be seen in public with me! 😂",
       awardTitle: "OFFICIAL CERTIFICATE OF AWESOMENESS",

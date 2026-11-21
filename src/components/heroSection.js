@@ -23,7 +23,7 @@ export function initHeroSection(container, config) {
           <div class="hero-number-3d" id="heroAge">${age || "15"}</div>
         </div>
 
-        <h1 class="hero-title">${heroTitle || "Happy Birthday"} <span class="glow-name">${recipientName || "Sweety"}</span></h1>
+        <h1 class="hero-title">${heroTitle || "Happy Birthday"} <span class="glow-name">${recipientName || "My Love"}</span></h1>
         <p class="hero-subtitle">${heroSubtitle || "To the most special girl in my universe ✨"}</p>
         
         <div class="scroll-indicator" id="scrollIndicator">

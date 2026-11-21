@@ -207,7 +207,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         <div class="blossom-drawer-content">
           <div class="b-field">
             <label>Recipient's Pet Name</label>
-            <input type="text" id="edRecip" value="${data.recipientName || ''}" placeholder="e.g. my gurll, Sweety" />
+            <input type="text" id="edRecip" value="${data.recipientName || ''}" placeholder="e.g. my gurll, My Love" />
           </div>
           <div class="b-field">
             <label>Keypad 4-Digit Passcode</label>

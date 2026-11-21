@@ -13,11 +13,11 @@ export function renderBirthdayTemplate(container, data) {
   // Format config for components
   const config = {
     general: {
-      recipientName: data.recipientName || "Sweety",
+      recipientName: data.recipientName || "My Love",
       age: data.age || "15",
-      audioTitle: data.audioTitle || "Sweety's Song",
+      audioTitle: data.audioTitle || "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: data.audioSubtitle || "BIRTHDAY PLAYLIST",
-      audioSrc: data.audioSrc || "/audio/song.mp3",
+      audioSrc: data.audioSrc || "/audio/alfaaz.mp3",
       heroTitle: data.heroTitle || "Happy Birthday",
       heroSubtitle: data.heroSubtitle || "To the most special girl in my universe ✨"
     },
@@ -37,7 +37,7 @@ export function renderBirthdayTemplate(container, data) {
       coverTag: "SWEET SPECIAL EDITION",
       vogueTitle: data.magazine?.title || "VOGUE",
       chapterTitle: "CHAPTER 01",
-      chapterHeading: `THINGS ABOUT ${data.recipientName || 'SWEETY'}`,
+      chapterHeading: `THINGS ABOUT ${data.recipientName ? data.recipientName.toUpperCase() : 'YOU'}`,
       chapterSubheading: "GET TO KNOW MY SWEETEST GIRL",
       editorialQuote: data.magazine?.quote || "Being with you makes every ordinary day feel like the sweetest dream come true.",
       editorialPhoto: data.magazine?.photo || "/images/sunset.jpg",
@@ -55,7 +55,7 @@ export function renderBirthdayTemplate(container, data) {
     },
     vipLanyard: {
       badgeType: "ALL-ACCESS VIP PASS",
-      recipient: (data.recipientName || "SWEETY").toUpperCase(),
+      recipient: (data.recipientName || "VIP").toUpperCase(),
       edition: "BIRTHDAY EDITION",
       photo: data.polaroids?.[1]?.image || "/images/always_you.jpg",
       accessLevel: "LEVEL: UNLIMITED LOVE & HAPPINESS",
@@ -63,7 +63,7 @@ export function renderBirthdayTemplate(container, data) {
     },
     phoneChat: {
       time: "7:25 PM",
-      contactName: `${data.recipientName || 'Sweety'} ❤️`,
+      contactName: `${data.recipientName || 'My Love'} ❤️`,
       contactStatus: "iMessage • online now",
       avatar: data.polaroids?.[0]?.image || "/images/dream_girl.jpg",
       messages: (data.chatMessages || []).map(msg => ({

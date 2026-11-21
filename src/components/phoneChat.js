@@ -45,7 +45,7 @@ export function initPhoneChat(container, config) {
               <img src="${phoneChat.avatar || '/images/dream_girl.jpg'}" alt="Avatar" />
             </div>
             <div class="chat-contact-info">
-              <span class="chat-contact-name">${phoneChat.contactName || "Sweety ❤️"}</span>
+              <span class="chat-contact-name">${phoneChat.contactName || "My Love ❤️"}</span>
               <span class="chat-contact-status">${phoneChat.contactStatus || "iMessage • online now"}</span>
             </div>
           </div>
