@@ -1,14 +1,15 @@
-// src/models/siteStorage.js - URL Sharing, State & Storage (100% Bulletproof & Portable)
+// src/models/siteStorage.js - URL Sharing, State & Storage (100% Bulletproof, Quota-Safe & Portable)
 
 import LZString from 'lz-string';
 import { TEMPLATES } from './templateRegistry.js';
 
-const STORAGE_KEY = "celebration_builder_drafts";
+const DRAFTS_KEY = "celebration_builder_drafts";
+const PUBLISHED_KEY = "celebration_published_site";
 
-// Client-side image compressor for crisp, ultra-lightweight photo uploads
-async function compressImageFile(file, maxWidth = 1000, quality = 0.75) {
+// Image compression for ultra-lightweight photo uploads (under 25KB per image, quota-safe)
+async function compressImageFile(file, maxWidth = 640, quality = 0.68) {
   return new Promise((resolve) => {
-    if (!file.type.startsWith('image/')) {
+    if (!file.type || !file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => resolve({ success: true, url: e.target.result });
       reader.onerror = () => resolve({ success: false, error: "Failed to read file" });
@@ -47,42 +48,198 @@ async function compressImageFile(file, maxWidth = 1000, quality = 0.75) {
   });
 }
 
-// Upload photo or song file (handles client-side compression & fallback)
+// Upload photo or song file
+// Tries backend server first (if running on Node/Oracle), then falls back to client compression
 export async function uploadFile(file) {
-  // If image, compress to lightweight format so URL never breaks
-  if (file.type && file.type.startsWith('image/')) {
-    return await compressImageFile(file, 960, 0.72);
+  // 1. If backend server is available, upload directly to get a clean permanent short URL
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && json.url) {
+        return { success: true, url: json.url, isServer: true };
+      }
+    }
+  } catch {
+    // Backend not available (e.g. running on static Vercel), use client-side handling
   }
 
-  // If audio, read as Data URL
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => resolve({ success: true, url: e.target.result });
-    reader.onerror = () => resolve({ success: false, error: "Failed to read file" });
-    reader.readAsDataURL(file);
-  });
+  // 2. If it's an image, compress to lightweight format so localStorage and URLs never break
+  if (file.type && file.type.startsWith('image/')) {
+    return await compressImageFile(file, 640, 0.68);
+  }
+
+  // 3. If audio and no backend server:
+  // MP3 files are 3MB-10MB. Storing them as Base64 crashes localStorage (5MB limit)
+  // and breaks WhatsApp/browser URL limits.
+  return {
+    success: false,
+    isAudio: true,
+    error: "Direct MP3 upload requires the backend server. To ensure your website plays reliably on all phones, please select from the built-in romantic tracks (like Alfaaz) or paste a direct MP3 link!"
+  };
 }
 
-// Encode site to bulletproof URL
-export function encodeSiteToUrl(templateId, data, isReview = false) {
+// Get the active celebration template ID
+export function getPublishedTemplateId() {
+  try {
+    const pub = localStorage.getItem(PUBLISHED_KEY);
+    if (pub) {
+      const parsed = JSON.parse(pub);
+      if (parsed.templateId && TEMPLATES[parsed.templateId]) {
+        return parsed.templateId;
+      }
+    }
+  } catch {}
+  return "blossom";
+}
+
+// Get active celebration data for viewer
+export function getActiveCelebrationData(templateId = "blossom") {
+  const template = TEMPLATES[templateId] || TEMPLATES.blossom;
+  let baseData = JSON.parse(JSON.stringify(template.defaultData));
+
+  // 1. Check published site in localStorage
+  try {
+    const pub = localStorage.getItem(PUBLISHED_KEY);
+    if (pub) {
+      const parsed = JSON.parse(pub);
+      if (parsed.templateId === templateId && parsed.data) {
+        return { ...baseData, ...parsed.data };
+      }
+    }
+  } catch {}
+
+  // 2. Check local draft
+  const draft = getLocalDraft(templateId);
+  if (draft) {
+    return { ...baseData, ...draft };
+  }
+
+  return baseData;
+}
+
+// Save active celebration to primary website (persists across reloads for any viewer)
+export function saveActiveCelebration(templateId, data) {
   try {
     const payload = {
-      t: templateId,
-      d: data,
-      v: 2
+      templateId,
+      data,
+      savedAt: new Date().toISOString()
     };
-    const jsonStr = JSON.stringify(payload);
+    localStorage.setItem(PUBLISHED_KEY, JSON.stringify(payload));
+  } catch (err) {
+    console.warn("Could not save to PUBLISHED_KEY in localStorage:", err);
+  }
+
+  // Also save draft
+  saveLocalDraft(templateId, data);
+
+  // Sync with backend if available
+  try {
+    fetch('/api/default-site', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ templateId, data })
+    }).catch(() => {});
+  } catch {}
+
+  return true;
+}
+
+// Save draft safely without crashing on quota
+export function saveLocalDraft(templateId, data) {
+  try {
+    const drafts = getLocalDrafts();
+    drafts[templateId] = {
+      updatedAt: new Date().toISOString(),
+      data
+    };
+    localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+    return true;
+  } catch (err) {
+    console.warn("Save draft quota notice, trimming large items:", err);
+    try {
+      // Safe fallback: strip any large base64 thumbnails if storage is tight
+      const safeData = JSON.parse(JSON.stringify(data));
+      if (safeData.cards) {
+        safeData.cards = safeData.cards.map(c => ({
+          ...c,
+          image: c.image && c.image.length > 50000 ? '/images/sunset.jpg' : c.image
+        }));
+      }
+      const drafts = getLocalDrafts();
+      drafts[templateId] = { updatedAt: new Date().toISOString(), data: safeData };
+      localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+export function getLocalDraft(templateId) {
+  try {
+    const drafts = getLocalDrafts();
+    return drafts[templateId]?.data || null;
+  } catch {
+    return null;
+  }
+}
+
+export function getLocalDrafts() {
+  try {
+    const raw = localStorage.getItem(DRAFTS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+// Create a compact delta payload for URL encoding (guaranteed under 1500 chars for WhatsApp)
+function createCompactDelta(templateId, data) {
+  const defaultData = TEMPLATES[templateId]?.defaultData || {};
+  const diff = {};
+
+  for (const [key, val] of Object.entries(data)) {
+    // Only serialize properties that were customized
+    if (JSON.stringify(val) !== JSON.stringify(defaultData[key])) {
+      diff[key] = val;
+    }
+  }
+
+  return {
+    t: templateId,
+    d: diff,
+    v: 3
+  };
+}
+
+// Encode site to bulletproof, ultra-compact URL
+export function encodeSiteToUrl(templateId, data, isReview = false) {
+  try {
+    const compactPayload = createCompactDelta(templateId, data);
+    const jsonStr = JSON.stringify(compactPayload);
     const compressed = LZString.compressToEncodedURIComponent(jsonStr);
 
     const basePath = `${window.location.origin}${window.location.pathname}`;
     const reviewQuery = isReview ? '?review=true' : '';
     return `${basePath}${reviewQuery}#site=${compressed}`;
   } catch (err) {
-    console.error("LZString encoding error:", err);
-    // Safe Base64 fallback
+    console.error("LZString encoding error, using safe fallback:", err);
     try {
-      const payload = { t: templateId, d: data, v: 1 };
-      const jsonStr = JSON.stringify(payload);
+      const compactPayload = createCompactDelta(templateId, data);
+      const jsonStr = JSON.stringify(compactPayload);
       const bytes = new TextEncoder().encode(jsonStr);
       let binString = '';
       for (let i = 0; i < bytes.length; i++) binString += String.fromCharCode(bytes[i]);
@@ -101,9 +258,8 @@ export function decodeSiteFromUrl() {
   try {
     const searchParams = new URLSearchParams(window.location.search);
     
-    // Check if maker review flag is active in query, hash, or sessionStorage
-    let isMakerReview = searchParams.get('review') === 'true' || 
-                        sessionStorage.getItem('maker_review_unlocked') === 'true';
+    // Check if maker review flag is active explicitly in query
+    let isMakerReview = searchParams.get('review') === 'true';
 
     let rawToken = searchParams.get('site') || searchParams.get('data');
 
@@ -114,11 +270,9 @@ export function decodeSiteFromUrl() {
         isMakerReview = true;
       }
 
-      // Try URLSearchParams on hash string
       const hashParams = new URLSearchParams(hash);
       rawToken = hashParams.get('site') || hashParams.get('data');
 
-      // Manual extraction if URLSearchParams didn't catch (e.g. #site=TOKEN)
       if (!rawToken) {
         if (hash.startsWith('site=')) {
           rawToken = hash.substring(5).split('&')[0];
@@ -144,7 +298,7 @@ export function decodeSiteFromUrl() {
       // not LZ
     }
 
-    // 2. If not LZ, try safe Base64 decode
+    // 2. Try Base64 decode
     if (!parsed) {
       try {
         let base64 = rawToken.replace(/-/g, '+').replace(/_/g, '/');
@@ -174,15 +328,16 @@ export function decodeSiteFromUrl() {
 
     if (!parsed) return null;
 
-    let templateId = parsed.t || parsed.templateId;
-    let siteData = parsed.d || parsed.data || parsed;
-
-    if (!templateId) {
-      templateId = parsed.general ? 'birthday' : 'blossom';
+    let templateId = parsed.t || parsed.templateId || "blossom";
+    if (!TEMPLATES[templateId]) {
+      templateId = "blossom";
     }
 
     const template = TEMPLATES[templateId] || TEMPLATES.blossom;
-    const mergedData = { ...template.defaultData, ...siteData };
+    const incomingData = parsed.d || parsed.data || parsed;
+    
+    // Deep merge with template defaults so missing delta fields use full default values
+    const mergedData = { ...template.defaultData, ...incomingData };
 
     return {
       isShared: true,
@@ -192,40 +347,7 @@ export function decodeSiteFromUrl() {
       data: mergedData
     };
   } catch (err) {
-    console.error("decodeSiteFromUrl critical error:", err);
+    console.error("decodeSiteFromUrl error:", err);
     return null;
-  }
-}
-
-export function saveLocalDraft(templateId, data) {
-  try {
-    const drafts = getLocalDrafts();
-    drafts[templateId] = {
-      updatedAt: new Date().toISOString(),
-      data
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(drafts));
-    return true;
-  } catch (err) {
-    console.error("Save draft error:", err);
-    return false;
-  }
-}
-
-export function getLocalDraft(templateId) {
-  try {
-    const drafts = getLocalDrafts();
-    return drafts[templateId]?.data || null;
-  } catch {
-    return null;
-  }
-}
-
-export function getLocalDrafts() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
   }
 }

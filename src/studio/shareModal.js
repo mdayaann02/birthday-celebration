@@ -37,10 +37,13 @@ export function openShareModal(templateId, data) {
 
         <!-- Recipient Link -->
         <div class="share-link-group">
-          <label class="share-link-label">🎁 Recipient Link ${isLocked ? '(Locked with Countdown)' : '(Direct Celebration)'}</label>
+          <label class="share-link-label">🎁 Recipient Celebration Link ${isLocked ? '(Locked with Countdown)' : '(Direct Celebration)'}</label>
           <div class="share-input-row">
             <input type="text" class="share-url-input" readonly id="inpRecipientUrl" value="${recipientUrl}" />
             <button class="btn-copy-link" id="btnCopyRecipient">Copy</button>
+          </div>
+          <div class="share-sub-hint" style="margin-top:6px; font-size:11px; color:#10b981;">
+            ✨ Guaranteed clean viewer mode: No editor controls, no builder bars. Opens pure celebration!
           </div>
           <div class="share-quick-actions" style="margin-top:10px; display:flex; gap:8px;">
             <button type="button" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:9px 16px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);">
@@ -51,19 +54,19 @@ export function openShareModal(templateId, data) {
 
         <!-- Maker Review Link -->
         <div class="share-link-group" style="margin-top:18px;">
-          <label class="share-link-label">👁️ Maker Review Link (Bypasses Lock for Testing)</label>
+          <label class="share-link-label">👁️ Creator Review Link (Bypasses Lock for Testing)</label>
           <div class="share-input-row">
             <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="${makerReviewUrl}" />
             <button class="btn-copy-link" id="btnCopyMaker">Copy</button>
           </div>
           <div class="share-sub-hint" style="margin-top:4px; font-size:11px; color:#888;">
-            Use this link to verify your website before sending it! (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
+            Use this link if you want to bypass the countdown lock yourself. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
           </div>
         </div>
 
         <div class="share-action-buttons" style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
-          <a href="${makerReviewUrl}" target="_blank" class="btn-open-preview" style="display:inline-flex; align-items:center; gap:6px;">
-            🚀 Open & Test in New Tab
+          <a href="${recipientUrl}" target="_blank" class="btn-open-preview" style="display:inline-flex; align-items:center; gap:6px;">
+            👁️ Open Celebration as Recipient
           </a>
         </div>
       </div>

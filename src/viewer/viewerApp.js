@@ -1,4 +1,4 @@
-// src/viewer/viewerApp.js - Recipient Experience Orchestrator
+// src/viewer/viewerApp.js - Recipient Experience Orchestrator (100% Clean Viewer)
 
 import { checkCountdownLock, renderCountdownGate } from './countdownGate.js';
 import { renderBlossomTemplate } from './templates/blossomTemplate.js';
@@ -30,19 +30,15 @@ export function renderViewerApp(container, templateId, data, isMakerReviewParam 
 function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   container.innerHTML = `
     ${isMakerReview ? `
-      <div class="maker-review-banner">
-        <span>👁️ <strong>MAKER REVIEW MODE:</strong> You are previewing the unlocked website.</span>
-        <button class="btn-banner-edit" id="btnBackToStudio">✏️ Edit in Studio</button>
+      <div class="maker-review-banner" id="makerReviewBanner">
+        <div class="maker-banner-content">
+          <span>👁️ <strong>Creator Preview Active:</strong> You are viewing the unlocked website.</span>
+          <a href="?edit=true" class="btn-banner-edit">✏️ Studio Editor</a>
+        </div>
       </div>
     ` : ''}
     <div id="templateRoot"></div>
   `;
-
-  if (isMakerReview) {
-    container.querySelector('#btnBackToStudio')?.addEventListener('click', () => {
-      window.location.href = window.location.origin + window.location.pathname;
-    });
-  }
 
   const root = container.querySelector('#templateRoot');
 

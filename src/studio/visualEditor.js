@@ -79,6 +79,22 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       <!-- Section C: Music Player & MP3 Upload -->
       <div class="editor-section">
         <div class="section-title">🎵 Background Music & Song</div>
+
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label" style="font-size:12px; color:var(--primary); font-weight:700;">⚡ Choose Romantic Song Preset (1-Tap):</label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-song-preset" data-src="/audio/alfaaz.mp3" data-title="Alfaaz - Hamza Malik & Zain Zohaib" data-sub="ROMANTIC SOUNDTRACK" style="background:rgba(244,114,182,0.15); border:1px solid #f472b6; color:#f472b6; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
+              🎵 Alfaaz (Hamza Malik)
+            </button>
+            <button type="button" class="btn-song-preset" data-src="/audio/blossom_song.mp3" data-title="Blossom Romance Soundtrack" data-sub="LOVELY MELODY" style="background:rgba(244,114,182,0.15); border:1px solid #f472b6; color:#f472b6; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
+              🌸 Blossom Theme
+            </button>
+            <button type="button" class="btn-song-preset" data-src="/audio/song.mp3" data-title="Happy Birthday Acoustic Track" data-sub="CELEBRATION" style="background:rgba(244,114,182,0.15); border:1px solid #f472b6; color:#f472b6; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
+              🎂 Birthday Song
+            </button>
+          </div>
+        </div>
+
         <div class="editor-grid-2">
           <div class="form-group">
             <label class="form-label">Song Title</label>
@@ -159,15 +175,31 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <div id="blossomCardsList">
           ${blossomCards.map((c, i) => `
             <div class="sub-card-editor blossom-card-row" data-card-idx="${i}" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px; background:rgba(255,255,255,0.85); border:1px solid #fbcfe8; border-radius:12px; padding:12px;">
-              <div style="display:flex; gap:10px; align-items:center;">
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <img src="${c.image}" class="bcard-thumb" id="bcardThumb_${i}" style="width:48px; height:48px; border-radius:8px; object-fit:cover; border:2px solid #f472b6; flex-shrink:0;" onerror="this.src='/images/sunset.jpg'" />
-                <div style="flex:1; min-width:0; display:flex; gap:6px;">
+                <div style="flex:1; min-width:140px; display:flex; gap:6px;">
                   <input type="text" class="form-input bcard-img" data-i="${i}" value="${c.image}" placeholder="Image URL" style="font-size:12px; min-width:0; flex:1;" />
                   <label class="btn-file-upload-sm" style="flex-shrink:0;" title="Upload from phone">
                     📷
                     <input type="file" class="file-upload-blossom-card" data-i="${i}" accept="image/*" style="display:none;" />
                   </label>
                 </div>
+                <select class="form-input select-bcard-preset" data-i="${i}" style="width:auto; font-size:11px; padding:4px 6px; cursor:pointer;">
+                  <option value="">🖼️ Pick photo...</option>
+                  <option value="/images/sunset.jpg">Sunset Glow</option>
+                  <option value="/images/always_you.jpg">Always You</option>
+                  <option value="/images/beautiful.jpg">Beautiful</option>
+                  <option value="/images/pretty.jpg">Pretty</option>
+                  <option value="/images/dream_girl.jpg">Dream Girl</option>
+                  <option value="/images/queen.jpg">Queen</option>
+                  <option value="/images/baddie.jpg">Baddie</option>
+                  <option value="/images/vogue_cover.jpg">Vogue Cover</option>
+                  <option value="/images/blossom/memory_1.jpg">Memory 1</option>
+                  <option value="/images/blossom/memory_2.jpg">Memory 2</option>
+                  <option value="/images/blossom/memory_3.jpg">Memory 3</option>
+                  <option value="/images/blossom/memory_4.jpg">Memory 4</option>
+                  <option value="/images/blossom/memory_5.jpg">Memory 5</option>
+                </select>
                 <button type="button" class="btn-del-blossom-card" data-i="${i}" style="background:#fee2e2; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#dc2626; flex-shrink:0;" title="Delete Card">🗑️</button>
               </div>
               <input type="text" class="form-input bcard-cap" data-i="${i}" value="${c.caption || ''}" placeholder="Card Caption (e.g. Sweet moments with you)" style="font-size:13px;" />
@@ -279,6 +311,36 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     `;
   }
 
+  // Bind song preset buttons
+  container.querySelectorAll('.btn-song-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = btn.getAttribute('data-src');
+      const title = btn.getAttribute('data-title');
+      const sub = btn.getAttribute('data-sub');
+      const elSrc = container.querySelector('#edAudioSrc');
+      const elTitle = container.querySelector('#edAudioTitle');
+      const elSub = container.querySelector('#edAudioSub');
+      if (elSrc) elSrc.value = src;
+      if (elTitle) elTitle.value = title;
+      if (elSub) elSub.value = sub;
+      emitChange();
+    });
+  });
+
+  // Bind photo preset selects
+  container.querySelectorAll('.select-bcard-preset').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const val = sel.value;
+      if (!val) return;
+      const idx = sel.getAttribute('data-i');
+      const textInput = container.querySelector(`.bcard-img[data-i="${idx}"]`);
+      const thumb = container.querySelector(`#bcardThumb_${idx}`);
+      if (textInput) textInput.value = val;
+      if (thumb) thumb.src = val;
+      emitChange();
+    });
+  });
+
   // Bind file upload inputs
   const fileSong = container.querySelector('#fileUploadSong');
   fileSong?.addEventListener('change', async (e) => {
@@ -291,7 +353,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (inpAudio) inpAudio.value = res.url;
       emitChange();
     } else {
-      alert("Upload failed. Please try a smaller audio file.");
+      if (inpAudio) inpAudio.value = data.audioSrc || '/audio/alfaaz.mp3';
+      alert(res.error || "Upload failed. Please choose one of the preset tracks (like Alfaaz) or paste an MP3 URL.");
     }
   });
 
@@ -306,6 +369,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (res.success) {
         if (textInput) textInput.value = res.url;
         emitChange();
+      } else {
+        alert(res.error || "Upload failed. Please try a different photo.");
       }
     });
   });
@@ -322,6 +387,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (res.success) {
         if (textInput) textInput.value = res.url;
         emitChange();
+      } else {
+        alert(res.error || "Upload failed. Please try a different photo.");
       }
     });
   });
@@ -340,6 +407,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         if (textInput) textInput.value = res.url;
         if (thumb) thumb.src = res.url;
         emitChange();
+      } else {
+        alert(res.error || "Upload failed. Please try a different photo.");
       }
     });
   });

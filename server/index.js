@@ -146,6 +146,34 @@ app.get('/api/sites/:slug', (req, res) => {
   return res.json({ success: true, site });
 });
 
+// API 4: Save Default Published Celebration Site
+const defaultSitePath = path.join(dataDir, 'default_site.json');
+app.post('/api/default-site', (req, res) => {
+  const { templateId, data } = req.body;
+  if (!templateId || !data) {
+    return res.status(400).json({ error: "Missing templateId or data" });
+  }
+  try {
+    fs.writeFileSync(defaultSitePath, JSON.stringify({ templateId, data, updatedAt: new Date().toISOString() }, null, 2), 'utf-8');
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to save default site" });
+  }
+});
+
+// API 5: Get Default Published Celebration Site
+app.get(['/api/default-site', '/api/published'], (req, res) => {
+  try {
+    if (fs.existsSync(defaultSitePath)) {
+      const site = JSON.parse(fs.readFileSync(defaultSitePath, 'utf-8'));
+      return res.json({ success: true, site });
+    }
+    return res.json({ success: false, message: "No custom default site set yet" });
+  } catch (err) {
+    return res.status(500).json({ error: "Error reading default site" });
+  }
+});
+
 // Route: View Short URL
 app.get('/s/:slug', (req, res) => {
   const distIndex = path.join(rootDir, 'dist', 'index.html');

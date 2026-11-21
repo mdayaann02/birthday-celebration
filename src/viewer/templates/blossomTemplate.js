@@ -1,6 +1,6 @@
 // src/viewer/templates/blossomTemplate.js - The Viral Pastel Blossom Celebration Experience
 
-import { encodeSiteToUrl, uploadFile } from '../../models/siteStorage.js';
+import { encodeSiteToUrl, uploadFile, saveActiveCelebration, saveLocalDraft } from '../../models/siteStorage.js';
 
 export function renderBlossomTemplate(container, initialData = {}, isMakerReview = false) {
   // Ensure default data exists
@@ -447,6 +447,10 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       });
       data.cards = updatedCards;
     }
+
+    // Persist changes so they never reset on refresh or when viewed
+    saveActiveCelebration('blossom', data);
+    saveLocalDraft('blossom', data);
 
     editDrawer.classList.remove('open');
     renderScene(currentScene);

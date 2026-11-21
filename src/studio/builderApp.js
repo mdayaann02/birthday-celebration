@@ -1,7 +1,12 @@
 // src/studio/builderApp.js - The Studio Web App Interface (100% Mobile & Desktop Friendly)
 
 import { TEMPLATES } from '../models/templateRegistry.js';
-import { saveLocalDraft, getLocalDraft } from '../models/siteStorage.js';
+import { 
+  saveLocalDraft, 
+  getLocalDraft, 
+  saveActiveCelebration, 
+  getActiveCelebrationData 
+} from '../models/siteStorage.js';
 import { renderTemplateSelector } from './templateSelector.js';
 import { renderVisualEditor } from './visualEditor.js';
 import { openShareModal } from './shareModal.js';
@@ -9,11 +14,22 @@ import { renderViewerApp } from '../viewer/viewerApp.js';
 
 export function renderStudioApp(root) {
   let activeTemplateId = "blossom";
-  let activeData = getLocalDraft(activeTemplateId) || JSON.parse(JSON.stringify(TEMPLATES.blossom.defaultData));
+  let activeData = getActiveCelebrationData(activeTemplateId);
   let currentMobileTab = "editor"; // "editor" | "templates" | "preview"
 
   root.innerHTML = `
     <div class="studio-layout">
+      <!-- Studio Mode Alert Bar -->
+      <div class="studio-top-mode-bar" style="background:#1e1b4b; color:#c7d2fe; padding:8px 16px; font-size:12px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #312e81;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span>✏️</span>
+          <span><strong>Studio Editor Active:</strong> You are customizing your website. Recipients will see the clean celebration.</span>
+        </div>
+        <a href="/" style="color:#a5f3fc; text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:4px; padding:2px 8px; background:rgba(255,255,255,0.1); border-radius:4px;">
+          👁️ Recipient View &rarr;
+        </a>
+      </div>
+
       <!-- Studio Header -->
       <header class="studio-header">
         <div class="studio-brand">
@@ -25,11 +41,11 @@ export function renderStudioApp(root) {
         </div>
 
         <div class="studio-header-actions">
-          <a href="?template=blossom" class="btn-studio-action btn-header-fullscreen" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:4px;">
-            🌸 <span>Fullscreen Reel</span>
+          <a href="/" class="btn-studio-action btn-header-recipient" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:4px;" title="Open website as recipient">
+            👁️ <span>Recipient View</span>
           </a>
-          <button class="btn-studio-action btn-preview-toggle" id="btnTogglePreview">
-            👁️ <span id="previewToggleLabel">Live Preview</span>
+          <button class="btn-studio-action btn-save-primary" id="btnHeaderSave" style="background:#10b981; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+            💾 <span>Save Website</span>
           </button>
           <button class="btn-studio-primary" id="btnSharePublish">
             🚀 <span>Get Share Link</span>
@@ -89,11 +105,14 @@ export function renderStudioApp(root) {
 
       <!-- Sticky Bottom Dock on Mobile -->
       <div class="studio-mobile-bottom-bar" id="studioMobileBottomBar">
-        <button class="btn-dock-item btn-dock-preview" id="btnDockPreviewToggle">
-          👁️ Preview Site
+        <a href="/" class="btn-dock-item btn-dock-recipient" style="text-decoration:none; display:flex; align-items:center; justify-content:center; color:#fff; background:#334155; font-size:12px; font-weight:700;">
+          👁️ Recipient View
+        </a>
+        <button class="btn-dock-item btn-dock-save" id="btnDockSaveDefault" style="background:#059669; color:#fff; font-size:12px; font-weight:700;">
+          💾 Save Website
         </button>
-        <button class="btn-dock-item btn-dock-primary" id="btnDockPublish">
-          🚀 Get Share Link & Deploy
+        <button class="btn-dock-item btn-dock-primary" id="btnDockPublish" style="font-size:12px; font-weight:700;">
+          🚀 Share Link
         </button>
       </div>
     </div>
@@ -107,8 +126,8 @@ export function renderStudioApp(root) {
 
   const btnShare = root.querySelector('#btnSharePublish');
   const btnDockPublish = root.querySelector('#btnDockPublish');
-  const btnTogglePreview = root.querySelector('#btnTogglePreview');
-  const btnDockPreviewToggle = root.querySelector('#btnDockPreviewToggle');
+  const btnHeaderSave = root.querySelector('#btnHeaderSave');
+  const btnDockSaveDefault = root.querySelector('#btnDockSaveDefault');
   const btnMobileBackToEditor = root.querySelector('#btnMobileBackToEditor');
 
   function renderOccasionBanner() {
@@ -130,7 +149,6 @@ export function renderStudioApp(root) {
 
     occasionBannerMount.querySelector('#btnBannerSwitchOccasion')?.addEventListener('click', () => {
       switchMobileTab('templates');
-      // Scroll to top of templates
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
@@ -138,38 +156,18 @@ export function renderStudioApp(root) {
   function switchMobileTab(tab) {
     currentMobileTab = tab;
 
-    // Update active tab buttons
     root.querySelectorAll('.mobile-tab-btn').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
     });
 
-    // Update workspace classes
     studioWorkspace.classList.remove('mobile-view-editor', 'mobile-view-templates', 'mobile-view-preview');
     studioWorkspace.classList.add(`mobile-view-${tab}`);
 
-    // Update tab sections inside sidebar
     const secTemplates = root.querySelector('#tabTemplatesSection');
     const secEditor = root.querySelector('#tabEditorSection');
 
     if (secTemplates) secTemplates.classList.toggle('active', tab === 'templates');
     if (secEditor) secEditor.classList.toggle('active', tab === 'editor');
-
-    // Update desktop header button label
-    const previewToggleLabel = root.querySelector('#previewToggleLabel');
-    if (previewToggleLabel) {
-      previewToggleLabel.textContent = (tab === 'preview') ? "Back to Editor" : "Live Preview";
-    }
-
-    // Update mobile dock button label
-    if (btnDockPreviewToggle) {
-      if (tab === 'preview') {
-        btnDockPreviewToggle.innerHTML = "✏️ Back to Edit";
-        btnDockPreviewToggle.classList.add('active-editor');
-      } else {
-        btnDockPreviewToggle.innerHTML = "👁️ Preview Site";
-        btnDockPreviewToggle.classList.remove('active-editor');
-      }
-    }
 
     if (tab === 'preview') {
       updateLivePreview();
@@ -185,7 +183,8 @@ export function renderStudioApp(root) {
     renderOccasionBanner();
     renderVisualEditor(editorMount, activeTemplateId, activeData, (updatedData) => {
       activeData = updatedData;
-      saveLocalDraft(activeTemplateId, activeData);
+      // Automatically save to draft AND active celebration so edits never reset!
+      saveActiveCelebration(activeTemplateId, activeData);
       updateLivePreview();
     });
   }
@@ -193,11 +192,10 @@ export function renderStudioApp(root) {
   function mountTemplateSelector() {
     renderTemplateSelector(selectorMount, activeTemplateId, (newTid) => {
       activeTemplateId = newTid;
-      activeData = getLocalDraft(activeTemplateId) || JSON.parse(JSON.stringify(TEMPLATES[newTid].defaultData));
+      activeData = getActiveCelebrationData(activeTemplateId);
       mountTemplateSelector();
       mountEditor();
       updateLivePreview();
-      // On mobile, immediately transition back to editor so the user can customize right away!
       switchMobileTab('editor');
     });
   }
@@ -216,31 +214,23 @@ export function renderStudioApp(root) {
     });
   });
 
-  // Dock preview toggle
-  btnDockPreviewToggle?.addEventListener('click', () => {
-    if (currentMobileTab === 'preview') {
-      switchMobileTab('editor');
-    } else {
-      switchMobileTab('preview');
-    }
-  });
-
   // Back to editor inside preview device header
   btnMobileBackToEditor?.addEventListener('click', () => {
     switchMobileTab('editor');
   });
 
-  // Header desktop toggle
-  btnTogglePreview?.addEventListener('click', () => {
-    if (currentMobileTab === 'preview') {
-      switchMobileTab('editor');
-    } else {
-      switchMobileTab('preview');
-    }
-  });
+  // Save Website handler
+  function handleSaveWebsite() {
+    saveActiveCelebration(activeTemplateId, activeData);
+    alert("🎉 Website Saved Successfully!\n\nAll your customized photos, music, and messages have been saved. When anyone opens your website, they will see this celebration directly!");
+  }
+
+  btnHeaderSave?.addEventListener('click', handleSaveWebsite);
+  btnDockSaveDefault?.addEventListener('click', handleSaveWebsite);
 
   // Share/Deploy triggers
   function triggerShare() {
+    saveActiveCelebration(activeTemplateId, activeData);
     openShareModal(activeTemplateId, activeData);
   }
 
