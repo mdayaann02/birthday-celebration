@@ -341,6 +341,15 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       </div>
     `;
   } else if (templateId === 'birthday') {
+    const bdayPolaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "Baddie 😎", image: "/images/baddie.jpg", note: "You have that effortless aura and confidence that turns heads everywhere! 🌟" },
+      { title: "Always You 🫶", image: "/images/always_you.jpg", note: "Is butterfly ki tarah meri har khushi ka raasta bhi aakhir tum tak hi aakar rukta hai. 🫶" },
+      { title: "Pretty ✨", image: "/images/pretty.jpg", note: "No poetry in this world can ever truly capture how breathtaking you look when you're just being yourself. 🌸" },
+      { title: "Beautiful 🌸", image: "/images/beautiful.jpg", note: "Your heart is even more radiant than your smile, and that's saying a lot! ☀️" },
+      { title: "Dream Girl 💫", image: "/images/dream_girl.jpg", note: "Before I met you, I thought perfection only existed in storybooks. 💖" },
+      { title: "Queen 👑", image: "/images/queen.jpg", note: "May you always wear your invisible crown with happiness, peace, and endless love! 👑" }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">🎂 Birthday Special Content & Themes</div>
 
@@ -371,7 +380,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       
       <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 16px 0 8px;">📸 Polaroid Photo Cards (Upload or Quick Pick):</div>
       <div id="polaroidCardsList">
-        ${(data.polaroids || []).map((p, i) => `
+        ${bdayPolaroids.map((p, i) => `
           <div class="sub-card-editor bday-polaroid-row" data-i="${i}">
             <div class="bcard-top-row">
               <div class="bcard-thumb-wrap">
@@ -518,7 +527,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         const thumb = specificBox.querySelector('#sorryCreatorThumb');
         if (imgInput) imgInput.value = res.url;
         if (thumb) thumb.src = res.url;
-        triggerChange();
+        emitChange();
       }
     });
 
@@ -534,7 +543,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           const thumb = specificBox.querySelector(`#sorryPolThumb_${i}`);
           if (imgInput) imgInput.value = res.url;
           if (thumb) thumb.src = res.url;
-          triggerChange();
+          emitChange();
         }
       });
     });
@@ -714,12 +723,16 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (!file) return;
       const idx = fileInput.getAttribute('data-i');
       const textInput = container.querySelector(`.pol-img[data-i="${idx}"]`);
+      const thumb = container.querySelector(`#polThumb_${idx}`);
+      const origVal = textInput ? textInput.value : '';
       if (textInput) textInput.value = "Uploading photo...";
       const res = await uploadFile(file);
-      if (res.success) {
+      if (res.success && res.url) {
         if (textInput) textInput.value = res.url;
+        if (thumb) thumb.src = res.url;
         emitChange();
       } else {
+        if (textInput) textInput.value = origVal;
         alert(res.error || "Upload failed. Please try a different photo.");
       }
     });
@@ -732,12 +745,14 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (!file) return;
       const idx = fileInput.getAttribute('data-i');
       const textInput = container.querySelector(`.cd-bg-input[data-i="${idx}"]`);
+      const origVal = textInput ? textInput.value : '';
       if (textInput) textInput.value = "Uploading photo...";
       const res = await uploadFile(file);
-      if (res.success) {
+      if (res.success && res.url) {
         if (textInput) textInput.value = res.url;
         emitChange();
       } else {
+        if (textInput) textInput.value = origVal;
         alert(res.error || "Upload failed. Please try a different photo.");
       }
     });
@@ -751,13 +766,15 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const idx = fileInput.getAttribute('data-i');
       const textInput = container.querySelector(`.bcard-img[data-i="${idx}"]`);
       const thumb = container.querySelector(`#bcardThumb_${idx}`);
+      const origVal = textInput ? textInput.value : '';
       if (textInput) textInput.value = "Uploading photo...";
       const res = await uploadFile(file);
-      if (res.success) {
+      if (res.success && res.url) {
         if (textInput) textInput.value = res.url;
         if (thumb) thumb.src = res.url;
         emitChange();
       } else {
+        if (textInput) textInput.value = origVal;
         alert(res.error || "Upload failed. Please try a different photo.");
       }
     });
@@ -813,13 +830,15 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const idx = fileInput.getAttribute('data-i');
       const textInput = container.querySelector(`.tree-pol-img[data-i="${idx}"]`);
       const thumb = container.querySelector(`#treePolThumb_${idx}`);
+      const origVal = textInput ? textInput.value : '';
       if (textInput) textInput.value = "Uploading photo...";
       const res = await uploadFile(file);
-      if (res.success) {
+      if (res.success && res.url) {
         if (textInput) textInput.value = res.url;
         if (thumb) thumb.src = res.url;
         emitChange();
       } else {
+        if (textInput) textInput.value = origVal;
         alert(res.error || "Upload failed. Please try a different photo.");
       }
     });
@@ -830,7 +849,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     const file = e.target.files[0];
     if (!file) return;
     const res = await uploadFile(file);
-    if (res.success) {
+    if (res.success && res.url) {
       data.countdownBackgroundImages = data.countdownBackgroundImages || ["/images/sunset.jpg", "/images/always_you.jpg"];
       data.countdownBackgroundImages.push(res.url);
       renderVisualEditor(container, templateId, data, onChange);
@@ -860,13 +879,15 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const idx = fileInput.getAttribute('data-i');
       const textInput = container.querySelector(`.gen-pol-img[data-prefix="${prefix}"][data-i="${idx}"]`);
       const thumb = container.querySelector(`#${prefix}PolThumb_${idx}`);
+      const origVal = textInput ? textInput.value : '';
       if (textInput) textInput.value = "Uploading photo...";
       const res = await uploadFile(file);
-      if (res.success) {
+      if (res.success && res.url) {
         if (textInput) textInput.value = res.url;
         if (thumb) thumb.src = res.url;
         emitChange();
       } else {
+        if (textInput) textInput.value = origVal;
         alert(res.error || "Upload failed. Please try a different photo.");
       }
     });
@@ -994,20 +1015,18 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const elPersona = container.querySelector('#edRecipientPersona');
       if (elPersona) updated.recipientPersona = elPersona.value;
 
-      const newPols = [...(updated.polaroids || [])];
-      container.querySelectorAll('.pol-t').forEach(inp => {
-        const i = parseInt(inp.getAttribute('data-i'), 10);
-        if (newPols[i]) newPols[i].title = inp.value;
-      });
-      container.querySelectorAll('.pol-img').forEach(inp => {
-        const i = parseInt(inp.getAttribute('data-i'), 10);
-        if (newPols[i]) newPols[i].image = inp.value;
-      });
-      container.querySelectorAll('.pol-n').forEach(inp => {
-        const i = parseInt(inp.getAttribute('data-i'), 10);
-        if (newPols[i]) newPols[i].note = inp.value;
-      });
-      updated.polaroids = newPols;
+      const polRows = container.querySelectorAll('.bday-polaroid-row');
+      if (polRows.length > 0) {
+        const newPols = [];
+        polRows.forEach(row => {
+          const i = row.getAttribute('data-i');
+          const title = row.querySelector(`.pol-t[data-i="${i}"]`)?.value || '';
+          const image = row.querySelector(`.pol-img[data-i="${i}"]`)?.value || '/images/always_you.jpg';
+          const note = row.querySelector(`.pol-n[data-i="${i}"]`)?.value || '';
+          newPols.push({ title, image, note });
+        });
+        updated.polaroids = newPols;
+      }
     } else if (templateId === 'anniversary') {
       const elAnniStart = container.querySelector('#edAnniStart');
       const elAnniLetter = container.querySelector('#edAnniLetter');
