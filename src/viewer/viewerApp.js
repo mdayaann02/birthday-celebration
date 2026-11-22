@@ -48,11 +48,12 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   const root = container.querySelector('#templateRoot');
 
   switch (templateId) {
-    case 'tree':
-      renderTreeTemplate(root, data, isMakerReview);
-      break;
+    case 'long_romance':
     case 'blossom':
       renderBlossomTemplate(root, data, isMakerReview);
+      break;
+    case 'tree':
+      renderTreeTemplate(root, data, isMakerReview);
       break;
     case 'anniversary':
       renderAnniversaryTemplate(root, data);

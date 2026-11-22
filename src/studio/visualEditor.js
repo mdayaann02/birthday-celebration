@@ -248,7 +248,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         `).join('')}
       </div>
     `;
-  } else if (templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
+  } else if (templateId === 'long_romance' || templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
     const isGirl = templateId === 'bestie_girl';
     const isBoy = templateId === 'bestie_boy';
     const sectionTitle = isGirl ? "💅 Girl Bestie (Soul Sister) Details" : isBoy ? "👊 Bro Bestie (Ride or Die) Details" : "🌸 Blossom Romance Details (Viral Pastel Story)";
@@ -976,7 +976,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         });
         if (polsArr.length > 0) updated.polaroids = polsArr;
       }
-    } else if (templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
+    } else if (templateId === 'long_romance' || templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
       const elPin = container.querySelector('#edBlossomPin');
       const elKeyTitle = container.querySelector('#edBlossomKeypadTitle');
       const elPrompt = container.querySelector('#edBlossomPrompt');
@@ -1090,8 +1090,16 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     onChange(updated);
   }
 
+  let inputDebounceTimer = null;
+  function debouncedEmitChange() {
+    if (inputDebounceTimer) clearTimeout(inputDebounceTimer);
+    inputDebounceTimer = setTimeout(() => {
+      emitChange();
+    }, 280);
+  }
+
   container.querySelectorAll('input:not([type="file"]), textarea').forEach(elem => {
-    elem.addEventListener('input', emitChange);
+    elem.addEventListener('input', debouncedEmitChange);
     elem.addEventListener('change', emitChange);
   });
 }

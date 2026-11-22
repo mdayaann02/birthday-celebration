@@ -21,7 +21,7 @@ export function renderStudioApp(root) {
   const searchParams = new URLSearchParams(window.location.search);
   const hash = window.location.hash.replace(/^#/, '');
   const urlTid = searchParams.get('template') || (hash.startsWith('template=') ? hash.substring(9) : null) || (TEMPLATES[hash] ? hash : null);
-  let activeTemplateId = (urlTid && TEMPLATES[urlTid]) ? urlTid : "blossom";
+  let activeTemplateId = (urlTid && TEMPLATES[urlTid]) ? urlTid : "long_romance";
   let activeData = getActiveCelebrationData(activeTemplateId);
   let currentMobileTab = "editor"; // "templates" | "editor" | "preview"
 
@@ -225,7 +225,9 @@ export function renderStudioApp(root) {
     if (secEditor) secEditor.classList.toggle('active', tab === 'editor');
 
     if (tab === 'preview') {
-      updateLivePreview();
+      if (needsPreviewUpdate) {
+        updateLivePreview();
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (btnDockPreviewToggle) {
         btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon">✏️</span><span class="dock-btn-label">Back to Edit</span>`;
@@ -239,13 +241,37 @@ export function renderStudioApp(root) {
     }
   }
 
+  let previewDebounceTimer = null;
+  let needsPreviewUpdate = true;
+
+  function schedulePreviewUpdate(immediate = false) {
+    needsPreviewUpdate = true;
+    if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+
+    const isMobile = window.innerWidth <= 900;
+    if (isMobile && currentMobileTab !== 'preview') {
+      // On mobile in editor mode, do not waste CPU cycles rendering offscreen canvas
+      return;
+    }
+
+    if (immediate) {
+      updateLivePreview();
+    } else {
+      previewDebounceTimer = setTimeout(() => {
+        updateLivePreview();
+      }, 300);
+    }
+  }
+
   function updateLivePreview() {
     if (previewContainer) {
       previewContainer.querySelectorAll('audio').forEach(a => {
         try { a.pause(); a.currentTime = 0; } catch {}
       });
+      previewContainer.innerHTML = '';
     }
     renderViewerApp(previewContainer, activeTemplateId, activeData);
+    needsPreviewUpdate = false;
   }
 
   function mountEditor() {
@@ -253,7 +279,7 @@ export function renderStudioApp(root) {
     renderVisualEditor(editorMount, activeTemplateId, activeData, (updatedData) => {
       activeData = updatedData;
       saveActiveCelebration(activeTemplateId, activeData);
-      updateLivePreview();
+      schedulePreviewUpdate(false);
     });
   }
 
@@ -263,7 +289,7 @@ export function renderStudioApp(root) {
       activeData = getActiveCelebrationData(activeTemplateId);
       mountTemplateSelector();
       mountEditor();
-      updateLivePreview();
+      schedulePreviewUpdate(true);
       switchMobileTab('editor');
     });
   }
@@ -271,7 +297,7 @@ export function renderStudioApp(root) {
   // Initial mounts
   mountTemplateSelector();
   mountEditor();
-  updateLivePreview();
+  schedulePreviewUpdate(true);
   renderOccasionBanner();
 
   // Initialize Creator Journey Step-by-Step Guide

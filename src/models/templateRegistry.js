@@ -1,6 +1,53 @@
 // src/models/templateRegistry.js - Templates Registry & Schema
 
 export const TEMPLATES = {
+  long_romance: {
+    id: "long_romance",
+    name: "Long Romance Masterpiece",
+    badge: "Cupid + Tree + Reel 🏹🌸",
+    icon: "🏹🌸",
+    description: "The complete, continuous long romance website: Viral Reel blossom opener, Cupid's recurve bow & arrow arena, living canvas blossom tree, 3D Polaroid memories scrapbook, ember burn-away letter, and twilight sky lanterns with sticky chapter progress dock and mini CD music player.",
+    defaultTheme: {
+      primary: "#d4235c",
+      bgGradient: "radial-gradient(120% 88% at 50% 24%, #fff8f1 0%, #fff6ee 38%, #f9e2d2 74%, #f2c9b8 100%)",
+      accent: "#ffcf6a"
+    },
+    defaultData: {
+      recipientName: "My Love",
+      senderName: "Yours Forever",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      audioSubtitle: "ROMANTIC MASTERPIECE",
+      audioSrc: "/audio/alfaaz.mp3",
+      heroTitle: "To My One & Only Love 🌸",
+      heroSubtitle: "A continuous story of us, blooming through every season.",
+      polaroids: [
+        { image: "/images/sunset.jpg", caption: "Our favourite sunset walk 🌅", note: "The golden hour that made me realize I want forever with you." },
+        { image: "/images/always_you.jpg", caption: "Always laughing with you 🫶", note: "Pure joy, uncontrolled giggles, and zero worries." },
+        { image: "/images/pretty.jpg", caption: "Your breathtaking smile ✨", note: "The sight that lights up my entire universe every single day." },
+        { image: "/images/dream_girl.jpg", caption: "Adventures of a lifetime 💫", note: "Every moment by your side is an adventure I cherish." },
+        { image: "/images/queen.jpg", caption: "Forever my queen 👑", note: "Kind, radiant, and the most beautiful soul on earth." }
+      ],
+      reasons: [
+        "The way your eyes light up whenever you laugh",
+        "How you make every single day feel like home",
+        "Your endless kindness and the purest heart",
+        "How we can talk for hours about absolutely everything"
+      ],
+      shuffleCompliments: [
+        "You make my entire universe brighter just by existing 🌟",
+        "You are the definition of breathtaking beauty inside and out 💖",
+        "I fall in love with you all over again every single day 🌸",
+        "Your gentle touch calms any storm in my life 🕊️",
+        "Nobody in the world could ever replace you 👑",
+        "Your happiness is my highest priority forever and always ✨"
+      ],
+      letterText: "Dearest you,\n\nFrom the moment you walked into my life, you brought colors, laughter, and a warmth I never knew existed.\n\nWatching you grow, smile, and achieve your dreams is my greatest joy. Thank you for being my partner, my best friend, and my whole heart.\n\nHere is to celebrating you today, tomorrow, and across a lifetime of blooming love.\n\nI love you endlessly. ♡"
+    }
+  },
+
   tree: {
     id: "tree",
     name: "Cupid & Blossom Tree",

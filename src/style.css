@@ -13268,3 +13268,22 @@ button, select, input, textarea, a {
     border-radius: 16px;
   }
 }
+
+/* Instant tactile touch response for all interactive buttons */
+button,
+a,
+input,
+select,
+textarea,
+.template-card,
+.mobile-tab-btn,
+.btn-dock-item,
+.tmpl-filter-chip,
+.btn-studio-action,
+.btn-banner-switch,
+.btn-quick-gen-preset,
+.btn-thumb-upload,
+.upload-btn-label {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
