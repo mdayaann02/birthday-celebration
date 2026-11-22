@@ -1,22 +1,23 @@
-// src/viewer/templates/blossomTemplate.js - The Flagship Long Romance Website
-// Combines: Cupid Archery + Procedural Blossom Tree + Blossom Romance (Viral Reel) +
-// Polaroid Flipbook + Burn-to-Reveal Love Letter + Twilight Wishing Lanterns.
-// Ultra-smooth 60fps animations, continuous long-scroll storybook, and sticky mini vinyl CD player.
+// src/viewer/templates/blossomTemplate.js - The Flagship Multi-Page Long Romance Masterpiece
+// 6 Distinct Chapters: 1.The Spark (Viral Bloom) | 2.Cupid's Archery | 3.Living Blossom Tree |
+// 4.Realistic 3D Memory Flipbook | 5.Burn-To-Reveal Letter | 6.Twilight Sky Lanterns Finale
+// 100% Mobile & Desktop Compatible, 60fps physics, and sleek spinning mini vinyl CD player.
 
 import gsap from 'gsap';
 import confetti from 'canvas-confetti';
+import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 export function renderBlossomTemplate(container, initialData = {}, isMakerReview = false) {
-  // Normalize data with romantic fallbacks
   const data = initialData || {};
   const recipient = data.recipientName || 'My Love';
+  const sender = data.senderName || 'Yours Truly';
 
   const polaroids = data.polaroids && data.polaroids.length > 0 ? data.polaroids : [
-    { image: '/images/sunset.jpg', caption: 'Our favourite sunset walk 🌅', note: 'I knew then you were the one.' },
-    { image: '/images/always_you.jpg', caption: 'Always laughing with you 🫶', note: 'Your laugh is my favourite melody.' },
-    { image: '/images/pretty.jpg', caption: 'Your breathtaking smile ✨', note: 'You light up every room you enter.' },
-    { image: '/images/dream_girl.jpg', caption: 'Adventures of a lifetime 💫', note: 'Every step with you is paradise.' },
-    { image: '/images/queen.jpg', caption: 'Forever my queen 👑', note: 'My heart belongs to you completely.' }
+    { image: '/images/sunset.jpg', caption: 'Our favourite sunset walk 🌅', note: 'I knew then you were the one I want forever.' },
+    { image: '/images/always_you.jpg', caption: 'Always laughing with you 🫶', note: 'Your laugh is my absolute favourite melody in this world.' },
+    { image: '/images/pretty.jpg', caption: 'Your breathtaking smile ✨', note: 'You light up every room you enter just by being you.' },
+    { image: '/images/dream_girl.jpg', caption: 'Adventures of a lifetime 💫', note: 'Every single step by your side is paradise to me.' },
+    { image: '/images/queen.jpg', caption: 'Forever my queen 👑', note: 'The kindest, most radiant soul. My heart is completely yours.' }
   ];
 
   const loveNotesList = data.loveNotes && data.loveNotes.length > 0 ? data.loveNotes : [
@@ -43,457 +44,482 @@ Thank you for choosing me, for believing in us, and for making every sunrise bri
 
 I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
-  // Main Long Website Container HTML
+  const CHAPTER_TITLES = {
+    1: "🌸 The Spark • Blossom Bloom",
+    2: "🏹 Cupid's Archery & Heart",
+    3: "🌳 Living Sakura Tree",
+    4: "📖 3D Memory Flipbook",
+    5: "🕯️ Burn-To-Reveal Letter",
+    6: "🏮 Twilight Sky Lanterns"
+  };
+
   container.innerHTML = `
-    <div class="long-romance-page" id="longRomancePage">
+    <div class="romance-story-page" id="romanceStoryPage">
       <!-- Dynamic Floating Ambient Petals Background Canvas -->
       <canvas id="ambientPetalsCanvas" class="ambient-petals-canvas"></canvas>
 
-      <!-- Sticky Top Chapter Progress Dock -->
+      <!-- Corner Mini Spinning Vinyl CD Player Slot -->
+      <div id="romanceMusicSlot" style="position:fixed; top:12px; right:12px; z-index:999;"></div>
+
+      <!-- Top Sticky Chapter Navigation Dock -->
       <nav class="romance-nav-dock" id="romanceNavDock" aria-label="Story Chapters">
-        <div class="romance-dock-progress" id="dockProgressBar"></div>
-        <div class="romance-dock-chips">
-          <button type="button" class="dock-chip active" data-target="#chapterBlossom">🌸 <span>Blossom</span></button>
-          <button type="button" class="dock-chip" data-target="#chapterCupid">🏹 <span>Cupid</span></button>
-          <button type="button" class="dock-chip" data-target="#chapterTree">🌳 <span>Tree</span></button>
-          <button type="button" class="dock-chip" data-target="#chapterMemories">📸 <span>Memories</span></button>
-          <button type="button" class="dock-chip" data-target="#chapterBurn">💌 <span>Letter</span></button>
-          <button type="button" class="dock-chip" data-target="#chapterLanterns">🏮 <span>Lanterns</span></button>
+        <div class="romance-dock-top">
+          <span class="dock-step-pill" id="dockStepPill">PAGE 1 OF 6</span>
+          <span class="dock-chapter-title" id="dockChapterTitle">🌸 The Spark • Blossom Bloom</span>
+        </div>
+        <div class="romance-progress-track">
+          <div class="romance-progress-fill" id="dockProgressFill" style="width: 16.66%;"></div>
+        </div>
+        <div class="romance-dock-chips" id="dockChips">
+          <button type="button" class="romance-chip-btn active" data-page="1">🌸 Bloom</button>
+          <button type="button" class="romance-chip-btn" data-page="2">🏹 Cupid</button>
+          <button type="button" class="romance-chip-btn" data-page="3">🌳 Tree</button>
+          <button type="button" class="romance-chip-btn" data-page="4">📖 Flipbook</button>
+          <button type="button" class="romance-chip-btn" data-page="5">💌 Letter</button>
+          <button type="button" class="romance-chip-btn" data-page="6">🏮 Lanterns</button>
         </div>
       </nav>
 
-      <!-- Corner Mini Spinning Vinyl CD Player -->
-      <div class="corner-mini-cd-player" id="romanceMusicToggle" role="button" aria-label="Toggle Romantic Music" title="Tap to Play / Pause Music">
-        <div class="mini-cd-disc" id="romanceMiniCd">
-          <div class="cd-groove-rings"></div>
-          <div class="cd-holo-sheen"></div>
-          <div class="cd-center-sticker">
-            <img src="${polaroids[0]?.image || '/images/sunset.jpg'}" class="cd-cover-art" alt="Cover" />
-            <span class="cd-center-spindle"></span>
-          </div>
-        </div>
-        <div class="cd-track-pill" id="romanceTrackPill">
-          <div class="cd-pill-equalizer"><span></span><span></span><span></span></div>
-          <span class="cd-pill-title">${data.audioTitle || "Romantic Theme"}</span>
-        </div>
-        <audio id="romanceAudio" loop preload="auto">
-          <source src="${data.audioSrc || '/audio/alfaaz.mp3'}" type="audio/mpeg" />
-        </audio>
-      </div>
-
       <!-- ========================================================
-           CHAPTER 1: THE VIRAL REEL BLOSSOM FLOWER
+           PAGE 1: THE SPARK (VIRAL REEL BLOSSOM)
            ======================================================== -->
-      <section class="romance-chapter chapter-blossom" id="chapterBlossom">
-        <div class="chapter-content-wrap">
-          <div class="chapter-badge">CHAPTER I • THE SPARK</div>
-          <h1 class="chapter-title cursive">${data.blossomTitle || 'Touch The Blossom'}</h1>
-          <p class="chapter-sub">${data.blossomSubtitle || 'A secret love story made just for you'}</p>
+      <section class="romance-page-view active" data-page="1" id="pageBlossom">
+        <span class="romance-page-badge">CHAPTER I • THE SPARK</span>
+        <h1 class="romance-page-title">${data.heroTitle || `To My Beloved ${recipient} 🌸`}</h1>
+        <p class="romance-page-sub">${data.heroSubtitle || 'Touch the secret blossom to begin our story...'}</p>
 
-          <!-- Interactive Blooming Flower -->
-          <div class="viral-flower-stage">
-            <div class="viral-flower-btn" id="viralFlowerBtn" role="button" tabindex="0" aria-label="Touch the blossom to open">
-              <svg class="viral-flower-svg" viewBox="0 0 100 100" width="130" height="130">
-                <defs>
-                  <radialGradient id="vgSakura" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stop-color="#fff5f8" stop-opacity="0.95"/>
-                    <stop offset="45%" stop-color="#fbcfe8" stop-opacity="0.92"/>
-                    <stop offset="85%" stop-color="#f43f5e" stop-opacity="0.88"/>
-                    <stop offset="100%" stop-color="#be123c" stop-opacity="0.85"/>
-                  </radialGradient>
-                  <filter id="vgGlow" x="-25%" y="-25%" width="150%" height="150%">
-                    <feGaussianBlur stdDeviation="3.5" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                  </filter>
-                </defs>
-                <g filter="url(#vgGlow)">
-                  <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)"/>
-                  <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(72 50 50)"/>
-                  <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(144 50 50)"/>
-                  <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(216 50 50)"/>
-                  <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(288 50 50)"/>
-                  <circle cx="50" cy="50" r="7.5" fill="#e11d48"/>
-                  <circle cx="50" cy="50" r="3.5" fill="#fef08a"/>
-                </g>
-              </svg>
-              <div class="viral-flower-glow-halo"></div>
-            </div>
-            <p class="viral-flower-hint">✦ Tap the blossom to bloom &amp; begin ✦</p>
+        <!-- Interactive Blooming Flower -->
+        <div class="viral-flower-stage">
+          <div class="viral-flower-btn" id="viralFlowerBtn" role="button" tabindex="0" aria-label="Touch the blossom to open">
+            <svg class="viral-flower-svg" viewBox="0 0 100 100" width="130" height="130">
+              <defs>
+                <radialGradient id="vgSakura" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#fff5f8" stop-opacity="0.95"/>
+                  <stop offset="45%" stop-color="#fbcfe8" stop-opacity="0.92"/>
+                  <stop offset="85%" stop-color="#f43f5e" stop-opacity="0.88"/>
+                  <stop offset="100%" stop-color="#be123c" stop-opacity="0.85"/>
+                </radialGradient>
+                <filter id="vgGlow" x="-25%" y="-25%" width="150%" height="150%">
+                  <feGaussianBlur stdDeviation="3.5" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <g filter="url(#vgGlow)">
+                <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)"/>
+                <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(72 50 50)"/>
+                <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(144 50 50)"/>
+                <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(216 50 50)"/>
+                <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(288 50 50)"/>
+                <circle cx="50" cy="50" r="7.5" fill="#e11d48"/>
+                <circle cx="50" cy="50" r="3.5" fill="#fef08a"/>
+              </g>
+            </svg>
+            <div class="viral-flower-glow-halo"></div>
           </div>
+          <p class="viral-flower-hint" id="blossomHint">✦ Tap the blossom to bloom &amp; begin ✦</p>
           <canvas id="blossomBurstCanvas" class="blossom-burst-canvas"></canvas>
         </div>
-        <div class="scroll-down-indicator" data-target="#chapterCupid">
-          <span>Scroll to Cupid</span>
-          <span class="scroll-chevron">▾</span>
+
+        <div class="bloom-card-reveal" id="bloomCardReveal">
+          <p style="font-size:15px; line-height:1.6; color:#881337; margin:0 0 10px; font-weight:600;">
+            "Every love story is beautiful, but ours is my absolute favourite." ✨
+          </p>
+          <span style="font-size:12px; color:#a21caf; font-weight:700;">Ready to draw Cupid's bow? 🏹</span>
+        </div>
+
+        <div class="romance-nav-footer">
+          <button type="button" class="btn-romance-next" data-next="2">
+            Step into Cupid's Arena 🏹 &rarr;
+          </button>
         </div>
       </section>
 
       <!-- ========================================================
-           CHAPTER 2: CUPID'S RECURVE ARCHERY ARENA
+           PAGE 2: CUPID'S RECURVE ARCHERY & BEATING HEART
            ======================================================== -->
-      <section class="romance-chapter chapter-cupid" id="chapterCupid">
-        <div class="chapter-content-wrap">
-          <div class="chapter-badge">CHAPTER II • CUPID'S ARROW</div>
-          <h2 class="chapter-title cursive">${data.cupidPrompt || "Cupid's Sakura Shot 🏹"}</h2>
-          <p class="chapter-sub">${data.cupidHint || "Pull back the recurve bow and strike my heart..."}</p>
+      <section class="romance-page-view" data-page="2" id="pageCupid">
+        <span class="romance-page-badge">CHAPTER II • CUPID'S ARROW</span>
+        <h2 class="romance-page-title">${data.cupidPrompt || "Cupid's Sakura Shot 🏹"}</h2>
+        <p class="romance-page-sub">${data.cupidHint || "Pull down the bowstring and release to strike my heart..."}</p>
 
-          <div class="cupid-arena" id="cupidArena">
-            <!-- Winged Ruby Target Heart -->
-            <div class="target-heart-wrap" id="cupidTargetWrap">
-              <div class="target-wings">
-                <svg class="target-wing wing-l" viewBox="0 0 44 38">
-                  <path d="M40 35 C20 30 4 20 6 8 C14 4 28 12 40 22 Z" fill="#ffffff" stroke="#f43f5e" stroke-width="1.6" />
-                </svg>
-                <svg class="target-wing wing-r" viewBox="0 0 44 38">
-                  <path d="M4 35 C24 30 40 20 38 8 C30 4 16 12 4 22 Z" fill="#ffffff" stroke="#f43f5e" stroke-width="1.6" />
-                </svg>
-              </div>
-              <div class="target-ruby-heart" id="cupidTargetHeart">
-                <svg viewBox="0 0 100 92" width="76" height="70">
-                  <defs>
-                    <radialGradient id="targetGrad" cx="35%" cy="30%" r="75%">
-                      <stop offset="0%" stop-color="#fff0f3" />
-                      <stop offset="35%" stop-color="#ff4d6d" />
-                      <stop offset="85%" stop-color="#be123c" />
-                    </radialGradient>
-                  </defs>
-                  <path d="M50 86.5C26 68 10.5 53.6 10.5 34.6 10.5 20.4 21 11 33.2 11c8.6 0 14.2 4.7 16.8 11.4C52.6 15.7 58.2 11 66.8 11 79 11 89.5 20.4 89.5 34.6 89.5 53.6 74 68 50 86.5Z" fill="url(#targetGrad)" />
-                </svg>
-              </div>
+        <div class="cupid-arena" id="cupidArena">
+          <!-- Winged Ruby Target Heart -->
+          <div class="target-heart-wrap" id="cupidTargetWrap">
+            <div class="target-wings">
+              <svg class="target-wing wing-l" viewBox="0 0 44 38">
+                <path d="M40 35 C20 30 4 20 6 8 C14 4 28 12 40 22 Z" fill="#ffffff" stroke="#f43f5e" stroke-width="1.6" />
+              </svg>
+              <svg class="target-wing wing-r" viewBox="0 0 44 38">
+                <path d="M4 35 C24 30 40 20 38 8 C30 4 16 12 4 22 Z" fill="#ffffff" stroke="#f43f5e" stroke-width="1.6" />
+              </svg>
             </div>
+            <div class="target-ruby-heart" id="cupidTargetHeart">
+              <svg viewBox="0 0 100 92" width="76" height="70">
+                <defs>
+                  <radialGradient id="targetGrad" cx="35%" cy="30%" r="75%">
+                    <stop offset="0%" stop-color="#fff0f3" />
+                    <stop offset="35%" stop-color="#ff4d6d" />
+                    <stop offset="85%" stop-color="#be123c" />
+                  </radialGradient>
+                </defs>
+                <path d="M50 86.5C26 68 10.5 53.6 10.5 34.6 10.5 20.4 21 11 33.2 11c8.6 0 14.2 4.7 16.8 11.4C52.6 15.7 58.2 11 66.8 11 79 11 89.5 20.4 89.5 34.6 89.5 53.6 74 68 50 86.5Z" fill="url(#targetGrad)" />
+              </svg>
+            </div>
+          </div>
 
-            <!-- Recurve Bow + Arrow Rig -->
-            <div class="archery-rig" id="cupidArcheryRig">
-              <div class="archery-aim-line" id="cupidAimLine"></div>
+          <!-- Recurve Bow + Arrow Rig -->
+          <div class="archery-rig" id="cupidArcheryRig">
+            <div class="archery-bow" id="cupidBowElem">
+              <svg class="bow-svg" viewBox="0 0 460 260">
+                <defs>
+                  <linearGradient id="bowWoodGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#881337" />
+                    <stop offset="50%" stop-color="#f43f5e" />
+                    <stop offset="100%" stop-color="#881337" />
+                  </linearGradient>
+                </defs>
+                <path id="bowWoodPath" d="M34 96 C 118 168, 168 220, 230 230 C 292 220, 342 168, 426 96" fill="none" stroke="url(#bowWoodGrad)" stroke-width="12" stroke-linecap="round" />
+                <line id="bowStringL" x1="40" y1="80" x2="230" y2="90" stroke="#fb7185" stroke-width="2.5" />
+                <line id="bowStringR" x1="420" y1="80" x2="230" y2="90" stroke="#fb7185" stroke-width="2.5" />
+                <circle id="bowNock" cx="230" cy="90" r="5" fill="#f43f5e" />
+              </svg>
 
-              <div class="archery-bow" id="cupidBowElem">
-                <svg class="bow-svg" viewBox="0 0 460 260">
+              <div class="archery-arrow" id="cupidArrowElem">
+                <svg viewBox="0 0 40 160" width="100%" height="100%">
                   <defs>
-                    <linearGradient id="bowWoodGrad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stop-color="#881337" />
-                      <stop offset="50%" stop-color="#f43f5e" />
-                      <stop offset="100%" stop-color="#881337" />
+                    <linearGradient id="arrowShaftGold" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#fef08a" />
+                      <stop offset="50%" stop-color="#f59e0b" />
+                      <stop offset="100%" stop-color="#b45309" />
                     </linearGradient>
                   </defs>
-                  <path id="bowWoodPath" d="M34 96 C 118 168, 168 220, 230 230 C 292 220, 342 168, 426 96" fill="none" stroke="url(#bowWoodGrad)" stroke-width="12" stroke-linecap="round" />
-                  <line id="bowStringL" x1="40" y1="80" x2="230" y2="90" stroke="#fb7185" stroke-width="2.5" />
-                  <line id="bowStringR" x1="420" y1="80" x2="230" y2="90" stroke="#fb7185" stroke-width="2.5" />
-                  <circle id="bowNock" cx="230" cy="90" r="5" fill="#f43f5e" />
+                  <rect x="18" y="24" width="4" height="120" fill="url(#arrowShaftGold)" rx="2"/>
+                  <path d="M20 8 C18 4 12 4 12 9 C12 13 16 16 20 20 C24 16 28 13 28 9 C28 4 22 4 20 8 Z" fill="#e11d48"/>
+                  <path d="M20 125 L12 145 L20 140 L28 145 Z" fill="#fb7185"/>
                 </svg>
-
-                <div class="archery-arrow" id="cupidArrowElem">
-                  <svg viewBox="0 0 40 160" width="100%" height="100%">
-                    <defs>
-                      <linearGradient id="arrowShaftGold" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#fef08a" />
-                        <stop offset="50%" stop-color="#f59e0b" />
-                        <stop offset="100%" stop-color="#b45309" />
-                      </linearGradient>
-                    </defs>
-                    <rect x="18" y="24" width="4" height="120" fill="url(#arrowShaftGold)" rx="2"/>
-                    <path d="M20 8 C18 4 12 4 12 9 C12 13 16 16 20 20 C24 16 28 13 28 9 C28 4 22 4 20 8 Z" fill="#e11d48"/>
-                    <path d="M20 125 L12 145 L20 140 L28 145 Z" fill="#fb7185"/>
-                  </svg>
-                </div>
               </div>
-
-              <p class="archery-pull-hint">▼ PULL DOWN &amp; RELEASE TO SHOOT ▼</p>
-              <button type="button" class="btn-quick-shoot-primary" id="btnCupidQuickShoot">
-                🏹 Direct Cupid Strike 🎯
-              </button>
             </div>
+
+            <p class="archery-pull-hint">▼ PULL DOWN &amp; RELEASE TO SHOOT ▼</p>
+            <button type="button" class="btn-quick-shoot-primary" id="btnCupidQuickShoot">
+              🏹 Direct Cupid Strike 🎯
+            </button>
           </div>
         </div>
-        <div class="scroll-down-indicator" data-target="#chapterTree">
-          <span>Continue to Blossom Tree</span>
-          <span class="scroll-chevron">▾</span>
+
+        <div class="cupid-strike-banner" id="cupidStrikeBanner">
+          💘 Bullseye! You captured my heart completely! ✨
+        </div>
+
+        <div class="romance-nav-footer">
+          <button type="button" class="btn-romance-prev" data-prev="1">&larr; Back</button>
+          <button type="button" class="btn-romance-next" data-next="3">
+            Visit The Blossom Tree 🌳 &rarr;
+          </button>
         </div>
       </section>
 
       <!-- ========================================================
-           CHAPTER 3: PROCEDURAL LIVING BLOSSOM TREE
+           PAGE 3: PROCEDURAL LIVING BLOSSOM TREE
            ======================================================== -->
-      <section class="romance-chapter chapter-tree" id="chapterTree">
-        <div class="chapter-content-wrap">
-          <div class="chapter-badge">CHAPTER III • LIVING SAKURA TREE</div>
-          <h2 class="chapter-title cursive">${data.treeTitle || "Our Blossom Tree"}</h2>
-          <p class="chapter-sub">${data.treeSubtitle || "Watch love grow branch by branch • Touch canvas to guide the wind"}</p>
+      <section class="romance-page-view" data-page="3" id="pageTree">
+        <span class="romance-page-badge">CHAPTER III • LIVING SAKURA TREE</span>
+        <h2 class="romance-page-title">${data.treeTitle || "Our Blossom Tree"}</h2>
+        <p class="romance-page-sub">${data.treeSubtitle || "Watch our love grow branch by branch • Tap blossoms to reveal love notes"}</p>
 
-          <div class="tree-canvas-holder">
-            <canvas id="livingTreeCanvas" class="living-tree-canvas"></canvas>
-            <div class="tree-floating-love-bubble" id="treeLoveBubble" aria-hidden="true">
-              <span id="treeLoveBubbleText">You are my whole universe 🌸</span>
-            </div>
-            <div class="tree-controls-bar">
-              <button type="button" class="btn-tree-action" id="btnRegrowTree">🌱 Regrow Tree</button>
-              <button type="button" class="btn-tree-action" id="btnPopLoveNote">💌 Pop Secret Note</button>
-            </div>
+        <div class="tree-canvas-holder">
+          <canvas id="livingTreeCanvas" class="living-tree-canvas"></canvas>
+          <div class="tree-floating-love-bubble" id="treeLoveBubble" aria-hidden="true">
+            <span id="treeLoveBubbleText">You are my whole universe 🌸</span>
+          </div>
+          <div class="tree-controls-bar">
+            <button type="button" class="btn-tree-action" id="btnRegrowTree">🌱 Regrow Tree</button>
+            <button type="button" class="btn-tree-action" id="btnPopLoveNote">💌 Pop Secret Note</button>
           </div>
         </div>
-        <div class="scroll-down-indicator" data-target="#chapterMemories">
-          <span>Open Memories Scrapbook</span>
-          <span class="scroll-chevron">▾</span>
+
+        <div class="romance-nav-footer">
+          <button type="button" class="btn-romance-prev" data-prev="2">&larr; Back</button>
+          <button type="button" class="btn-romance-next" data-next="4">
+            Open 3D Memory Flipbook 📖 &rarr;
+          </button>
         </div>
       </section>
 
       <!-- ========================================================
-           CHAPTER 4: 3D POLAROID MEMORIES SCRAPBOOK
+           PAGE 4: REALISTIC 3D MEMORY FLIPBOOK
            ======================================================== -->
-      <section class="romance-chapter chapter-memories" id="chapterMemories">
-        <div class="chapter-content-wrap">
-          <div class="chapter-badge">CHAPTER IV • TREASURED MEMORIES</div>
-          <h2 class="chapter-title cursive">${data.memoriesTitle || "Our Story in Polaroids"}</h2>
-          <p class="chapter-sub">Touch any memory to reveal its secret handwritten note</p>
+      <section class="romance-page-view" data-page="4" id="pageFlipbook">
+        <span class="romance-page-badge">CHAPTER IV • MEMORY FLIPBOOK</span>
+        <h2 class="romance-page-title">${data.memoriesTitle || "Treasured Memories"}</h2>
+        <p class="romance-page-sub">A realistic 3D storybook of us • Tap the page to turn</p>
 
-          <div class="polaroid-cards-row">
-            ${polaroids.map((p, i) => `
-              <div class="romance-polaroid-card" data-idx="${i}">
-                <div class="polaroid-pin">📍</div>
-                <div class="polaroid-photo-frame">
-                  <img src="${p.image || '/images/sunset.jpg'}" alt="Memory" loading="lazy" onerror="this.src='/images/sunset.jpg'" />
+        <div class="realistic-flipbook-wrap">
+          <div class="realistic-book" id="realisticBook">
+            <div class="book-hardcover-back"></div>
+            <div class="book-spine-crease"></div>
+
+            <!-- Double-Sided 3D Leaves -->
+            ${polaroids.map((p, i) => {
+              const rot = ((i % 2 === 0 ? -1.5 : 1.5) * (1 + (i % 3) * 0.5)).toFixed(1);
+              const noteText = p.note || loveNotesList[i % loveNotesList.length] || "Every moment by your side is a memory I treasure forever.";
+              return `
+                <div class="book-leaf" data-leaf="${i}" style="z-index: ${polaroids.length - i};">
+                  <!-- Front: Polaroid Frame + Caption -->
+                  <div class="leaf-face leaf-front">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:11px; font-weight:800; color:#d4235c; letter-spacing:0.1em;">OUR STORY</span>
+                      <span style="font-size:11px; color:#8a6070; font-weight:700;">VOL. I</span>
+                    </div>
+
+                    <div class="book-polaroid-frame" style="--rot:${rot}deg;">
+                      <div class="book-polaroid-img-wrap">
+                        <img src="${p.image || '/images/sunset.jpg'}" class="book-polaroid-img" alt="Memory ${i+1}" onerror="this.src='/images/sunset.jpg'" />
+                      </div>
+                      <h4 class="book-polaroid-caption">${p.caption || 'Our favourite moment 💖'}</h4>
+                    </div>
+
+                    <div class="leaf-page-number">Page ${i * 2 + 1} of ${polaroids.length * 2}</div>
+                  </div>
+
+                  <!-- Back: Handwritten Heartfelt Note -->
+                  <div class="leaf-face leaf-back">
+                    <div class="book-note-header">
+                      <span class="book-note-stamp">MEMORIES &amp; HEARTBEATS</span>
+                      <span style="font-size:14px;">💌</span>
+                    </div>
+                    <div class="book-note-body">
+                      "${noteText}"
+                    </div>
+                    <div class="book-note-footer">
+                      Forever with you ♡
+                    </div>
+                    <div class="leaf-page-number" style="text-align:left;">Page ${i * 2 + 2} of ${polaroids.length * 2}</div>
+                  </div>
                 </div>
-                <p class="polaroid-caption">${p.caption || 'Our favourite moment 💖'}</p>
-                <div class="polaroid-secret-note">${p.note || 'Every moment with you is golden.'}</div>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Flip Controls -->
+          <div class="flipbook-controls-bar">
+            <button type="button" class="btn-flip-book" id="btnFlipPrev" disabled>❮ Previous</button>
+            <span class="flipbook-page-indicator" id="flipIndicator">Memory 1 of ${polaroids.length}</span>
+            <button type="button" class="btn-flip-book" id="btnFlipNext">Next ❯</button>
+          </div>
+        </div>
+
+        <div class="romance-nav-footer">
+          <button type="button" class="btn-romance-prev" data-prev="3">&larr; Back</button>
+          <button type="button" class="btn-romance-next" data-next="5">
+            Unseal Love Letter 💌 &rarr;
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           PAGE 5: WAX SEALED LOVE LETTER (BURN TO REVEAL)
+           ======================================================== -->
+      <section class="romance-page-view" data-page="5" id="pageLetter">
+        <span class="romance-page-badge">CHAPTER V • THE SACRED LETTER</span>
+        <h2 class="romance-page-title">${data.burnTitle || "Burn To Reveal"}</h2>
+        <p class="romance-page-sub">Strike the golden match to burn away the wax seal...</p>
+
+        <div class="burn-letter-stage">
+          <div class="wax-envelope-card" id="waxEnvelopeCard">
+            <!-- Sealed Wax Stamp State -->
+            <div class="wax-seal-wrapper" id="waxSealWrapper">
+              <div class="wax-seal-stamp" id="waxSealStamp">
+                <span>💌</span>
               </div>
-            `).join('')}
-          </div>
-
-          <!-- Reasons Wall & Compliment Shuffler -->
-          <div class="romance-reasons-block">
-            <h3 class="reasons-heading">A Few Reasons Why I Love You</h3>
-            <div class="reasons-grid">
-              ${reasonsList.map(r => `
-                <div class="reason-note-pill">
-                  <span class="reason-spark">✨</span>
-                  <span>${r}</span>
-                </div>
-              `).join('')}
-            </div>
-
-            <div class="compliment-shuffle-box" id="complimentBox">
-              <p class="compliment-text" id="complimentText">${loveNotesList[0]}</p>
-              <button type="button" class="btn-shuffle-compliment" id="btnShuffleLoveNote">
-                🔀 Read Another Note
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="scroll-down-indicator" data-target="#chapterBurn">
-          <span>Read My Letter</span>
-          <span class="scroll-chevron">▾</span>
-        </div>
-      </section>
-
-      <!-- ========================================================
-           CHAPTER 5: INTERACTIVE BURN-TO-REVEAL WAX PARCHMENT LETTER
-           ======================================================== -->
-      <section class="romance-chapter chapter-burn" id="chapterBurn">
-        <div class="chapter-content-wrap">
-          <div class="chapter-badge">CHAPTER V • THE SACRED LETTER</div>
-          <h2 class="chapter-title cursive">${data.burnTitle || "Burn To Reveal"}</h2>
-          <p class="chapter-sub">Strike the golden match to burn away the parchment seal</p>
-
-          <div class="burn-letter-container">
-            <!-- Golden Match Trigger -->
-            <div class="match-strike-box" id="matchStrikeBox">
-              <div class="matchstick-icon" id="matchstickIcon">🕯️</div>
               <button type="button" class="btn-strike-match" id="btnStrikeMatch">
-                🔥 Strike Match &amp; Burn Seal
+                🕯️ Strike Match &amp; Burn Seal
               </button>
             </div>
 
-            <!-- Burning Letter Canvas Overlay -->
-            <div class="burn-parchment-card" id="burnParchmentCard">
-              <canvas id="burnOverlayCanvas" class="burn-overlay-canvas"></canvas>
-              <div class="parchment-letter-inner">
-                <div class="parchment-wax-seal">
-                  <div class="wax-seal-crest">💌</div>
-                </div>
-                <div class="parchment-body-text">
-                  ${letterBody.replace(/\n\n/g, '<br /><br />').replace(/\n/g, '<br />')}
-                </div>
-                <div class="parchment-signature">
-                  Forever Yours,<br />
-                  <span>${data.senderName || 'Your Love'} ♡</span>
-                </div>
-              </div>
+            <!-- Unfolded Letter Inside -->
+            <div class="parchment-letter-unfolded" id="parchmentLetter">
+              <div class="letter-greeting">Dearest ${recipient},</div>
+              <div class="letter-paragraph">${letterBody}</div>
+              <div class="letter-signature">With all my love,<br/>${sender} ♡</div>
             </div>
           </div>
         </div>
-        <div class="scroll-down-indicator" data-target="#chapterLanterns">
-          <span>Release Twilight Lanterns</span>
-          <span class="scroll-chevron">▾</span>
+
+        <div class="romance-nav-footer">
+          <button type="button" class="btn-romance-prev" data-prev="4">&larr; Back</button>
+          <button type="button" class="btn-romance-next" data-next="6">
+            Release Sky Lanterns 🏮 &rarr;
+          </button>
         </div>
       </section>
 
       <!-- ========================================================
-           CHAPTER 6: TWILIGHT WISHING LANTERNS & CONFESSION
+           PAGE 6: TWILIGHT SKY LANTERNS & GRAND FINALE
            ======================================================== -->
-      <section class="romance-chapter chapter-lanterns" id="chapterLanterns">
-        <div class="chapter-content-wrap">
-          <div class="chapter-badge">CHAPTER VI • ETERNITY</div>
-          <h2 class="chapter-title cursive">${data.lanternTitle || "Make A Wish Into Twilight"}</h2>
-          <p class="chapter-sub">Release glowing lanterns into the sky with our love proclamation</p>
+      <section class="romance-page-view" data-page="6" id="pageLanterns">
+        <span class="romance-page-badge">CHAPTER VI • TWILIGHT SKY</span>
+        <h2 class="romance-page-title" style="color:#fef08a; text-shadow:0 0 20px rgba(251,191,36,0.5);">${data.lanternTitle || "Wishes In The Sky"}</h2>
+        <p class="romance-page-sub" style="color:#fbcfe8;">Release our glowing lanterns into the starry night...</p>
 
-          <div class="lantern-sky-stage" id="lanternSkyStage">
-            <div class="twilight-stars-field" id="twilightStarsField"></div>
-            <div class="floating-lantern-field" id="floatingLanternField"></div>
+        <div class="lanterns-sky-stage" id="lanternsSkyStage">
+          <div class="twilight-starfield"></div>
+          <div id="floatingLanternField" style="position:absolute; inset:0; pointer-events:none;"></div>
+        </div>
 
-            <div class="grand-confession-card">
-              <div class="confession-heart-icon">💖</div>
-              <h3 class="confession-heading">Happy Birthday, ${recipient}!</h3>
-              <p class="confession-text">
-                May your life be as radiant, blooming, and unforgettable as the love you give so generously every single day.
-              </p>
-              <button type="button" class="btn-release-lantern-primary" id="btnReleaseMoreLanterns">
-                🏮 Release More Wishing Lanterns
-              </button>
-            </div>
-          </div>
+        <div style="margin-bottom:20px;">
+          <button type="button" class="btn-release-lanterns-glow" id="btnReleaseMoreLanterns">
+            ✨ Release More Lanterns 🏮
+          </button>
+        </div>
+
+        <div class="finale-celebration-box">
+          <p style="font-size:16px; font-weight:800; color:#881337; margin:0 0 8px;">
+            Here's to a lifetime of love, laughter &amp; blooming memories ✨
+          </p>
+          <p style="font-size:13px; color:#5a3f4e; margin:0 0 14px;">
+            Created with all my heart for ${recipient}.
+          </p>
+          <button type="button" class="btn-romance-prev" id="btnReplayCelebration" style="width:100%; border-color:#d4235c; color:#d4235c; background:#fff5eb; font-weight:800;">
+            ↺ Replay Our Celebration
+          </button>
+        </div>
+
+        <div class="romance-nav-footer" style="margin-top:24px;">
+          <button type="button" class="btn-romance-prev" data-prev="5">&larr; Back to Letter</button>
         </div>
       </section>
     </div>
   `;
 
-  // =========================================================================
-  // AUDIO & CD PLAYER CONTROLS
-  // =========================================================================
-  const audioEl = container.querySelector('#romanceAudio');
-  const musicToggle = container.querySelector('#romanceMusicToggle');
-  const miniCd = container.querySelector('#romanceMiniCd');
-  const trackPill = container.querySelector('#romanceTrackPill');
-  let isPlaying = false;
+  // Mount Corner Mini Spinning CD Music Player
+  const musicSlot = container.querySelector('#romanceMusicSlot');
+  initMusicPlayer(musicSlot, {
+    ...data,
+    audioSrc: data.audioSrc || '/audio/alfaaz.mp3',
+    audioTitle: data.audioTitle || 'Alfaaz - Hamza Malik & Zain Zohaib',
+    audioSubtitle: 'ROMANTIC SCORE'
+  });
 
-  function toggleAudio() {
-    if (window.isCelebrationEditorMode) return;
-    if (isPlaying) {
-      audioEl.pause();
-      isPlaying = false;
-      miniCd.classList.remove('spinning');
-      trackPill.classList.remove('playing');
-    } else {
-      audioEl.play().then(() => {
-        isPlaying = true;
-        miniCd.classList.add('spinning');
-        trackPill.classList.add('playing');
-      }).catch(() => {});
+  // =========================================================================
+  // PAGE-BY-PAGE NAVIGATION ENGINE
+  // =========================================================================
+  let currentPage = 1;
+  const totalPages = 6;
+  const pages = container.querySelectorAll('.romance-page-view');
+  const dockChips = container.querySelectorAll('.romance-chip-btn');
+  const progressFill = container.querySelector('#dockProgressFill');
+  const dockStepPill = container.querySelector('#dockStepPill');
+  const dockChapterTitle = container.querySelector('#dockChapterTitle');
+
+  function goToPage(page) {
+    currentPage = Math.max(1, Math.min(page, totalPages));
+
+    pages.forEach(p => {
+      const pNum = parseInt(p.getAttribute('data-page'), 10);
+      p.classList.toggle('active', pNum === currentPage);
+    });
+
+    dockChips.forEach(chip => {
+      const cNum = parseInt(chip.getAttribute('data-page'), 10);
+      chip.classList.toggle('active', cNum === currentPage);
+    });
+
+    if (progressFill) {
+      progressFill.style.width = `${(currentPage / totalPages) * 100}%`;
+    }
+    if (dockStepPill) {
+      dockStepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
+    }
+    if (dockChapterTitle) {
+      dockChapterTitle.textContent = CHAPTER_TITLES[currentPage] || "Romance Journey";
+    }
+
+    if (navigator.vibrate) navigator.vibrate(14);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Page-specific trigger actions
+    if (currentPage === 3) {
+      setTimeout(() => initLivingTree(), 60);
+    } else if (currentPage === 6) {
+      setTimeout(() => spawnLanternBatch(4), 100);
     }
   }
 
-  musicToggle?.addEventListener('click', toggleAudio);
+  // Connect Next & Prev buttons
+  container.querySelectorAll('.btn-romance-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'), 10);
+      goToPage(next);
+    });
+  });
 
-  function startAutoplayAudio() {
-    if (window.isCelebrationEditorMode) return;
-    if (!isPlaying) {
-      audioEl.play().then(() => {
-        isPlaying = true;
-        miniCd.classList.add('spinning');
-        trackPill.classList.add('playing');
-      }).catch(() => {});
-    }
-  }
+  container.querySelectorAll('.btn-romance-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'), 10);
+      goToPage(prev);
+    });
+  });
 
-  // =========================================================================
-  // CHAPTER NAVIGATION DOCK & PROGRESS TRACKER
-  // =========================================================================
-  const navDock = container.querySelector('#romanceNavDock');
-  const dockProgress = container.querySelector('#dockProgressBar');
-  const dockChips = container.querySelectorAll('.dock-chip');
-  const scrollIndicators = container.querySelectorAll('.scroll-down-indicator');
-
+  // Connect Top Chapter Dock Chips
   dockChips.forEach(chip => {
     chip.addEventListener('click', () => {
-      if (navigator.vibrate) navigator.vibrate(12);
-      const targetId = chip.getAttribute('data-target');
-      const targetElem = container.querySelector(targetId);
-      if (targetElem) {
-        targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      const targetPage = parseInt(chip.getAttribute('data-page'), 10);
+      goToPage(targetPage);
     });
   });
 
-  scrollIndicators.forEach(ind => {
-    ind.addEventListener('click', () => {
-      const targetId = ind.getAttribute('data-target');
-      const targetElem = container.querySelector(targetId);
-      if (targetElem) {
-        targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
+  // Replay celebration
+  container.querySelector('#btnReplayCelebration')?.addEventListener('click', () => {
+    goToPage(1);
+    confetti({ particleCount: 80, spread: 80, origin: { y: 0.5 } });
   });
 
-  // Scroll listener for progress bar and active chips
-  const pageWrap = container.querySelector('#longRomancePage');
-  const chapters = container.querySelectorAll('.romance-chapter');
-
-  function updateScrollProgress() {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-    if (dockProgress) dockProgress.style.width = `${progress}%`;
-
-    // Highlight active chapter
-    chapters.forEach(ch => {
-      const rect = ch.getBoundingClientRect();
-      if (rect.top <= window.innerHeight * 0.4 && rect.bottom >= window.innerHeight * 0.3) {
-        const id = '#' + ch.id;
-        dockChips.forEach(chip => {
-          chip.classList.toggle('active', chip.getAttribute('data-target') === id);
-        });
-      }
-    });
-  }
-
-  window.addEventListener('scroll', updateScrollProgress, { passive: true });
-
   // =========================================================================
-  // AMBIENT SAKURA PETALS BACKGROUND CANVAS (60FPS FLUID PHYSICS)
+  // AMBIENT FLOATING SAKURA PETALS BACKGROUND (60fps)
   // =========================================================================
-  const bgCanvas = container.querySelector('#ambientPetalsCanvas');
-  if (bgCanvas) {
-    const bgCtx = bgCanvas.getContext('2d');
-    let bgW = (bgCanvas.width = window.innerWidth);
-    let bgH = (bgCanvas.height = window.innerHeight);
+  const ambientCanvas = container.querySelector('#ambientPetalsCanvas');
+  if (ambientCanvas) {
+    const aCtx = ambientCanvas.getContext('2d');
+    let aW = (ambientCanvas.width = window.innerWidth);
+    let aH = (ambientCanvas.height = window.innerHeight);
 
     window.addEventListener('resize', () => {
-      bgW = bgCanvas.width = window.innerWidth;
-      bgH = bgCanvas.height = window.innerHeight;
-    });
+      aW = ambientCanvas.width = window.innerWidth;
+      aH = ambientCanvas.height = window.innerHeight;
+    }, { passive: true });
 
-    const ambientPetals = [];
-    for (let i = 0; i < 35; i++) {
-      ambientPetals.push({
-        x: Math.random() * bgW,
-        y: Math.random() * bgH,
-        size: Math.random() * 8 + 6,
-        vx: Math.random() * 1.2 - 0.6,
-        vy: Math.random() * 1.5 + 0.8,
-        rot: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.03,
-        alpha: Math.random() * 0.5 + 0.3
-      });
-    }
+    const petals = Array.from({ length: 24 }, () => ({
+      x: Math.random() * aW,
+      y: Math.random() * aH,
+      size: Math.random() * 8 + 6,
+      vx: Math.random() * 0.8 - 0.4,
+      vy: Math.random() * 0.9 + 0.5,
+      rot: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.03,
+      alpha: Math.random() * 0.45 + 0.25,
+      color: ['#fda4af', '#fbcfe8', '#f43f5e', '#fed7aa'][Math.floor(Math.random() * 4)]
+    }));
 
     function renderAmbientPetals() {
-      bgCtx.clearRect(0, 0, bgW, bgH);
-      for (let p of ambientPetals) {
+      aCtx.clearRect(0, 0, aW, aH);
+      for (let p of petals) {
         p.x += p.vx;
         p.y += p.vy;
         p.rot += p.rotSpeed;
-        if (p.y > bgH + 20) { p.y = -20; p.x = Math.random() * bgW; }
-        if (p.x > bgW + 20) p.x = -20;
-        if (p.x < -20) p.x = bgW + 20;
+        if (p.y > aH + 20) { p.y = -20; p.x = Math.random() * aW; }
+        if (p.x > aW + 20) p.x = -20;
+        if (p.x < -20) p.x = aW + 20;
 
-        bgCtx.save();
-        bgCtx.translate(p.x, p.y);
-        bgCtx.rotate(p.rot);
-        bgCtx.fillStyle = `rgba(244, 63, 94, ${p.alpha})`;
-        bgCtx.beginPath();
-        bgCtx.moveTo(0, 0);
-        bgCtx.bezierCurveTo(-p.size * 0.5, -p.size * 0.8, -p.size, p.size * 0.5, 0, p.size);
-        bgCtx.bezierCurveTo(p.size, p.size * 0.5, p.size * 0.5, -p.size * 0.8, 0, 0);
-        bgCtx.fill();
-        bgCtx.restore();
+        aCtx.save();
+        aCtx.globalAlpha = p.alpha;
+        aCtx.translate(p.x, p.y);
+        aCtx.rotate(p.rot);
+        aCtx.fillStyle = p.color;
+        aCtx.beginPath();
+        aCtx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+        aCtx.fill();
+        aCtx.restore();
       }
       requestAnimationFrame(renderAmbientPetals);
     }
@@ -505,21 +531,22 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   // =========================================================================
   const viralFlowerBtn = container.querySelector('#viralFlowerBtn');
   const burstCanvas = container.querySelector('#blossomBurstCanvas');
+  const bloomCard = container.querySelector('#bloomCardReveal');
   let flowerBloomed = false;
 
   viralFlowerBtn?.addEventListener('click', () => {
     if (flowerBloomed) return;
     flowerBloomed = true;
-    startAutoplayAudio();
-    if (navigator.vibrate) navigator.vibrate([30, 40]);
+    if (navigator.vibrate) navigator.vibrate([25, 35]);
 
     viralFlowerBtn.classList.add('bloomed');
+    bloomCard?.classList.add('shown');
 
     // Canvas explosion
     if (burstCanvas) {
       const bCtx = burstCanvas.getContext('2d');
-      const bW = (burstCanvas.width = burstCanvas.clientWidth || 360);
-      const bH = (burstCanvas.height = burstCanvas.clientHeight || 360);
+      const bW = (burstCanvas.width = burstCanvas.clientWidth || 340);
+      const bH = (burstCanvas.height = burstCanvas.clientHeight || 340);
       burstCanvas.style.opacity = '1';
 
       const burstPetals = [];
@@ -567,22 +594,16 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
 
     confetti({
-      particleCount: 60,
-      spread: 70,
-      origin: { y: 0.4 },
+      particleCount: 65,
+      spread: 75,
+      origin: { y: 0.45 },
       colors: ['#f43f5e', '#fb7185', '#fda4af', '#fef08a']
     });
-
-    // Smooth scroll down to Cupid after bloom
-    setTimeout(() => {
-      container.querySelector('#chapterCupid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 900);
   });
 
   // =========================================================================
-  // CHAPTER 2: CUPID'S RECURVE ARCHERY GAME (SMOOTH DRAG & RELEASE)
+  // CHAPTER 2: CUPID'S RECURVE ARCHERY & BEATING HEART TARGET
   // =========================================================================
-  const cupidArena = container.querySelector('#cupidArena');
   const cupidTargetWrap = container.querySelector('#cupidTargetWrap');
   const cupidTargetHeart = container.querySelector('#cupidTargetHeart');
   const cupidBowElem = container.querySelector('#cupidBowElem');
@@ -592,6 +613,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const bowStrR = container.querySelector('#bowStringR');
   const bowNock = container.querySelector('#bowNock');
   const btnQuickShoot = container.querySelector('#btnCupidQuickShoot');
+  const strikeBanner = container.querySelector('#cupidStrikeBanner');
 
   let isAiming = false;
   let hasShotArrow = false;
@@ -615,34 +637,25 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   function launchArrow() {
     if (hasShotArrow) return;
     hasShotArrow = true;
-    startAutoplayAudio();
-    if (navigator.vibrate) navigator.vibrate([20, 30, 40]);
+    if (navigator.vibrate) navigator.vibrate([20, 30, 45]);
 
-    // Animate arrow flight up towards target heart
     gsap.to(cupidArrowElem, {
-      y: -window.innerHeight * 0.45,
-      duration: 0.35,
+      y: -window.innerHeight * 0.42,
+      duration: 0.32,
       ease: 'power2.in',
       onComplete: () => {
-        // Heart strike impact
-        cupidTargetHeart.classList.add('heart-struck');
-        cupidTargetWrap.classList.add('heart-burst');
+        cupidTargetHeart?.classList.add('heart-struck');
+        strikeBanner?.classList.add('shown');
 
         confetti({
-          particleCount: 80,
+          particleCount: 90,
           spread: 85,
-          origin: { y: 0.35 },
+          origin: { y: 0.32 },
           colors: ['#e11d48', '#f43f5e', '#fb7185', '#ffd700']
         });
-
-        // Smooth glide to Chapter 3: Living Blossom Tree
-        setTimeout(() => {
-          container.querySelector('#chapterTree')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 850);
       }
     });
 
-    // Reset bowstring snap
     gsap.to({ p: currentPull }, {
       p: 0,
       duration: 0.15,
@@ -658,7 +671,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (hasShotArrow) return;
     isAiming = true;
     startTouchY = e.clientY;
-    cupidBowElem.setPointerCapture(e.pointerId);
+    try { cupidBowElem.setPointerCapture(e.pointerId); } catch {}
   });
 
   cupidBowElem?.addEventListener('pointermove', (e) => {
@@ -673,7 +686,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const endDrag = () => {
     if (!isAiming || hasShotArrow) return;
     isAiming = false;
-    if (currentPull > 30) {
+    if (currentPull > 28) {
       launchArrow();
     } else {
       gsap.to({ p: currentPull }, {
@@ -718,10 +731,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     treePetals = [];
     treeGrowthProgress = 0;
 
-    // Generate procedural tree branch structure
     function buildBranch(startX, startY, length, angle, depth) {
       if (depth === 0) {
-        // Add blossom petals at branch ends in heart canopy
         const count = Math.floor(Math.random() * 4 + 3);
         for (let i = 0; i < count; i++) {
           treePetals.push({
@@ -730,10 +741,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             size: Math.random() * 6 + 4,
             color: ['#f43f5e', '#ec4899', '#fb7185', '#fda4af', '#fff0f3'][Math.floor(Math.random() * 5)],
             rot: Math.random() * Math.PI * 2,
-            rotSpeed: (Math.random() - 0.5) * 0.04,
-            falling: false,
-            vx: 0,
-            vy: 0
+            rotSpeed: (Math.random() - 0.5) * 0.04
           });
         }
         return;
@@ -760,14 +768,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
 
     const trunkX = actualW / 2;
-    const trunkY = actualH - 20;
+    const trunkY = actualH - 18;
     buildBranch(trunkX, trunkY, actualH * 0.24, -Math.PI / 2, 6);
 
-    // Tree animation loop
     function renderTreeFrame() {
       tCtx.clearRect(0, 0, actualW, actualH);
 
-      // Draw growing branches
       tCtx.lineCap = 'round';
       tCtx.strokeStyle = '#5a3822';
       const visibleCount = Math.floor(treeBranches.length * Math.min(1, treeGrowthProgress));
@@ -781,19 +787,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         tCtx.stroke();
       }
 
-      // Draw blooming petals if tree is grown enough
       if (treeGrowthProgress > 0.45) {
         const petalAlpha = Math.min(1, (treeGrowthProgress - 0.45) / 0.55);
         tCtx.save();
         tCtx.globalAlpha = petalAlpha;
 
         for (let p of treePetals) {
-          if (p.falling) {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.rot += p.rotSpeed;
-            if (p.y > actualH + 10) { p.y = -10; p.x = Math.random() * actualW; }
-          }
           tCtx.save();
           tCtx.translate(p.x, p.y);
           tCtx.rotate(p.rot);
@@ -807,20 +806,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       }
 
       if (treeGrowthProgress < 1) {
-        treeGrowthProgress += 0.015;
+        treeGrowthProgress += 0.02;
+        treeRAF = requestAnimationFrame(renderTreeFrame);
       }
-
-      treeRAF = requestAnimationFrame(renderTreeFrame);
     }
 
     if (treeRAF) cancelAnimationFrame(treeRAF);
     treeRAF = requestAnimationFrame(renderTreeFrame);
   }
 
-  initLivingTree();
   btnRegrowTree?.addEventListener('click', initLivingTree);
 
-  // Pop love note bubble on tree
   let currentNoteIdx = 0;
   function showNextLoveNote() {
     currentNoteIdx = (currentNoteIdx + 1) % loveNotesList.length;
@@ -838,101 +834,82 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   treeCanvas?.addEventListener('click', showNextLoveNote);
 
   // =========================================================================
-  // CHAPTER 4: POLAROID MEMORIES FLIP & SHUFFLE
+  // CHAPTER 4: REALISTIC 3D MEMORY FLIPBOOK
   // =========================================================================
-  const polaroidCards = container.querySelectorAll('.romance-polaroid-card');
-  polaroidCards.forEach(card => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('flipped');
-      if (navigator.vibrate) navigator.vibrate(12);
+  const leaves = container.querySelectorAll('.book-leaf');
+  const btnFlipPrev = container.querySelector('#btnFlipPrev');
+  const btnFlipNext = container.querySelector('#btnFlipNext');
+  const flipIndicator = container.querySelector('#flipIndicator');
+  let currentLeafIdx = 0;
+
+  function updateFlipbookState() {
+    leaves.forEach((leaf, idx) => {
+      if (idx < currentLeafIdx) {
+        leaf.classList.add('flipped');
+      } else {
+        leaf.classList.remove('flipped');
+      }
+    });
+
+    if (btnFlipPrev) btnFlipPrev.disabled = (currentLeafIdx === 0);
+    if (btnFlipNext) btnFlipNext.disabled = (currentLeafIdx === polaroids.length);
+    if (flipIndicator) {
+      const displayIdx = Math.min(currentLeafIdx + 1, polaroids.length);
+      flipIndicator.textContent = `Memory ${displayIdx} of ${polaroids.length}`;
+    }
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  btnFlipNext?.addEventListener('click', () => {
+    if (currentLeafIdx < polaroids.length) {
+      currentLeafIdx++;
+      updateFlipbookState();
+    }
+  });
+
+  btnFlipPrev?.addEventListener('click', () => {
+    if (currentLeafIdx > 0) {
+      currentLeafIdx--;
+      updateFlipbookState();
+    }
+  });
+
+  // Tapping directly on the book leaves to flip
+  leaves.forEach((leaf, idx) => {
+    leaf.addEventListener('click', () => {
+      if (idx === currentLeafIdx) {
+        currentLeafIdx++;
+        updateFlipbookState();
+      } else if (idx === currentLeafIdx - 1) {
+        currentLeafIdx--;
+        updateFlipbookState();
+      }
     });
   });
 
-  const btnShuffle = container.querySelector('#btnShuffleLoveNote');
-  const compText = container.querySelector('#complimentText');
-  let compIdx = 0;
-
-  btnShuffle?.addEventListener('click', () => {
-    compIdx = (compIdx + 1) % loveNotesList.length;
-    if (compText) {
-      gsap.to(compText, {
-        opacity: 0,
-        y: -6,
-        duration: 0.15,
-        onComplete: () => {
-          compText.textContent = loveNotesList[compIdx];
-          gsap.to(compText, { opacity: 1, y: 0, duration: 0.2 });
-        }
-      });
-    }
-  });
-
   // =========================================================================
-  // CHAPTER 5: INTERACTIVE BURN-TO-REVEAL WAX PARCHMENT LETTER
+  // CHAPTER 5: BURN-TO-REVEAL WAX PARCHMENT LETTER
   // =========================================================================
   const btnStrikeMatch = container.querySelector('#btnStrikeMatch');
-  const matchstickIcon = container.querySelector('#matchstickIcon');
-  const burnCard = container.querySelector('#burnParchmentCard');
-  const burnCanvas = container.querySelector('#burnOverlayCanvas');
-  let hasBurned = false;
+  const waxStamp = container.querySelector('#waxSealStamp');
+  const waxWrapper = container.querySelector('#waxSealWrapper');
+  const parchmentLetter = container.querySelector('#parchmentLetter');
 
   btnStrikeMatch?.addEventListener('click', () => {
-    if (hasBurned) return;
-    hasBurned = true;
-    startAutoplayAudio();
-    if (navigator.vibrate) navigator.vibrate([40, 50, 60]);
+    if (navigator.vibrate) navigator.vibrate([20, 30, 40]);
+    waxStamp?.classList.add('burned');
 
-    if (matchstickIcon) matchstickIcon.classList.add('lit');
-    if (burnCard) burnCard.classList.add('burning');
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.5 },
+      colors: ['#f59e0b', '#ef4444', '#ffd700']
+    });
 
-    // Ember canvas animation
-    if (burnCanvas) {
-      const bCtx = burnCanvas.getContext('2d');
-      const bw = (burnCanvas.width = burnCanvas.clientWidth || 320);
-      const bh = (burnCanvas.height = burnCanvas.clientHeight || 450);
-      burnCanvas.style.opacity = '1';
-
-      const embers = [];
-      for (let i = 0; i < 45; i++) {
-        embers.push({
-          x: bw / 2 + (Math.random() - 0.5) * 80,
-          y: bh / 2 + (Math.random() - 0.5) * 80,
-          vx: (Math.random() - 0.5) * 3,
-          vy: -Math.random() * 4 - 2,
-          size: Math.random() * 4 + 2,
-          alpha: 1,
-          decay: Math.random() * 0.02 + 0.015,
-          color: ['#f59e0b', '#ef4444', '#fbbf24', '#ff7849'][Math.floor(Math.random() * 4)]
-        });
-      }
-
-      function renderEmbers() {
-        bCtx.clearRect(0, 0, bw, bh);
-        let alive = false;
-        for (let em of embers) {
-          em.x += em.vx;
-          em.y += em.vy;
-          em.alpha -= em.decay;
-          if (em.alpha > 0) {
-            alive = true;
-            bCtx.save();
-            bCtx.globalAlpha = em.alpha;
-            bCtx.fillStyle = em.color;
-            bCtx.beginPath();
-            bCtx.arc(em.x, em.y, em.size, 0, Math.PI * 2);
-            bCtx.fill();
-            bCtx.restore();
-          }
-        }
-        if (alive) requestAnimationFrame(renderEmbers);
-      }
-      requestAnimationFrame(renderEmbers);
-    }
-
-    // Reveal parchment letter
     setTimeout(() => {
-      if (burnCard) burnCard.classList.add('revealed');
-    }, 600);
+      if (waxWrapper) waxWrapper.style.display = 'none';
+      if (parchmentLetter) parchmentLetter.classList.add('visible');
+    }, 700);
   });
 
   // =========================================================================
@@ -941,12 +918,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const lanternField = container.querySelector('#floatingLanternField');
   const btnMoreLanterns = container.querySelector('#btnReleaseMoreLanterns');
 
-  function spawnLantern() {
+  function spawnOneLantern() {
     if (!lanternField) return;
     const l = document.createElement('div');
     l.className = 'twilight-lantern';
     const startX = Math.random() * 85 + 5;
-    const duration = Math.random() * 6 + 7;
+    const duration = Math.random() * 5 + 7;
     const scale = Math.random() * 0.4 + 0.8;
 
     l.style.left = `${startX}%`;
@@ -965,21 +942,20 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }, duration * 1000);
   }
 
-  // Initial peaceful lanterns
-  for (let i = 0; i < 6; i++) {
-    setTimeout(spawnLantern, i * 1100);
+  function spawnLanternBatch(count = 4) {
+    for (let i = 0; i < count; i++) {
+      setTimeout(spawnOneLantern, i * 400);
+    }
   }
 
   btnMoreLanterns?.addEventListener('click', () => {
     if (navigator.vibrate) navigator.vibrate(25);
-    for (let i = 0; i < 8; i++) {
-      setTimeout(spawnLantern, i * 250);
-    }
+    spawnLanternBatch(6);
     confetti({
       particleCount: 50,
-      spread: 60,
-      origin: { y: 0.7 },
-      colors: ['#ffd700', '#ff69b4', '#ff1493', '#fff0f5']
+      spread: 70,
+      origin: { y: 0.65 },
+      colors: ['#ffd700', '#ff69b4', '#fbcfe8', '#fef08a']
     });
   });
 }
