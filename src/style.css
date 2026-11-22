@@ -9509,3 +9509,131 @@ svg {
     flex: 1;
   }
 }
+
+
+/* ============================================================ */
+/* BLOSSOM ACCURATE SMOOTH ANIMATIONS & PHYSICAL FEEDBACK       */
+/* ============================================================ */
+
+/* Scene 0 Flower Bloom & Ripple */
+.blossom-flower-trigger {
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.blossom-flower-trigger.blossom-clicked-bloom {
+  animation: bloomBurst 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bloomBurst {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.36) rotate(14deg); filter: drop-shadow(0 0 35px #f43f5e); }
+  70% { transform: scale(0.96) rotate(-4deg); }
+  100% { transform: scale(1.1) rotate(0); opacity: 0.9; }
+}
+
+.blossom-glow-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 2px solid rgba(244, 114, 182, 0.45);
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.3);
+  pointer-events: none;
+  animation: ringPulseGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes ringPulseGlow {
+  0%, 100% { transform: scale(0.95); opacity: 0.4; }
+  50% { transform: scale(1.12); opacity: 0.85; }
+}
+
+/* Scene 5 Cake Bite Indent */
+.cake-sponge-stack.cake-bitten {
+  clip-path: polygon(0 0, 78% 0, 74% 20%, 82% 38%, 73% 55%, 80% 72%, 72% 88%, 79% 100%, 0 100%);
+  transition: clip-path 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.candle-item.blown .candle-smoke {
+  display: block;
+  animation: smokeRiseCurling 0.95s ease-out forwards;
+}
+
+@keyframes smokeRiseCurling {
+  0% { opacity: 0.9; transform: translateY(0) scale(0.5) rotate(0deg); }
+  45% { opacity: 0.6; transform: translateY(-16px) scale(1) rotate(14deg); }
+  100% { opacity: 0; transform: translateY(-36px) scale(1.6) rotate(-22deg); }
+}
+
+/* Scene 7 Wishing Tree Floating Orbs */
+.tree-floating-wish-orb {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #fbcfe8 45%, #f43f5e 100%);
+  box-shadow: 0 0 20px 6px rgba(244, 114, 182, 0.95), inset 0 0 8px rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  animation: orbFloatUp 1.1s cubic-bezier(0.18, 0.8, 0.25, 1) forwards;
+  z-index: 15;
+}
+
+@keyframes orbFloatUp {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 1; }
+  50% { transform: translate(-14px, -65px) scale(1.4); opacity: 0.95; }
+  100% { transform: translate(18px, -150px) scale(0.3); opacity: 0; }
+}
+
+.tree-node-blossom.bloomed .node-sakura-icon {
+  animation: nodeSakuraBloom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes nodeSakuraBloom {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.45) rotate(25deg); filter: drop-shadow(0 0 20px #f43f5e); }
+  100% { transform: scale(1.2) rotate(12deg); filter: drop-shadow(0 0 12px #f43f5e); }
+}
+
+/* Scene 9 Constellation Shooting Star */
+.shooting-star-streak {
+  position: absolute;
+  top: 10%;
+  left: -25%;
+  width: 160px;
+  height: 2.5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(254, 240, 138, 0.6) 40%, #ffffff 100%);
+  transform: rotate(-32deg);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 12;
+  border-radius: 999px;
+  filter: drop-shadow(0 0 8px #fef08a);
+}
+
+.shooting-star-streak.active {
+  animation: shootingStarFly 1.1s cubic-bezier(0.1, 0.85, 0.2, 1) forwards;
+}
+
+@keyframes shootingStarFly {
+  0% { transform: translate(0, 0) rotate(-32deg); opacity: 1; }
+  100% { transform: translate(520px, 340px) rotate(-32deg); opacity: 0; }
+}
+
+/* Scene 11 Wax Seal Cracking & Letter Emergence */
+.wax-seal-button.cracked {
+  animation: waxCrackPop 0.45s ease-out forwards;
+}
+
+@keyframes waxCrackPop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.3) rotate(-10deg); filter: drop-shadow(0 0 20px rgba(225, 29, 72, 0.9)); }
+  100% { transform: scale(0.8); opacity: 0.15; pointer-events: none; }
+}
+
+.envelope-letter-preview.letter-slide-out {
+  animation: letterSlideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes letterSlideUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-80px); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22); }
+}

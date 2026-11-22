@@ -522,11 +522,18 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     }
   });
 
+  let sceneCleanup = null;
+
   function goToScene(index) {
     if (isTransitioning) return;
     isTransitioning = true;
     currentScene = index;
     backBtn.style.visibility = (currentScene > 0 && currentScene < 11) ? 'visible' : 'hidden';
+
+    if (sceneCleanup) {
+      try { sceneCleanup(); } catch (_) {}
+      sceneCleanup = null;
+    }
 
     stage.style.transition = 'opacity 0.22s cubic-bezier(0.25, 1, 0.5, 1), transform 0.22s cubic-bezier(0.25, 1, 0.5, 1)';
     stage.style.opacity = '0';
@@ -595,16 +602,20 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     stage.innerHTML = `
       <div class="blossom-center-flow">
         <div class="blossom-flower-trigger" id="blossomTrigger" role="button" aria-label="Touch the blossom">
-          <svg class="blossom-svg-pulse" viewBox="0 0 100 100" width="120" height="120">
+          <svg class="blossom-svg-pulse" viewBox="0 0 100 100" width="124" height="124">
             <defs>
               <radialGradient id="sakuraGrad" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stop-color="#fff0f3" stop-opacity="0.95"/>
-                <stop offset="45%" stop-color="#fbcfe8" stop-opacity="0.85"/>
-                <stop offset="85%" stop-color="#f472b6" stop-opacity="0.75"/>
-                <stop offset="100%" stop-color="#fb7185" stop-opacity="0.6"/>
+                <stop offset="45%" stop-color="#fbcfe8" stop-opacity="0.9"/>
+                <stop offset="85%" stop-color="#f472b6" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#fb7185" stop-opacity="0.75"/>
               </radialGradient>
+              <filter id="sakuraSoftGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
             </defs>
-            <g>
+            <g filter="url(#sakuraSoftGlow)">
               <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#sakuraGrad)"/>
               <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#sakuraGrad)" transform="rotate(72 50 50)"/>
               <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#sakuraGrad)" transform="rotate(144 50 50)"/>
@@ -614,6 +625,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
               <circle cx="50" cy="50" r="3.5" fill="#fef08a"/>
             </g>
           </svg>
+          <div class="blossom-glow-ring"></div>
         </div>
         <p class="blossom-calligraphy-text">${data.blossomPrompt || 'Touch the blossom'}</p>
       </div>
@@ -622,64 +634,97 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
     const trigger = stage.querySelector('#blossomTrigger');
     const explodeCanvas = stage.querySelector('#blossomExplodeCanvas');
+    let animId = null;
+    let clicked = false;
+
+    sceneCleanup = () => {
+      if (animId) cancelAnimationFrame(animId);
+    };
 
     trigger.addEventListener('click', () => {
+      if (clicked) return;
+      clicked = true;
       playSound('blossom');
       startAutoplayAudio();
 
+      trigger.classList.add('blossom-clicked-bloom');
+
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      explodeCanvas.width = viewport.clientWidth * dpr;
-      explodeCanvas.height = viewport.clientHeight * dpr;
+      const cWidth = viewport.clientWidth;
+      const cHeight = viewport.clientHeight;
+      explodeCanvas.width = cWidth * dpr;
+      explodeCanvas.height = cHeight * dpr;
       const expCtx = explodeCanvas.getContext('2d');
       expCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       explodeCanvas.style.opacity = '1';
 
-      const flowerColors = ['#f43f5e', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#fbbf24', '#ffffff'];
-      const particles = [];
-      const originX = trigger.getBoundingClientRect().left + 60;
-      const originY = trigger.getBoundingClientRect().top + 60;
+      // Accurately compute origin in canvas space
+      const tRect = trigger.getBoundingClientRect();
+      const cRect = explodeCanvas.getBoundingClientRect();
+      const originX = tRect.left - cRect.left + tRect.width / 2;
+      const originY = tRect.top - cRect.top + tRect.height / 2;
 
-      for (let i = 0; i < 90; i++) {
+      const petalColors = ['#f43f5e', '#ec4899', '#fb7185', '#f472b6', '#fda4af', '#fff0f3'];
+      const particles = [];
+
+      for (let i = 0; i < 75; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 12 + 4;
+        const speed = Math.random() * 9 + 3;
         particles.push({
-          x: originX, y: originY,
-          vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-          size: Math.random() * 16 + 10,
+          x: originX,
+          y: originY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 12 + 8,
           rot: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * 0.1,
-          color: flowerColors[Math.floor(Math.random() * flowerColors.length)],
+          rotSpeed: (Math.random() - 0.5) * 0.12,
+          color: petalColors[Math.floor(Math.random() * petalColors.length)],
           alpha: 1,
-          decay: Math.random() * 0.015 + 0.012
+          decay: Math.random() * 0.016 + 0.012,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: Math.random() * 0.08 + 0.04
         });
       }
 
-      function animateExplosion() {
-        expCtx.clearRect(0, 0, viewport.clientWidth, viewport.clientHeight);
-        let alive = false;
+      function renderFrame() {
+        expCtx.clearRect(0, 0, cWidth, cHeight);
+        let anyAlive = false;
+
         for (let p of particles) {
-          p.x += p.vx; p.y += p.vy;
-          p.vx *= 0.95; p.vy *= 0.95;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.96;
+          p.vy = p.vy * 0.96 + 0.06; // gentle natural gravity
           p.rot += p.rotSpeed;
+          p.wobble += p.wobbleSpeed;
           p.alpha -= p.decay;
+
           if (p.alpha > 0) {
-            alive = true;
+            anyAlive = true;
             expCtx.save();
             expCtx.translate(p.x, p.y);
             expCtx.rotate(p.rot);
-            expCtx.globalAlpha = p.alpha;
+            expCtx.scale(Math.cos(p.wobble), 1); // 3D flutter
+            expCtx.globalAlpha = Math.max(0, p.alpha);
+
+            // True curved sakura petal shape
             expCtx.beginPath();
-            expCtx.arc(0, 0, p.size, 0, Math.PI * 2);
+            expCtx.moveTo(0, p.size);
+            expCtx.bezierCurveTo(-p.size * 0.7, p.size * 0.4, -p.size * 0.75, -p.size * 0.5, 0, -p.size);
+            expCtx.bezierCurveTo(p.size * 0.75, -p.size * 0.5, p.size * 0.7, p.size * 0.4, 0, p.size);
             expCtx.fillStyle = p.color;
             expCtx.fill();
             expCtx.restore();
           }
         }
-        if (alive) requestAnimationFrame(animateExplosion);
-        else goToScene(1);
+
+        if (anyAlive) {
+          animId = requestAnimationFrame(renderFrame);
+        }
       }
-      animateExplosion();
-      setTimeout(() => goToScene(1), 900);
+
+      animId = requestAnimationFrame(renderFrame);
+      setTimeout(() => goToScene(1), 750);
     });
   }
 
@@ -735,14 +780,21 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       if (currentPin === correctPin || currentPin === "1234") {
         playSound('unlock');
         ripple.classList.add('active');
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ['#f43f5e', '#ec4899', '#fbcfe8', '#fbbf24']
+        });
         setTimeout(() => goToScene(2), 650);
       } else {
         dotsContainer.classList.add('shake');
+        playSound('puff');
         setTimeout(() => {
           dotsContainer.classList.remove('shake');
           currentPin = "";
           updateDots();
-        }, 400);
+        }, 450);
       }
     }
 
@@ -788,7 +840,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   }
 
   // ==========================================
-  // SCENE 3: Cupid's Sakura Love Archery Mini-Game (NEW!)
+  // SCENE 3: Cupid's Sakura Love Archery Mini-Game
   // ==========================================
   function renderScene3_CupidArchery() {
     stage.className = "blossom-stage scene-cupid-archery";
@@ -809,7 +861,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           </svg>
         </div>
         <div class="cupid-heart-balloon" id="cupidHeart">
-          <svg viewBox="0 0 100 92" width="76" height="70">
+          <svg viewBox="0 0 100 92" width="78" height="72">
             <defs>
               <radialGradient id="sakuraHeartGrad" cx="35%" cy="30%" r="75%">
                 <stop offset="0%" stop-color="#fff0f3" />
@@ -875,11 +927,12 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
     let isDrawing = false;
     let startY = 0;
+    let startX = 0;
     let currentPull = 0;
     const maxPull = 80;
     let arrowFired = false;
 
-    function updateBowTension(pull) {
+    function updateBowTension(pull, angle = 0) {
       const norm = Math.min(1, Math.max(0, pull / maxPull));
       const bend = norm * 26; // limbs bend downward and inward
       const x1 = 34 + bend * 0.7;
@@ -908,11 +961,12 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         nock.setAttribute('cy', nockY);
       }
       if (arrow) {
-        arrow.style.transform = `translateX(-50%) translateY(${pull * 1.15}px)`;
+        arrow.style.transform = `translateX(-50%) translateY(${pull * 1.15}px) rotate(${angle}deg)`;
       }
       if (aimGuide) {
         aimGuide.style.opacity = (0.2 + norm * 0.8).toFixed(2);
         aimGuide.style.height = `${140 + norm * 100}px`;
+        aimGuide.style.transform = `rotate(${angle * 0.7}deg)`;
       }
     }
 
@@ -921,6 +975,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       isDrawing = true;
       const pt = e.touches ? e.touches[0] : e;
       startY = pt.clientY;
+      startX = pt.clientX;
       playSound('bow');
     }
 
@@ -928,31 +983,38 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       if (!isDrawing || arrowFired) return;
       const pt = e.touches ? e.touches[0] : e;
       currentPull = Math.max(0, Math.min(maxPull, pt.clientY - startY));
-      updateBowTension(currentPull);
+      const diffX = pt.clientX - startX;
+      const aimAngle = Math.max(-12, Math.min(12, (diffX / 80) * 12));
+      updateBowTension(currentPull, aimAngle);
     }
 
     function onEnd() {
       if (!isDrawing || arrowFired) return;
       isDrawing = false;
 
-      if (currentPull > 28) {
-        // Fire arrow with high velocity!
+      if (currentPull > 26) {
+        // Fire arrow accurately into the heart!
         arrowFired = true;
         playSound('shot');
 
-        // Spring bow back and recoil
-        updateBowTension(0);
+        // Spring bow limbs back and twang recoil
+        updateBowTension(0, 0);
         bowWrap.classList.add('bow-twang-recoil');
         setTimeout(() => bowWrap.classList.remove('bow-twang-recoil'), 350);
 
-        arrow.style.transition = 'transform 0.25s cubic-bezier(0.12, 0.9, 0.2, 1)';
-        arrow.style.transform = 'translateX(-50%) translateY(-480px) scale(0.95)';
+        // Dynamically compute EXACT distance from arrow tip to heart target center
+        const targetRect = targetHeart.getBoundingClientRect();
+        const arrowRect = arrow.getBoundingClientRect();
+        const flightY = arrowRect.top - targetRect.top - 14;
+
+        arrow.style.transition = 'transform 0.24s cubic-bezier(0.12, 0.9, 0.2, 1)';
+        arrow.style.transform = `translateX(-50%) translateY(-${flightY}px) scale(0.95)`;
 
         setTimeout(() => {
           playSound('hit');
           targetHeart.classList.add('heart-hit-burst');
 
-          // Append animated shockwave ripple ring
+          // Append radiant shockwave ring
           const ring = document.createElement('div');
           ring.className = 'cupid-shockwave-ring';
           targetHeart.appendChild(ring);
@@ -961,8 +1023,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           hintText.style.color = "#e11d48";
 
           confetti({
-            particleCount: 85,
-            spread: 75,
+            particleCount: 90,
+            spread: 80,
             origin: { y: 0.35 },
             colors: ['#e11d48', '#f43f5e', '#fb7185', '#fda4af', '#fbbf24', '#ffffff']
           });
@@ -970,9 +1032,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           setTimeout(() => goToScene(4), 1200);
         }, 240);
       } else {
-        // Spring back
+        // Elastic spring back
         arrow.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        updateBowTension(0);
+        updateBowTension(0, 0);
       }
     }
 
@@ -1010,6 +1072,11 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
     const flameBtn = stage.querySelector('#flameTrigger');
     const burnCanvas = stage.querySelector('#burnOverlayCanvas');
+    let burnAnimId = null;
+
+    sceneCleanup = () => {
+      if (burnAnimId) cancelAnimationFrame(burnAnimId);
+    };
 
     flameBtn.addEventListener('click', () => {
       playSound('puff');
@@ -1018,37 +1085,76 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       const bCtx = burnCanvas.getContext('2d');
       burnCanvas.style.opacity = '1';
 
+      // Accurately compute relative center in canvas coordinates
       const rect = flameBtn.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      let radius = 10;
-      const maxRadius = Math.hypot(burnCanvas.width, burnCanvas.height) * 1.1;
+      const bRect = burnCanvas.getBoundingClientRect();
+      const centerX = rect.left - bRect.left + rect.width / 2;
+      const centerY = rect.top - bRect.top + rect.height / 2;
+      let radius = 12;
+      const maxRadius = Math.hypot(burnCanvas.width, burnCanvas.height) * 1.05;
+
+      // Fiery ember spark particles
+      const embers = [];
+      for (let i = 0; i < 40; i++) {
+        embers.push({
+          x: centerX + (Math.random() - 0.5) * 40,
+          y: centerY + (Math.random() - 0.5) * 40,
+          vx: (Math.random() - 0.5) * 6,
+          vy: -Math.random() * 7 - 2,
+          radius: Math.random() * 3.5 + 1.5,
+          color: ['#f97316', '#fbbf24', '#ef4444', '#ffedd5'][Math.floor(Math.random() * 4)],
+          alpha: 1,
+          decay: Math.random() * 0.022 + 0.015
+        });
+      }
 
       function animateBurn() {
-        radius += 24;
+        radius += 20;
         bCtx.clearRect(0, 0, burnCanvas.width, burnCanvas.height);
         bCtx.save();
         bCtx.fillStyle = '#fff1f2';
         bCtx.fillRect(0, 0, burnCanvas.width, burnCanvas.height);
+
+        // Destination-out hole
         bCtx.globalCompositeOperation = 'destination-out';
         bCtx.beginPath();
         bCtx.arc(centerX, centerY, radius, 0, Math.PI * 2);
         bCtx.fill();
+
+        // Glowing fiery ember perimeter
         bCtx.globalCompositeOperation = 'source-over';
         bCtx.beginPath();
         bCtx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-        bCtx.strokeStyle = 'rgba(255, 69, 0, 0.95)';
+        bCtx.strokeStyle = 'rgba(249, 115, 22, 0.95)';
         bCtx.lineWidth = 14;
+        bCtx.shadowColor = '#ea580c';
+        bCtx.shadowBlur = 20;
         bCtx.stroke();
+
+        // Draw floating sparks
+        for (let em of embers) {
+          em.x += em.vx;
+          em.y += em.vy;
+          em.alpha -= em.decay;
+          if (em.alpha > 0) {
+            bCtx.beginPath();
+            bCtx.arc(em.x, em.y, em.radius, 0, Math.PI * 2);
+            bCtx.fillStyle = em.color;
+            bCtx.globalAlpha = em.alpha;
+            bCtx.shadowColor = em.color;
+            bCtx.shadowBlur = 10;
+            bCtx.fill();
+          }
+        }
         bCtx.restore();
 
         if (radius < maxRadius) {
-          requestAnimationFrame(animateBurn);
+          burnAnimId = requestAnimationFrame(animateBurn);
         } else {
           goToScene(5);
         }
       }
-      animateBurn();
+      burnAnimId = requestAnimationFrame(animateBurn);
     });
   }
 
@@ -1077,7 +1183,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
             `).join('')}
           </div>
 
-          <div class="cake-sponge-stack">
+          <div class="cake-sponge-stack" id="cakeSponge">
             <div class="cake-berries-row">
               <span>🍓</span><span>🍓</span><span>🍓</span><span>🍓</span><span>🍓</span>
             </div>
@@ -1102,6 +1208,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
     const cakeHint = stage.querySelector('#cakeHint');
     const biteBtn = stage.querySelector('#btnTakeBite');
+    const cakeSponge = stage.querySelector('#cakeSponge');
 
     stage.querySelectorAll('.candle-item').forEach(cEl => {
       cEl.addEventListener('click', () => {
@@ -1117,9 +1224,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
             cakeHint.innerHTML = "✨ All candles blown! Your secret wish is coming true! 💖";
             cakeHint.style.color = "#e11d48";
             confetti({
-              particleCount: 80,
-              spread: 70,
-              origin: { y: 0.6 },
+              particleCount: 85,
+              spread: 75,
+              origin: { y: 0.58 },
               colors: ['#f43f5e', '#ec4899', '#fbcfe8', '#fbbf24', '#ffffff']
             });
             if (biteBtn) {
@@ -1133,7 +1240,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     biteBtn?.addEventListener('click', () => {
       playSound('chomp');
       biteBtn.innerHTML = "✨ Delicious! 🍓";
-      confetti({ particleCount: 30, spread: 50 });
+      cakeSponge.classList.add('cake-bitten');
+      confetti({
+        particleCount: 40,
+        spread: 55,
+        origin: { y: 0.65 },
+        colors: ['#ef4444', '#fbcfe8', '#fbbf24']
+      });
     });
 
     stage.querySelector('#btnNextToCards').addEventListener('click', () => {
@@ -1143,7 +1256,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   }
 
   // ==========================================
-  // SCENE 6: 3D Swipe Cards
+  // SCENE 6: 3D Swipe Cards (Buttery Smooth Physical Card Toss)
   // ==========================================
   function renderScene6_Cards() {
     stage.className = "blossom-stage scene-5-cards";
@@ -1159,7 +1272,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
                 <div class="card-inner-frame">
                   <div class="card-memory-badge">✨ Memory #${i+1}</div>
                   <img src="${c.image}" alt="Memory photo ${i+1}" loading="lazy" />
-                  <div class="card-heart-hint">Tap twice ♡</div>
+                  <div class="card-heart-hint">Tap or swipe ♡</div>
                   ${c.caption ? `<div class="card-caption">${c.caption}</div>` : ''}
                 </div>
               </div>
@@ -1180,6 +1293,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     const deck = stage.querySelector('#cardsDeck');
     const dots = stage.querySelectorAll('.deck-dot');
     const cardElements = Array.from(deck.querySelectorAll('.swipe-photo-card'));
+    let isFlicking = false;
 
     function updateDeck() {
       cardElements.forEach((card, idx) => {
@@ -1188,15 +1302,19 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         } else {
           card.style.display = 'block';
           const offset = idx - activeCardIndex;
+          card.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease';
           if (offset === 0) {
             card.style.transform = 'translate3d(0, 0, 0) scale(1) rotate(0deg)';
             card.style.opacity = '1';
+            card.style.pointerEvents = 'auto';
           } else if (offset === 1) {
             card.style.transform = 'translate3d(12px, 8px, -20px) scale(0.96) rotate(4deg)';
             card.style.opacity = '0.9';
+            card.style.pointerEvents = 'none';
           } else {
             card.style.transform = 'translate3d(0, 18px, -40px) scale(0.9)';
             card.style.opacity = '0.7';
+            card.style.pointerEvents = 'none';
           }
         }
       });
@@ -1204,12 +1322,72 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     }
     updateDeck();
 
-    cardElements.forEach(card => {
-      card.addEventListener('click', () => {
-        playSound('blossom');
+    function tossCard(direction = 1) {
+      if (isFlicking || cardElements.length <= 1) return;
+      isFlicking = true;
+      playSound('blossom');
+
+      const topCard = cardElements[activeCardIndex];
+      topCard.style.transition = 'transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.32s ease';
+      topCard.style.transform = `translate3d(${direction * 140}%, -30px, 0) rotate(${direction * 24}deg)`;
+      topCard.style.opacity = '0';
+      topCard.style.pointerEvents = 'none';
+
+      setTimeout(() => {
         activeCardIndex = (activeCardIndex + 1) % cardElements.length;
         updateDeck();
-      });
+        isFlicking = false;
+      }, 280);
+    }
+
+    // Touch swipe gesture physics
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isDraggingCard = false;
+
+    deck.addEventListener('touchstart', (e) => {
+      if (isFlicking) return;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      isDraggingCard = true;
+    }, { passive: true });
+
+    deck.addEventListener('touchmove', (e) => {
+      if (!isDraggingCard || isFlicking) return;
+      const t = e.touches[0];
+      const diffX = t.clientX - touchStartX;
+      const diffY = t.clientY - touchStartY;
+      const activeCard = cardElements[activeCardIndex];
+      if (activeCard) {
+        const rot = (diffX / 200) * 22;
+        activeCard.style.transition = 'none';
+        activeCard.style.transform = `translate3d(${diffX}px, ${diffY * 0.3}px, 0) rotate(${rot}deg)`;
+      }
+    }, { passive: true });
+
+    deck.addEventListener('touchend', (e) => {
+      if (!isDraggingCard || isFlicking) return;
+      isDraggingCard = false;
+      const t = e.changedTouches[0];
+      const diffX = t.clientX - touchStartX;
+      if (Math.abs(diffX) > 60) {
+        tossCard(diffX > 0 ? 1 : -1);
+      } else {
+        // Spring back
+        const activeCard = cardElements[activeCardIndex];
+        if (activeCard) {
+          activeCard.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          activeCard.style.transform = 'translate3d(0, 0, 0) scale(1) rotate(0deg)';
+        }
+      }
+    });
+
+    // Tap fallback
+    deck.addEventListener('click', (e) => {
+      if (!isDraggingCard && !isFlicking) {
+        tossCard(1);
+      }
     });
 
     stage.querySelector('#btnNextToTree').addEventListener('click', () => {
@@ -1219,7 +1397,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   }
 
   // ==========================================
-  // SCENE 7: 3D Blossom Wishing Tree & Love Whispers (NEW!)
+  // SCENE 7: 3D Blossom Wishing Tree & Love Whispers
   // ==========================================
   function renderScene7_BlossomTree() {
     stage.className = "blossom-stage scene-blossom-tree";
@@ -1275,7 +1453,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         ].map(node => `
           <div class="tree-node-blossom" style="left: ${node.x}px; top: ${node.y}px;" data-widx="${node.idx}">
             <svg class="node-sakura-icon" viewBox="0 0 40 40">
-              <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,0.7)" />
+              <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,0.75)" />
               <path d="M20 20 C18 10 10 4 20 0 C30 4 22 10 20 20" fill="#f43f5e" />
               <path d="M20 20 C18 10 10 4 20 0 C30 4 22 10 20 20" fill="#f43f5e" transform="rotate(72 20 20)" />
               <path d="M20 20 C18 10 10 4 20 0 C30 4 22 10 20 20" fill="#f43f5e" transform="rotate(144 20 20)" />
@@ -1298,6 +1476,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       </button>
     `;
 
+    const treeStage = stage.querySelector('#treeStage');
     const popup = stage.querySelector('#whisperPopup');
     const popupText = stage.querySelector('#whisperText');
     const countBadge = stage.querySelector('#whisperCount');
@@ -1310,14 +1489,22 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         discovered.add(idx);
         node.classList.add('bloomed');
 
+        // Ascending glowing wish orb
+        const orb = document.createElement('div');
+        orb.className = 'tree-floating-wish-orb';
+        orb.style.left = `${node.offsetLeft + 14}px`;
+        orb.style.top = `${node.offsetTop + 14}px`;
+        treeStage.appendChild(orb);
+        setTimeout(() => orb.remove(), 1100);
+
         popupText.textContent = `"${whispers[idx % whispers.length]}"`;
         countBadge.textContent = `${discovered.size} / 6 DISCOVERED ✨`;
         popup.classList.add('visible');
 
         if (discovered.size >= 4) {
           confetti({
-            particleCount: 50,
-            spread: 60,
+            particleCount: 55,
+            spread: 65,
             origin: { y: 0.5 },
             colors: ['#f472b6', '#ffd1dc', '#ffffff']
           });
@@ -1375,6 +1562,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
     const lampWrap = stage.querySelector('#lampWrap');
     const lampGlow = stage.querySelector('#lampGlow');
+    const lampGlobe = stage.querySelector('#lampGlobe');
     const pullChain = stage.querySelector('#pullChain');
     const pullBall = stage.querySelector('#pullBall');
     const lampPrompt = stage.querySelector('#lampPrompt');
@@ -1387,7 +1575,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
         lampGlow.style.opacity = '0';
         lampPrompt.innerHTML = "✨ You brought the twilight stars to life...";
         nextBtn.style.visibility = 'visible';
-        setTimeout(() => goToScene(9), 1800);
+        setTimeout(() => goToScene(9), 1600);
       } else {
         lampWrap.classList.remove('twilight-dark');
         lampGlow.style.opacity = '1';
@@ -1395,15 +1583,60 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       }
     }
 
-    pullBall.onclick = () => {
-      pullChain.style.transition = 'transform 0.2s ease';
-      pullChain.style.transform = 'translateY(50px)';
-      playSound('click');
-      setTimeout(() => {
-        pullChain.style.transition = 'transform 0.4s ease';
-        pullChain.style.transform = 'translateY(0px)';
+    // Interactive string drag physics
+    let isDraggingCord = false;
+    let cordStartY = 0;
+    let cordDragY = 0;
+
+    function onCordStart(e) {
+      isDraggingCord = true;
+      const pt = e.touches ? e.touches[0] : e;
+      cordStartY = pt.clientY;
+    }
+
+    function onCordMove(e) {
+      if (!isDraggingCord) return;
+      const pt = e.touches ? e.touches[0] : e;
+      cordDragY = Math.max(0, Math.min(65, pt.clientY - cordStartY));
+      pullChain.style.transition = 'none';
+      pullChain.style.transform = `translateY(${cordDragY}px)`;
+      lampGlobe.style.transform = `translateY(${cordDragY * 0.16}px)`;
+    }
+
+    function onCordEnd() {
+      if (!isDraggingCord) return;
+      isDraggingCord = false;
+      pullChain.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      lampGlobe.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      pullChain.style.transform = 'translateY(0px)';
+      lampGlobe.style.transform = 'translateY(0px)';
+
+      if (cordDragY > 24) {
+        playSound('click');
         toggleLamp();
-      }, 200);
+      }
+      cordDragY = 0;
+    }
+
+    pullBall.addEventListener('mousedown', onCordStart);
+    window.addEventListener('mousemove', onCordMove);
+    window.addEventListener('mouseup', onCordEnd);
+
+    pullBall.addEventListener('touchstart', onCordStart, { passive: true });
+    window.addEventListener('touchmove', onCordMove, { passive: true });
+    window.addEventListener('touchend', onCordEnd);
+
+    pullBall.onclick = () => {
+      if (cordDragY === 0) {
+        pullChain.style.transition = 'transform 0.2s ease';
+        pullChain.style.transform = 'translateY(45px)';
+        playSound('click');
+        setTimeout(() => {
+          pullChain.style.transition = 'transform 0.4s ease';
+          pullChain.style.transform = 'translateY(0px)';
+          toggleLamp();
+        }, 180);
+      }
     };
 
     nextBtn.addEventListener('click', () => {
@@ -1413,7 +1646,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   }
 
   // ==========================================
-  // SCENE 9: Twilight Constellations & Make-a-Wish Star (NEW!)
+  // SCENE 9: Twilight Constellations & Make-a-Wish Star
   // ==========================================
   function renderScene9_Constellation() {
     stage.className = "blossom-stage scene-twilight-stars";
@@ -1425,22 +1658,25 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
       <!-- Star Sky Box -->
       <div class="constellation-sky-box" id="skyBox">
-        <svg class="constellation-svg-net" id="starNet">
-          <path id="constellationLine" d="" fill="none" stroke="#f472b6" stroke-width="2.5" stroke-dasharray="4 4" />
+        <svg class="constellation-svg-net" id="starNet" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path id="constellationLine" d="" fill="none" stroke="#f472b6" stroke-width="1.8" stroke-dasharray="3 3" />
         </svg>
 
-        <!-- 5 Constellation Stars forming a celestial heart -->
+        <!-- 5 Constellation Stars forming a celestial heart (Responsive Percentage Coordinates) -->
         ${[
-          { x: 190, y: 240, id: 0 },
-          { x: 90,  y: 130, id: 1 },
-          { x: 140, y: 60,  id: 2 },
-          { x: 240, y: 60,  id: 3 },
-          { x: 290, y: 130, id: 4 }
+          { x: 50, y: 74, id: 0 },
+          { x: 25, y: 44, id: 1 },
+          { x: 38, y: 20, id: 2 },
+          { x: 62, y: 20, id: 3 },
+          { x: 75, y: 44, id: 4 }
         ].map(s => `
-          <button class="constellation-star-btn" style="left: ${s.x}px; top: ${s.y}px;" data-sid="${s.id}">
+          <button class="constellation-star-btn" style="left: ${s.x}%; top: ${s.y}%;" data-sid="${s.id}">
             <div class="star-point-glow"></div>
           </button>
         `).join('')}
+
+        <!-- Shooting Star -->
+        <div class="shooting-star-streak" id="shootingStar"></div>
       </div>
 
       <div style="display:flex; flex-direction:column; align-items:center; gap:12px; z-index:10;">
@@ -1457,14 +1693,15 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     const linePath = stage.querySelector('#constellationLine');
     const starHint = stage.querySelector('#starHint');
     const btnWish = stage.querySelector('#btnShootStar');
+    const shootingStar = stage.querySelector('#shootingStar');
     let connectedStars = [];
 
-    const starCoords = [
-      { x: 190, y: 240 },
-      { x: 90,  y: 130 },
-      { x: 140, y: 60 },
-      { x: 240, y: 60 },
-      { x: 290, y: 130 }
+    const starPercentCoords = [
+      { x: 50, y: 74 },
+      { x: 25, y: 44 },
+      { x: 38, y: 20 },
+      { x: 62, y: 20 },
+      { x: 75, y: 44 }
     ];
 
     starBtns.forEach(btn => {
@@ -1475,21 +1712,28 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           btn.classList.add('connected');
           playSound('blossom');
 
-          // Draw SVG line
+          // Draw SVG line in 0-100 coordinate space
           let d = "";
           connectedStars.forEach((id, i) => {
-            const pt = starCoords[id];
+            const pt = starPercentCoords[id];
             d += (i === 0 ? `M ${pt.x} ${pt.y}` : ` L ${pt.x} ${pt.y}`);
           });
+
           if (connectedStars.length === 5) {
             d += ` Z`; // Close the heart!
             linePath.setAttribute('stroke', '#ec4899');
-            linePath.setAttribute('stroke-width', '3');
+            linePath.setAttribute('stroke-width', '2.5');
             linePath.removeAttribute('stroke-dasharray');
+            linePath.style.filter = 'drop-shadow(0 0 10px #f472b6)';
             starHint.innerHTML = "✨ Our celestial heart shines brightly in the cosmos! 💖";
             starHint.style.color = "#f472b6";
             btnWish.style.display = 'inline-flex';
             playSound('unlock');
+
+            // Trigger shooting star streak across sky
+            if (shootingStar) {
+              shootingStar.classList.add('active');
+            }
           }
           linePath.setAttribute('d', d);
         }
@@ -1500,7 +1744,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       playSound('blossom');
       btnWish.innerHTML = "✨ Wish Sent to the Stars! 💫";
       confetti({
-        particleCount: 70,
+        particleCount: 75,
         spread: 80,
         origin: { y: 0.4 },
         colors: ['#fbcfe8', '#facc15', '#ffffff']
@@ -1515,7 +1759,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   }
 
   // ==========================================
-  // SCENE 10: Golden Holographic Scratch Love Ticket (NEW!)
+  // SCENE 10: Golden Holographic Scratch Love Ticket (High-DPI Continuous Scratch)
   // ==========================================
   function renderScene10_ScratchTicket() {
     stage.className = "blossom-stage scene-scratch-ticket";
@@ -1526,7 +1770,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       </div>
 
       <!-- Scratch Ticket Box -->
-      <div class="scratch-ticket-container">
+      <div class="scratch-ticket-container" id="scratchContainer">
         <!-- Underneath Secret Prize -->
         <div class="scratch-card-underlay">
           <span class="scratch-ticket-badge">★ OFFICIAL VIP BIRTHDAY COUPON ★</span>
@@ -1544,47 +1788,36 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     `;
 
     const canvas = stage.querySelector('#scratchCanvas');
+    const containerEl = stage.querySelector('#scratchContainer');
     const ctx = canvas.getContext('2d');
-    canvas.width = canvas.offsetWidth || 340;
-    canvas.height = canvas.offsetHeight || 220;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    const w = containerEl.clientWidth || 340;
+    const h = containerEl.clientHeight || 220;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
 
     // Fill with Shimmering Golden Scratch Foil
-    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    const grad = ctx.createLinearGradient(0, 0, w, h);
     grad.addColorStop(0, '#fef08a');
     grad.addColorStop(0.3, '#f59e0b');
     grad.addColorStop(0.7, '#d97706');
     grad.addColorStop(1, '#b45309');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, w, h);
 
     // Scratch Card Cover Typography
     ctx.fillStyle = '#78350f';
-    ctx.font = 'bold 15px sans-serif';
+    ctx.font = 'bold 14px "Montserrat", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('✨ SCRATCH HERE TO REVEAL ✨', canvas.width / 2, canvas.height / 2);
+    ctx.fillText('✨ SCRATCH HERE TO REVEAL ✨', w / 2, h / 2);
 
     let isScratching = false;
-    let scratchedPixels = 0;
+    let lastX = 0;
+    let lastY = 0;
+    let scratchedCount = 0;
     let celebrated = false;
-
-    function scratch(x, y) {
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.beginPath();
-      ctx.arc(x, y, 22, 0, Math.PI * 2);
-      ctx.fill();
-
-      scratchedPixels++;
-      if (scratchedPixels > 45 && !celebrated) {
-        celebrated = true;
-        playSound('unlock');
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.5 },
-          colors: ['#f59e0b', '#ec4899', '#ffffff']
-        });
-      }
-    }
 
     function getCoords(e) {
       const rect = canvas.getBoundingClientRect();
@@ -1592,12 +1825,63 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       return { x: pt.clientX - rect.left, y: pt.clientY - rect.top };
     }
 
-    canvas.addEventListener('mousedown', (e) => { isScratching = true; const { x, y } = getCoords(e); scratch(x, y); });
-    window.addEventListener('mousemove', (e) => { if (isScratching) { const { x, y } = getCoords(e); scratch(x, y); } });
+    function doScratch(x, y) {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = 42;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+
+      lastX = x;
+      lastY = y;
+      scratchedCount++;
+
+      if (scratchedCount > 35 && !celebrated) {
+        celebrated = true;
+        playSound('unlock');
+        // Fade remaining foil smoothly
+        canvas.style.transition = 'opacity 0.6s ease';
+        canvas.style.opacity = '0';
+        confetti({
+          particleCount: 85,
+          spread: 75,
+          origin: { y: 0.5 },
+          colors: ['#f59e0b', '#ec4899', '#ffffff', '#fbbf24']
+        });
+      }
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      isScratching = true;
+      const { x, y } = getCoords(e);
+      lastX = x;
+      lastY = y;
+      doScratch(x, y);
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (isScratching) {
+        const { x, y } = getCoords(e);
+        doScratch(x, y);
+      }
+    });
     window.addEventListener('mouseup', () => { isScratching = false; });
 
-    canvas.addEventListener('touchstart', (e) => { isScratching = true; const { x, y } = getCoords(e); scratch(x, y); }, { passive: true });
-    window.addEventListener('touchmove', (e) => { if (isScratching) { const { x, y } = getCoords(e); scratch(x, y); } }, { passive: true });
+    canvas.addEventListener('touchstart', (e) => {
+      isScratching = true;
+      const { x, y } = getCoords(e);
+      lastX = x;
+      lastY = y;
+      doScratch(x, y);
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (isScratching) {
+        const { x, y } = getCoords(e);
+        doScratch(x, y);
+      }
+    }, { passive: true });
     window.addEventListener('touchend', () => { isScratching = false; });
 
     stage.querySelector('#btnNextToLetter').addEventListener('click', () => {
@@ -1620,7 +1904,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
         <div class="wax-envelope-wrap" id="envelopeWrapper">
           <div class="envelope-back"></div>
-          <div class="envelope-letter-preview"></div>
+          <div class="envelope-letter-preview" id="letterPreview"></div>
           <div class="envelope-front"></div>
           <div class="envelope-flap" id="envelopeFlap"></div>
 
@@ -1668,6 +1952,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
 
     const waxBtn = stage.querySelector('#waxSealBtn');
     const flap = stage.querySelector('#envelopeFlap');
+    const letterPreview = stage.querySelector('#letterPreview');
     const modal = stage.querySelector('#letterModal');
     const closeBtn = stage.querySelector('#btnCloseLetter');
     const typedTextEl = stage.querySelector('#typedLetterText');
@@ -1681,6 +1966,10 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       playSound('letter');
       waxBtn.classList.add('cracked');
       flap.classList.add('open');
+
+      if (letterPreview) {
+        letterPreview.classList.add('letter-slide-out');
+      }
 
       setTimeout(() => {
         modal.classList.add('show');
@@ -1697,7 +1986,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
           typedTextEl.innerHTML += (char === '\n' ? '<br/>' : char);
           if (charIdx % 3 === 0) playSound('typewriter');
           charIdx++;
-          setTimeout(typeChar, 24);
+          const delay = (char === '.' || char === '!' || char === '?') ? 140 : (char === ',' ? 60 : 22);
+          setTimeout(typeChar, delay);
         }
       }
       typeChar();
