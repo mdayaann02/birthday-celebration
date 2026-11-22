@@ -853,7 +853,10 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     stage.innerHTML = `
       <div class="cupid-header-wrap">
         <h2 class="cupid-cursive-title">${data.cupidPrompt || "Cupid's Sakura Shot 🏹🌸"}</h2>
-        <p class="cupid-sub-hint" id="cupidHintText">${data.cupidHint || "Pull the bowstring & aim for my heart..."}</p>
+        <p class="cupid-sub-hint" id="cupidHintText">${data.cupidHint || "Pull the bowstring or tap below to strike my heart..."}</p>
+        <button type="button" class="btn-fam-action btn-quick-shoot-cupid" id="btnQuickShoot" style="margin-top:10px; font-size:12px; padding:7px 18px; border-radius:20px; background:rgba(225,29,72,0.18); border:1.5px solid #e11d48; color:#fff; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(225,29,72,0.3); transition:all 0.2s ease;">
+          🏹 Tap to Shoot Directly 🎯
+        </button>
       </div>
 
       <!-- Floating Winged Heart Target -->
@@ -994,49 +997,64 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       updateBowTension(currentPull, aimAngle);
     }
 
+    function shootArrow() {
+      if (arrowFired) return;
+      arrowFired = true;
+      playSound('shot');
+
+      // 1. Reset bow tension with a crisp snap recoil
+      updateBowTension(0, 0);
+      bowWrap.classList.add('bow-twang-recoil');
+      setTimeout(() => bowWrap.classList.remove('bow-twang-recoil'), 350);
+
+      // 2. Measure exact center coordinates of the floating heart
+      const targetHeartElem = stage.querySelector('#cupidHeart') || targetHeart;
+      const targetRect = targetHeartElem.getBoundingClientRect();
+      const targetCenterX = targetRect.left + targetRect.width / 2;
+      const targetCenterY = targetRect.top + targetRect.height / 2;
+
+      // 3. Measure resting arrow position
+      arrow.style.transition = 'none';
+      const arrowRect = arrow.getBoundingClientRect();
+      const arrowRestX = arrowRect.left + arrowRect.width / 2;
+      const arrowRestY = arrowRect.top + 16; // Tip of the heart arrow
+
+      const deltaX = targetCenterX - arrowRestX;
+      const deltaY = arrowRestY - targetCenterY;
+
+      // 4. Clean, direct high-speed flight directly into the heart's exact center
+      arrow.style.transition = 'transform 0.26s cubic-bezier(0.12, 0.95, 0.2, 1)';
+      arrow.style.transform = `translate(calc(-50% + ${deltaX.toFixed(1)}px), -${deltaY.toFixed(1)}px) rotate(0deg) scale(0.95)`;
+
+      setTimeout(() => {
+        playSound('hit');
+        targetHeart.classList.add('heart-hit-burst');
+
+        // Append radiant shockwave ring
+        const ring = document.createElement('div');
+        ring.className = 'cupid-shockwave-ring';
+        targetHeart.appendChild(ring);
+
+        hintText.innerHTML = "💘 Bullseye! You struck my heart directly! ✨";
+        hintText.style.color = "#e11d48";
+
+        confetti({
+          particleCount: 90,
+          spread: 80,
+          origin: { y: 0.35 },
+          colors: ['#e11d48', '#f43f5e', '#fb7185', '#fda4af', '#fbbf24', '#ffffff']
+        });
+
+        setTimeout(() => goToScene(4), 1200);
+      }, 260);
+    }
+
     function onEnd() {
       if (!isDrawing || arrowFired) return;
       isDrawing = false;
 
-      if (currentPull > 26) {
-        // Fire arrow accurately into the heart!
-        arrowFired = true;
-        playSound('shot');
-
-        // Spring bow limbs back and twang recoil
-        updateBowTension(0, 0);
-        bowWrap.classList.add('bow-twang-recoil');
-        setTimeout(() => bowWrap.classList.remove('bow-twang-recoil'), 350);
-
-        // Dynamically compute EXACT distance from arrow tip to heart target center
-        const targetRect = targetHeart.getBoundingClientRect();
-        const arrowRect = arrow.getBoundingClientRect();
-        const flightY = arrowRect.top - targetRect.top - 14;
-
-        arrow.style.transition = 'transform 0.24s cubic-bezier(0.12, 0.9, 0.2, 1)';
-        arrow.style.transform = `translateX(-50%) translateY(-${flightY}px) scale(0.95)`;
-
-        setTimeout(() => {
-          playSound('hit');
-          targetHeart.classList.add('heart-hit-burst');
-
-          // Append radiant shockwave ring
-          const ring = document.createElement('div');
-          ring.className = 'cupid-shockwave-ring';
-          targetHeart.appendChild(ring);
-
-          hintText.innerHTML = "💘 Bullseye! You struck my heart directly! ✨";
-          hintText.style.color = "#e11d48";
-
-          confetti({
-            particleCount: 90,
-            spread: 80,
-            origin: { y: 0.35 },
-            colors: ['#e11d48', '#f43f5e', '#fb7185', '#fda4af', '#fbbf24', '#ffffff']
-          });
-
-          setTimeout(() => goToScene(4), 1200);
-        }, 240);
+      if (currentPull > 24) {
+        shootArrow();
       } else {
         // Elastic spring back
         arrow.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
@@ -1052,13 +1070,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     window.addEventListener('touchmove', onMove, { passive: true });
     window.addEventListener('touchend', onEnd);
 
-    // Click target fallback
-    targetHeart.addEventListener('click', () => {
-      if (!arrowFired) {
-        currentPull = 50;
-        onEnd();
-      }
-    });
+    // Click target / Quick shoot button fallbacks
+    targetHeart.addEventListener('click', shootArrow);
+    stage.querySelector('#btnQuickShoot')?.addEventListener('click', shootArrow);
   }
 
   // ==========================================
