@@ -8541,3 +8541,971 @@ svg {
   overflow-y: auto;
   padding: 20px 0;
 }
+
+
+/* ============================================================ */
+/* CUPID SAKURA ARCHERY - REALISTIC RECOIL, SHOCKWAVE & IMPACT */
+/* ============================================================ */
+
+.cupid-aim-guide {
+  position: absolute;
+  bottom: 84px;
+  width: 2px;
+  height: 140px;
+  background: linear-gradient(to top, rgba(225, 29, 72, 0.9), rgba(244, 114, 182, 0.4), transparent);
+  border-left: 1.5px dashed rgba(244, 114, 182, 0.85);
+  pointer-events: none;
+  opacity: 0.3;
+  transition: opacity 0.1s ease-out, height 0.1s ease-out;
+  filter: drop-shadow(0 0 6px rgba(244, 114, 182, 0.8));
+}
+
+.bow-twang-recoil {
+  animation: bowTwangSpring 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes bowTwangSpring {
+  0% { transform: translateY(0) scale(1); }
+  25% { transform: translateY(-8px) scale(1.04); }
+  55% { transform: translateY(4px) scale(0.98); }
+  80% { transform: translateY(-2px) scale(1.01); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.heart-hit-burst {
+  animation: heartStrikeRecoil 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes heartStrikeRecoil {
+  0% { transform: scale(1) translateY(0); }
+  20% { transform: scale(1.42) translateY(-16px) rotate(-10deg); filter: drop-shadow(0 0 35px #f43f5e); }
+  45% { transform: scale(0.92) translateY(8px) rotate(8deg); }
+  70% { transform: scale(1.18) translateY(-4px) rotate(-4deg); }
+  85% { transform: scale(0.98) translateY(2px) rotate(1deg); }
+  100% { transform: scale(1.1) translateY(0) rotate(0deg); filter: drop-shadow(0 8px 30px rgba(225, 29, 72, 0.7)); }
+}
+
+.heart-hit-burst .wing-left {
+  animation: flapFastLeft 0.25s ease-in-out infinite alternate !important;
+}
+
+.heart-hit-burst .wing-right {
+  animation: flapFastRight 0.25s ease-in-out infinite alternate !important;
+}
+
+@keyframes flapFastLeft {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-35deg); }
+}
+
+@keyframes flapFastRight {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(35deg); }
+}
+
+.cupid-shockwave-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  margin-top: -40px;
+  margin-left: -40px;
+  border-radius: 50%;
+  border: 3px solid rgba(244, 63, 94, 0.95);
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.8), inset 0 0 15px rgba(251, 191, 36, 0.6);
+  pointer-events: none;
+  animation: shockwaveExpand 0.75s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+  z-index: 20;
+}
+
+@keyframes shockwaveExpand {
+  0% { transform: scale(0.4); opacity: 1; }
+  100% { transform: scale(3.2); opacity: 0; }
+}
+
+/* ============================================================ */
+/* VOGUE LUXURY MAGAZINE FLIPBOOK ENGINE (100% MOBILE COMPATIBLE) */
+/* ============================================================ */
+
+.vogue-mag-section {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 10px 14px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.vogue-mag-header {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.vogue-edition-badge {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #be185d;
+  background: rgba(244, 114, 182, 0.14);
+  border: 1px solid rgba(244, 114, 182, 0.45);
+  padding: 5px 16px;
+  border-radius: 999px;
+  box-shadow: 0 2px 10px rgba(244, 114, 182, 0.15);
+}
+
+.vogue-section-title {
+  font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+  font-size: clamp(26px, 5.5vw, 40px);
+  font-weight: 800;
+  color: #1c1917;
+  margin: 8px 0 3px;
+  letter-spacing: -0.5px;
+}
+
+.vogue-section-sub {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(13px, 3.2vw, 15px);
+  font-style: italic;
+  color: #78716c;
+  margin: 0;
+}
+
+/* Toolbar */
+.vogue-mag-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 231, 235, 0.9);
+  border-radius: 999px;
+  padding: 5px 10px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  z-index: 50;
+}
+
+.vogue-tool-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  font-family: 'Montserrat', -apple-system, sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #44403c;
+  padding: 6px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.vogue-tool-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+}
+
+.vogue-tool-btn.active-pill {
+  background: #e11d48;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(225, 29, 72, 0.35);
+}
+
+.vogue-page-indicator {
+  font-family: 'Cinzel', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #be185d;
+  background: rgba(244, 114, 182, 0.15);
+  padding: 5px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* Viewport container with 3D perspective */
+.vogue-mag-viewport {
+  position: relative;
+  perspective: 2000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  touch-action: pan-y;
+}
+
+/* Mobile Single-Page Reader (100% viewport fit, vertical golden ratio) */
+.vogue-mag-viewport.mobile-single-view {
+  width: min(390px, 92vw);
+  height: clamp(520px, 78vh, 660px);
+}
+
+/* Desktop Spread View (Open 2-Page Layout) */
+.vogue-mag-viewport.desktop-spread-view {
+  width: min(860px, 94vw);
+  height: clamp(480px, 74vh, 600px);
+}
+
+/* Underneath soft table shadow */
+.vogue-surface-shadow {
+  position: absolute;
+  bottom: -22px;
+  left: 5%;
+  right: 5%;
+  height: 38px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0) 72%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* The Magazine Book Deck */
+.vogue-magazine {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  border-radius: 6px;
+}
+
+/* Spine gutter crease (Spread view) */
+.vogue-spine-gutter {
+  display: none;
+}
+
+.desktop-spread-view .vogue-spine-gutter {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 32px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.3) 45%, rgba(0, 0, 0, 0.02) 50%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0.16) 100%);
+  z-index: 25;
+  pointer-events: none;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* The Magazine Page */
+.vogue-page {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #fdfcf9;
+  border-radius: 5px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: left center;
+  box-sizing: border-box;
+  will-change: transform, opacity;
+}
+
+/* Gloss sheen reflection layer across the page */
+.vogue-page-gloss {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(130deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 32%, rgba(0, 0, 0, 0.02) 58%, rgba(255, 255, 255, 0.18) 100%);
+  pointer-events: none;
+  z-index: 30;
+}
+
+/* ============================================================ */
+/* PAGE 0: VOGUE HIGH-FASHION COVER                             */
+/* ============================================================ */
+
+.cover-frame-inner {
+  position: absolute;
+  inset: 0;
+  padding: 16px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.cover-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #78716c;
+  border-bottom: 1px solid #f0eeee;
+  padding-bottom: 5px;
+}
+
+.vogue-masthead {
+  font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+  font-size: clamp(52px, 14vw, 86px);
+  font-weight: 900;
+  letter-spacing: 6px;
+  text-align: center;
+  color: #111827;
+  margin: 4px 0 2px;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.cover-hero-image-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 200px;
+  margin: 6px 0;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.25);
+}
+
+.cover-hero-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.cover-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.05) 100%);
+}
+
+.cover-headlines-layer {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  right: 14px;
+  color: #ffffff;
+  z-index: 5;
+}
+
+.cover-highlight-pill {
+  display: inline-block;
+  background: #e11d48;
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 3px 9px;
+  border-radius: 2px;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 6px rgba(225, 29, 72, 0.4);
+}
+
+.cover-headline-main {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(16px, 4.2vw, 22px);
+  font-weight: 800;
+  line-height: 1.22;
+  margin: 0 0 4px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  letter-spacing: -0.2px;
+}
+
+.cover-headline-sub {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(12px, 3.2vw, 13.5px);
+  line-height: 1.35;
+  margin: 0 0 6px;
+  opacity: 0.95;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+}
+
+.cover-sub-articles {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  line-height: 1.5;
+  opacity: 0.9;
+  text-transform: uppercase;
+}
+
+.cover-sub-article {
+  margin-top: 2px;
+}
+
+.cover-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 6px;
+  border-top: 1px solid #f0eeee;
+}
+
+.vogue-barcode-box {
+  font-family: 'Courier New', monospace;
+  font-size: 8.5px;
+  letter-spacing: 1.5px;
+  color: #57534e;
+}
+
+.barcode-lines {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  line-height: 1;
+}
+
+.vogue-corner-curl {
+  background: linear-gradient(135deg, #fecdd3, #fda4af);
+  border: 1px solid #fb7185;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #9f1239;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.vogue-corner-curl:hover {
+  transform: scale(1.06) translateY(-2px);
+}
+
+/* ============================================================ */
+/* EDITORIAL INNER PAGES (PAGES 1 - 5)                          */
+/* ============================================================ */
+
+.editorial-page-inner {
+  position: absolute;
+  inset: 0;
+  padding: 18px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.editorial-issue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #a8a29e;
+  border-bottom: 1px solid #f5f5f4;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.editorial-columns-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.photo-matting-frame {
+  border: 6px solid #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+  max-height: 180px;
+  background: #f5f5f4;
+}
+
+.editorial-portrait-img {
+  width: 100%;
+  height: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-caption-tiny {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #a8a29e;
+  text-align: center;
+  padding: 4px 0 2px;
+  background: #ffffff;
+}
+
+.editorial-salutation {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: #1c1917;
+  margin: 0 0 6px;
+}
+
+.editorial-lead-para {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #292524;
+  margin: 0 0 8px;
+}
+
+.vogue-drop-cap {
+  float: left;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 40px;
+  line-height: 0.78;
+  font-weight: 900;
+  color: #be185d;
+  padding-right: 8px;
+  padding-top: 4px;
+}
+
+.editorial-body-para {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #57534e;
+  margin: 0 0 10px;
+}
+
+.editorial-signature-box {
+  text-align: right;
+  margin-top: 4px;
+}
+
+.signature-cursive {
+  font-family: 'Great Vibes', cursive;
+  font-size: 20px;
+  color: #e11d48;
+  display: block;
+  line-height: 1.2;
+}
+
+.signature-title {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #78716c;
+}
+
+.vogue-page-footer {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #a8a29e;
+  text-align: center;
+  border-top: 1px solid #f5f5f4;
+  padding-top: 6px;
+  margin-top: auto;
+}
+
+/* ============================================================ */
+/* PAGES 2 & 3: 12 REASONS EDITORIAL GRID                       */
+/* ============================================================ */
+
+.features-main-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #1c1917;
+  margin: 0 0 2px;
+}
+
+.features-subtitle {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 12.5px;
+  font-style: italic;
+  color: #78716c;
+  margin: 0 0 10px;
+}
+
+.reasons-vogue-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.vogue-trait-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 9px;
+  background: rgba(254, 242, 242, 0.55);
+  border-left: 3px solid #f43f5e;
+  border-radius: 0 4px 4px 0;
+}
+
+.vogue-trait-num {
+  font-family: 'Cinzel', serif;
+  font-size: 11.5px;
+  font-weight: 900;
+  color: #be185d;
+  min-width: 20px;
+}
+
+.vogue-trait-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1c1917;
+  margin: 0 0 1px;
+}
+
+.vogue-trait-desc {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #57534e;
+  margin: 0;
+}
+
+.vogue-pull-quote-banner {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.quote-mark-large {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 34px;
+  color: #fb7185;
+  line-height: 0.5;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.pull-quote-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13.5px;
+  font-style: italic;
+  line-height: 1.45;
+  color: #881337;
+  margin: 0 0 4px;
+}
+
+.quote-author-credit {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #be185d;
+}
+
+/* ============================================================ */
+/* PAGE 4: LOOKBOOK PHOTO GALLERY                               */
+/* ============================================================ */
+
+.lookbook-gallery-duo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.lookbook-photo-card {
+  background: #ffffff;
+  padding: 7px;
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f5f5f4;
+}
+
+.lookbook-img-frame {
+  height: 120px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #f5f5f4;
+}
+
+.lookbook-img-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lookbook-caption {
+  padding-top: 5px;
+}
+
+.look-num {
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #e11d48;
+  display: block;
+}
+
+.look-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 12.5px;
+  color: #44403c;
+  margin: 1px 0 0;
+}
+
+/* ============================================================ */
+/* PAGE 5: WAX-SEALED LOVE LETTER                               */
+/* ============================================================ */
+
+.letter-paper-bg {
+  background: radial-gradient(circle at 50% 20%, #fffdf5 0%, #fef8ee 100%);
+}
+
+.letter-top-crest {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.crest-seal {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #9a3412;
+  background: #ffedd5;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid #fdba74;
+}
+
+.letter-cursive-head {
+  font-family: 'Great Vibes', cursive;
+  font-size: 24px;
+  color: #9f1239;
+  margin: 6px 0 8px;
+  text-align: center;
+}
+
+.letter-prose-body {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #451a03;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0 4px;
+}
+
+.letter-closing-signature {
+  text-align: right;
+  margin-top: 8px;
+}
+
+.letter-sign-cursive {
+  font-family: 'Great Vibes', cursive;
+  font-size: 19px;
+  color: #be185d;
+  margin: 0;
+}
+
+.letter-sign-name {
+  font-family: 'Cinzel', serif;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #78716c;
+  margin: 2px 0 0;
+}
+
+.btn-letter-confetti {
+  margin: 10px auto 0;
+  display: block;
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(225, 29, 72, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-letter-confetti:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 5px 16px rgba(225, 29, 72, 0.45);
+}
+
+/* ============================================================ */
+/* PAGE 6: BACK COVER FINISH                                    */
+/* ============================================================ */
+
+.backcover-inner {
+  position: absolute;
+  inset: 0;
+  padding: 24px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  background: #181514;
+  color: #f5f5f4;
+  box-sizing: border-box;
+}
+
+.backcover-top-logo {
+  font-family: 'Fraunces', 'Playfair Display', serif;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #fafaf9;
+}
+
+.backcover-gold-monogram {
+  font-size: 26px;
+  color: #fbbf24;
+  margin: 10px 0;
+  text-shadow: 0 0 14px rgba(251, 191, 36, 0.5);
+}
+
+.backcover-quote-card {
+  border-top: 1px solid #383432;
+  border-bottom: 1px solid #383432;
+  padding: 16px 10px;
+  margin: 8px 0;
+}
+
+.backcover-quote-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14.5px;
+  font-style: italic;
+  line-height: 1.5;
+  color: #e7e5e4;
+  margin: 0 0 8px;
+}
+
+.backcover-quote-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #fb7185;
+}
+
+.backcover-credits-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.backcover-meta {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #78716c;
+}
+
+.large-barcode {
+  color: #a8a29e;
+}
+
+.btn-read-again-pill {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #451a03;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+  transition: transform 0.2s;
+}
+
+.btn-read-again-pill:hover {
+  transform: scale(1.04);
+}
+
+/* Footer Navigation Dots */
+.vogue-mag-footer-nav {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.vogue-dots-bar {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.vogue-nav-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.vogue-nav-dot.active {
+  width: 24px;
+  border-radius: 999px;
+  background: #e11d48;
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.4);
+}
+
+/* Tablet & Desktop Spread View Enhancements */
+@media (min-width: 768px) {
+  .vogue-mag-viewport.desktop-spread-view {
+    height: 540px;
+  }
+
+  .desktop-spread-view .editorial-columns-grid {
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .desktop-spread-view .editorial-col-photo {
+    flex: 0 0 42%;
+  }
+
+  .desktop-spread-view .editorial-col-text {
+    flex: 1;
+  }
+
+  .desktop-spread-view .reasons-vogue-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .desktop-spread-view .lookbook-gallery-duo {
+    flex-direction: row;
+    gap: 14px;
+  }
+
+  .desktop-spread-view .lookbook-photo-card {
+    flex: 1;
+  }
+}

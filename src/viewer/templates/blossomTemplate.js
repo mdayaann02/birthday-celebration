@@ -528,19 +528,19 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     currentScene = index;
     backBtn.style.visibility = (currentScene > 0 && currentScene < 11) ? 'visible' : 'hidden';
 
-    stage.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+    stage.style.transition = 'opacity 0.22s cubic-bezier(0.25, 1, 0.5, 1), transform 0.22s cubic-bezier(0.25, 1, 0.5, 1)';
     stage.style.opacity = '0';
-    stage.style.transform = 'scale(0.97) translateY(6px)';
+    stage.style.transform = 'scale(0.98) translate3d(0, 8px, 0)';
 
     setTimeout(() => {
       renderScene(currentScene);
       void stage.offsetWidth;
-      stage.style.transition = 'opacity 0.32s ease, transform 0.32s ease';
+      stage.style.transition = 'opacity 0.34s cubic-bezier(0.16, 1, 0.3, 1), transform 0.34s cubic-bezier(0.16, 1, 0.3, 1)';
       stage.style.opacity = '1';
-      stage.style.transform = 'scale(1) translateY(0)';
+      stage.style.transform = 'scale(1) translate3d(0, 0, 0)';
       setTimeout(() => {
         isTransitioning = false;
-      }, 330);
+      }, 350);
     }, 220);
   }
 
@@ -835,7 +835,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
                 <stop offset="1" stop-color="#9d174d" />
               </linearGradient>
             </defs>
-            <path d="M34 96 C 118 168, 168 220, 230 230 C 292 220, 342 168, 426 96" fill="none" stroke="url(#blossomBowWood)" stroke-width="12" stroke-linecap="round" />
+            <path id="blossomBowWoodPath" d="M34 96 C 118 168, 168 220, 230 230 C 292 220, 342 168, 426 96" fill="none" stroke="url(#blossomBowWood)" stroke-width="12" stroke-linecap="round" />
             <line id="blossomStrL" x1="40" y1="80" x2="230" y2="90" stroke="#db2777" stroke-width="2.5" />
             <line id="blossomStrR" x1="420" y1="80" x2="230" y2="90" stroke="#db2777" stroke-width="2.5" />
             <circle id="blossomNock" cx="230" cy="90" r="5" fill="#f43f5e" />
@@ -864,18 +864,57 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     `;
 
     const bowWrap = stage.querySelector('#cupidBow');
+    const bowWood = stage.querySelector('#blossomBowWoodPath');
     const arrow = stage.querySelector('#cupidArrow');
     const strL = stage.querySelector('#blossomStrL');
     const strR = stage.querySelector('#blossomStrR');
     const nock = stage.querySelector('#blossomNock');
     const targetHeart = stage.querySelector('#cupidTarget');
     const hintText = stage.querySelector('#cupidHintText');
+    const aimGuide = stage.querySelector('#cupidAim');
 
     let isDrawing = false;
     let startY = 0;
     let currentPull = 0;
     const maxPull = 80;
     let arrowFired = false;
+
+    function updateBowTension(pull) {
+      const norm = Math.min(1, Math.max(0, pull / maxPull));
+      const bend = norm * 26; // limbs bend downward and inward
+      const x1 = 34 + bend * 0.7;
+      const y1 = 96 + bend * 0.9;
+      const x2 = 426 - bend * 0.7;
+      const y2 = 96 + bend * 0.9;
+      const nockY = 90 + pull * 1.15;
+
+      if (bowWood) {
+        bowWood.setAttribute('d', `M${x1} ${y1} C ${118 + bend * 0.3} ${168 + bend * 0.5}, 168 220, 230 230 C 292 220, ${342 - bend * 0.3} ${168 + bend * 0.5}, ${x2} ${y2}`);
+      }
+      if (strL) {
+        strL.setAttribute('x1', x1);
+        strL.setAttribute('y1', y1);
+        strL.setAttribute('x2', 230);
+        strL.setAttribute('y2', nockY);
+      }
+      if (strR) {
+        strR.setAttribute('x1', x2);
+        strR.setAttribute('y1', y2);
+        strR.setAttribute('x2', 230);
+        strR.setAttribute('y2', nockY);
+      }
+      if (nock) {
+        nock.setAttribute('cx', 230);
+        nock.setAttribute('cy', nockY);
+      }
+      if (arrow) {
+        arrow.style.transform = `translateX(-50%) translateY(${pull * 1.15}px)`;
+      }
+      if (aimGuide) {
+        aimGuide.style.opacity = (0.2 + norm * 0.8).toFixed(2);
+        aimGuide.style.height = `${140 + norm * 100}px`;
+      }
+    }
 
     function onStart(e) {
       if (arrowFired) return;
@@ -889,46 +928,51 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
       if (!isDrawing || arrowFired) return;
       const pt = e.touches ? e.touches[0] : e;
       currentPull = Math.max(0, Math.min(maxPull, pt.clientY - startY));
-      arrow.style.transform = `translateX(-50%) translateY(${currentPull}px)`;
-      const nockY = 90 + currentPull * 0.8;
-      strL.setAttribute('y2', nockY);
-      strR.setAttribute('y2', nockY);
-      nock.setAttribute('cy', nockY);
+      updateBowTension(currentPull);
     }
 
     function onEnd() {
       if (!isDrawing || arrowFired) return;
       isDrawing = false;
 
-      if (currentPull > 30) {
-        // Fire arrow!
+      if (currentPull > 28) {
+        // Fire arrow with high velocity!
         arrowFired = true;
         playSound('shot');
-        arrow.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
-        arrow.style.transform = 'translateX(-50%) translateY(-380px) scale(1.1)';
+
+        // Spring bow back and recoil
+        updateBowTension(0);
+        bowWrap.classList.add('bow-twang-recoil');
+        setTimeout(() => bowWrap.classList.remove('bow-twang-recoil'), 350);
+
+        arrow.style.transition = 'transform 0.25s cubic-bezier(0.12, 0.9, 0.2, 1)';
+        arrow.style.transform = 'translateX(-50%) translateY(-480px) scale(0.95)';
 
         setTimeout(() => {
           playSound('hit');
           targetHeart.classList.add('heart-hit-burst');
+
+          // Append animated shockwave ripple ring
+          const ring = document.createElement('div');
+          ring.className = 'cupid-shockwave-ring';
+          targetHeart.appendChild(ring);
+
           hintText.innerHTML = "💘 Bullseye! You struck my heart directly! ✨";
           hintText.style.color = "#e11d48";
 
           confetti({
-            particleCount: 80,
-            spread: 70,
+            particleCount: 85,
+            spread: 75,
             origin: { y: 0.35 },
-            colors: ['#e11d48', '#f472b6', '#fbbf24', '#ffffff']
+            colors: ['#e11d48', '#f43f5e', '#fb7185', '#fda4af', '#fbbf24', '#ffffff']
           });
 
-          setTimeout(() => goToScene(4), 1100);
-        }, 260);
+          setTimeout(() => goToScene(4), 1200);
+        }, 240);
       } else {
         // Spring back
         arrow.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        arrow.style.transform = 'translateX(-50%) translateY(0px)';
-        strL.setAttribute('y2', 90);
-        strR.setAttribute('y2', 90);
-        nock.setAttribute('cy', 90);
+        updateBowTension(0);
       }
     }
 
