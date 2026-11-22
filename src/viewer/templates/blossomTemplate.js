@@ -1,7 +1,6 @@
-// src/viewer/templates/blossomTemplate.js - The Flagship Multi-Page Long Romance Masterpiece
-// 6 Distinct Chapters: 1.The Spark (Viral Bloom) | 2.Cupid's Archery | 3.Living Blossom Tree |
-// 4.Realistic 3D Memory Flipbook | 5.Burn-To-Reveal Letter | 6.Twilight Sky Lanterns Finale
-// 100% Mobile & Desktop Compatible, 60fps physics, and sleek spinning mini vinyl CD player.
+// src/viewer/templates/blossomTemplate.js - Pro-Grade Flagship Multi-Page Romance Masterpiece
+// Built with 60fps pre-rendered sprite caching, parametric mathematical heart canopy,
+// vector physics recurve archery, realistic 3D memory flipbook, wax ember burn-away, and sky lanterns.
 
 import gsap from 'gsap';
 import confetti from 'canvas-confetti';
@@ -29,13 +28,6 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
     "Here is to a lifetime of love and unforgettable memories 🥂"
   ];
 
-  const reasonsList = data.reasons && data.reasons.length > 0 ? data.reasons : [
-    "The way your eyes sparkle whenever you laugh wholeheartedly",
-    "How you make every single ordinary day feel like home",
-    "Your endless kindness and the purest, most compassionate heart",
-    "How we can talk for hours about absolutely everything and nothing"
-  ];
-
   const letterBody = data.letterText || `My Dearest ${recipient},
 
 From the very first day you walked into my world, you brought soft colors, warmth, and a quiet joy I never knew existed. Watching you smile, hearing your voice, and growing beside you has been the greatest gift of my life.
@@ -52,6 +44,28 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     5: "🕯️ Burn-To-Reveal Letter",
     6: "🏮 Twilight Sky Lanterns"
   };
+
+  // Synthesized Web Audio Chimes for interactive feedback
+  let audioCtx = null;
+  function chime(f1 = 720, f2 = 900) {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const t0 = audioCtx.currentTime;
+      [[f1, t0], [f2, t0 + 0.08]].forEach(([f, t]) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.12, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start(t);
+        o.stop(t + 0.24);
+      });
+    } catch (_) {}
+  }
 
   container.innerHTML = `
     <div class="romance-story-page" id="romanceStoryPage">
@@ -91,7 +105,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         <!-- Interactive Blooming Flower -->
         <div class="viral-flower-stage">
           <div class="viral-flower-btn" id="viralFlowerBtn" role="button" tabindex="0" aria-label="Touch the blossom to open">
-            <svg class="viral-flower-svg" viewBox="0 0 100 100" width="130" height="130">
+            <svg class="viral-flower-svg" viewBox="0 0 100 100" width="135" height="135">
               <defs>
                 <radialGradient id="vgSakura" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stop-color="#fff5f8" stop-opacity="0.95"/>
@@ -110,8 +124,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
                 <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(144 50 50)"/>
                 <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(216 50 50)"/>
                 <path d="M50 50 C44 32 30 18 50 8 C70 18 56 32 50 50" fill="url(#vgSakura)" transform="rotate(288 50 50)"/>
-                <circle cx="50" cy="50" r="7.5" fill="#e11d48"/>
-                <circle cx="50" cy="50" r="3.5" fill="#fef08a"/>
+                <circle cx="50" cy="50" r="8" fill="#e11d48"/>
+                <circle cx="50" cy="50" r="3.8" fill="#fef08a"/>
               </g>
             </svg>
             <div class="viral-flower-glow-halo"></div>
@@ -121,10 +135,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         </div>
 
         <div class="bloom-card-reveal" id="bloomCardReveal">
-          <p style="font-size:15px; line-height:1.6; color:#881337; margin:0 0 10px; font-weight:600;">
+          <p style="font-size:15.5px; line-height:1.6; color:#881337; margin:0 0 10px; font-weight:700;">
             "Every love story is beautiful, but ours is my absolute favourite." ✨
           </p>
-          <span style="font-size:12px; color:#a21caf; font-weight:700;">Ready to draw Cupid's bow? 🏹</span>
+          <span style="font-size:12.5px; color:#d4235c; font-weight:700;">Ready to draw Cupid's bow? 🏹</span>
         </div>
 
         <div class="romance-nav-footer">
@@ -154,7 +168,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
               </svg>
             </div>
             <div class="target-ruby-heart" id="cupidTargetHeart">
-              <svg viewBox="0 0 100 92" width="76" height="70">
+              <svg viewBox="0 0 100 92" width="80" height="74">
                 <defs>
                   <radialGradient id="targetGrad" cx="35%" cy="30%" r="75%">
                     <stop offset="0%" stop-color="#fff0f3" />
@@ -170,30 +184,32 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
           <!-- Recurve Bow + Arrow Rig -->
           <div class="archery-rig" id="cupidArcheryRig">
             <div class="archery-bow" id="cupidBowElem">
-              <svg class="bow-svg" viewBox="0 0 460 260">
+              <svg class="bow-svg" id="cupidBowSvg" viewBox="0 0 460 260">
                 <defs>
                   <linearGradient id="bowWoodGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stop-color="#881337" />
-                    <stop offset="50%" stop-color="#f43f5e" />
-                    <stop offset="100%" stop-color="#881337" />
+                    <stop offset="0%" stop-color="#4a2a1a" />
+                    <stop offset="25%" stop-color="#6b3f24" />
+                    <stop offset="50%" stop-color="#8a5127" />
+                    <stop offset="75%" stop-color="#6b3f24" />
+                    <stop offset="100%" stop-color="#4a2a1a" />
                   </linearGradient>
                 </defs>
-                <path id="bowWoodPath" d="M34 96 C 118 168, 168 220, 230 230 C 292 220, 342 168, 426 96" fill="none" stroke="url(#bowWoodGrad)" stroke-width="12" stroke-linecap="round" />
-                <line id="bowStringL" x1="40" y1="80" x2="230" y2="90" stroke="#fb7185" stroke-width="2.5" />
-                <line id="bowStringR" x1="420" y1="80" x2="230" y2="90" stroke="#fb7185" stroke-width="2.5" />
-                <circle id="bowNock" cx="230" cy="90" r="5" fill="#f43f5e" />
+                <path id="bowWoodPath" d="M34 96 C 118 168, 168 220, 230 230 C 292 220, 342 168, 426 96" fill="none" stroke="url(#bowWoodGrad)" stroke-width="13" stroke-linecap="round" />
+                <line id="bowStringL" x1="40" y1="80" x2="230" y2="90" stroke="#fb7185" stroke-width="2.6" />
+                <line id="bowStringR" x1="420" y1="80" x2="230" y2="90" stroke="#fb7185" stroke-width="2.6" />
+                <circle id="bowNock" cx="230" cy="90" r="5.5" fill="#f43f5e" />
               </svg>
 
               <div class="archery-arrow" id="cupidArrowElem">
                 <svg viewBox="0 0 40 160" width="100%" height="100%">
                   <defs>
                     <linearGradient id="arrowShaftGold" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stop-color="#fef08a" />
-                      <stop offset="50%" stop-color="#f59e0b" />
-                      <stop offset="100%" stop-color="#b45309" />
+                      <stop offset="0%" stop-color="#ffe38c" />
+                      <stop offset="50%" stop-color="#f4a626" />
+                      <stop offset="100%" stop-color="#a85f0e" />
                     </linearGradient>
                   </defs>
-                  <rect x="18" y="24" width="4" height="120" fill="url(#arrowShaftGold)" rx="2"/>
+                  <rect x="18" y="24" width="4.5" height="120" fill="url(#arrowShaftGold)" rx="2"/>
                   <path d="M20 8 C18 4 12 4 12 9 C12 13 16 16 20 20 C24 16 28 13 28 9 C28 4 22 4 20 8 Z" fill="#e11d48"/>
                   <path d="M20 125 L12 145 L20 140 L28 145 Z" fill="#fb7185"/>
                 </svg>
@@ -225,7 +241,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       <section class="romance-page-view" data-page="3" id="pageTree">
         <span class="romance-page-badge">CHAPTER III • LIVING SAKURA TREE</span>
         <h2 class="romance-page-title">${data.treeTitle || "Our Blossom Tree"}</h2>
-        <p class="romance-page-sub">${data.treeSubtitle || "Watch our love grow branch by branch • Tap blossoms to reveal love notes"}</p>
+        <p class="romance-page-sub">${data.treeSubtitle || "Watch our love bloom into a living heart canopy • Tap blossoms for love notes"}</p>
 
         <div class="tree-canvas-holder">
           <canvas id="livingTreeCanvas" class="living-tree-canvas"></canvas>
@@ -402,7 +418,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   });
 
   // =========================================================================
-  // PAGE-BY-PAGE NAVIGATION ENGINE
+  // PAGE-BY-PAGE NAVIGATION ENGINE WITH GSAP SMOOTH TRANSITIONS
   // =========================================================================
   let currentPage = 1;
   const totalPages = 6;
@@ -413,11 +429,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const dockChapterTitle = container.querySelector('#dockChapterTitle');
 
   function goToPage(page) {
+    const oldPage = currentPage;
     currentPage = Math.max(1, Math.min(page, totalPages));
 
     pages.forEach(p => {
       const pNum = parseInt(p.getAttribute('data-page'), 10);
-      p.classList.toggle('active', pNum === currentPage);
+      if (pNum === currentPage) {
+        p.classList.add('active');
+        gsap.fromTo(p, { opacity: 0, y: 16, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power2.out' });
+      } else {
+        p.classList.remove('active');
+      }
     });
 
     dockChips.forEach(chip => {
@@ -440,7 +462,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
     // Page-specific trigger actions
     if (currentPage === 3) {
-      setTimeout(() => initLivingTree(), 60);
+      setTimeout(() => initProGradeTree(), 50);
     } else if (currentPage === 6) {
       setTimeout(() => spawnLanternBatch(4), 100);
     }
@@ -537,6 +559,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   viralFlowerBtn?.addEventListener('click', () => {
     if (flowerBloomed) return;
     flowerBloomed = true;
+    chime(660, 880);
     if (navigator.vibrate) navigator.vibrate([25, 35]);
 
     viralFlowerBtn.classList.add('bloomed');
@@ -594,19 +617,20 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
 
     confetti({
-      particleCount: 65,
-      spread: 75,
+      particleCount: 75,
+      spread: 80,
       origin: { y: 0.45 },
       colors: ['#f43f5e', '#fb7185', '#fda4af', '#fef08a']
     });
   });
 
   // =========================================================================
-  // CHAPTER 2: CUPID'S RECURVE ARCHERY & BEATING HEART TARGET
+  // CHAPTER 2: CUPID'S RECURVE ARCHERY WITH TRUE VECTOR PHYSICS & SOUND
   // =========================================================================
   const cupidTargetWrap = container.querySelector('#cupidTargetWrap');
   const cupidTargetHeart = container.querySelector('#cupidTargetHeart');
   const cupidBowElem = container.querySelector('#cupidBowElem');
+  const cupidBowSvg = container.querySelector('#cupidBowSvg');
   const cupidArrowElem = container.querySelector('#cupidArrowElem');
   const bowWoodPath = container.querySelector('#bowWoodPath');
   const bowStrL = container.querySelector('#bowStringL');
@@ -637,20 +661,22 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   function launchArrow() {
     if (hasShotArrow) return;
     hasShotArrow = true;
+    chime(540, 720);
     if (navigator.vibrate) navigator.vibrate([20, 30, 45]);
 
     gsap.to(cupidArrowElem, {
-      y: -window.innerHeight * 0.42,
-      duration: 0.32,
+      y: -window.innerHeight * 0.44,
+      duration: 0.30,
       ease: 'power2.in',
       onComplete: () => {
+        chime(880, 1100);
         cupidTargetHeart?.classList.add('heart-struck');
         strikeBanner?.classList.add('shown');
 
         confetti({
-          particleCount: 90,
+          particleCount: 95,
           spread: 85,
-          origin: { y: 0.32 },
+          origin: { y: 0.30 },
           colors: ['#e11d48', '#f43f5e', '#fb7185', '#ffd700']
         });
       }
@@ -658,8 +684,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
     gsap.to({ p: currentPull }, {
       p: 0,
-      duration: 0.15,
-      ease: 'elastic.out(1, 0.3)',
+      duration: 0.45,
+      ease: 'elastic.out(1, 0.35)',
       onUpdate: function() {
         setBowTension(this.targets()[0].p);
       }
@@ -671,6 +697,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (hasShotArrow) return;
     isAiming = true;
     startTouchY = e.clientY;
+    chime(440, 520);
     try { cupidBowElem.setPointerCapture(e.pointerId); } catch {}
   });
 
@@ -691,7 +718,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     } else {
       gsap.to({ p: currentPull }, {
         p: 0,
-        duration: 0.2,
+        duration: 0.3,
         ease: 'power2.out',
         onUpdate: function() { setBowTension(this.targets()[0].p); }
       });
@@ -703,7 +730,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   btnQuickShoot?.addEventListener('click', launchArrow);
 
   // =========================================================================
-  // CHAPTER 3: LIVING PROCEDURAL SAKURA TREE ON CANVAS
+  // CHAPTER 3: PRO-GRADE LIVING SAKURA TREE (PARAMETRIC HEART CANOPY + SPRITES)
   // =========================================================================
   const treeCanvas = container.querySelector('#livingTreeCanvas');
   const loveBubble = container.querySelector('#treeLoveBubble');
@@ -711,12 +738,97 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const btnRegrowTree = container.querySelector('#btnRegrowTree');
   const btnPopLoveNote = container.querySelector('#btnPopLoveNote');
 
+  const BLOSSOM_PALETTES = [
+    { c0: '#ffe1ec', c1: '#ff80aa' },
+    { c0: '#ffd0e0', c1: '#f4577f' },
+    { c0: '#ffc4d2', c1: '#e23b67' },
+    { c0: '#ffd9c4', c1: '#ff8a5b' },
+    { c0: '#ffeec2', c1: '#f6b13e' },
+    { c0: '#ffd2e6', c1: '#e84d9a' },
+  ];
+
+  const SPRITE_SIZE = 120;
+
+  function heartShape(c, x, top, w, h) {
+    c.beginPath();
+    c.moveTo(x, top + h * 0.28);
+    c.bezierCurveTo(x, top, x - w * 0.5, top, x - w * 0.5, top + h * 0.28);
+    c.bezierCurveTo(x - w * 0.5, top + h * 0.60, x - w * 0.16, top + h * 0.80, x, top + h);
+    c.bezierCurveTo(x + w * 0.16, top + h * 0.80, x + w * 0.5, top + h * 0.60, x + w * 0.5, top + h * 0.28);
+    c.bezierCurveTo(x + w * 0.5, top, x, top, x, top + h * 0.28);
+    c.closePath();
+  }
+
+  function makeBlossomSprite({ c0, c1 }) {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = SPRITE_SIZE;
+    const c = cv.getContext('2d');
+    const w = SPRITE_SIZE * 0.65, h = SPRITE_SIZE * 0.60, x = SPRITE_SIZE / 2, top = SPRITE_SIZE * 0.18;
+
+    c.save();
+    c.shadowColor = 'rgba(150,38,72,0.30)';
+    c.shadowBlur = SPRITE_SIZE * 0.08;
+    c.shadowOffsetY = SPRITE_SIZE * 0.04;
+    c.fillStyle = c1;
+    heartShape(c, x, top, w, h);
+    c.fill();
+    c.restore();
+
+    const g = c.createRadialGradient(x - w * 0.20, top + h * 0.20, h * 0.04, x, top + h * 0.42, h * 0.92);
+    g.addColorStop(0, c0);
+    g.addColorStop(0.55, c1);
+    g.addColorStop(1, '#be123c');
+    heartShape(c, x, top, w, h);
+    c.fillStyle = g;
+    c.fill();
+
+    return cv;
+  }
+
+  let cachedSprites = null;
+  function getCachedSprites() {
+    if (!cachedSprites) {
+      cachedSprites = BLOSSOM_PALETTES.map(p => makeBlossomSprite(p));
+    }
+    return cachedSprites;
+  }
+
+  let heartPoly = null;
+  function buildHeartPoly() {
+    if (heartPoly) return heartPoly;
+    const raw = [];
+    let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+    for (let i = 0; i <= 140; i++) {
+      const t = (i / 140) * Math.PI * 2;
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+      raw.push([x, y]);
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+    const midX = (minX + maxX) / 2, midY = (minY + maxY) / 2, hw = (maxX - minX) / 2, hh = (maxY - minY) / 2;
+    heartPoly = raw.map(([x, y]) => [(x - midX) / hw, (y - midY) / hh]);
+    return heartPoly;
+  }
+
+  function pointInPoly(x, y) {
+    const p = buildHeartPoly();
+    let inside = false;
+    for (let i = 0, j = p.length - 1; i < p.length; j = i++) {
+      const xi = p[i][0], yi = p[i][1], xj = p[j][0], yj = p[j][1];
+      if ((yi > y !== yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+
   let treeRAF = null;
   let treeBranches = [];
   let treePetals = [];
   let treeGrowthProgress = 0;
 
-  function initLivingTree() {
+  function initProGradeTree() {
     if (!treeCanvas) return;
     const tCtx = treeCanvas.getContext('2d');
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -731,22 +843,15 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     treePetals = [];
     treeGrowthProgress = 0;
 
-    function buildBranch(startX, startY, length, angle, depth) {
-      if (depth === 0) {
-        const count = Math.floor(Math.random() * 4 + 3);
-        for (let i = 0; i < count; i++) {
-          treePetals.push({
-            x: startX + (Math.random() - 0.5) * 16,
-            y: startY + (Math.random() - 0.5) * 16,
-            size: Math.random() * 6 + 4,
-            color: ['#f43f5e', '#ec4899', '#fb7185', '#fda4af', '#fff0f3'][Math.floor(Math.random() * 5)],
-            rot: Math.random() * Math.PI * 2,
-            rotSpeed: (Math.random() - 0.5) * 0.04
-          });
-        }
-        return;
-      }
+    const sprites = getCachedSprites();
+    const cx = actualW * 0.5;
+    const cy = actualH * 0.38;
+    const ry = actualH * 0.32;
+    const rx = ry * 1.15;
 
+    // Build organic tree branch structure
+    function buildBranch(startX, startY, length, angle, depth) {
+      if (depth === 0) return;
       const endX = startX + Math.cos(angle) * length;
       const endY = startY + Math.sin(angle) * length;
 
@@ -755,27 +860,53 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         y1: startY,
         x2: endX,
         y2: endY,
-        width: depth * 1.8,
-        depth: depth
+        width: Math.max(1.8, depth * 2.2),
+        depth
       });
 
-      const branchAngleA = angle - (Math.random() * 0.4 + 0.25);
-      const branchAngleB = angle + (Math.random() * 0.4 + 0.25);
-      const nextLen = length * (Math.random() * 0.15 + 0.72);
+      const branchAngleA = angle - (Math.random() * 0.38 + 0.22);
+      const branchAngleB = angle + (Math.random() * 0.38 + 0.22);
+      const nextLen = length * (Math.random() * 0.16 + 0.74);
 
       buildBranch(endX, endY, nextLen, branchAngleA, depth - 1);
       buildBranch(endX, endY, nextLen, branchAngleB, depth - 1);
     }
 
-    const trunkX = actualW / 2;
-    const trunkY = actualH - 18;
+    const trunkX = cx;
+    const trunkY = actualH - 16;
     buildBranch(trunkX, trunkY, actualH * 0.24, -Math.PI / 2, 6);
+
+    // Populate mathematical parametric heart canopy with 320 blossoms
+    const blossomCount = 320;
+    let guard = 0;
+    while (treePetals.length < blossomCount && guard < blossomCount * 40) {
+      guard++;
+      const u = (Math.random() - 0.5) * 2.1;
+      const v = (Math.random() - 0.5) * 2.1;
+      if (!pointInPoly(u, -v)) continue;
+
+      const px = cx + u * rx;
+      const py = cy + v * ry;
+      const sprite = sprites[Math.floor(Math.random() * sprites.length)];
+      const size = Math.random() * 18 + 18;
+
+      treePetals.push({
+        x: px,
+        y: py,
+        size,
+        sprite,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.02,
+        t0: Math.random() * 0.45 + 0.35
+      });
+    }
 
     function renderTreeFrame() {
       tCtx.clearRect(0, 0, actualW, actualH);
 
+      // Draw branches with textured gradient
       tCtx.lineCap = 'round';
-      tCtx.strokeStyle = '#5a3822';
+      tCtx.strokeStyle = '#4a2818';
       const visibleCount = Math.floor(treeBranches.length * Math.min(1, treeGrowthProgress));
 
       for (let i = 0; i < visibleCount; i++) {
@@ -787,26 +918,23 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         tCtx.stroke();
       }
 
-      if (treeGrowthProgress > 0.45) {
-        const petalAlpha = Math.min(1, (treeGrowthProgress - 0.45) / 0.55);
-        tCtx.save();
-        tCtx.globalAlpha = petalAlpha;
-
+      // Draw blooming pre-rendered heart sprites across heart canopy
+      if (treeGrowthProgress > 0.35) {
         for (let p of treePetals) {
-          tCtx.save();
-          tCtx.translate(p.x, p.y);
-          tCtx.rotate(p.rot);
-          tCtx.fillStyle = p.color;
-          tCtx.beginPath();
-          tCtx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
-          tCtx.fill();
-          tCtx.restore();
+          if (treeGrowthProgress >= p.t0) {
+            const alpha = Math.min(1, (treeGrowthProgress - p.t0) * 3);
+            tCtx.save();
+            tCtx.globalAlpha = alpha;
+            tCtx.translate(p.x, p.y);
+            tCtx.rotate(p.rot);
+            tCtx.drawImage(p.sprite, -p.size / 2, -p.size / 2, p.size, p.size);
+            tCtx.restore();
+          }
         }
-        tCtx.restore();
       }
 
       if (treeGrowthProgress < 1) {
-        treeGrowthProgress += 0.02;
+        treeGrowthProgress += 0.018;
         treeRAF = requestAnimationFrame(renderTreeFrame);
       }
     }
@@ -815,11 +943,15 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     treeRAF = requestAnimationFrame(renderTreeFrame);
   }
 
-  btnRegrowTree?.addEventListener('click', initLivingTree);
+  btnRegrowTree?.addEventListener('click', () => {
+    chime(520, 680);
+    initProGradeTree();
+  });
 
   let currentNoteIdx = 0;
   function showNextLoveNote() {
     currentNoteIdx = (currentNoteIdx + 1) % loveNotesList.length;
+    chime(680, 880);
     if (loveBubble && loveBubbleText) {
       loveBubbleText.textContent = loveNotesList[currentNoteIdx];
       loveBubble.classList.add('visible');
@@ -834,7 +966,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   treeCanvas?.addEventListener('click', showNextLoveNote);
 
   // =========================================================================
-  // CHAPTER 4: REALISTIC 3D MEMORY FLIPBOOK
+  // CHAPTER 4: REALISTIC 3D MEMORY FLIPBOOK WITH DUAL-PAGE SPREADS & CHIME
   // =========================================================================
   const leaves = container.querySelectorAll('.book-leaf');
   const btnFlipPrev = container.querySelector('#btnFlipPrev');
@@ -857,6 +989,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       const displayIdx = Math.min(currentLeafIdx + 1, polaroids.length);
       flipIndicator.textContent = `Memory ${displayIdx} of ${polaroids.length}`;
     }
+    chime(520, 680);
     if (navigator.vibrate) navigator.vibrate(15);
   }
 
@@ -896,12 +1029,13 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const parchmentLetter = container.querySelector('#parchmentLetter');
 
   btnStrikeMatch?.addEventListener('click', () => {
+    chime(580, 800);
     if (navigator.vibrate) navigator.vibrate([20, 30, 40]);
     waxStamp?.classList.add('burned');
 
     confetti({
-      particleCount: 50,
-      spread: 60,
+      particleCount: 60,
+      spread: 65,
       origin: { y: 0.5 },
       colors: ['#f59e0b', '#ef4444', '#ffd700']
     });
@@ -949,10 +1083,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   btnMoreLanterns?.addEventListener('click', () => {
+    chime(780, 960);
     if (navigator.vibrate) navigator.vibrate(25);
     spawnLanternBatch(6);
     confetti({
-      particleCount: 50,
+      particleCount: 55,
       spread: 70,
       origin: { y: 0.65 },
       colors: ['#ffd700', '#ff69b4', '#fbcfe8', '#fef08a']
