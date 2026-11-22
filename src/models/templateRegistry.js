@@ -264,6 +264,32 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         "To listen first and understand before reacting.",
         "To never take your patience and love for granted.",
         "To communicate openly with gentleness and honesty."
+      ],
+      penances: [
+        "Buy your favorite Iced Boba / Treat right now 🧋",
+        "30-minute soothing massage whenever you ask 💆‍♀️",
+        "Order whatever food you are craving tonight, my treat 🍕",
+        "Watch 3 chick flicks / K-dramas with zero groaning 🍿",
+        "Fold all your laundry & do your chores this weekend 🧹",
+        "Write 100 cute post-it notes of things I adore about you 📝"
+      ],
+      treatyClauses: [
+        "Party A (The Cutest Girl) is officially declared 100% Right in all past, present, and future disputes.",
+        "Party B must deliver hugs, kisses, and forehead kisses upon demand.",
+        "Permanent hoodie and jacket theft rights are granted with zero retaliation.",
+        "All future disagreements must be settled immediately with dessert and boba.",
+        "No going to sleep angry ever again — cuddles are mandatory."
+      ],
+      polaroids: [
+        { image: "/images/sunset.jpg", caption: "Our sunset walk... I miss your laugh so much 🌅" },
+        { image: "/images/always_you.jpg", caption: "You are the brightest light in my world 🫶" },
+        { image: "/images/pretty.jpg", caption: "I never want to see you hurt ever again ✨" }
+      ],
+      coupons: [
+        { icon: "🎟️", title: "Get Out of Jail Free", desc: "Win any future argument instantly with no rebuttal!" },
+        { icon: "🍫", title: "Midnight Craving Pass", desc: "Redeemable 24/7 for chocolates, snacks, or fast food." },
+        { icon: "🧸", title: "Unlimited Bear Hugs", desc: "Non-expiring voucher for long, tight, comforting hugs." },
+        { icon: "👑", title: "Queen For A Day", desc: "He must obey your every cute command for 24 hours." }
       ]
     }
   },

@@ -3,6 +3,22 @@
 import confetti from 'canvas-confetti';
 import { encodeSiteToUrl, publishSiteToServer } from '../models/siteStorage.js';
 
+// Helper to ensure WhatsApp parses the URL as a 100% clickable hyperlink
+export function toWhatsAppSafeUrl(rawUrl) {
+  if (!rawUrl) return rawUrl;
+  let s = rawUrl.trim();
+  // WhatsApp's parser is buggy with raw IP:port (drops .29 from 155.248.255.29:3000)
+  // Converting to standard domain 155-248-255-29.sslip.io (on standard port 80) guarantees a clickable hyperlink!
+  if (s.includes('155.248.255.29:3000') || s.includes('155.248.255.29')) {
+    s = s.replace(/https?:\/\/155\.248\.255\.29(:3000)?/, 'http://155-248-255-29.sslip.io');
+    s = s.replace(/155\.248\.255\.29(:3000)?/, '155-248-255-29.sslip.io');
+    if (!s.startsWith('http://') && !s.startsWith('https://')) {
+      s = 'http://' + s;
+    }
+  }
+  return s;
+}
+
 export function openShareModal(templateId, data) {
   let fallbackRecipientUrl = encodeSiteToUrl(templateId, data, false);
   let makerReviewUrl = encodeSiteToUrl(templateId, data, true);
@@ -19,7 +35,9 @@ export function openShareModal(templateId, data) {
     year: 'numeric'
   }) : '';
 
-  let activeRecipientUrl = fallbackRecipientUrl;
+  let activeRecipientUrl = toWhatsAppSafeUrl(fallbackRecipientUrl);
+  let serverDirectUrl = "";
+  let serverVercelUrl = "";
 
   const overlay = document.createElement("div");
   overlay.id = "shareModalOverlay";
@@ -39,35 +57,43 @@ export function openShareModal(templateId, data) {
 
         <!-- Clean Recipient Link -->
         <div class="share-link-group">
-          <label class="share-link-label">
-            🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#22c55e;">(Publishing to server...)</span>
-          </label>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label class="share-link-label" style="margin-bottom:0;">
+              🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#22c55e;">(Publishing to server...)</span>
+            </label>
+            <span style="font-size:10px; background:rgba(34,197,94,0.18); border:1px solid rgba(34,197,94,0.4); color:#4ade80; padding:2px 6px; border-radius:10px; font-weight:700;">
+              WhatsApp Hyperlink Active ✓
+            </span>
+          </div>
+
           <div class="share-input-row">
             <input type="text" class="share-url-input" readonly id="inpRecipientUrl" value="${activeRecipientUrl}" />
             <button class="btn-copy-link" id="btnCopyRecipient">Copy</button>
           </div>
+
           <div class="share-sub-hint" id="shareSubHint" style="margin-top:6px; font-size:11px; color:#10b981;">
-            ✨ Guaranteed clean viewer mode: No editor controls, no builder bars. Opens pure celebration!
+            ✨ Guaranteed clickable blue hyperlink in WhatsApp (no raw IP bugs or dropped digits).
           </div>
-          <div class="share-quick-actions" style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
-            <button type="button" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35); flex:1; justify-content:center; min-height:44px;">
+
+          <div class="share-quick-actions" style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:12px 20px; border-radius:12px; font-size:13.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4); flex:1; justify-content:center; min-height:46px;">
               💬 Share on WhatsApp
             </button>
-            <a href="${activeRecipientUrl}" target="_blank" class="btn-open-preview" id="linkOpenPreview" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:700; background:#3b82f6; color:#fff; text-decoration:none; min-height:44px;">
-              👁️ Open Website
+            <a href="${activeRecipientUrl}" target="_blank" class="btn-open-preview" id="linkOpenPreview" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 18px; border-radius:12px; font-size:13px; font-weight:700; background:linear-gradient(135deg, #3b82f6, #6366f1); color:#fff; text-decoration:none; min-height:46px;">
+              👁️ Test Website
             </a>
           </div>
         </div>
 
         <!-- Creator Early Review -->
-        <div class="share-link-group" style="margin-top:16px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:12px;">
-          <label class="share-link-label" style="color:#94a3b8;">👁️ Creator Early Review Link (Bypasses Countdown)</label>
+        <div class="share-link-group" style="margin-top:18px; border-top:1px dashed rgba(255,255,255,0.12); padding-top:14px;">
+          <label class="share-link-label" style="color:#cbd5e1;">👁️ Creator Early Review Link (Bypasses Countdown)</label>
           <div class="share-input-row">
-            <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="${makerReviewUrl}" style="font-size:11px;" />
+            <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="${toWhatsAppSafeUrl(makerReviewUrl)}" style="font-size:11px;" />
             <button class="btn-copy-link" id="btnCopyMaker" style="font-size:11px;">Copy</button>
           </div>
-          <div class="share-sub-hint" style="margin-top:4px; font-size:11px; color:#888;">
-            Use this to verify your celebration before the countdown ends. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
+          <div class="share-sub-hint" style="margin-top:4px; font-size:11px; color:#94a3b8;">
+            Use this to verify your celebration before the event countdown ends. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
           </div>
         </div>
       </div>
@@ -82,15 +108,17 @@ export function openShareModal(templateId, data) {
     origin: { y: 0.6 }
   });
 
-  // Automatically publish to backend server if available to generate clean short link /s/slug
+  // Automatically publish to backend server to generate permanent short link
   const inpRecipient = overlay.querySelector('#inpRecipientUrl');
   const lblType = overlay.querySelector('#lblLinkType');
   const linkPreview = overlay.querySelector('#linkOpenPreview');
 
   publishSiteToServer(templateId, data).then(res => {
     if (res && (res.fullUrl || res.path)) {
-      const fullUrl = res.fullUrl || `${window.location.origin}${res.path}`;
+      const fullUrl = toWhatsAppSafeUrl(res.fullUrl || `${window.location.origin}${res.path}`);
       activeRecipientUrl = fullUrl;
+      serverDirectUrl = res.directIpUrl || "";
+      serverVercelUrl = res.vercelUrl || "";
       if (inpRecipient) inpRecipient.value = fullUrl;
       if (lblType) lblType.innerHTML = `(Permanent Short-Link Active ✨)`;
       if (linkPreview) linkPreview.href = fullUrl;
@@ -158,8 +186,9 @@ export function openShareModal(templateId, data) {
   });
 
   overlay.querySelector('#btnShareWhatsapp')?.addEventListener('click', () => {
-    const shareUrl = activeRecipientUrl;
-    const shareMsg = `I made something very special just for you, ${recipientName}! ❤️✨ Open your surprise celebration here: ${shareUrl}`;
+    const shareUrl = toWhatsAppSafeUrl(activeRecipientUrl);
+    // Placing the URL on its own line after double newlines guarantees WhatsApp parses it as a clickable blue hyperlink
+    const shareMsg = `I made something very special just for you, ${recipientName}! ❤️✨\n\nOpen your surprise website here:\n${shareUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`, '_blank');
   });
 }

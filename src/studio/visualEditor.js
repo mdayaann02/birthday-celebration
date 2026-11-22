@@ -353,13 +353,88 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       </div>
     `;
   } else if (templateId === 'sorry') {
+    const sorryPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { image: "/images/sunset.jpg", caption: "Our sunset walk... I miss your laugh so much 🌅", note: "You looked so peaceful here. I promise to always protect your happiness." },
+      { image: "/images/always_you.jpg", caption: "You are the brightest light in my world 🫶", note: "Even on my gloomiest days, one smile from you fixes everything." },
+      { image: "/images/pretty.jpg", caption: "I never want to see you hurt ever again ✨", note: "You deserve the gentlest, sweetest love in the universe." }
+    ];
+
     specificBox.innerHTML = `
-      <div class="section-title">🥺 Apology Details</div>
+      <div class="section-title">🥺 Multi-Page Apology Details (Stage 1 to 7)</div>
+      
       <div class="form-group">
-        <label class="form-label">Sincere Apology Message</label>
-        <textarea rows="3" class="form-textarea" id="edSorryMsg">${data.apologyMessage || ''}</textarea>
+        <label class="form-label">Sincere Apology Message (Letter)</label>
+        <textarea rows="4" class="form-textarea" id="edSorryMsg">${data.apologyMessage || ''}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">My Penance / Punishment Tasks (1 per line)</label>
+        <div class="editor-help-text" style="margin-bottom:6px;">Tasks and deeds you agree to perform for her:</div>
+        <textarea rows="5" class="form-textarea" id="edSorryPenance">${(data.penances || [
+          "Buy your favorite Iced Boba / Treat right now 🧋",
+          "30-minute soothing massage whenever you ask 💆‍♀️",
+          "Order whatever food you are craving tonight, my treat 🍕",
+          "Watch 3 chick flicks / K-dramas with zero groaning 🍿",
+          "Fold all your laundry & do your chores this weekend 🧹",
+          "Write 100 cute post-it notes of things I adore about you 📝"
+        ]).join('\n')}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Official Peace Treaty Clauses (1 per line)</label>
+        <div class="editor-help-text" style="margin-bottom:6px;">Playful legal articles stamped by her fingerprint:</div>
+        <textarea rows="5" class="form-textarea" id="edSorryTreaty">${(data.treatyClauses || [
+          "Party A (The Cutest Girl) is officially declared 100% Right in all past, present, and future disputes.",
+          "Party B must deliver hugs, kisses, and forehead kisses upon demand.",
+          "Permanent hoodie and jacket theft rights are granted with zero retaliation.",
+          "All future disagreements must be settled immediately with dessert and boba.",
+          "No going to sleep angry ever again — cuddles are mandatory."
+        ]).join('\n')}</textarea>
+      </div>
+
+      <!-- Memory Polaroids -->
+      <div style="margin-top:16px;">
+        <label class="form-label" style="font-weight:700; color:var(--primary);">📸 Reconciliation Memory Photos (Stage 4):</label>
+        <div id="sorryPolsList">
+          ${sorryPols.map((p, i) => `
+            <div class="sub-card-editor sorry-pol-row" data-i="${i}">
+              <div class="bcard-top-row">
+                <div class="bcard-thumb-wrap">
+                  <img src="${p.image}" class="bcard-thumb" id="sorryPolThumb_${i}" onerror="this.src='/images/sunset.jpg'" />
+                  <label class="btn-thumb-upload" title="Upload Photo">
+                    📷
+                    <input type="file" class="file-upload-sorry-photo" data-i="${i}" accept="image/*" style="display:none;" />
+                  </label>
+                </div>
+                <div class="bcard-caption-col">
+                  <span class="bcard-num-badge">📸 Memory #${i+1}</span>
+                  <input type="text" class="form-input sorry-pol-cap" data-i="${i}" value="${p.caption || ''}" placeholder="Front Caption (e.g. Our favorite sunset walk)" />
+                </div>
+              </div>
+              <input type="text" class="form-input sorry-pol-note" data-i="${i}" style="margin-top:6px;" value="${p.note || ''}" placeholder="Secret Note on Back of Polaroid" />
+              <input type="text" class="form-input sorry-pol-img" data-i="${i}" style="margin-top:6px;" value="${p.image}" placeholder="Image URL (or tap 📷 to upload)" />
+            </div>
+          `).join('')}
+        </div>
       </div>
     `;
+
+    // File upload listeners for sorry photos
+    specificBox.querySelectorAll('.file-upload-sorry-photo').forEach(input => {
+      input.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const i = input.getAttribute('data-i');
+        const res = await uploadFile(file);
+        if (res.success && res.url) {
+          const imgInput = specificBox.querySelector(`.sorry-pol-img[data-i="${i}"]`);
+          const thumb = specificBox.querySelector(`#sorryPolThumb_${i}`);
+          if (imgInput) imgInput.value = res.url;
+          if (thumb) thumb.src = res.url;
+          triggerChange();
+        }
+      });
+    });
   } else if (templateId === 'valentine') {
     specificBox.innerHTML = `
       <div class="section-title">💖 Valentine Proposal Details</div>
@@ -745,7 +820,21 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (elAnniLetter) updated.letter = elAnniLetter.value;
     } else if (templateId === 'sorry') {
       const elSorry = container.querySelector('#edSorryMsg');
+      const elPenance = container.querySelector('#edSorryPenance');
+      const elTreaty = container.querySelector('#edSorryTreaty');
       if (elSorry) updated.apologyMessage = elSorry.value;
+      if (elPenance) updated.penances = elPenance.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (elTreaty) updated.treatyClauses = elTreaty.value.split('\n').map(s => s.trim()).filter(Boolean);
+
+      const sorryPols = [];
+      container.querySelectorAll('.sorry-pol-row').forEach(row => {
+        const i = row.getAttribute('data-i');
+        const img = row.querySelector(`.sorry-pol-img[data-i="${i}"]`)?.value || '/images/sunset.jpg';
+        const cap = row.querySelector(`.sorry-pol-cap[data-i="${i}"]`)?.value || '';
+        const note = row.querySelector(`.sorry-pol-note[data-i="${i}"]`)?.value || '';
+        sorryPols.push({ image: img, caption: cap, note });
+      });
+      if (sorryPols.length > 0) updated.polaroids = sorryPols;
     } else if (templateId === 'valentine') {
       const elQ = container.querySelector('#edValQuestion');
       const elL = container.querySelector('#edValLetter');

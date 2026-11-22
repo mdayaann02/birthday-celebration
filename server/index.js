@@ -122,14 +122,29 @@ app.post('/api/sites', (req, res) => {
   saveSitesDB(db);
 
   const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-  const host = req.get('host');
-  const fullUrl = `${protocol}://${host}/s/${slug}`;
+  const rawHost = req.get('host') || '';
+  
+  // Clean host: If running on Oracle VM IP 155.248.255.29, use domain 155-248-255-29.sslip.io (port 80)
+  // This guarantees WhatsApp recognizes it as a 100% clickable blue hyperlink with no port 3000 parsing issues.
+  let cleanHost = rawHost;
+  if (rawHost.includes('155.248.255.29')) {
+    cleanHost = '155-248-255-29.sslip.io';
+  } else {
+    // Strip default port if port 80 is used
+    cleanHost = rawHost.replace(/:3000$/, '');
+  }
+
+  const fullUrl = `http://${cleanHost}/s/${slug}`;
+  const directIpUrl = `http://155.248.255.29/s/${slug}`;
+  const vercelUrl = `https://birthday-website-phi-one.vercel.app/s/${slug}`;
 
   return res.json({
     success: true,
     slug,
     path: `/s/${slug}`,
-    fullUrl
+    fullUrl,
+    directIpUrl,
+    vercelUrl
   });
 });
 
