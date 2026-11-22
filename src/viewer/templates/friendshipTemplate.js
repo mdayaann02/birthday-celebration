@@ -4,6 +4,12 @@ import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 export function renderFriendshipTemplate(container, data) {
+  const polaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+    { title: "Partners in Crime 👯", image: "/images/sunset.jpg", note: "From crazy spontaneous plans to endless uncontrollable laughter." },
+    { title: "Best Friends Forever 🥂", image: "/images/always_you.jpg", note: "Thank you for always having my back no matter what." },
+    { title: "Unstoppable Duo 🌟", image: "/images/baddie.jpg", note: "Here's to a lifetime of chaotic adventures and memories!" }
+  ];
+
   container.innerHTML = `
     <!-- Top Audio Player -->
     <div id="bffPlayerSlot"></div>
@@ -58,6 +64,25 @@ export function renderFriendshipTemplate(container, data) {
               <p class="bff-card-desc">${m.text}</p>
             </div>
           `).join('')}
+        </div>
+
+        <!-- Bestie Polaroids Wall -->
+        <div class="bff-polaroid-gallery" style="margin-top:32px;">
+          <div class="bff-tag">📸 BESTIE HALL OF FAME</div>
+          <h2 style="font-family:'Playfair Display',serif; font-size:24px; color:#fff; text-align:center; margin:6px 0 20px;">Memories We Will Never Forget</h2>
+          <div class="bff-polaroids-grid">
+            ${polaroids.map((p, i) => `
+              <div class="bff-polaroid-card">
+                <div class="bff-polaroid-frame">
+                  <img src="${p.image}" alt="${p.title || 'Bestie Memory'}" onerror="this.src='/images/sunset.jpg'" />
+                </div>
+                <div class="bff-polaroid-info">
+                  <h4 class="bff-pol-title">${p.title || `Memory #${i+1}`}</h4>
+                  <p class="bff-pol-note">${p.note || p.caption || ''}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
         </div>
 
         <div style="text-align:center; margin: 40px 0 60px;">

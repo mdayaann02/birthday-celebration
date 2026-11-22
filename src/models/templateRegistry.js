@@ -227,6 +227,11 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         "I promise to hold your hand through every twist and turn of life.",
         "I promise to keep falling in love with you more every single sunrise."
       ],
+      polaroids: [
+        { title: "Our First Sunset Walk 🌅", image: "/images/sunset.jpg", note: "The day I knew I never wanted to let go of your hand." },
+        { title: "Always Laughing With You 🫶", image: "/images/always_you.jpg", note: "Every silly joke, every shared smile makes my life a dream." },
+        { title: "My Beautiful Forever ✨", image: "/images/pretty.jpg", note: "I fall in love with you all over again every single morning." }
+      ],
       letter: "Every single day with you is a reminder of how lucky I am. Thank you for being my anchor, my warmth, and my favorite hello and hardest goodbye. Happy Anniversary, my love."
     }
   },
@@ -317,6 +322,11 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       heroTitle: "To the Girl Who Stole My Heart",
       heroSubtitle: "Every love song makes complete sense now that you're in my life 🌹",
       proposalQuestion: "Will You Be My Valentine & Forever? ❤️",
+      polaroids: [
+        { title: "That Unforgettable Smile ✨", image: "/images/pretty.jpg", note: "The very first time you looked at me and smiled, my heart decided right then." },
+        { title: "Our Favorite Adventures 🌅", image: "/images/sunset.jpg", note: "Every moment with you feels like a beautiful dream I never want to wake up from." },
+        { title: "Forever My Queen 👑", image: "/images/queen.jpg", note: "The kindest, most radiant soul. I am truly the luckiest person in the world." }
+      ],
       loveLetter: "You walked into my life so gently, but turned it into the most magical journey. Your smile is my daily dose of peace, and your voice makes everything else fade away. I want to spend all my tomorrows making you smile as bright as you make mine."
     }
   },
@@ -349,6 +359,11 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         { title: "Late Night Talks", text: "Solving world problems at 2 AM instead of sleeping." },
         { title: "Unstoppable Laughs", text: "Laughing so hard at something nobody else found funny." },
         { title: "Always Having My Back", text: "Knowing exactly what I'm thinking with just one glance." }
+      ],
+      polaroids: [
+        { title: "Partners In Crime 👯", image: "/images/sunset.jpg", note: "Late night drives, endless food runs, and gossip sessions." },
+        { title: "Unstoppable Duo ⚡", image: "/images/always_you.jpg", note: "Through thick and thin, no one gets me like you do!" },
+        { title: "Legendary Memories 📸", image: "/images/dream_girl.jpg", note: "A toast to 100 more years of crazy adventures together!" }
       ]
     }
   },
@@ -375,6 +390,11 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       audioSrc: "/audio/alfaaz.mp3",
       heroTitle: "To My Queen, My Maa ❤️",
       heroSubtitle: "In your smile lies my entire universe, and in your prayers I find my greatest strength.",
+      polaroids: [
+        { title: "Her Gentle Smile 🌸", image: "/images/beautiful.jpg", note: "The warmth and peace that has always been my safe place." },
+        { title: "Unconditional Support 🫶", image: "/images/always_you.jpg", note: "No matter how tough life gets, knowing you are praying for me gives me strength." },
+        { title: "Forever My Queen 👑", image: "/images/queen.jpg", note: "A mother like no other, radiant, loving, and truly unforgettable." }
+      ],
       letter: `Dear Maa,
 
 No words or songs in this world will ever be enough to thank you for everything you do. 
@@ -409,6 +429,11 @@ I love you more than words could ever describe, Maa! 🌸👑❤️`
       audioSrc: "/audio/alfaaz.mp3",
       heroTitle: "To My First Hero, My Father 🌟",
       heroSubtitle: "A father's love is quiet, yet it moves mountains. Thank you for being my rock and greatest shield.",
+      polaroids: [
+        { title: "Quiet Strength 🛡️", image: "/images/sunset.jpg", note: "Working through sleepless days so our future would shine bright." },
+        { title: "Life's Compass 🧭", image: "/images/always_you.jpg", note: "Teaching us integrity, honor, and how to stand tall in any storm." },
+        { title: "My First Hero 🌟", image: "/images/dream_girl.jpg", note: "No cape, no armor, just a father who gave us everything." }
+      ],
       letter: `Dear Papa,
 
 You worked tirelessly through every storm without ever complaining, just so our future could shine bright.
@@ -443,6 +468,11 @@ Happy celebration, Papa! 🌟🛡️❤️`
       audioSrc: "/audio/alfaaz.mp3",
       heroTitle: "To My Crazy, Annoying, Irreplaceable Sister 💅✨",
       heroSubtitle: "We fight, we steal each other's clothes, we drive each other insane... but no one has my back like you do!",
+      polaroids: [
+        { title: "Partner in Crime 💅", image: "/images/pretty.jpg", note: "From raiding each other's wardrobes to keeping the deepest secrets safe." },
+        { title: "Chaos & Blackmail 📸", image: "/images/always_you.jpg", note: "Photos that could ruin each other's reputation, kept as supreme leverage! 😂" },
+        { title: "Forever Bestie 💖", image: "/images/beautiful.jpg", note: "No matter how loud our fights get, you are the first person I run to." }
+      ],
       letter: `Dear Behna,
 
 Even though you steal my things and blame me for everything in front of Mom, I wouldn't trade you for the world!
@@ -477,6 +507,11 @@ Love you endlessly, my favourite sister! 💖💅✨`
       audioSrc: "/audio/alfaaz.mp3",
       heroTitle: "To My Brother in Chaos, The Legend 🤜🤛🔥",
       heroSubtitle: "From wrestling over the TV remote to standing shoulder-to-shoulder through everything. Brotherhood forever!",
+      polaroids: [
+        { title: "Chaos & Adventures 🚗", image: "/images/sunset.jpg", note: "Late night drives, wild plans that almost got us into trouble, and countless memories." },
+        { title: "Gaming Battles 🎮", image: "/images/always_you.jpg", note: "Yelling at the TV screen, blaming the controller, and legendary 3 AM tournament wins." },
+        { title: "Brothers for Life 🤜🤛", image: "/images/dream_girl.jpg", note: "No matter how much we roast each other, you are the one person I can always count on." }
+      ],
       letter: `Dear Bhai,
 
 We've broken things, made crazy memories, fought like wild animals, and laughed until our stomachs hurt.

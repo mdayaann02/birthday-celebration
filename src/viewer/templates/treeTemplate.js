@@ -1579,6 +1579,12 @@ I love you endlessly. ♡`;
   }
 
   function startMusicAutoplay() {
+    const isEditorMode = Boolean(window.isCelebrationEditorMode) ||
+                         Boolean(document.querySelector('.studio-layout')) ||
+                         Boolean(container.closest('.studio-layout')) ||
+                         Boolean(container.closest('#previewContainer'));
+    if (isEditorMode) return; // Stop autoplay during editor mode
+
     if (!audioEl || isPlaying) return;
     audioEl.play().then(() => {
       setPlaying(true);

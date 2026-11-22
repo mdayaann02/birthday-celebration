@@ -26,6 +26,19 @@ async function initApp() {
   if (pathname.startsWith('/s/')) {
     const slug = pathname.split('/s/')[1]?.replace(/\/$/, '').toLowerCase();
     if (slug) {
+      window.isCelebrationEditorMode = false;
+
+      // Priority A: Check if encoded site delta is present in query (?site= or ?data=)
+      const embeddedToken = searchParams.get('site') || searchParams.get('data');
+      if (embeddedToken || window.location.hash.includes('site=')) {
+        const decodedSite = decodeSiteFromUrl();
+        if (decodedSite && decodedSite.data) {
+          renderViewerApp(root, decodedSite.templateId, decodedSite.data, isMakerReview);
+          return;
+        }
+      }
+
+      // Priority B: Fetch from backend server API
       root.innerHTML = `
         <div class="site-loading-screen" style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; color:#fff; background:radial-gradient(circle at 50% 50%, #1c1028 0%, #0c0814 100%); font-family:system-ui, -apple-system, sans-serif; text-align:center; padding:20px;">
           <div style="font-size:46px; margin-bottom:14px; animation: pulse 1.5s infinite;">🌸</div>
@@ -38,12 +51,28 @@ async function initApp() {
         renderViewerApp(root, site.templateId || 'blossom', site.data, isMakerReview);
         return;
       }
+
+      // Priority C: Site not found or server offline
+      root.innerHTML = `
+        <div class="site-loading-screen" style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; color:#fff; background:radial-gradient(circle at 50% 50%, #1c1028 0%, #0c0814 100%); font-family:system-ui, -apple-system, sans-serif; text-align:center; padding:24px;">
+          <div style="font-size:52px; margin-bottom:16px;">💌</div>
+          <h2 style="font-size:24px; font-weight:800; margin-bottom:8px; color:#fff;">Celebration Not Found</h2>
+          <p style="font-size:14px; color:#fda4af; max-width:340px; line-height:1.6; margin-bottom:24px;">
+            We couldn't load this celebration link. It may have expired or the link may be incomplete.
+          </p>
+          <a href="/" style="display:inline-block; padding:12px 24px; border-radius:12px; background:linear-gradient(135deg, #ff4d6d, #fbbf24); color:#fff; font-weight:700; text-decoration:none;">
+            Open Celebration Studio ✨
+          </a>
+        </div>
+      `;
+      return;
     }
   }
 
   // 2. SHARED CELEBRATION LINK: Check if URL contains shared site token (#site=... or ?site=...)
   const decodedSite = decodeSiteFromUrl();
   if (decodedSite && decodedSite.isShared) {
+    window.isCelebrationEditorMode = false;
     renderViewerApp(root, decodedSite.templateId, decodedSite.data, decodedSite.isMakerReview);
     return;
   }
@@ -60,6 +89,7 @@ async function initApp() {
                            hash.startsWith('recipient=');
 
   if (isExplicitViewer) {
+    window.isCelebrationEditorMode = false;
     const tmplQuery = searchParams.get('template') || 
                       (hash.startsWith('template=') ? hash.substring(9) : null);
     const activeTemplateId = (tmplQuery && TEMPLATES[tmplQuery]) ? tmplQuery : getPublishedTemplateId();

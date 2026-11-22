@@ -13,6 +13,9 @@ import { openShareModal } from './shareModal.js';
 import { renderViewerApp } from '../viewer/viewerApp.js';
 
 export function renderStudioApp(root) {
+  // Flag that editor mode is active so audio players never auto-play on click/touch in editor
+  window.isCelebrationEditorMode = true;
+
   const searchParams = new URLSearchParams(window.location.search);
   const hash = window.location.hash.replace(/^#/, '');
   const urlTid = searchParams.get('template') || (hash.startsWith('template=') ? hash.substring(9) : null) || (TEMPLATES[hash] ? hash : null);
@@ -225,6 +228,11 @@ export function renderStudioApp(root) {
   }
 
   function updateLivePreview() {
+    if (previewContainer) {
+      previewContainer.querySelectorAll('audio').forEach(a => {
+        try { a.pause(); a.currentTime = 0; } catch {}
+      });
+    }
     renderViewerApp(previewContainer, activeTemplateId, activeData);
   }
 

@@ -2,6 +2,41 @@
 
 import { uploadFile } from '../models/siteStorage.js';
 
+function renderGenPolaroidsBlock(prefix, label, polaroids) {
+  return `
+    <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 18px 0 8px;">📸 ${label}:</div>
+    <div id="${prefix}PolaroidsList">
+      ${polaroids.map((p, i) => `
+        <div class="sub-card-editor gen-polaroid-row" data-prefix="${prefix}" data-i="${i}">
+          <div class="bcard-top-row">
+            <div class="bcard-thumb-wrap">
+              <img src="${p.image}" class="bcard-thumb" id="${prefix}PolThumb_${i}" onerror="this.src='/images/sunset.jpg'" />
+              <label class="btn-thumb-upload" title="Upload Photo">
+                📷
+                <input type="file" class="file-upload-gen-polaroid" data-prefix="${prefix}" data-i="${i}" accept="image/*" style="display:none;" />
+              </label>
+            </div>
+            <div class="bcard-caption-col">
+              <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
+              <input type="text" class="form-input gen-pol-title" data-prefix="${prefix}" data-i="${i}" value="${p.title || ''}" placeholder="Title / Caption (e.g. Unforgettable Smile)" />
+            </div>
+          </div>
+          <div class="bcard-presets-chips">
+            <span class="preset-chip-label">Quick Pick:</span>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/pretty.jpg">Pretty</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/queen.jpg">Queen</button>
+          </div>
+          <input type="text" class="form-input gen-pol-img" data-prefix="${prefix}" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap 📷 to upload)" />
+          <input type="text" class="form-input gen-pol-note" data-prefix="${prefix}" data-i="${i}" style="margin-top:6px;" value="${p.note || ''}" placeholder="Secret Note / Memory on Tap" />
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
 export function renderVisualEditor(container, templateId, data, onChange) {
   container.innerHTML = `
     <div class="visual-editor-wrap">
@@ -341,6 +376,12 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       </div>
     `;
   } else if (templateId === 'anniversary') {
+    const anniPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "Our First Sunset Walk 🌅", image: "/images/sunset.jpg", note: "The day I knew I never wanted to let go of your hand." },
+      { title: "Always Laughing With You 🫶", image: "/images/always_you.jpg", note: "Every silly joke, every shared smile makes my life a dream." },
+      { title: "My Beautiful Forever ✨", image: "/images/pretty.jpg", note: "I fall in love with you all over again every single morning." }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">💍 Anniversary Details</div>
       <div class="form-group">
@@ -351,6 +392,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <label class="form-label">Love Letter to Recipient</label>
         <textarea rows="3" class="form-textarea" id="edAnniLetter">${data.letter || ''}</textarea>
       </div>
+      ${renderGenPolaroidsBlock('anni', 'Cherished Anniversary Moments & Polaroids', anniPols)}
     `;
   } else if (templateId === 'sorry') {
     const sorryPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
@@ -436,6 +478,12 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       });
     });
   } else if (templateId === 'valentine') {
+    const valPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "That Unforgettable Smile ✨", image: "/images/pretty.jpg", note: "The very first time you looked at me and smiled, my heart decided right then." },
+      { title: "Our Favorite Adventures 🌅", image: "/images/sunset.jpg", note: "Every moment with you feels like a beautiful dream I never want to wake up from." },
+      { title: "Forever My Queen 👑", image: "/images/queen.jpg", note: "The kindest, most radiant soul. I am truly the luckiest person in the world." }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">💖 Valentine Proposal Details</div>
       <div class="form-group">
@@ -446,46 +494,82 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <label class="form-label">Wax-Sealed Love Letter</label>
         <textarea rows="3" class="form-textarea" id="edValLetter">${data.loveLetter || ''}</textarea>
       </div>
+      ${renderGenPolaroidsBlock('val', 'Valentine Cherished Polaroids', valPols)}
     `;
   } else if (templateId === 'friendship') {
+    const bffPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "Partners In Crime 👯", image: "/images/sunset.jpg", note: "Late night drives, endless food runs, and gossip sessions." },
+      { title: "Unstoppable Duo ⚡", image: "/images/always_you.jpg", note: "Through thick and thin, no one gets me like you do!" },
+      { title: "Legendary Memories 📸", image: "/images/dream_girl.jpg", note: "A toast to 100 more years of crazy adventures together!" }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">👯 Friendship Details</div>
       <div class="form-group">
         <label class="form-label">Certificate Award Reason</label>
         <textarea rows="2" class="form-textarea" id="edBffReason">${data.awardReason || ''}</textarea>
       </div>
+      ${renderGenPolaroidsBlock('bff', 'Bestie Hall of Fame Polaroids', bffPols)}
     `;
   } else if (templateId === 'mother') {
+    const momPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "Her Gentle Smile 🌸", image: "/images/beautiful.jpg", note: "The warmth and peace that has always been my safe place." },
+      { title: "Unconditional Support 🫶", image: "/images/always_you.jpg", note: "No matter how tough life gets, knowing you are praying for me gives me strength." },
+      { title: "Forever My Queen 👑", image: "/images/queen.jpg", note: "A mother like no other, radiant, loving, and truly unforgettable." }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">🌸 Mother Special (Maa) Details</div>
       <div class="form-group">
         <label class="form-label">Heartfelt Letter to Maa</label>
         <textarea rows="5" class="form-textarea" id="edMomLetter">${data.letter || ''}</textarea>
       </div>
+      ${renderGenPolaroidsBlock('mom', 'Cherished Memories With Maa', momPols)}
     `;
   } else if (templateId === 'father') {
+    const dadPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "Quiet Strength 🛡️", image: "/images/sunset.jpg", note: "Working through sleepless days so our future would shine bright." },
+      { title: "Life's Compass 🧭", image: "/images/always_you.jpg", note: "Teaching us integrity, honor, and how to stand tall in any storm." },
+      { title: "My First Hero 🌟", image: "/images/dream_girl.jpg", note: "No cape, no armor, just a father who gave us everything." }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">🌟 Father Special (Papa) Details</div>
       <div class="form-group">
         <label class="form-label">Letter of Gratitude & Honor to Papa</label>
         <textarea rows="5" class="form-textarea" id="edDadLetter">${data.letter || ''}</textarea>
       </div>
+      ${renderGenPolaroidsBlock('dad', 'Memories With Papa', dadPols)}
     `;
   } else if (templateId === 'sister') {
+    const sisPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "Partner in Crime 💅", image: "/images/pretty.jpg", note: "From raiding each other's wardrobes to keeping the deepest secrets safe." },
+      { title: "Chaos & Blackmail 📸", image: "/images/always_you.jpg", note: "Photos that could ruin each other's reputation, kept as supreme leverage! 😂" },
+      { title: "Forever Bestie 💖", image: "/images/beautiful.jpg", note: "No matter how loud our fights get, you are the first person I run to." }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">💅 Sister Special (Behna) Details</div>
       <div class="form-group">
         <label class="form-label">Letter to My Crazy Sister</label>
         <textarea rows="5" class="form-textarea" id="edSisLetter">${data.letter || ''}</textarea>
       </div>
+      ${renderGenPolaroidsBlock('sis', 'Sister Memories & Blackmail Polaroids', sisPols)}
     `;
   } else if (templateId === 'brother') {
+    const broPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "Chaos & Adventures 🚗", image: "/images/sunset.jpg", note: "Late night drives, wild plans that almost got us into trouble, and countless memories." },
+      { title: "Gaming Battles 🎮", image: "/images/always_you.jpg", note: "Yelling at the TV screen, blaming the controller, and legendary 3 AM tournament wins." },
+      { title: "Brothers for Life 🤜🤛", image: "/images/dream_girl.jpg", note: "No matter how much we roast each other, you are the one person I can always count on." }
+    ];
+
     specificBox.innerHTML = `
       <div class="section-title">🤜🤛 Brother Special (Bhai) Details</div>
       <div class="form-group">
         <label class="form-label">Letter to My Brother in Chaos</label>
         <textarea rows="5" class="form-textarea" id="edBroLetter">${data.letter || ''}</textarea>
       </div>
+      ${renderGenPolaroidsBlock('bro', 'Brotherhood Hall of Fame Polaroids', broPols)}
     `;
   }
 
@@ -693,9 +777,57 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     }
   });
 
+  // Gen polaroids quick-pick and file upload listeners
+  container.querySelectorAll('.btn-quick-gen-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prefix = btn.getAttribute('data-prefix');
+      const idx = btn.getAttribute('data-i');
+      const src = btn.getAttribute('data-src');
+      const imgInp = container.querySelector(`.gen-pol-img[data-prefix="${prefix}"][data-i="${idx}"]`);
+      const thumb = container.querySelector(`#${prefix}PolThumb_${idx}`);
+      if (imgInp) imgInp.value = src;
+      if (thumb) thumb.src = src;
+      emitChange();
+    });
+  });
+
+  container.querySelectorAll('.file-upload-gen-polaroid').forEach(fileInput => {
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const prefix = fileInput.getAttribute('data-prefix');
+      const idx = fileInput.getAttribute('data-i');
+      const textInput = container.querySelector(`.gen-pol-img[data-prefix="${prefix}"][data-i="${idx}"]`);
+      const thumb = container.querySelector(`#${prefix}PolThumb_${idx}`);
+      if (textInput) textInput.value = "Uploading photo...";
+      const res = await uploadFile(file);
+      if (res.success) {
+        if (textInput) textInput.value = res.url;
+        if (thumb) thumb.src = res.url;
+        emitChange();
+      } else {
+        alert(res.error || "Upload failed. Please try a different photo.");
+      }
+    });
+  });
+
   // Bind text input listeners
   function emitChange() {
     const updated = { ...data };
+
+    function extractGenPols(prefix) {
+      const rows = container.querySelectorAll(`.gen-polaroid-row[data-prefix="${prefix}"]`);
+      if (rows.length === 0) return null;
+      const arr = [];
+      rows.forEach(row => {
+        const i = row.getAttribute('data-i');
+        const img = row.querySelector(`.gen-pol-img[data-prefix="${prefix}"][data-i="${i}"]`)?.value || '/images/sunset.jpg';
+        const title = row.querySelector(`.gen-pol-title[data-prefix="${prefix}"][data-i="${i}"]`)?.value || '';
+        const note = row.querySelector(`.gen-pol-note[data-prefix="${prefix}"][data-i="${i}"]`)?.value || '';
+        arr.push({ image: img, title, note });
+      });
+      return arr;
+    }
     const elRec = container.querySelector('#edRecipient');
     const elSend = container.querySelector('#edSender');
     const elHeroT = container.querySelector('#edHeroTitle');
@@ -818,6 +950,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const elAnniLetter = container.querySelector('#edAnniLetter');
       if (elAnniStart) updated.anniversaryStartDate = elAnniStart.value;
       if (elAnniLetter) updated.letter = elAnniLetter.value;
+      const anniPols = extractGenPols('anni');
+      if (anniPols) updated.polaroids = anniPols;
     } else if (templateId === 'sorry') {
       const elSorry = container.querySelector('#edSorryMsg');
       const elPenance = container.querySelector('#edSorryPenance');
@@ -840,21 +974,33 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const elL = container.querySelector('#edValLetter');
       if (elQ) updated.proposalQuestion = elQ.value;
       if (elL) updated.loveLetter = elL.value;
+      const valPols = extractGenPols('val');
+      if (valPols) updated.polaroids = valPols;
     } else if (templateId === 'friendship') {
       const elR = container.querySelector('#edBffReason');
       if (elR) updated.awardReason = elR.value;
+      const bffPols = extractGenPols('bff');
+      if (bffPols) updated.polaroids = bffPols;
     } else if (templateId === 'mother') {
       const elML = container.querySelector('#edMomLetter');
       if (elML) updated.letter = elML.value;
+      const momPols = extractGenPols('mom');
+      if (momPols) updated.polaroids = momPols;
     } else if (templateId === 'father') {
       const elDL = container.querySelector('#edDadLetter');
       if (elDL) updated.letter = elDL.value;
+      const dadPols = extractGenPols('dad');
+      if (dadPols) updated.polaroids = dadPols;
     } else if (templateId === 'sister') {
       const elSL = container.querySelector('#edSisLetter');
       if (elSL) updated.letter = elSL.value;
+      const sisPols = extractGenPols('sis');
+      if (sisPols) updated.polaroids = sisPols;
     } else if (templateId === 'brother') {
       const elBL = container.querySelector('#edBroLetter');
       if (elBL) updated.letter = elBL.value;
+      const broPols = extractGenPols('bro');
+      if (broPols) updated.polaroids = broPols;
     }
 
     onChange(updated);

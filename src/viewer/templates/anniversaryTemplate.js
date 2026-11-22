@@ -5,6 +5,11 @@ import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 export function renderAnniversaryTemplate(container, data) {
   const startDate = new Date(data.anniversaryStartDate || "2023-11-28T00:00").getTime();
+  const polaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+    { title: "Our First Sunset Walk 🌅", image: "/images/sunset.jpg", note: "The day I realized I never want to watch a sunset with anyone else." },
+    { title: "Endless Laughter & Joy 🫶", image: "/images/always_you.jpg", note: "Smiling so much my cheeks hurt. You bring pure sunshine into my days." },
+    { title: "Forever & Always 💍", image: "/images/dream_girl.jpg", note: "A lifetime of choosing you, loving you, and growing with you." }
+  ];
 
   container.innerHTML = `
     <!-- Top Audio Player Slot -->
@@ -74,6 +79,25 @@ export function renderAnniversaryTemplate(container, data) {
             <div class="anni-vow-card">
               <div class="anni-vow-icon">💌</div>
               <p class="anni-vow-text">"${vow}"</p>
+            </div>
+          `).join('')}
+        </div>
+      </section>
+
+      <!-- Anniversary Cherished Moments Polaroid Gallery -->
+      <section class="anni-section">
+        <div class="anni-section-tag">UNFORGETTABLE MEMORIES</div>
+        <h2 class="anni-section-head">Moments of Us 📸</h2>
+        <div class="anni-polaroid-gallery">
+          ${polaroids.map((p, i) => `
+            <div class="anni-polaroid-item">
+              <div class="anni-polaroid-frame">
+                <img src="${p.image}" alt="${p.title || 'Anniversary Memory'}" onerror="this.src='/images/sunset.jpg'" />
+              </div>
+              <div class="anni-polaroid-caption">
+                <h4 class="anni-pol-title">${p.title || `Memory #${i+1}`}</h4>
+                <p class="anni-pol-note">${p.note || p.caption || ''}</p>
+              </div>
             </div>
           `).join('')}
         </div>

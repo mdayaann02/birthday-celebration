@@ -463,6 +463,12 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   }
 
   function startAutoplayAudio() {
+    const isEditorMode = Boolean(window.isCelebrationEditorMode) ||
+                         Boolean(document.querySelector('.studio-layout')) ||
+                         Boolean(container.closest('.studio-layout')) ||
+                         Boolean(container.closest('#previewContainer'));
+    if (isEditorMode) return; // Stop autoplay during editor mode
+
     if (!audioPlaying && audioEl) {
       audioEl.play().then(() => {
         updateBlossomPlayState(true);

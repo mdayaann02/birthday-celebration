@@ -4,6 +4,12 @@ import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 export function renderValentineTemplate(container, data) {
+  const polaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+    { title: "That Unforgettable Smile ✨", image: "/images/pretty.jpg", note: "The very first time you looked at me and smiled, my heart decided right then." },
+    { title: "Our Favorite Adventures 🌅", image: "/images/sunset.jpg", note: "Every moment with you feels like a beautiful dream I never want to wake up from." },
+    { title: "Forever My Queen 👑", image: "/images/queen.jpg", note: "The kindest, most radiant soul. I am truly the luckiest person in the world." }
+  ];
+
   container.innerHTML = `
     <!-- Top Audio Player -->
     <div id="valPlayerSlot"></div>
@@ -31,6 +37,25 @@ export function renderValentineTemplate(container, data) {
           </button>
         </div>
         <p class="envelope-subtitle" style="margin-top:16px;">👆 Tap the wax seal to read the secret letter!</p>
+      </section>
+
+      <!-- Romantic Valentine Polaroids -->
+      <section class="val-memories-section">
+        <div class="val-tag">WHY I FELL FOR YOU 📸</div>
+        <h2 class="val-memories-title">Cherished Moments With You</h2>
+        <div class="val-polaroids-grid">
+          ${polaroids.map((p, i) => `
+            <div class="val-polaroid-card">
+              <div class="val-polaroid-img-frame">
+                <img src="${p.image}" alt="${p.title || 'Valentine Memory'}" onerror="this.src='/images/sunset.jpg'" />
+              </div>
+              <div class="val-polaroid-caption">
+                <h4 class="val-pol-title">${p.title || `Memory #${i+1}`}</h4>
+                <p class="val-pol-note">${p.note || p.caption || ''}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
       </section>
 
       <!-- Proposal Question Section -->

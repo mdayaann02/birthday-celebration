@@ -77,21 +77,29 @@ export function initMusicPlayer(container, config) {
 
   cdPlayer.addEventListener('click', togglePlay);
 
-  // Auto-play on first touch/click anywhere on page
-  const onFirstInteraction = () => {
-    if (audio.paused && !isPlaying) {
-      audio.play().then(() => {
-        setPlayingState(true);
-      }).catch(() => {});
-    }
-    window.removeEventListener('click', onFirstInteraction);
-    window.removeEventListener('touchstart', onFirstInteraction);
-    window.removeEventListener('pointerdown', onFirstInteraction);
-  };
+  // In editor mode, NEVER autoplay on click/touch/interaction!
+  const isEditorMode = Boolean(window.isCelebrationEditorMode) ||
+                       Boolean(document.querySelector('.studio-layout')) ||
+                       Boolean(container.closest('.studio-layout')) ||
+                       Boolean(container.closest('#previewContainer'));
 
-  window.addEventListener('click', onFirstInteraction, { once: true });
-  window.addEventListener('touchstart', onFirstInteraction, { once: true });
-  window.addEventListener('pointerdown', onFirstInteraction, { once: true });
+  if (!isEditorMode) {
+    // Auto-play on first touch/click anywhere on page ONLY in recipient viewer mode
+    const onFirstInteraction = () => {
+      if (audio.paused && !isPlaying) {
+        audio.play().then(() => {
+          setPlayingState(true);
+        }).catch(() => {});
+      }
+      window.removeEventListener('click', onFirstInteraction);
+      window.removeEventListener('touchstart', onFirstInteraction);
+      window.removeEventListener('pointerdown', onFirstInteraction);
+    };
+
+    window.addEventListener('click', onFirstInteraction, { once: true });
+    window.addEventListener('touchstart', onFirstInteraction, { once: true });
+    window.addEventListener('pointerdown', onFirstInteraction, { once: true });
+  }
 
   audio.addEventListener('play', () => setPlayingState(true));
   audio.addEventListener('pause', () => setPlayingState(false));

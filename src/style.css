@@ -10735,3 +10735,183 @@ svg {
   0% { transform: translateY(0); }
   100% { transform: translateY(-80px); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22); }
 }
+
+/* Anniversary Cherished Moments Polaroids */
+.anni-polaroid-gallery {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 12px 6px 20px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.anni-polaroid-item {
+  flex: 0 0 250px;
+  scroll-snap-align: center;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 10px 10px 16px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+.anni-polaroid-item:hover {
+  transform: translateY(-4px) rotate(1deg);
+}
+
+.anni-polaroid-frame {
+  width: 100%;
+  height: 220px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.anni-polaroid-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.anni-polaroid-caption {
+  margin-top: 10px;
+}
+
+.anni-pol-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px;
+}
+
+.anni-pol-note {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Valentine Memories Polaroids Grid */
+.val-polaroids-grid {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 12px 6px 20px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.val-polaroid-card {
+  flex: 0 0 250px;
+  scroll-snap-align: center;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 10px 10px 16px;
+  box-shadow: 0 12px 28px rgba(244, 63, 94, 0.2);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+.val-polaroid-card:hover {
+  transform: translateY(-4px) rotate(-1deg);
+}
+
+.val-polaroid-img-frame {
+  width: 100%;
+  height: 220px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff1f2;
+}
+
+.val-polaroid-img-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.val-polaroid-caption {
+  margin-top: 10px;
+}
+
+.val-pol-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #be123c;
+  margin: 0 0 4px;
+}
+
+.val-pol-note {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #475569;
+  margin: 0;
+}
+
+/* Bestie Hall of Fame Polaroids */
+.bff-polaroids-grid {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 12px 6px 20px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bff-polaroid-card {
+  flex: 0 0 250px;
+  scroll-snap-align: center;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 10px 10px 16px;
+  box-shadow: 0 12px 28px rgba(32, 191, 107, 0.2);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+.bff-polaroid-card:hover {
+  transform: translateY(-4px) rotate(1deg);
+}
+
+.bff-polaroid-frame {
+  width: 100%;
+  height: 220px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f0fdf4;
+}
+
+.bff-polaroid-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bff-polaroid-info {
+  margin-top: 10px;
+}
+
+.bff-pol-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #15803d;
+  margin: 0 0 4px;
+}
+
+.bff-pol-note {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #475569;
+  margin: 0;
+}
