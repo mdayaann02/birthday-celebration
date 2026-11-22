@@ -17,7 +17,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
     if (['tree', 'blossom', 'valentine', 'anniversary', 'sorry'].includes(tid)) return 'romance';
     if (['birthday'].includes(tid)) return 'birthday';
     if (['mother', 'father', 'sister', 'brother'].includes(tid)) return 'family';
-    if (['friendship'].includes(tid)) return 'friends';
+    if (['friendship', 'bestie_girl', 'bestie_boy'].includes(tid)) return 'friends';
     return 'all';
   }
 

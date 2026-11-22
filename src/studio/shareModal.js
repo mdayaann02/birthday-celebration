@@ -54,10 +54,10 @@ export function openShareModal(templateId, data) {
 
         <!-- Link Type Selector / Tabs -->
         <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
-          <button type="button" class="btn-link-tab active" id="tabVercelLink" style="padding:7px 14px; border-radius:10px; font-size:12px; font-weight:700; border:1px solid #38bdf8; background:rgba(56,189,248,0.22); color:#38bdf8; cursor:pointer; transition:all 0.2s ease;">
+          <button type="button" class="btn-link-tab active" id="tabVercelLink" style="padding:7px 14px; border-radius:10px; font-size:12px; font-weight:700; border:1px solid #d4235c; background:rgba(212,35,92,0.08); color:#d4235c; cursor:pointer; transition:all 0.2s ease;">
             ⚡ Vercel HTTPS (Recommended)
           </button>
-          <button type="button" class="btn-link-tab" id="tabCloudLink" style="padding:7px 14px; border-radius:10px; font-size:12px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.06); color:#cbd5e1; cursor:pointer; transition:all 0.2s ease;">
+          <button type="button" class="btn-link-tab" id="tabCloudLink" style="padding:7px 14px; border-radius:10px; font-size:12px; font-weight:700; border:1px solid rgba(212,175,55,0.28); background:#fffdfa; color:#6a5862; cursor:pointer; transition:all 0.2s ease;">
             🌐 Cloud Server (155.248.255.29)
           </button>
         </div>
@@ -65,10 +65,10 @@ export function openShareModal(templateId, data) {
         <!-- Clean Recipient Link -->
         <div class="share-link-group">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <label class="share-link-label" style="margin-bottom:0;">
-              🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#22c55e;">(Creating short link...)</span>
+            <label class="share-link-label" style="margin-bottom:0; color:#1c1216;">
+              🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#059669;">(Creating short link...)</span>
             </label>
-            <span style="font-size:10px; background:rgba(34,197,94,0.18); border:1px solid rgba(34,197,94,0.4); color:#4ade80; padding:2px 6px; border-radius:10px; font-weight:700;">
+            <span style="font-size:10px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35); color:#059669; padding:2px 6px; border-radius:10px; font-weight:700;">
               WhatsApp Hyperlink Active ✓
             </span>
           </div>
@@ -78,7 +78,7 @@ export function openShareModal(templateId, data) {
             <button class="btn-copy-link" id="btnCopyRecipient">Copy</button>
           </div>
 
-          <div class="share-sub-hint" id="shareSubHint" style="margin-top:6px; font-size:11px; color:#10b981;">
+          <div class="share-sub-hint" id="shareSubHint" style="margin-top:6px; font-size:11px; color:#059669;">
             ✨ Guaranteed 100% clickable blue hyperlink in WhatsApp on all phones.
           </div>
 
@@ -86,17 +86,17 @@ export function openShareModal(templateId, data) {
             <a href="#" target="_blank" rel="noopener noreferrer" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:12px 20px; border-radius:12px; font-size:13.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4); flex:1; justify-content:center; min-height:46px; text-decoration:none;">
               💬 Share on WhatsApp
             </a>
-            <a href="#" target="_blank" class="btn-open-preview" id="linkOpenPreview" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 18px; border-radius:12px; font-size:13px; font-weight:700; background:linear-gradient(135deg, #3b82f6, #6366f1); color:#fff; text-decoration:none; min-height:46px;">
+            <a href="#" target="_blank" class="btn-open-preview" id="linkOpenPreview" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 18px; border-radius:12px; font-size:13px; font-weight:700; background:linear-gradient(135deg, #d4235c, #e11d48); color:#fff; text-decoration:none; min-height:46px; box-shadow: 0 4px 16px rgba(212, 35, 92, 0.35);">
               👁️ Test Website
             </a>
           </div>
         </div>
 
         <!-- Creator Early Review -->
-        <div class="share-link-group" style="margin-top:18px; border-top:1px dashed rgba(255,255,255,0.12); padding-top:14px;">
+        <div class="share-link-group" style="margin-top:18px; border-top:1px dashed rgba(212,175,55,0.25); padding-top:14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <label class="share-link-label" style="color:#cbd5e1; margin-bottom:0;">👁️ Creator Early Review (Bypasses Countdown)</label>
-            <a href="#" target="_blank" id="linkTestCreator" style="color:#38bdf8; font-size:11px; font-weight:700; text-decoration:underline;">
+            <label class="share-link-label" style="color:#4a3840; margin-bottom:0;">👁️ Creator Early Review (Bypasses Countdown)</label>
+            <a href="#" target="_blank" id="linkTestCreator" style="color:#d4235c; font-size:11px; font-weight:700; text-decoration:underline;">
               Open Creator View →
             </a>
           </div>
@@ -104,7 +104,7 @@ export function openShareModal(templateId, data) {
             <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="Generating creator review link..." style="font-size:11px;" />
             <button class="btn-copy-link" id="btnCopyMaker" style="font-size:11px;">Copy</button>
           </div>
-          <div class="share-sub-hint" style="margin-top:4px; font-size:11px; color:#94a3b8;">
+          <div class="share-sub-hint" style="margin-top:4px; font-size:11px; color:#6a5862;">
             Use this to verify your surprise before the event countdown ends. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
           </div>
         </div>
@@ -180,12 +180,12 @@ export function openShareModal(templateId, data) {
 
   // Tab switching between Vercel HTTPS and Cloud IP
   tabVercel?.addEventListener('click', () => {
-    tabVercel.style.borderColor = '#38bdf8';
-    tabVercel.style.background = 'rgba(56,189,248,0.22)';
-    tabVercel.style.color = '#38bdf8';
-    tabCloud.style.borderColor = 'rgba(255,255,255,0.2)';
-    tabCloud.style.background = 'rgba(255,255,255,0.06)';
-    tabCloud.style.color = '#cbd5e1';
+    tabVercel.style.borderColor = '#d4235c';
+    tabVercel.style.background = 'rgba(212,35,92,0.08)';
+    tabVercel.style.color = '#d4235c';
+    tabCloud.style.borderColor = 'rgba(212,175,55,0.28)';
+    tabCloud.style.background = '#fffdfa';
+    tabCloud.style.color = '#6a5862';
 
     if (vercelDirectUrl) {
       updateActiveUrls(vercelDirectUrl, `${vercelDirectUrl}?review=true`);
@@ -193,12 +193,12 @@ export function openShareModal(templateId, data) {
   });
 
   tabCloud?.addEventListener('click', () => {
-    tabCloud.style.borderColor = '#38bdf8';
-    tabCloud.style.background = 'rgba(56,189,248,0.22)';
-    tabCloud.style.color = '#38bdf8';
-    tabVercel.style.borderColor = 'rgba(255,255,255,0.2)';
-    tabVercel.style.background = 'rgba(255,255,255,0.06)';
-    tabVercel.style.color = '#cbd5e1';
+    tabCloud.style.borderColor = '#d4235c';
+    tabCloud.style.background = 'rgba(212,35,92,0.08)';
+    tabCloud.style.color = '#d4235c';
+    tabVercel.style.borderColor = 'rgba(212,175,55,0.28)';
+    tabVercel.style.background = '#fffdfa';
+    tabVercel.style.color = '#6a5862';
 
     if (cloudDirectUrl) {
       updateActiveUrls(cloudDirectUrl, `${cloudDirectUrl}?review=true`);
