@@ -3359,12 +3359,36 @@ body {
 }
 
 .preview-frame-container.preview-viewport-mobile {
-  max-width: 410px;
-  margin: 16px auto;
-  border-radius: 38px;
-  border: 8px solid #2d1a24;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-  height: calc(100% - 32px);
+  aspect-ratio: 9 / 16;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  max-height: calc(100% - 16px);
+  margin: auto;
+  border-radius: 42px;
+  border: 10px solid #1c141d;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 25px 60px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #ffffff;
+}
+
+.preview-frame-container.preview-viewport-mobile::before {
+  content: '';
+  position: sticky;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88px;
+  height: 20px;
+  background: #000000;
+  border-radius: 20px;
+  z-index: 99999;
+  display: block;
+  margin: 0 auto -20px auto;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .preview-frame-container.preview-viewport-tablet {
@@ -5111,52 +5135,21 @@ body {
     display: none !important; /* In floating bottom dock on phone */
   }
 
-  /* Hero Section on Mobile */
-  .studio-hero-section {
-    padding: 24px 14px 20px 14px !important;
-  }
-  .hero-inner-container {
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
-  }
-  .hero-headline {
-    font-size: 28px !important;
-    line-height: 1.2 !important;
-    margin-bottom: 12px !important;
-  }
-  .hero-subheadline {
-    font-size: 13.5px !important;
-    line-height: 1.5 !important;
-    margin-bottom: 20px !important;
-  }
-  .hero-cta-cluster {
-    flex-direction: column !important;
-    gap: 10px !important;
-  }
-  .btn-hero-primary, .btn-hero-secondary {
-    width: 100% !important;
-    justify-content: center !important;
-  }
-
-  /* 3-Step Strip on Mobile */
-  .studio-3step-strip {
-    padding: 0 14px !important;
-    margin: 10px auto 20px auto !important;
-  }
-  .step-strip-inner {
-    flex-direction: column !important;
-    gap: 12px !important;
-    padding: 14px !important;
-  }
-  .step-strip-divider {
+  /* On 9:16 mobile portrait screens, dedicate 100% of viewport to the interactive app */
+  .studio-hero-section,
+  .studio-3step-strip,
+  .studio-footer-glass {
     display: none !important;
   }
 
   /* Gallery & Customizer on Mobile */
-  .studio-gallery-section,
+  .studio-gallery-section {
+    padding: 0 12px !important;
+    margin-bottom: 90px !important;
+  }
   .studio-customizer-section {
     padding: 0 12px !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 90px !important;
   }
   .section-glass-container {
     padding: 16px 12px !important;
@@ -5167,9 +5160,19 @@ body {
     gap: 12px !important;
   }
 
-  /* Mobile Tabs & Bottom Dock */
+  /* Mobile Tabs & Bottom Dock Sticky Controller */
   .studio-mobile-tabs {
     display: flex !important;
+    position: sticky !important;
+    top: 56px !important;
+    z-index: 490 !important;
+    margin: 6px 12px 12px 12px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 14px rgba(28, 18, 22, 0.08) !important;
   }
 
   .studio-mobile-bottom-bar {
@@ -5196,19 +5199,31 @@ body {
 
   .studio-preview-pane {
     width: 100% !important;
-    height: calc(100vh - 120px) !important;
+    height: calc(100dvh - 120px) !important;
     position: relative !important;
     top: 0 !important;
-    box-sizing: border-box;
-    padding: 4px 4px 90px 4px !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
     border-radius: 18px !important;
-    background: var(--glass-surface) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
-  /* Footer on Mobile */
-  .footer-glass-inner {
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
+  .studio-preview-pane .preview-frame-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    border-radius: 18px !important;
+    border: 2px solid rgba(212, 175, 55, 0.3) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .studio-preview-pane .preview-frame-container::before {
+    display: none !important; /* On real mobile phone, native screen handles notch */
   }
 
   .preview-device-header {

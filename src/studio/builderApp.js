@@ -257,9 +257,9 @@ export function renderStudioApp(root) {
 
               <!-- Viewport Switcher -->
               <div class="preview-viewport-switcher" id="viewportSwitcher" role="group" aria-label="Preview Device Viewports">
-                <button type="button" class="btn-viewport-toggle active" data-viewport="mobile" title="Mobile Phone View (390px)">
+                <button type="button" class="btn-viewport-toggle active" data-viewport="mobile" title="Mobile Phone View (9:16 Aspect Ratio)">
                   <i data-lucide="smartphone"></i>
-                  <span class="viewport-label">Mobile</span>
+                  <span class="viewport-label">9:16 Mobile</span>
                 </button>
                 <button type="button" class="btn-viewport-toggle" data-viewport="tablet" title="Tablet View (768px)">
                   <i data-lucide="tablet"></i>
@@ -482,19 +482,53 @@ export function renderStudioApp(root) {
       btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
     });
 
-    studioWorkspace.classList.remove('mobile-view-editor', 'mobile-view-templates', 'mobile-view-preview');
-    studioWorkspace.classList.add(`mobile-view-${tab}`);
+    const studioLayout = root.querySelector('.studio-layout');
+    if (studioLayout) {
+      studioLayout.classList.remove('mobile-active-tab-editor', 'mobile-active-tab-templates', 'mobile-active-tab-preview');
+      studioLayout.classList.add(`mobile-active-tab-${tab}`);
+    }
 
-    if (tab === 'preview') {
-      if (needsPreviewUpdate) {
-        updateLivePreview();
-      }
-      if (btnDockPreviewToggle) {
-        btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon"><i data-lucide="wand-2"></i></span><span class="dock-btn-label">Back to Edit</span>`;
-        btnDockPreviewToggle.classList.add('dock-active-preview');
-        renderStudioIcons(btnDockPreviewToggle);
+    const secTemplates = root.querySelector('#templatesSection');
+    const secCustomizer = root.querySelector('#customizerSection');
+    const sidebar = root.querySelector('#studioSidebar');
+    const previewPane = root.querySelector('#studioPreviewPane');
+
+    if (window.innerWidth <= 900) {
+      if (tab === 'templates') {
+        if (secTemplates) secTemplates.style.display = 'block';
+        if (secCustomizer) secCustomizer.style.display = 'none';
+        if (sidebar) sidebar.style.display = 'none';
+        if (previewPane) previewPane.style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (tab === 'editor') {
+        if (secTemplates) secTemplates.style.display = 'none';
+        if (secCustomizer) secCustomizer.style.display = 'block';
+        if (sidebar) sidebar.style.display = 'block';
+        if (previewPane) previewPane.style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (tab === 'preview') {
+        if (secTemplates) secTemplates.style.display = 'none';
+        if (secCustomizer) secCustomizer.style.display = 'block';
+        if (sidebar) sidebar.style.display = 'none';
+        if (previewPane) previewPane.style.display = 'flex';
+        if (needsPreviewUpdate) {
+          updateLivePreview();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (btnDockPreviewToggle) {
+          btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon"><i data-lucide="wand-2"></i></span><span class="dock-btn-label">Back to Edit</span>`;
+          btnDockPreviewToggle.classList.add('dock-active-preview');
+          renderStudioIcons(btnDockPreviewToggle);
+        }
       }
     } else {
+      if (secTemplates) secTemplates.style.display = 'block';
+      if (secCustomizer) secCustomizer.style.display = 'block';
+      if (sidebar) sidebar.style.display = 'block';
+      if (previewPane) previewPane.style.display = 'flex';
+    }
+
+    if (tab !== 'preview') {
       if (btnDockPreviewToggle) {
         btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon"><i data-lucide="eye"></i></span><span class="dock-btn-label">Live Preview</span>`;
         btnDockPreviewToggle.classList.remove('dock-active-preview');
@@ -675,4 +709,22 @@ export function renderStudioApp(root) {
   mountTemplateSelector();
   mountEditor();
   schedulePreviewUpdate(true);
+  if (window.innerWidth <= 900) {
+    switchMobileTab('editor');
+  }
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth <= 900) {
+      switchMobileTab(currentMobileTab);
+    } else {
+      const secTemplates = root.querySelector('#templatesSection');
+      const secCustomizer = root.querySelector('#customizerSection');
+      const sidebar = root.querySelector('#studioSidebar');
+      const previewPane = root.querySelector('#studioPreviewPane');
+      if (secTemplates) secTemplates.style.display = 'block';
+      if (secCustomizer) secCustomizer.style.display = 'block';
+      if (sidebar) sidebar.style.display = 'block';
+      if (previewPane) previewPane.style.display = 'flex';
+    }
+  });
 }
