@@ -1,8 +1,17 @@
 // src/components/musicPlayer.js - Sleek Spinning Mini CD Player (Upper Right Corner)
 
-export function initMusicPlayer(container, config) {
-  const { audioTitle, audioSubtitle, audioSrc } = config.general;
-  const coverUrl = config.photoRibbon?.[0]?.url || config.polaroids?.[0]?.image || '/images/sunset.jpg';
+export function initMusicPlayer(container, config = {}) {
+  if (!container) return;
+  const general = config.general || config || {};
+  const audioTitle = general.audioTitle || config.audioTitle || "Romantic Track";
+  const audioSubtitle = general.audioSubtitle || config.audioSubtitle || "CELEBRATION";
+  const audioSrc = general.audioSrc || config.audioSrc || "/audio/alfaaz.mp3";
+  const coverUrl = config.photoRibbon?.[0]?.url || 
+                   config.polaroids?.[0]?.image || 
+                   config.photos?.[0] ||
+                   general.photoRibbon?.[0]?.url || 
+                   general.polaroids?.[0]?.image || 
+                   '/images/sunset.jpg';
 
   container.innerHTML = `
     <div class="corner-mini-cd-player" id="cornerCdPlayer" role="button" aria-label="Toggle Music Player" title="Tap to Play / Pause Music">
@@ -36,6 +45,8 @@ export function initMusicPlayer(container, config) {
   const cdPill = container.querySelector('#cdTrackPill');
   const cdTitle = container.querySelector('#cdPillTitle');
 
+  if (!audio || !cdPlayer) return;
+
   let isPlaying = false;
   let pillTimer = null;
 
@@ -52,12 +63,12 @@ export function initMusicPlayer(container, config) {
   function setPlayingState(playing) {
     isPlaying = playing;
     if (playing) {
-      cdDisc.classList.add('spinning');
-      cdPlayer.classList.add('is-playing');
+      if (cdDisc) cdDisc.classList.add('spinning');
+      if (cdPlayer) cdPlayer.classList.add('is-playing');
       showPillBriefly();
     } else {
-      cdDisc.classList.remove('spinning');
-      cdPlayer.classList.remove('is-playing');
+      if (cdDisc) cdDisc.classList.remove('spinning');
+      if (cdPlayer) cdPlayer.classList.remove('is-playing');
     }
   }
 

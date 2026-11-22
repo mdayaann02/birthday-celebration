@@ -1020,8 +1020,8 @@ I love you endlessly. ♡`;
 
   // Split words for kinetic typography
   function splitWord(el) {
-    if (!el) return [];
-    const chars = [...el.textContent];
+    if (!el || !el.textContent) return [];
+    const chars = [...(el.textContent || '')];
     el.textContent = '';
     return chars.map((c) => {
       const s = document.createElement('span');

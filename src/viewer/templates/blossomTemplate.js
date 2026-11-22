@@ -960,7 +960,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     `;
 
     lanternField.appendChild(l);
-    setTimeout(() => l.remove(), duration * 1000);
+    setTimeout(() => {
+      if (typeof l?.remove === 'function') l.remove();
+    }, duration * 1000);
   }
 
   // Initial peaceful lanterns

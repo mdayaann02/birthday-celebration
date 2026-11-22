@@ -221,10 +221,15 @@ export function renderCountdownGate(container, data, onUnlock) {
     const m = Math.floor((remaining / 1000 / 60) % 60);
     const s = Math.floor((remaining / 1000) % 60);
 
-    elDays.textContent = d < 10 ? `0${d}` : d;
-    elHours.textContent = h < 10 ? `0${h}` : h;
-    elMins.textContent = m < 10 ? `0${m}` : m;
-    elSecs.textContent = s < 10 ? `0${s}` : s;
+    const dEl = elDays || document.getElementById("cdDays");
+    const hEl = elHours || document.getElementById("cdHours");
+    const mEl = elMins || document.getElementById("cdMins");
+    const sEl = elSecs || document.getElementById("cdSecs");
+
+    if (dEl) dEl.textContent = d < 10 ? `0${d}` : d;
+    if (hEl) hEl.textContent = h < 10 ? `0${h}` : h;
+    if (mEl) mEl.textContent = m < 10 ? `0${m}` : m;
+    if (sEl) sEl.textContent = s < 10 ? `0${s}` : s;
   }
 
   updateClock();
@@ -238,7 +243,7 @@ export function renderCountdownGate(container, data, onUnlock) {
   });
 
   // Maker review bypass handler
-  document.getElementById("btnMakerReview").addEventListener("click", () => {
+  document.getElementById("btnMakerReview")?.addEventListener("click", () => {
     const entered = prompt("Enter Maker Passcode to preview early (Default: " + (data.passcode || "1234") + "):", "");
     if (entered === (data.passcode || "1234") || entered === "admin") {
       sessionStorage.setItem("maker_review_unlocked", "true");

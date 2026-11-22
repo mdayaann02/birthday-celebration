@@ -264,14 +264,19 @@ export function renderStudioApp(root) {
   }
 
   function updateLivePreview() {
-    if (previewContainer) {
-      previewContainer.querySelectorAll('audio').forEach(a => {
-        try { a.pause(); a.currentTime = 0; } catch {}
-      });
-      previewContainer.innerHTML = '';
+    try {
+      if (previewContainer) {
+        previewContainer.querySelectorAll('audio').forEach(a => {
+          try { a.pause(); a.currentTime = 0; } catch {}
+        });
+        previewContainer.innerHTML = '';
+      }
+      renderViewerApp(previewContainer, activeTemplateId, activeData);
+    } catch (err) {
+      console.error('Error rendering live preview:', err);
+    } finally {
+      needsPreviewUpdate = false;
     }
-    renderViewerApp(previewContainer, activeTemplateId, activeData);
-    needsPreviewUpdate = false;
   }
 
   function mountEditor() {
@@ -293,12 +298,6 @@ export function renderStudioApp(root) {
       switchMobileTab('editor');
     });
   }
-
-  // Initial mounts
-  mountTemplateSelector();
-  mountEditor();
-  schedulePreviewUpdate(true);
-  renderOccasionBanner();
 
   // Initialize Creator Journey Step-by-Step Guide
   const guideMount = root.querySelector('#creatorGuideMount');
@@ -363,4 +362,10 @@ export function renderStudioApp(root) {
   btnShare?.addEventListener('click', triggerShare);
   btnDockPublish?.addEventListener('click', triggerShare);
   btnMobilePreviewShare?.addEventListener('click', triggerShare);
+
+  // Initial mounts and first preview render
+  mountTemplateSelector();
+  mountEditor();
+  schedulePreviewUpdate(true);
+  renderOccasionBanner();
 }
