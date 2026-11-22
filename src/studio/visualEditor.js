@@ -2,6 +2,48 @@
 
 import { uploadFile } from '../models/siteStorage.js';
 import Sortable from 'sortablejs';
+import { renderStudioIcons } from './icons.js';
+
+let activePreviewAudio = null;
+let activePreviewBtn = null;
+
+function toggleSongPreview(src, btn) {
+  if (activePreviewAudio && !activePreviewAudio.paused) {
+    activePreviewAudio.pause();
+    activePreviewAudio.currentTime = 0;
+    if (activePreviewBtn) {
+      activePreviewBtn.innerHTML = '<i data-lucide="play"></i>';
+      activePreviewBtn.classList.remove('playing');
+      renderStudioIcons(activePreviewBtn);
+    }
+    if (activePreviewBtn === btn) {
+      activePreviewAudio = null;
+      activePreviewBtn = null;
+      return;
+    }
+  }
+
+  btn.innerHTML = '<i data-lucide="volume-2"></i>';
+  btn.classList.add('playing');
+  renderStudioIcons(btn);
+  activePreviewBtn = btn;
+
+  activePreviewAudio = new Audio(src);
+  activePreviewAudio.volume = 0.8;
+  activePreviewAudio.play().catch(() => {
+    btn.innerHTML = '<i data-lucide="play"></i>';
+    btn.classList.remove('playing');
+    renderStudioIcons(btn);
+  });
+
+  activePreviewAudio.onended = () => {
+    btn.innerHTML = '<i data-lucide="play"></i>';
+    btn.classList.remove('playing');
+    renderStudioIcons(btn);
+    activePreviewAudio = null;
+    activePreviewBtn = null;
+  };
+}
 
 function renderGenPolaroidsBlock(prefix, label, polaroids) {
   return `
@@ -10,27 +52,28 @@ function renderGenPolaroidsBlock(prefix, label, polaroids) {
       ${polaroids.map((p, i) => `
         <div class="sub-card-editor gen-polaroid-row" data-prefix="${prefix}" data-i="${i}">
           <div class="bcard-top-row">
+            <div class="bcard-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
             <div class="bcard-thumb-wrap">
               <img src="${p.image}" class="bcard-thumb" id="${prefix}PolThumb_${i}" onerror="this.src='/images/sunset.jpg'" />
               <label class="btn-thumb-upload" title="Upload Photo">
-                📷
+                <i data-lucide="camera"></i>
                 <input type="file" class="file-upload-gen-polaroid" data-prefix="${prefix}" data-i="${i}" accept="image/*" style="display:none;" />
               </label>
             </div>
             <div class="bcard-caption-col">
-              <span class="bcard-num-badge" title="Drag to reorder"><span class="drag-icon">⋮⋮</span> 📸 Polaroid #${i+1}</span>
+              <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
               <input type="text" class="form-input gen-pol-title" data-prefix="${prefix}" data-i="${i}" value="${p.title || ''}" placeholder="Title / Caption (e.g. Unforgettable Smile)" />
             </div>
           </div>
           <div class="bcard-presets-chips">
             <span class="preset-chip-label">Quick Pick:</span>
-            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
-            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
-            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/pretty.jpg">Pretty</button>
-            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
-            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/queen.jpg">Queen</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/sunset.jpg"><img src="/images/sunset.jpg" class="preset-chip-img" /> Sunset</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/always_you.jpg"><img src="/images/always_you.jpg" class="preset-chip-img" /> Always You</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/pretty.jpg"><img src="/images/pretty.jpg" class="preset-chip-img" /> Pretty</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/dream_girl.jpg"><img src="/images/dream_girl.jpg" class="preset-chip-img" /> Dream Girl</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/queen.jpg"><img src="/images/queen.jpg" class="preset-chip-img" /> Queen</button>
           </div>
-          <input type="text" class="form-input gen-pol-img" data-prefix="${prefix}" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap 📷 to upload)" />
+          <input type="text" class="form-input gen-pol-img" data-prefix="${prefix}" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap camera to upload)" />
           <input type="text" class="form-input gen-pol-note" data-prefix="${prefix}" data-i="${i}" style="margin-top:6px;" value="${p.note || ''}" placeholder="Secret Note / Memory on Tap" />
         </div>
       `).join('')}
@@ -42,141 +85,204 @@ export function renderVisualEditor(container, templateId, data, onChange) {
   container.innerHTML = `
     <div class="visual-editor-wrap">
       <!-- Section A: General Info -->
-      <div class="editor-section">
-        <div class="section-title">🌟 Basic Details</div>
-        <div class="editor-grid-2">
-          <div class="form-group">
-            <label class="form-label">Recipient's Name</label>
-            <input type="text" class="form-input" id="edRecipient" value="${data.recipientName || ''}" placeholder="e.g. My Special One, Maa, Bhai, Sweetheart" />
+      <div class="editor-section" id="secBasicDetails">
+        <div class="editor-section-header">
+          <div class="section-title">
+            <i data-lucide="sparkles"></i>
+            <span>Basic Details</span>
           </div>
-          <div class="form-group">
-            <label class="form-label">Your Name (Creator)</label>
-            <input type="text" class="form-input" id="edSender" value="${data.senderName || ''}" placeholder="e.g. Yours Truly" />
-          </div>
+          <span class="section-collapse-arrow"><i data-lucide="chevron-down"></i></span>
         </div>
+        <div class="editor-section-body">
+          <div class="editor-grid-2">
+            <div class="form-group">
+              <label class="form-label">Recipient's Name</label>
+              <input type="text" class="form-input" id="edRecipient" value="${data.recipientName || ''}" placeholder="e.g. My Special One, Maa, Bhai, Sweetheart" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Your Name (Creator)</label>
+              <input type="text" class="form-input" id="edSender" value="${data.senderName || ''}" placeholder="e.g. Yours Truly" />
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label class="form-label">Hero Title</label>
-          <input type="text" class="form-input" id="edHeroTitle" value="${data.heroTitle || ''}" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Hero Subtitle</label>
-          <input type="text" class="form-input" id="edHeroSubtitle" value="${data.heroSubtitle || ''}" />
+          <div class="form-group">
+            <label class="form-label">Hero Title</label>
+            <input type="text" class="form-input" id="edHeroTitle" value="${data.heroTitle || ''}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hero Subtitle</label>
+            <input type="text" class="form-input" id="edHeroSubtitle" value="${data.heroSubtitle || ''}" />
+          </div>
         </div>
       </div>
 
       <!-- Section A2: Luxury Theme & Color Styling -->
-      <div class="editor-section">
-        <div class="section-title">🎨 Luxury Styling & Theme Palette</div>
-        <div class="editor-help-text" style="margin-bottom:12px;">
-          Choose your celebration's signature accent color. Live updates reflect instantly across hearts, buttons, glows, and chapter rings!
-        </div>
-        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <button type="button" class="btn-theme-swatch" id="btnThemeColorPicker" title="Tap to open pro color picker" style="background:${data.primaryColor || '#d4235c'}; width:38px; height:38px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 12px rgba(212,35,92,0.4); cursor:pointer; flex-shrink:0;"></button>
-            <input type="text" class="form-input" id="edPrimaryColor" value="${data.primaryColor || '#d4235c'}" style="width:110px; font-weight:700; font-family:monospace;" />
+      <div class="editor-section" id="secStyling">
+        <div class="editor-section-header">
+          <div class="section-title">
+            <i data-lucide="palette"></i>
+            <span>Luxury Styling & Theme Palette</span>
           </div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-            <span style="font-size:11px; color:#cbd5e1; font-weight:600;">1-Tap Presets:</span>
-            <button type="button" class="btn-color-preset" data-color="#d4235c" style="background:#d4235c; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">🌹 Rose</button>
-            <button type="button" class="btn-color-preset" data-color="#ec4899" style="background:#ec4899; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">🌸 Blossom</button>
-            <button type="button" class="btn-color-preset" data-color="#d97706" style="background:#d97706; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">👑 Gold</button>
-            <button type="button" class="btn-color-preset" data-color="#8b5cf6" style="background:#8b5cf6; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">💜 Lavender</button>
-            <button type="button" class="btn-color-preset" data-color="#2563eb" style="background:#2563eb; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">💙 Cobalt</button>
+          <span class="section-collapse-arrow"><i data-lucide="chevron-down"></i></span>
+        </div>
+        <div class="editor-section-body">
+          <div class="editor-help-text" style="margin-bottom:12px;">
+            Choose your celebration's signature accent color. Live updates reflect instantly across hearts, buttons, glows, and chapter rings!
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <button type="button" class="btn-theme-swatch" id="btnThemeColorPicker" title="Tap to open pro color picker" style="background:${data.primaryColor || '#d4235c'}; width:38px; height:38px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 12px rgba(212,35,92,0.4); cursor:pointer; flex-shrink:0;"></button>
+              <input type="text" class="form-input" id="edPrimaryColor" value="${data.primaryColor || '#d4235c'}" style="width:110px; font-weight:700; font-family:monospace;" />
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <span style="font-size:11px; color:#cbd5e1; font-weight:600;">1-Tap Presets:</span>
+              <button type="button" class="btn-color-preset" data-color="#d4235c" style="background:#d4235c; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">🌹 Rose</button>
+              <button type="button" class="btn-color-preset" data-color="#ec4899" style="background:#ec4899; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">🌸 Blossom</button>
+              <button type="button" class="btn-color-preset" data-color="#d97706" style="background:#d97706; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">👑 Gold</button>
+              <button type="button" class="btn-color-preset" data-color="#8b5cf6" style="background:#8b5cf6; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">💜 Lavender</button>
+              <button type="button" class="btn-color-preset" data-color="#2563eb" style="background:#2563eb; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">💙 Cobalt</button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Section B: Countdown Lock & Event Date -->
-      <div class="editor-section highlight-section">
-        <div class="section-title">⏰ Birthday / Event Date & Countdown Lock</div>
-        <div class="form-group">
-          <label class="checkbox-label">
-            <input type="checkbox" id="edCountdownLock" ${data.enableCountdownLock ? 'checked' : ''} />
-            <span><strong>Lock with Birthday Countdown</strong> (Only opens on the event day!)</span>
-          </label>
+      <div class="editor-section highlight-section" id="secCountdown">
+        <div class="editor-section-header">
+          <div class="section-title">
+            <i data-lucide="calendar"></i>
+            <span>Event Date & Countdown Lock</span>
+          </div>
+          <span class="section-collapse-arrow"><i data-lucide="chevron-down"></i></span>
         </div>
-
-        <div class="editor-grid-2">
+        <div class="editor-section-body">
           <div class="form-group">
-            <label class="form-label">Event Date & Time (Unlocks At)</label>
-            <input type="datetime-local" class="form-input" id="edEventDate" value="${data.eventDate ? data.eventDate.slice(0, 16) : ''}" />
+            <label class="checkbox-label">
+              <input type="checkbox" id="edCountdownLock" ${data.enableCountdownLock ? 'checked' : ''} />
+              <span><strong>Lock with Birthday Countdown</strong> (Only opens on the event day!)</span>
+            </label>
           </div>
-          <div class="form-group">
-            <label class="form-label">Maker Passcode (For early review)</label>
-            <input type="text" class="form-input" id="edPasscode" value="${data.passcode || '1234'}" placeholder="e.g. 1234" />
-          </div>
-        </div>
-        <div class="editor-help-text">
-          💡 When locked, the recipient sees a live romantic countdown clock. You can review the unlocked site anytime using your Maker Passcode.
-        </div>
 
-        <div style="margin-top:16px;">
-          <label class="form-label" style="font-weight:700; color:var(--primary);">📸 Photos Behind Date Timer (Slideshow):</label>
-          <div class="editor-help-text" style="margin-bottom:8px;">
-            Add photos that will gently float and crossfade behind the countdown timer for a romantic cinematic effect.
+          <div class="editor-grid-2">
+            <div class="form-group">
+              <label class="form-label">Event Date & Time (Unlocks At)</label>
+              <input type="datetime-local" class="form-input" id="edEventDate" value="${data.eventDate ? data.eventDate.slice(0, 16) : ''}" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Maker Passcode (For early review)</label>
+              <input type="text" class="form-input" id="edPasscode" value="${data.passcode || '1234'}" placeholder="e.g. 1234" />
+            </div>
           </div>
-          <div class="countdown-photos-grid" id="cdPhotosGrid">
-            ${((data.countdownBackgroundImages && data.countdownBackgroundImages.length > 0) ? data.countdownBackgroundImages : ["/images/sunset.jpg", "/images/always_you.jpg"]).map((img, i) => `
-              <div class="sub-card-editor" style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
-                <input type="text" class="form-input cd-bg-input" data-i="${i}" value="${img}" placeholder="Image URL" style="flex:1; min-width:0;" />
-                <label class="btn-file-upload-sm" style="flex-shrink:0;">
-                  📷
-                  <input type="file" class="file-upload-cd-photo" data-i="${i}" accept="image/*" style="display:none;" />
-                </label>
-              </div>
-            `).join('')}
+          <div class="editor-help-text">
+            💡 When locked, the recipient sees a live romantic countdown clock. You can review the unlocked site anytime using your Maker Passcode.
           </div>
-          <label class="btn-file-upload" style="margin-top:8px; display:inline-flex;">
-            📷 Add / Upload Timer Background Photo
-            <input type="file" id="uploadTimerBgPhoto" accept="image/*" style="display:none;" />
-          </label>
+
+          <div style="margin-top:16px;">
+            <label class="form-label" style="font-weight:700; color:var(--primary);">📸 Photos Behind Date Timer (Slideshow):</label>
+            <div class="editor-help-text" style="margin-bottom:8px;">
+              Add photos that will gently float and crossfade behind the countdown timer for a romantic cinematic effect.
+            </div>
+            <div class="countdown-photos-grid" id="cdPhotosGrid">
+              ${((data.countdownBackgroundImages && data.countdownBackgroundImages.length > 0) ? data.countdownBackgroundImages : ["/images/sunset.jpg", "/images/always_you.jpg"]).map((img, i) => `
+                <div class="sub-card-editor" style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                  <div class="bcard-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+                  <input type="text" class="form-input cd-bg-input" data-i="${i}" value="${img}" placeholder="Image URL" style="flex:1; min-width:0;" />
+                  <label class="btn-file-upload-sm" style="flex-shrink:0;">
+                    <i data-lucide="camera"></i>
+                    <input type="file" class="file-upload-cd-photo" data-i="${i}" accept="image/*" style="display:none;" />
+                  </label>
+                </div>
+              `).join('')}
+            </div>
+            <label class="btn-file-upload" style="margin-top:8px; display:inline-flex;">
+              <i data-lucide="camera"></i>
+              <span>Add / Upload Timer Background Photo</span>
+              <input type="file" id="uploadTimerBgPhoto" accept="image/*" style="display:none;" />
+            </label>
+          </div>
         </div>
       </div>
 
       <!-- Section C: Music Player & MP3 Upload -->
-      <div class="editor-section">
-        <div class="section-title">🎵 Background Music & Song</div>
-
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label" style="font-size:12px; color:var(--primary); font-weight:700;">⚡ Choose Romantic Song Preset (1-Tap):</label>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button type="button" class="btn-song-preset" data-src="/audio/alfaaz.mp3" data-title="Alfaaz - Hamza Malik & Zain Zohaib" data-sub="ROMANTIC SOUNDTRACK" style="background:rgba(244,114,182,0.15); border:1px solid #f472b6; color:#f472b6; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
-              🎵 Alfaaz (Hamza Malik)
-            </button>
-            <button type="button" class="btn-song-preset" data-src="/audio/blossom_song.mp3" data-title="Blossom Romance Soundtrack" data-sub="LOVELY MELODY" style="background:rgba(244,114,182,0.15); border:1px solid #f472b6; color:#f472b6; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
-              🌸 Blossom Theme
-            </button>
-            <button type="button" class="btn-song-preset" data-src="/audio/song.mp3" data-title="Happy Birthday Acoustic Track" data-sub="CELEBRATION" style="background:rgba(244,114,182,0.15); border:1px solid #f472b6; color:#f472b6; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
-              🎂 Birthday Song
-            </button>
+      <div class="editor-section" id="secMusic">
+        <div class="editor-section-header">
+          <div class="section-title">
+            <i data-lucide="music"></i>
+            <span>Background Music & Song</span>
           </div>
+          <span class="section-collapse-arrow"><i data-lucide="chevron-down"></i></span>
         </div>
+        <div class="editor-section-body">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:12px; color:var(--primary); font-weight:700;">⚡ Choose Song Preset (Tap to Select / Preview):</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <div class="song-preset-item" style="display:inline-flex; align-items:center; background:rgba(244,114,182,0.12); border:1px solid #f472b6; border-radius:10px; padding:2px 4px;">
+                <button type="button" class="btn-song-preset" data-src="/audio/alfaaz.mp3" data-title="Alfaaz - Hamza Malik & Zain Zohaib" data-sub="ROMANTIC SOUNDTRACK" style="background:none; border:none; color:#f472b6; padding:6px 10px; font-size:12px; font-weight:700; cursor:pointer;">
+                  🎵 Alfaaz (Hamza Malik)
+                </button>
+                <button type="button" class="btn-song-preview-toggle" data-src="/audio/alfaaz.mp3" title="Listen to preview" style="background:none; border:none; color:#f472b6; cursor:pointer; padding:4px 6px;">
+                  <i data-lucide="play" style="width:13px; height:13px;"></i>
+                </button>
+              </div>
 
-        <div class="editor-grid-2">
-          <div class="form-group">
-            <label class="form-label">Song Title</label>
-            <input type="text" class="form-input" id="edAudioTitle" value="${data.audioTitle || ''}" placeholder="e.g. Alfaaz - Hamza Malik & Zain Zohaib" />
+              <div class="song-preset-item" style="display:inline-flex; align-items:center; background:rgba(244,114,182,0.12); border:1px solid #f472b6; border-radius:10px; padding:2px 4px;">
+                <button type="button" class="btn-song-preset" data-src="/audio/blossom_song.mp3" data-title="Blossom Romance Soundtrack" data-sub="LOVELY MELODY" style="background:none; border:none; color:#f472b6; padding:6px 10px; font-size:12px; font-weight:700; cursor:pointer;">
+                  🌸 Blossom Theme
+                </button>
+                <button type="button" class="btn-song-preview-toggle" data-src="/audio/blossom_song.mp3" title="Listen to preview" style="background:none; border:none; color:#f472b6; cursor:pointer; padding:4px 6px;">
+                  <i data-lucide="play" style="width:13px; height:13px;"></i>
+                </button>
+              </div>
+
+              <div class="song-preset-item" style="display:inline-flex; align-items:center; background:rgba(244,114,182,0.12); border:1px solid #f472b6; border-radius:10px; padding:2px 4px;">
+                <button type="button" class="btn-song-preset" data-src="/audio/song.mp3" data-title="Happy Birthday Acoustic Track" data-sub="CELEBRATION" style="background:none; border:none; color:#f472b6; padding:6px 10px; font-size:12px; font-weight:700; cursor:pointer;">
+                  🎂 Birthday Song
+                </button>
+                <button type="button" class="btn-song-preview-toggle" data-src="/audio/song.mp3" title="Listen to preview" style="background:none; border:none; color:#f472b6; cursor:pointer; padding:4px 6px;">
+                  <i data-lucide="play" style="width:13px; height:13px;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="editor-grid-2">
+            <div class="form-group">
+              <label class="form-label">Song Title</label>
+              <input type="text" class="form-input" id="edAudioTitle" value="${data.audioTitle || ''}" placeholder="e.g. Alfaaz - Hamza Malik & Zain Zohaib" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Song Subtitle</label>
+              <input type="text" class="form-input" id="edAudioSub" value="${data.audioSubtitle || ''}" placeholder="e.g. ROMANTIC SOUNDTRACK" />
+            </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Song Subtitle</label>
-            <input type="text" class="form-input" id="edAudioSub" value="${data.audioSubtitle || ''}" placeholder="e.g. ROMANTIC SOUNDTRACK" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Audio URL / Upload MP3</label>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <input type="text" class="form-input" id="edAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" placeholder="/audio/alfaaz.mp3 or https://..." style="flex:1; min-width:180px;" />
-            <label class="btn-file-upload" style="flex-shrink:0;">
-              📁 Upload Song
-              <input type="file" id="fileUploadSong" accept="audio/*" style="display:none;" />
-            </label>
+            <label class="form-label">Audio URL / Upload MP3</label>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="text" class="form-input" id="edAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" placeholder="/audio/alfaaz.mp3 or https://..." style="flex:1; min-width:180px;" />
+              <label class="btn-file-upload" style="flex-shrink:0;">
+                <i data-lucide="upload-cloud"></i>
+                <span>Upload MP3</span>
+                <input type="file" id="fileUploadSong" accept="audio/*" style="display:none;" />
+              </label>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Section D: Template Specific Content -->
       <div class="editor-section" id="templateSpecificFields"></div>
+
+      <!-- Section E: Quick Action Footer -->
+      <div class="editor-form-footer" style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(212,175,55,0.25); display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="button" class="btn-studio-action btn-footer-save" id="btnBottomSave" style="flex:1; justify-content:center; padding:12px 18px; font-weight:700;">
+          <i data-lucide="save"></i>
+          <span>Save Website</span>
+        </button>
+        <button type="button" class="btn-studio-primary btn-footer-share" id="btnBottomShare" style="flex:1; justify-content:center; padding:12px 18px; font-weight:700;">
+          <i data-lucide="share-2"></i>
+          <span>Get Share Link</span>
+        </button>
+      </div>
     </div>
   `;
 
@@ -246,27 +352,28 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         ${treePolaroids.map((p, i) => `
           <div class="sub-card-editor tree-polaroid-row" data-i="${i}">
             <div class="bcard-top-row">
+              <div class="bcard-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
               <div class="bcard-thumb-wrap">
                 <img src="${p.image}" class="bcard-thumb" id="treePolThumb_${i}" onerror="this.src='/images/sunset.jpg'" />
                 <label class="btn-thumb-upload" title="Upload from phone">
-                  📷
+                  <i data-lucide="camera"></i>
                   <input type="file" class="file-upload-tree-polaroid" data-i="${i}" accept="image/*" style="display:none;" />
                 </label>
               </div>
               <div class="bcard-caption-col">
-                <span class="bcard-num-badge" title="Drag to reorder"><span class="drag-icon">⋮⋮</span> 📸 Polaroid #${i+1}</span>
+                <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
                 <input type="text" class="form-input tree-pol-cap" data-i="${i}" value="${p.caption || ''}" placeholder="Caption (e.g. Our favorite sunset walk)" />
               </div>
             </div>
             <div class="bcard-presets-chips">
               <span class="preset-chip-label">Quick Pick:</span>
-              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
-              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
-              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
-              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/queen.jpg">Queen</button>
-              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/baddie.jpg">Baddie</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/sunset.jpg"><img src="/images/sunset.jpg" class="preset-chip-img" /> Sunset</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/always_you.jpg"><img src="/images/always_you.jpg" class="preset-chip-img" /> Always You</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/dream_girl.jpg"><img src="/images/dream_girl.jpg" class="preset-chip-img" /> Dream Girl</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/queen.jpg"><img src="/images/queen.jpg" class="preset-chip-img" /> Queen</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/baddie.jpg"><img src="/images/baddie.jpg" class="preset-chip-img" /> Baddie</button>
             </div>
-            <input type="text" class="form-input tree-pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap 📷 to upload)" />
+            <input type="text" class="form-input tree-pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap camera to upload)" />
           </div>
         `).join('')}
       </div>
@@ -326,17 +433,18 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           ${blossomCards.map((c, i) => `
             <div class="sub-card-editor blossom-card-row" data-card-idx="${i}">
               <div class="bcard-top-row">
+                <div class="bcard-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
                 <div class="bcard-thumb-wrap">
                   <img src="${c.image}" class="bcard-thumb" id="bcardThumb_${i}" onerror="this.src='/images/sunset.jpg'" />
                   <label class="btn-thumb-upload" title="Upload Photo">
-                    📷
+                    <i data-lucide="camera"></i>
                     <input type="file" class="file-upload-blossom-card" data-i="${i}" accept="image/*" style="display:none;" />
                   </label>
                 </div>
                 <div class="bcard-caption-col">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <span class="bcard-num-badge" title="Drag to reorder"><span class="drag-icon">⋮⋮</span> ✨ Memory #${i+1}</span>
-                    <button type="button" class="btn-del-blossom-card" data-i="${i}" title="Delete Card">🗑️</button>
+                    <span class="bcard-num-badge">✨ Memory #${i+1}</span>
+                    <button type="button" class="btn-del-blossom-card" data-i="${i}" title="Delete Card"><i data-lucide="trash-2"></i></button>
                   </div>
                   <input type="text" class="form-input bcard-cap" data-i="${i}" value="${c.caption || ''}" placeholder="Caption (e.g. Sweet moments with you)" />
                 </div>
@@ -345,15 +453,15 @@ export function renderVisualEditor(container, templateId, data, onChange) {
               <!-- Quick Pick Photo Chips -->
               <div class="bcard-presets-chips">
                 <span class="preset-chip-label">Quick Pick:</span>
-                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
-                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
-                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
-                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/queen.jpg">Queen</button>
-                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/baddie.jpg">Baddie</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/sunset.jpg"><img src="/images/sunset.jpg" class="preset-chip-img" /> Sunset</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/always_you.jpg"><img src="/images/always_you.jpg" class="preset-chip-img" /> Always You</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/dream_girl.jpg"><img src="/images/dream_girl.jpg" class="preset-chip-img" /> Dream Girl</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/queen.jpg"><img src="/images/queen.jpg" class="preset-chip-img" /> Queen</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/baddie.jpg"><img src="/images/baddie.jpg" class="preset-chip-img" /> Baddie</button>
               </div>
 
               <div class="bcard-url-row">
-                <input type="text" class="form-input bcard-img" data-i="${i}" value="${c.image}" placeholder="Image URL (or tap 📷 to upload)" />
+                <input type="text" class="form-input bcard-img" data-i="${i}" value="${c.image}" placeholder="Image URL (or tap camera to upload)" />
               </div>
             </div>
           `).join('')}
@@ -406,26 +514,27 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         ${bdayPolaroids.map((p, i) => `
           <div class="sub-card-editor bday-polaroid-row" data-i="${i}">
             <div class="bcard-top-row">
+              <div class="bcard-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
               <div class="bcard-thumb-wrap">
                 <img src="${p.image}" class="bcard-thumb" id="polThumb_${i}" onerror="this.src='/images/always_you.jpg'" />
                 <label class="btn-thumb-upload" title="Upload from phone">
-                  📷
+                  <i data-lucide="camera"></i>
                   <input type="file" class="file-upload-photo" data-i="${i}" accept="image/*" style="display:none;" />
                 </label>
               </div>
               <div class="bcard-caption-col">
-                <span class="bcard-num-badge" title="Drag to reorder"><span class="drag-icon">⋮⋮</span> 📸 Polaroid #${i+1}</span>
+                <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
                 <input type="text" class="form-input pol-t" data-i="${i}" value="${p.title}" placeholder="Caption (e.g. Sunset Glow)" />
               </div>
             </div>
             <div class="bcard-presets-chips">
               <span class="preset-chip-label">Quick Pick:</span>
-              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
-              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
-              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
-              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/beautiful.jpg">Beautiful</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/always_you.jpg"><img src="/images/always_you.jpg" class="preset-chip-img" /> Always You</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/sunset.jpg"><img src="/images/sunset.jpg" class="preset-chip-img" /> Sunset</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/dream_girl.jpg"><img src="/images/dream_girl.jpg" class="preset-chip-img" /> Dream Girl</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/beautiful.jpg"><img src="/images/beautiful.jpg" class="preset-chip-img" /> Beautiful</button>
             </div>
-            <input type="text" class="form-input pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap 📷 to upload)" />
+            <input type="text" class="form-input pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap camera to upload)" />
             <input type="text" class="form-input pol-n" data-i="${i}" style="margin-top:6px;" value="${p.note}" placeholder="Secret Note on Click (e.g. My favorite memory)" />
           </div>
         `).join('')}
@@ -1179,14 +1288,17 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     try {
       Sortable.create(listEl, {
         animation: 200,
-        handle: '.bcard-num-badge, .bcard-thumb-wrap',
+        handle: '.bcard-drag-handle',
+        delay: 80,
+        delayOnTouchOnly: true,
+        touchStartThreshold: 5,
         ghostClass: 'sortable-ghost',
         chosenClass: 'sortable-chosen',
         dragClass: 'sortable-drag',
         onEnd: () => {
           listEl.querySelectorAll('.bcard-num-badge').forEach((badge, idx) => {
             const isCard = badge.textContent.includes('Memory') || badge.textContent.includes('Card');
-            badge.innerHTML = `<span class="drag-icon">⋮⋮</span> ${isCard ? '✨ Memory' : '📸 Polaroid'} #${idx + 1}`;
+            badge.innerHTML = `${isCard ? '✨ Memory' : '📸 Polaroid'} #${idx + 1}`;
           });
           emitChange();
         }
@@ -1195,4 +1307,35 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       console.warn('Sortable init error:', err);
     }
   });
+
+  // Song preview snippet toggle
+  container.querySelectorAll('.btn-song-preview-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const src = btn.getAttribute('data-src');
+      if (src) toggleSongPreview(src, btn);
+    });
+  });
+
+  // Collapsible accordion headers
+  container.querySelectorAll('.editor-section-header').forEach(hdr => {
+    hdr.addEventListener('click', () => {
+      const parent = hdr.closest('.editor-section');
+      if (parent) {
+        parent.classList.toggle('collapsed');
+      }
+    });
+  });
+
+  // Bottom action buttons
+  container.querySelector('#btnBottomSave')?.addEventListener('click', () => {
+    const btnSave = document.getElementById('btnHeaderSave');
+    if (btnSave) btnSave.click();
+  });
+  container.querySelector('#btnBottomShare')?.addEventListener('click', () => {
+    const btnShare = document.getElementById('btnSharePublish');
+    if (btnShare) btnShare.click();
+  });
+
+  renderStudioIcons(container);
 }

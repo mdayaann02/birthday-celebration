@@ -2,6 +2,7 @@
 
 import confetti from 'canvas-confetti';
 import { encodeSiteToUrl, publishSiteToServer } from '../models/siteStorage.js';
+import { renderStudioIcons } from './icons.js';
 
 // Helper to ensure WhatsApp parses the URL as a 100% clickable hyperlink
 export function toWhatsAppSafeUrl(rawUrl) {
@@ -42,8 +43,13 @@ export function openShareModal(templateId, data) {
   overlay.innerHTML = `
     <div class="share-modal-card">
       <div class="share-modal-header">
-        <h3 class="share-modal-title">🎉 Your Website is Ready!</h3>
-        <button class="btn-close-modal" id="btnCloseShareModal" aria-label="Close">&times;</button>
+        <h3 class="share-modal-title">
+          <i data-lucide="sparkles"></i>
+          <span>Your Celebration Website is Ready!</span>
+        </h3>
+        <button class="btn-close-modal" id="btnCloseShareModal" aria-label="Close">
+          <i data-lucide="x"></i>
+        </button>
       </div>
 
       <div class="share-modal-body">
@@ -75,7 +81,10 @@ export function openShareModal(templateId, data) {
 
           <div class="share-input-row">
             <input type="text" class="share-url-input" readonly id="inpRecipientUrl" value="Generating short link..." />
-            <button class="btn-copy-link" id="btnCopyRecipient">Copy</button>
+            <button class="btn-copy-link" id="btnCopyRecipient">
+              <i data-lucide="copy"></i>
+              <span>Copy</span>
+            </button>
           </div>
 
           <div class="share-sub-hint" id="shareSubHint" style="margin-top:6px; font-size:11px; color:#059669;">
@@ -84,10 +93,12 @@ export function openShareModal(templateId, data) {
 
           <div class="share-quick-actions" style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
             <a href="#" target="_blank" rel="noopener noreferrer" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:12px 20px; border-radius:12px; font-size:13.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4); flex:1; justify-content:center; min-height:46px; text-decoration:none;">
-              💬 Share on WhatsApp
+              <i data-lucide="share-2"></i>
+              <span>Share on WhatsApp</span>
             </a>
             <a href="#" target="_blank" class="btn-open-preview" id="linkOpenPreview" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 18px; border-radius:12px; font-size:13px; font-weight:700; background:linear-gradient(135deg, #d4235c, #e11d48); color:#fff; text-decoration:none; min-height:46px; box-shadow: 0 4px 16px rgba(212, 35, 92, 0.35);">
-              👁️ Test Website
+              <i data-lucide="external-link"></i>
+              <span>Test Website</span>
             </a>
           </div>
         </div>
@@ -95,14 +106,20 @@ export function openShareModal(templateId, data) {
         <!-- Creator Early Review -->
         <div class="share-link-group" style="margin-top:18px; border-top:1px dashed rgba(212,175,55,0.25); padding-top:14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <label class="share-link-label" style="color:#4a3840; margin-bottom:0;">👁️ Creator Early Review (Bypasses Countdown)</label>
+            <label class="share-link-label" style="color:#4a3840; margin-bottom:0;">
+              <i data-lucide="lock" style="width:12px; height:12px;"></i>
+              <span>Creator Early Review (Bypasses Countdown)</span>
+            </label>
             <a href="#" target="_blank" id="linkTestCreator" style="color:#d4235c; font-size:11px; font-weight:700; text-decoration:underline;">
               Open Creator View →
             </a>
           </div>
           <div class="share-input-row">
             <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="Generating creator review link..." style="font-size:11px;" />
-            <button class="btn-copy-link" id="btnCopyMaker" style="font-size:11px;">Copy</button>
+            <button class="btn-copy-link" id="btnCopyMaker" style="font-size:11px;">
+              <i data-lucide="copy"></i>
+              <span>Copy</span>
+            </button>
           </div>
           <div class="share-sub-hint" style="margin-top:4px; font-size:11px; color:#6a5862;">
             Use this to verify your surprise before the event countdown ends. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
@@ -113,6 +130,7 @@ export function openShareModal(templateId, data) {
   `;
 
   document.body.appendChild(overlay);
+  renderStudioIcons(overlay);
 
   confetti({
     particleCount: 75,
@@ -214,14 +232,23 @@ export function openShareModal(templateId, data) {
   });
 
   function showSuccess(btnElem) {
-    const orig = btnElem.textContent;
-    btnElem.textContent = "Copied! ✓";
+    const origHtml = btnElem.innerHTML;
+    btnElem.innerHTML = `<i data-lucide="check"></i> <span>Copied!</span>`;
     btnElem.style.background = "#22c55e";
     btnElem.style.color = "#fff";
+    renderStudioIcons(btnElem);
+
+    confetti({
+      particleCount: 35,
+      spread: 50,
+      origin: { y: 0.6 }
+    });
+
     setTimeout(() => {
-      btnElem.textContent = orig;
+      btnElem.innerHTML = origHtml;
       btnElem.style.background = "";
       btnElem.style.color = "";
+      renderStudioIcons(btnElem);
     }, 2000);
   }
 

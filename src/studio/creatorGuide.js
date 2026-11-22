@@ -2,6 +2,7 @@
 
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import { renderStudioIcons } from './icons.js';
 
 export function startStudioTour({ onSwitchTab, onOpenShare, onFocusEditor } = {}) {
   try {
@@ -79,7 +80,7 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       num: 1,
       id: "occasion",
       tab: "templates",
-      icon: "🎨",
+      icon: "palette",
       shortLabel: "1. Occasion",
       title: "Step 1: Choose Occasion & Template",
       desc: "Pick who this special celebration is for: Romantic Blossom Love, Birthday, Sorry / Apology, Anniversary, Valentine, or for Mother, Father, Brother, Sister & Friends.",
@@ -93,7 +94,7 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       num: 2,
       id: "customize",
       tab: "editor",
-      icon: "✏️",
+      icon: "wand-2",
       shortLabel: "2. Customize",
       title: "Step 2: Add Photos, Love Letters & Music",
       desc: "Personalize the recipient's name, upload memorable photos to the polaroid gallery, write heartfelt love notes, select romantic songs, and set a countdown lock with your secret passcode.",
@@ -107,7 +108,7 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       num: 3,
       id: "preview",
       tab: "preview",
-      icon: "👁️",
+      icon: "eye",
       shortLabel: "3. Live Test",
       title: "Step 3: Test Live Website on Mobile",
       desc: "Experience your website interactively just like your recipient will — blow the cake candles, touch the blooming petals, flip the 3D memories album, and hear the music.",
@@ -121,7 +122,7 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       num: 4,
       id: "share",
       tab: "editor",
-      icon: "🚀",
+      icon: "share-2",
       shortLabel: "4. Share Link",
       title: "Step 4: Generate Clean Link & Share on WhatsApp",
       desc: "Click 'Get Share Link' to generate your permanent short URL (https://birthday-website-phi-one.vercel.app/s/...). Send it directly via WhatsApp with 1 tap — guaranteed blue clickable hyperlink!",
@@ -140,14 +141,17 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
         <div class="creator-guide-collapsed" id="btnExpandGuide">
           <div style="display:flex; align-items:center; gap:8px;">
             <span class="guide-sparkle-dot"></span>
-            <strong>🧭 Step ${cur.num} of 4:</strong>
+            <strong><i data-lucide="compass"></i> Step ${cur.num} of 4:</strong>
             <span style="color:#cbd5e1;">${cur.shortLabel}</span>
           </div>
           <button type="button" class="btn-guide-toggle" aria-label="Expand Guide">
-            Expand Guide ▾
+            <span>Expand Guide</span>
+            <i data-lucide="chevron-down"></i>
           </button>
         </div>
       `;
+
+      renderStudioIcons(container);
 
       container.querySelector('#btnExpandGuide')?.addEventListener('click', () => {
         isCollapsed = false;
@@ -162,12 +166,13 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
         <div class="guide-header">
           <div class="guide-title-row">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span class="guide-logo-icon">🧭</span>
+              <span class="guide-logo-icon"><i data-lucide="compass"></i></span>
               <h3 class="guide-main-heading">How to Create Your Website</h3>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
               <button type="button" class="btn-guide-tour-chip" id="btnGuideInteractiveTour" title="Start interactive 30s tour">
-                ✨ Guided Tour
+                <i data-lucide="sparkles"></i>
+                <span>Guided Tour</span>
               </button>
               <span class="guide-step-counter">Step ${cur.num} of 4</span>
               <button type="button" class="btn-guide-minimize" id="btnCollapseGuide" title="Collapse guide">−</button>
@@ -188,7 +193,7 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
         <!-- Active Step Details Card -->
         <div class="guide-step-body">
           <div class="guide-step-icon-wrap">
-            <span class="guide-big-icon">${cur.icon}</span>
+            <span class="guide-big-icon"><i data-lucide="${cur.icon}"></i></span>
           </div>
           <div class="guide-step-content">
             <h4 class="guide-step-title">${cur.title}</h4>
@@ -220,6 +225,8 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
         </div>
       </div>
     `;
+
+    renderStudioIcons(container);
 
     // Step chip click listeners
     container.querySelectorAll('.guide-step-chip').forEach(chip => {

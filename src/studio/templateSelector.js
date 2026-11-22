@@ -1,16 +1,17 @@
 // src/studio/templateSelector.js - Ultra-Aesthetic Occasion Gallery with Category Filters
 
 import { TEMPLATES } from '../models/templateRegistry.js';
+import { renderStudioIcons } from './icons.js';
 
 export function renderTemplateSelector(container, activeTemplateId, onSelectTemplate) {
   let activeFilter = 'all';
 
   const categories = [
-    { id: 'all', label: `✨ All (${Object.keys(TEMPLATES).length})` },
-    { id: 'romance', label: '🌸 Romance' },
-    { id: 'birthday', label: '🎂 Birthday' },
-    { id: 'family', label: '👨‍👩‍👧 Family' },
-    { id: 'friends', label: '🥂 Friends' }
+    { id: 'all', icon: 'sparkles', label: `All (${Object.keys(TEMPLATES).length})` },
+    { id: 'romance', icon: 'heart', label: 'Romance' },
+    { id: 'birthday', icon: 'calendar', label: 'Birthday' },
+    { id: 'family', icon: 'shield-check', label: 'Family' },
+    { id: 'friends', icon: 'sparkle', label: 'Friends' }
   ];
 
   function getTemplateCategory(tid) {
@@ -30,15 +31,19 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
     container.innerHTML = `
       <div class="template-selector-wrap">
         <div class="template-selector-header">
-          <div class="studio-subheading">STEP 1: CHOOSE OCCASION</div>
-          <div class="template-selector-subhint">Tap any occasion below to customize its special story & animations:</div>
+          <div class="studio-subheading">
+            <i data-lucide="palette"></i>
+            <span>STEP 1: CHOOSE OCCASION</span>
+          </div>
+          <div class="template-selector-subhint">Tap any occasion below to customize its special story, live physics & animations:</div>
         </div>
 
         <!-- Filter Chips -->
         <div class="template-filter-chips" id="tmplFilterChips">
           ${categories.map(c => `
             <button type="button" class="tmpl-filter-chip ${c.id === activeFilter ? 'active' : ''}" data-cat="${c.id}">
-              ${c.label}
+              <i data-lucide="${c.icon}"></i>
+              <span>${c.label}</span>
             </button>
           `).join('')}
         </div>
@@ -50,7 +55,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
               <div class="template-card ${isSel ? 'selected' : ''}" data-tid="${tmpl.id}">
                 <div class="tmpl-card-top">
                   <span class="tmpl-badge">${tmpl.badge}</span>
-                  ${isSel ? '<span class="tmpl-check-pill">✓ Active</span>' : ''}
+                  ${isSel ? '<span class="tmpl-check-pill"><i data-lucide="check-circle-2"></i> Active</span>' : ''}
                 </div>
                 <div class="tmpl-card-body">
                   <div class="tmpl-icon-box">
@@ -59,6 +64,10 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
                   <div class="tmpl-info">
                     <h3 class="tmpl-name">${tmpl.name}</h3>
                     <p class="tmpl-desc">${tmpl.description}</p>
+                    <div class="tmpl-card-footer">
+                      <span class="tmpl-stat-pill">✨ 60FPS Physics</span>
+                      <span class="tmpl-stat-pill">🎵 Music</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -67,6 +76,8 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
         </div>
       </div>
     `;
+
+    renderStudioIcons(container);
 
     // Bind category filter clicks
     container.querySelectorAll('.tmpl-filter-chip').forEach(btn => {
