@@ -1,5 +1,6 @@
-// src/viewer/templates/birthdayTemplate.js - Dynamic Persona-Adaptive Birthday Celebration Viewer
+// src/viewer/templates/birthdayTemplate.js - Dynamic Persona-Adaptive Birthday Celebration Viewer (Page-By-Page Experience)
 
+import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 import { initHeroSection } from '../../components/heroSection.js';
 import { initPhotoRibbon } from '../../components/photoRibbon.js';
@@ -342,17 +343,198 @@ export function renderBirthdayTemplate(container, data) {
       </div>
     </nav>
 
-    <!-- Dynamic Theme Container -->
-    <div class="bday-persona-stage ${PERSONAS[activePersonaKey].themeClass}" id="bdayDynamicStage">
-      <div id="tpHeroSlot"></div>
-      <div id="tpRibbonSlot"></div>
-      <div id="tpPolaroidSlot"></div>
-      <div id="tpFlipSlot"></div>
-      <div id="tpScratchSlot"></div>
-      <div id="tpLanyardSlot"></div>
-      <div id="tpChatSlot"></div>
+    <!-- Dynamic Theme Container & Page-By-Page Storybook Viewport -->
+    <div class="bday-persona-stage bday-storybook-viewport ${PERSONAS[activePersonaKey].themeClass}" id="bdayDynamicStage">
+      
+      <!-- Stage Progress Bar & Passive Indicator -->
+      <header class="bday-floating-nav" style="pointer-events:none; user-select:none;">
+        <div class="bday-step-progress-track">
+          <div class="bday-step-progress-fill" id="bdayStepProgressFill" style="width: 14.3%;"></div>
+        </div>
+        <div class="bday-stage-indicator-bar">
+          <div class="bday-stage-info-pill">
+            <span class="stage-step-tag" id="bdayStageStepPill">PAGE 1 OF 7</span>
+            <span class="stage-step-separator">•</span>
+            <span class="stage-title-text" id="bdayStageTitleText">The Grand Birthday Opening ✨</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Multi-Page Content Cards Container -->
+      <main class="bday-pages-container" id="bdayPagesContainer">
+        <!-- PAGE 1: HERO -->
+        <section class="bday-page-card active" data-page="1">
+          <div id="tpHeroSlot"></div>
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-next" data-next="2">
+              <span>Explore Memory Lane 📸</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 2: MEMORIES (RIBBON & POLAROIDS) -->
+        <section class="bday-page-card" data-page="2">
+          <div id="tpRibbonSlot"></div>
+          <div id="tpPolaroidSlot"></div>
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="1">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="3">
+              <span>Flip Birthday Magazine 📖</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 3: VOGUE / MAGAZINE FLIPBOOK -->
+        <section class="bday-page-card" data-page="3">
+          <div id="tpFlipSlot"></div>
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="4">
+              <span>Scratch Secret Ticket 🎟️</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 4: SCRATCH CARD -->
+        <section class="bday-page-card" data-page="4">
+          <div id="tpScratchSlot"></div>
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="5">
+              <span>Claim VIP Pass 🪪</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 5: VIP LANYARD PASS -->
+        <section class="bday-page-card" data-page="5">
+          <div id="tpLanyardSlot"></div>
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="4">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="6">
+              <span>Check Birthday Chat 💬</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 6: IMESSAGE PHONE CHAT -->
+        <section class="bday-page-card" data-page="6">
+          <div id="tpChatSlot"></div>
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="5">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="7">
+              <span>Make a Birthday Wish 🎂</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 7: GRAND CAKE & FINALE -->
+        <section class="bday-page-card" data-page="7">
+          <div class="bday-finale-card">
+            <div class="bday-finale-cake-wrap" id="bdayFinaleCake">
+              <span class="bday-cake-emoji">🎂</span>
+            </div>
+            <div class="bday-cake-tap-hint">✨ TAP THE CAKE TO BLOW CANDLES ✨</div>
+            <h2 class="bday-finale-title" id="bdayFinaleHeadline">Happy Birthday, ${recipientName}! 🎉</h2>
+            <p class="bday-finale-msg" id="bdayFinaleSubtitle">
+              Wishing you a year filled with boundless laughter, wild dreams fulfilled, and infinite blessings! ✨
+            </p>
+            <button type="button" class="btn-fam-action btn-hug-mom" id="bdayConfettiBurst" style="margin-top:10px; width:100%; max-width:320px;">
+              🎆 Tap for Fireworks Shower 🎊
+            </button>
+          </div>
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="6">⬅ Back</button>
+            <button type="button" class="btn-bday-replay" id="btnBdayReplay">
+              <span>🎉 Replay from Start ↺</span>
+            </button>
+          </div>
+        </section>
+      </main>
     </div>
   `;
+
+  const bdayPageTitles = [
+    { num: 1, title: "The Grand Birthday Opening ✨" },
+    { num: 2, title: "Memory Lane & Polaroids 📸" },
+    { num: 3, title: "Birthday Vogue Magazine 📖" },
+    { num: 4, title: "Golden Scratch Secret Ticket 🎟️" },
+    { num: 5, title: "All-Access VIP Lanyard Pass 🪪" },
+    { num: 6, title: "iMessage Midnight Celebration Chat 💬" },
+    { num: 7, title: "Make a Birthday Wish & Cake 🎂" }
+  ];
+
+  const totalPages = bdayPageTitles.length;
+  let currentPage = 1;
+
+  function goToPage(page) {
+    currentPage = Math.max(1, Math.min(totalPages, page));
+
+    // Update Progress Bar
+    const progressPct = Math.round((currentPage / totalPages) * 100);
+    const fill = container.querySelector('#bdayStepProgressFill');
+    if (fill) fill.style.width = `${progressPct}%`;
+
+    // Update Stage Indicator Banner
+    const stepPill = container.querySelector('#bdayStageStepPill');
+    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
+    const titleText = container.querySelector('#bdayStageTitleText');
+    if (titleText && bdayPageTitles[currentPage - 1]) {
+      titleText.textContent = bdayPageTitles[currentPage - 1].title;
+    }
+
+    // Update Page View
+    container.querySelectorAll('.bday-page-card').forEach(card => {
+      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
+    });
+
+    // Smooth scroll to stage top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  // Bind Next / Prev buttons
+  container.querySelectorAll('.btn-bday-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'));
+      goToPage(next);
+    });
+  });
+  container.querySelectorAll('.btn-bday-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'));
+      goToPage(prev);
+    });
+  });
+
+  // Cake blowing & confetti effects in finale
+  const finaleCake = container.querySelector('#bdayFinaleCake');
+  const btnFireworks = container.querySelector('#bdayConfettiBurst');
+  const btnReplay = container.querySelector('#btnBdayReplay');
+
+  function triggerCelebrationConfetti() {
+    confetti({
+      particleCount: 80,
+      spread: 90,
+      origin: { y: 0.6 },
+      colors: ['#ff4d6d', '#fbbf24', '#38bdf8', '#c084fc', '#ffffff']
+    });
+  }
+
+  finaleCake?.addEventListener('click', () => {
+    triggerCelebrationConfetti();
+    const cakeHint = container.querySelector('.bday-cake-tap-hint');
+    if (cakeHint) cakeHint.textContent = "✨ WISH MADE! MAY IT COME TRUE! 🥳🎂";
+  });
+
+  btnFireworks?.addEventListener('click', triggerCelebrationConfetti);
+  btnReplay?.addEventListener('click', () => goToPage(1));
 
   // Initialize Audio Player once
   const initialConfig = buildConfigForPersona(activePersonaKey);
@@ -390,7 +572,7 @@ export function renderBirthdayTemplate(container, data) {
 
       // Update Theme Class on Stage
       const p = PERSONAS[activePersonaKey] || PERSONAS.special;
-      stage.className = `bday-persona-stage ${p.themeClass}`;
+      stage.className = `bday-persona-stage bday-storybook-viewport ${p.themeClass}`;
 
       // Smooth Fade Transition & Re-render Components
       stage.style.opacity = '0.4';

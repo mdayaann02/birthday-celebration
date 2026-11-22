@@ -1,4 +1,4 @@
-// src/viewer/templates/bestieBoyTemplate.js - The Ride-or-Die Brotherhood Vault (Bro Bestie Experience)
+// src/viewer/templates/bestieBoyTemplate.js - The Ride-or-Die Brotherhood Vault (Bro Bestie Experience - Page-By-Page)
 
 import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
@@ -24,129 +24,194 @@ export function renderBestieBoyTemplate(container, data) {
     <!-- Top Audio Player -->
     <div id="boyBestiePlayerSlot"></div>
 
-    <div class="fam-page-viewport bestie-boy-viewport">
+    <div class="fam-page-viewport fam-storybook-viewport bestie-boy-viewport">
       <!-- Ambient Amber Stardust Canvas -->
       <canvas id="bestieBoyCanvas" class="blossom-bg-canvas"></canvas>
 
-      <!-- Hero Section -->
-      <header class="fam-hero-section">
-        <div class="fam-badge amber-badge">👊 RIDE OR DIE, UNBREAKABLE BROTHERHOOD ⚡🔥</div>
-        <h1 class="fam-hero-title">${data.heroTitle || 'To My Day One, My Brother 👊⚡'}</h1>
-        <p class="fam-hero-subtitle">${data.heroSubtitle || "No cringe emotional speeches — you already know what it is. I built this legendary website just for you, my guy."}</p>
-        
-        <div class="bro-quick-actions">
-          <button class="btn-fam-action btn-fistbump" id="btnBroVaultFist">
-            🤜🤛 PLEDGE UNCONDITIONAL BROTHERHOOD 🔥
-          </button>
+      <!-- Stage Progress Bar & Passive Indicator -->
+      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
+        <div class="fam-step-progress-track">
+          <div class="fam-step-progress-fill" id="boyStepProgressFill" style="width: 16.6%;"></div>
         </div>
-        <div id="broVaultFeedback" class="fam-feedback-text"></div>
+        <div class="fam-stage-indicator-bar">
+          <div class="fam-stage-info-pill">
+            <span class="stage-step-tag" id="boyStageStepPill">PAGE 1 OF 6</span>
+            <span class="stage-step-separator">•</span>
+            <span class="stage-title-text" id="boyStageTitleText">Bro Code Opening 👊⚡</span>
+          </div>
+        </div>
       </header>
 
-      <!-- MODULE 1: The Wingman Scorecard & Legend Stats -->
-      <section class="fam-section">
-        <div class="bro-stats-card bestie-boy-stats">
-          <div class="theft-header" style="margin-bottom:14px;">
-            <span class="theft-badge" style="background:rgba(245,158,11,0.2); border-color:#f59e0b; color:#fbbf24;">VERIFIED METRICS ⚡</span>
-            <h2 class="fam-section-title" style="margin-bottom:4px;">📊 The Wingman Reliability Scorecard</h2>
-            <p class="fam-section-sub">Official combat &amp; loyalty stats of our duo</p>
+      <!-- Multi-Page Content Cards Container -->
+      <main class="fam-pages-container" id="boyPagesContainer">
+        <!-- PAGE 1: HERO -->
+        <section class="fam-page-card active" data-page="1">
+          <header class="fam-hero-section">
+            <div class="fam-badge amber-badge">👊 RIDE OR DIE, UNBREAKABLE BROTHERHOOD ⚡🔥</div>
+            <h1 class="fam-hero-title">${data.heroTitle || 'To My Day One, My Brother 👊⚡'}</h1>
+            <p class="fam-hero-subtitle">${data.heroSubtitle || "No cringe emotional speeches — you already know what it is. I built this legendary website just for you, my guy."}</p>
+            
+            <div class="bro-quick-actions">
+              <button class="btn-fam-action btn-fistbump" id="btnBroVaultFist">
+                🤜🤛 PLEDGE UNCONDITIONAL BROTHERHOOD 🔥
+              </button>
+            </div>
+            <div id="broVaultFeedback" class="fam-feedback-text"></div>
+          </header>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-next" data-next="2">
+              <span>Wingman Scorecard &amp; Stats 📊</span>
+              <span>➔</span>
+            </button>
           </div>
+        </section>
 
-          ${wingmanStats.map(m => `
-            <div class="bro-stat-meter-row">
-              <div class="meter-info">
-                <span class="meter-label">${m.label}</span>
-                <span class="meter-val" style="color:#fbbf24;">${m.val}</span>
-              </div>
-              <div class="meter-track">
-                <div class="meter-fill" style="width: ${m.width}; background:linear-gradient(90deg, #d97706, #fbbf24);"></div>
-              </div>
+        <!-- PAGE 2: WINGMAN SCORECARD -->
+        <section class="fam-page-card" data-page="2">
+          <div class="bro-stats-card bestie-boy-stats">
+            <div class="theft-header" style="margin-bottom:14px;">
+              <span class="theft-badge" style="background:rgba(245,158,11,0.2); border-color:#f59e0b; color:#fbbf24;">VERIFIED METRICS ⚡</span>
+              <h2 class="fam-section-title" style="margin-bottom:4px; text-align:center;">📊 The Wingman Reliability Scorecard</h2>
+              <p class="fam-section-sub" style="text-align:center;">Real-world assessment of our brotherhood &amp; late-night ride readiness</p>
             </div>
-          `).join('')}
-        </div>
-      </section>
 
-      <!-- MODULE 2: Legendary Adventure Polaroids -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">📸 Legendary Brotherhood Moments</h2>
-        <p class="fam-section-sub">Memories of midnight drives, big wins, and chaotic plans</p>
-
-        <div class="fam-polaroid-row">
-          ${polaroids.map((p, i) => `
-            <div class="fam-polaroid-card bestie-boy-card" data-i="${i}">
-              <div class="bro-hazard-tape">RIDE OR DIE // 4L</div>
-              <div class="fam-pol-img-wrap">
-                <img src="${p.image}" alt="${p.title || p.caption}" onerror="this.src='/images/sunset.jpg'" />
-              </div>
-              <h4 class="fam-pol-title">${p.title || p.caption || `Memory #${i+1}`}</h4>
-              <p class="fam-pol-note">${p.note || 'Unstoppable together'}</p>
-            </div>
-          `).join('')}
-        </div>
-      </section>
-
-      <!-- MODULE 3: The Bro-Code VIP Pass -->
-      <section class="fam-section">
-        <div class="bestie-scratch-card bestie-boy-pass">
-          <h2 class="fam-section-title" style="margin-bottom:6px;">🎟️ Lifetime Wingman Pass</h2>
-          <p class="fam-section-sub">Granted for life with permanent privileges</p>
-
-          <div class="scratch-reveal-box" style="border-color:#f59e0b; background:rgba(245,158,11,0.08);">
-            <div class="scratch-secret-text" style="color:#fef3c7;">
-              ⚡ <strong>LIFETIME BROTHERHOOD IMMUNITIES:</strong><br />
-              3 AM Emergency Pickup with Zero Questions Asked, Permanent Passenger Seat DJ Rights, and Unconditional Loyalty for Life! 👊
+            <div class="bhai-stats-grid">
+              ${wingmanStats.map(s => `
+                <div class="stat-gauge-card">
+                  <div class="stat-gauge-header">
+                    <span class="stat-gauge-label">${s.label}</span>
+                    <span class="stat-gauge-val">${s.val}</span>
+                  </div>
+                  <div class="stat-gauge-track">
+                    <div class="stat-gauge-fill" style="width: ${s.width}; background:linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+                  </div>
+                </div>
+              `).join('')}
             </div>
           </div>
-        </div>
-      </section>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="1">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="3">
+              <span>Legendary Adventures 📸</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-      <!-- MODULE 4: Bro-Fist Wax-Sealed Brotherhood Letter -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">💌 An Honest Word To My Brother</h2>
-        <p class="fam-section-sub">Tap the seal to unlock words straight from the heart</p>
+        <!-- PAGE 3: POLAROIDS SCRAPBOOK -->
+        <section class="fam-page-card" data-page="3">
+          <h2 class="fam-section-title" style="text-align:center;">📸 The Day One Hall of Fame</h2>
+          <p class="fam-section-sub" style="text-align:center;">Late night car talks, wild wins, and legendary memories that stay between us</p>
 
-        <div class="wax-envelope-wrap bro-wax-envelope" id="boyEnvelope">
-          <div class="envelope-back"></div>
-          <div class="envelope-front"></div>
-          <div class="envelope-flap" id="boyFlap"></div>
+          <div class="fam-polaroid-row">
+            ${polaroids.map((p, i) => `
+              <div class="fam-polaroid-card boy-bestie-polaroid" data-i="${i}">
+                <div class="bhai-hazard-tag" style="background:#f59e0b; color:#000;">DAY ONE</div>
+                <div class="fam-pol-img-wrap">
+                  <img src="${p.image}" alt="${p.title}" onerror="this.src='/images/sunset.jpg'" />
+                </div>
+                <h4 class="fam-pol-title">${p.title}</h4>
+                <p class="fam-pol-note">${p.note || 'Ride or die forever'}</p>
+              </div>
+            `).join('')}
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="4">
+              <span>Bro-Code VIP Pass 🪪</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-          <button class="wax-seal-button" id="boyWaxSeal" aria-label="Open letter">
-            <div class="wax-seal-emblem amber-emblem">
-              <span style="font-size:24px;">👊</span>
+        <!-- PAGE 4: METALLIC SCRATCH PASS -->
+        <section class="fam-page-card" data-page="4">
+          <div class="luxury-scratch-card boy-scratch-card">
+            <div class="scratch-badge" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">LIFETIME PASS 🪪</div>
+            <h3 class="scratch-headline">The Official Day One Pass</h3>
+            <p class="scratch-instruction">Scratch the metallic card below to reveal your permanent brotherhood perks</p>
+
+            <div class="scratch-canvas-wrap">
+              <div class="scratch-secret-content">
+                <span style="font-size:36px; display:block; margin-bottom:6px;">🍻⚡</span>
+                <strong style="color:#fbbf24; font-size:15px; display:block; margin-bottom:4px;">OFFICIAL RIDE-OR-DIE PRIVILEGES</strong>
+                <p style="font-size:12.5px; color:#fff; line-height:1.45; margin:0;">
+                  Unlimited 3 AM Pickup Pass, Drinks On Me Forever, Unconditional Wingman Defense &amp; Zero Judgments For Life! 🤜🤛
+                </p>
+              </div>
             </div>
-          </button>
-        </div>
-      </section>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="5">
+              <span>Bro-Fist Letter 💌</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-      <!-- MODULE 5: Certified Living Legend Citation -->
-      <section class="fam-section">
-        <div class="luxury-award-certificate amber-cert">
-          <div class="cert-border-corner tl"></div>
-          <div class="cert-border-corner tr"></div>
-          <div class="cert-border-corner bl"></div>
-          <div class="cert-border-corner br"></div>
+        <!-- PAGE 5: WAX SEAL LETTER -->
+        <section class="fam-page-card" data-page="5">
+          <h2 class="fam-section-title" style="text-align:center;">💌 Bro-Fist Wax-Sealed Brotherhood Letter</h2>
+          <p class="fam-section-sub" style="text-align:center;">Tap the wax seal to unroll a message from your brother</p>
 
-          <div class="cert-ribbon amber-ribbon">⚡ BROTHERS FOR LIFE // 4L ⚡</div>
-          <h2 class="cert-heading" style="color:#f59e0b;">CERTIFIED LIVING LEGEND</h2>
-          <div class="cert-recipient">SOLEMNLY BESTOWED UPON: <strong>${data.recipientName || 'MY GUY / BHAI'}</strong></div>
-          <p class="cert-body">
-            Conferred for always standing solid, never switching up, pushing each other to level up, 
-            and being the most genuine, ride-or-die brother anyone could ask for.
-          </p>
-          <div class="cert-stamp amber-stamp">🔥 UNSTOPPABLE FORCE 🔥</div>
-        </div>
-      </section>
+          <div class="wax-envelope-wrap boy-wax-envelope" id="boyEnvelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-flap" id="boyFlap"></div>
+
+            <button class="wax-seal-button" id="boyWaxSeal" aria-label="Open letter">
+              <div class="wax-seal-emblem">
+                <span style="font-size:24px;">👊</span>
+              </div>
+            </button>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="4">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="6">
+              <span>Living Legend Citation 🏅</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 6: CERTIFICATE & SHARE -->
+        <section class="fam-page-card" data-page="6">
+          <div class="luxury-award-certificate gold-cert">
+            <div class="cert-border-corner tl"></div>
+            <div class="cert-border-corner tr"></div>
+            <div class="cert-border-corner bl"></div>
+            <div class="cert-border-corner br"></div>
+
+            <div class="cert-ribbon" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">⚡ HALL OF FAME ⚡</div>
+            <h2 class="cert-heading">CERTIFIED LIVING LEGEND</h2>
+            <div class="cert-recipient">SOLEMNLY CONFERRED UPON: <strong>${data.recipientName || 'MY GUY'}</strong></div>
+            <p class="cert-body">
+              Awarded for remaining solid through every storm, undefeated loyalty, late-night car playlists, 
+              and for being a true brother in every sense of the word.
+            </p>
+            <div class="cert-stamp" style="border-color:#fbbf24; color:#fbbf24;">👊 DAY ONE BROTHERHOOD 👊</div>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="5">⬅ Back</button>
+            <button type="button" class="btn-fam-replay" id="btnBoyReplay">
+              <span>⚡ Replay Celebration ↺</span>
+            </button>
+          </div>
+        </section>
+      </main>
 
       <!-- Letter Modal Backdrop -->
       <div class="blossom-letter-modal-backdrop" id="boyLetterModal">
         <div class="blossom-modal-card">
           <div class="modal-card-header">
-            <span class="modal-badge-tag">BROTHERHOOD DISPATCH 💌</span>
+            <span class="modal-badge-tag" style="background:#f59e0b; color:#000;">BROTHERHOOD CODE 💌</span>
             <button class="btn-close-blossom-modal" id="btnCloseBoyLetter">✕</button>
           </div>
           <div class="modal-letter-scrollable">
-            <h3 class="modal-letter-title">Yo Brother,</h3>
+            <h3 class="modal-letter-title">Yo My Guy,</h3>
             <div class="modal-typewriter-text" id="boyLetterBody">
-              ${(data.letterBody || data.letter || `Happiest Birthday, my brother! 👑🎂\n\nPeople come and go, but having a brother who always has your back through every high and low is the rarest blessing in this world.\n\nFrom late-night drives and gaming grinds to pushing each other to level up in life — thank you for being the most genuine, loyal guy I know.\n\nI pray this year brings you unstoppable success, big money, peace, and everything you are grinding for.\n\nBrothers for life, no matter where life takes us. Ride or die forever! 👊🔥🧿`).replace(/\n/g, '<br>')}
+              ${(data.letter || `Yo my brother,\n\nWe have talked about conquering the world, laughed at crazy plans that almost got us locked up, and pushed each other to level up every single day.\n\nIn a world full of fake people, having someone who stays 100% solid no matter what is the rarest gift. You're not just a best friend; you're family.\n\nHere’s to another year of big wins, late night drives, wealth, and conquering every goal we set.\n\nFist bump forever! 👊⚡🔥`).replace(/\n/g, '<br>')}
             </div>
           </div>
         </div>
@@ -154,11 +219,64 @@ export function renderBestieBoyTemplate(container, data) {
     </div>
   `;
 
+  // Page switcher engine
+  const boyPageTitles = [
+    { num: 1, title: "Bro Code Opening 👊⚡" },
+    { num: 2, title: "Wingman Scorecard & Stats 📊" },
+    { num: 3, title: "Day One Hall of Fame 📸" },
+    { num: 4, title: "Bro-Code VIP Pass 🪪" },
+    { num: 5, title: "Bro-Fist Letter 💌" },
+    { num: 6, title: "Certified Living Legend 🏅" }
+  ];
+
+  const totalPages = boyPageTitles.length;
+  let currentPage = 1;
+
+  function goToPage(page) {
+    currentPage = Math.max(1, Math.min(totalPages, page));
+
+    // Update Progress Bar
+    const progressPct = Math.round((currentPage / totalPages) * 100);
+    const fill = container.querySelector('#boyStepProgressFill');
+    if (fill) fill.style.width = `${progressPct}%`;
+
+    // Update Stage Indicator Banner
+    const stepPill = container.querySelector('#boyStageStepPill');
+    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
+    const titleText = container.querySelector('#boyStageTitleText');
+    if (titleText && boyPageTitles[currentPage - 1]) {
+      titleText.textContent = boyPageTitles[currentPage - 1].title;
+    }
+
+    // Update Page View
+    container.querySelectorAll('.fam-page-card').forEach(card => {
+      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  // Bind Next / Prev buttons
+  container.querySelectorAll('.btn-fam-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'));
+      goToPage(next);
+    });
+  });
+  container.querySelectorAll('.btn-fam-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'));
+      goToPage(prev);
+    });
+  });
+  container.querySelector('#btnBoyReplay')?.addEventListener('click', () => goToPage(1));
+
   // Initialize background music player
   initMusicPlayer(container.querySelector('#boyBestiePlayerSlot'), {
-    audioTitle: data.audioTitle || "Brotherhood Anthem",
-    audioSubtitle: data.audioSubtitle || "RIDE OR DIE ⚡",
-    audioSrc: data.audioSrc || "/audio/blossom_song.mp3",
+    audioTitle: data.audioTitle || "Day One Anthem & Heavy Bass",
+    audioSubtitle: data.audioSubtitle || "BROTHERHOOD FOR LIFE",
+    audioSrc: data.audioSrc || "/audio/alfaaz.mp3",
     photoRibbon: [{ url: polaroids[0]?.image || "/images/sunset.jpg" }]
   });
 
@@ -168,7 +286,7 @@ export function renderBestieBoyTemplate(container, data) {
     const ctx = canvas.getContext('2d');
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
-    const particles = Array.from({ length: 24 }, () => ({
+    const particles = Array.from({ length: 25 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       size: 1.5 + Math.random() * 3,

@@ -1,4 +1,4 @@
-// src/viewer/templates/motherTemplate.js - The Sanctuary of Warmth & Eternal Dua (Mother Celebration)
+// src/viewer/templates/motherTemplate.js - The Sanctuary of Warmth & Eternal Dua (Mother Celebration - Page-By-Page)
 
 import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
@@ -29,118 +29,177 @@ export function renderMotherTemplate(container, data) {
     <!-- Top Audio Player -->
     <div id="momPlayerSlot"></div>
 
-    <div class="fam-page-viewport mother-viewport">
+    <div class="fam-page-viewport fam-storybook-viewport mother-viewport">
       <!-- Ambient Golden Petals Canvas -->
       <canvas id="momPetalCanvas" class="blossom-bg-canvas"></canvas>
 
-      <!-- Royal Maternal Hero -->
-      <header class="fam-hero-section">
-        <div class="fam-badge gold-badge">🌸 TO MY HEAVEN ON EARTH & GUARDIAN ANGEL 👑</div>
-        <h1 class="fam-hero-title">${data.heroTitle || 'To My Queen, My Beloved Maa ❤️'}</h1>
-        <p class="fam-hero-subtitle">${data.heroSubtitle || 'In your gentle smile lies my entire universe, and in your quiet prayers I find my greatest strength.'}</p>
-        
-        <div class="mom-quick-actions">
-          <button class="btn-fam-action btn-hug-mom" id="btnVirtualHug">
-            🤗 Send Warm Hug &amp; Salam to Maa ❤️
-          </button>
+      <!-- Stage Progress Bar & Passive Indicator -->
+      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
+        <div class="fam-step-progress-track">
+          <div class="fam-step-progress-fill" id="momStepProgressFill" style="width: 16.6%;"></div>
         </div>
-        <div id="hugFeedback" class="fam-feedback-text"></div>
+        <div class="fam-stage-indicator-bar">
+          <div class="fam-stage-info-pill">
+            <span class="stage-step-tag" id="momStageStepPill">PAGE 1 OF 6</span>
+            <span class="stage-step-separator">•</span>
+            <span class="stage-title-text" id="momStageTitleText">Royal Maternal Tribute 👑</span>
+          </div>
+        </div>
       </header>
 
-      <!-- MODULE 1: The Interactive Living Dua Jar -->
-      <section class="fam-section">
-        <div class="dua-jar-card">
-          <div class="dua-jar-icon-wrap" id="duaJarTrigger" title="Tap to draw a blessing">
-            <div class="dua-jar-glow"></div>
-            <div class="dua-jar-visual">🫙</div>
-            <span class="dua-jar-sparkle-pill">✨ TAP THE JAR ✨</span>
-          </div>
-          <h2 class="fam-section-title" style="margin-top:14px;">Maa's Living Jar of Duas 🤲🌸</h2>
-          <p class="fam-section-sub">Tap the glass jar to draw a personalized handwritten maternal prayer</p>
-          
-          <div class="dua-scroll-reveal" id="duaScrollReveal" style="display:none;">
-            <div class="dua-scroll-paper">
-              <span class="dua-scroll-badge" id="duaBadge">DUA OF PROTECTION</span>
-              <p class="dua-scroll-text" id="duaText"></p>
-              <span class="dua-scroll-footer">— Sealed With Maa's Eternal Love ♡</span>
+      <!-- Multi-Page Content Cards Container -->
+      <main class="fam-pages-container" id="momPagesContainer">
+        <!-- PAGE 1: HERO -->
+        <section class="fam-page-card active" data-page="1">
+          <header class="fam-hero-section">
+            <div class="fam-badge gold-badge">🌸 TO MY HEAVEN ON EARTH &amp; GUARDIAN ANGEL 👑</div>
+            <h1 class="fam-hero-title">${data.heroTitle || 'To My Queen, My Beloved Maa ❤️'}</h1>
+            <p class="fam-hero-subtitle">${data.heroSubtitle || 'In your gentle smile lies my entire universe, and in your quiet prayers I find my greatest strength.'}</p>
+            
+            <div class="mom-quick-actions">
+              <button class="btn-fam-action btn-hug-mom" id="btnVirtualHug">
+                🤗 Send Warm Hug &amp; Salam to Maa ❤️
+              </button>
             </div>
+            <div id="hugFeedback" class="fam-feedback-text"></div>
+          </header>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-next" data-next="2">
+              <span>Open Maa's Dua Jar 🤲</span>
+              <span>➔</span>
+            </button>
           </div>
-          <div class="dua-counter-pill" id="duaCounter">Tap the jar to draw your first blessing (5 Available)</div>
-        </div>
-      </section>
+        </section>
 
-      <!-- MODULE 2: Recipes of Love (Maa's Culinary Comfort Deck) -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">🍲 Recipes of Pure Love</h2>
-        <p class="fam-section-sub">Comfort foods and silent remedies that healed every heartache</p>
-
-        <div class="superpowers-grid mother-recipe-grid">
-          ${comfortRecipes.map((r, i) => `
-            <div class="superpower-card mom-comfort-card" data-card="${i}">
-              <span class="sp-icon">${r.icon}</span>
-              <h3>${r.title}</h3>
-              <p>${r.desc}</p>
-              <div class="mom-card-secret-tag">${r.secret}</div>
+        <!-- PAGE 2: LIVING DUA JAR -->
+        <section class="fam-page-card" data-page="2">
+          <div class="dua-jar-card">
+            <div class="dua-jar-icon-wrap" id="duaJarTrigger" title="Tap to draw a blessing">
+              <div class="dua-jar-glow"></div>
+              <div class="dua-jar-visual">🫙</div>
+              <span class="dua-jar-sparkle-pill">✨ TAP THE JAR ✨</span>
             </div>
-          `).join('')}
-        </div>
-      </section>
-
-      <!-- MODULE 3: Pressed-Flower Polaroid Scrapbook -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">📸 Cherished Memories With Maa</h2>
-        <p class="fam-section-sub">Moments frozen in time, preserved like pressed flowers in my heart</p>
-
-        <div class="fam-polaroid-row">
-          ${polaroids.map((p, i) => `
-            <div class="fam-polaroid-card mom-polaroid-card" data-i="${i}">
-              <div class="pressed-flower-pin">🌸</div>
-              <div class="fam-pol-img-wrap">
-                <img src="${p.image}" alt="${p.title}" onerror="this.src='/images/sunset.jpg'" />
+            <h2 class="fam-section-title" style="margin-top:14px;">Maa's Living Jar of Duas 🤲🌸</h2>
+            <p class="fam-section-sub">Tap the glass jar to draw a personalized handwritten maternal prayer</p>
+            
+            <div class="dua-scroll-reveal" id="duaScrollReveal" style="display:none;">
+              <div class="dua-scroll-paper">
+                <span class="dua-scroll-badge" id="duaBadge">DUA OF PROTECTION</span>
+                <p class="dua-scroll-text" id="duaText"></p>
+                <span class="dua-scroll-footer">— Sealed With Maa's Eternal Love ♡</span>
               </div>
-              <h4 class="fam-pol-title">${p.title}</h4>
-              <p class="fam-pol-note">${p.note || 'Always in my heart'}</p>
             </div>
-          `).join('')}
-        </div>
-      </section>
+            <div class="dua-counter-pill" id="duaCounter">Tap the jar to draw your first blessing (5 Available)</div>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="1">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="3">
+              <span>Maa's Comfort Recipes 🍲</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-      <!-- MODULE 4: 3D Wax-Seal Love Letter -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">💌 A Letter From My Deepest Soul</h2>
-        <p class="fam-section-sub">Tap the rose wax seal to unfold words rarely spoken out loud</p>
+        <!-- PAGE 3: RECIPES OF LOVE -->
+        <section class="fam-page-card" data-page="3">
+          <h2 class="fam-section-title" style="text-align:center;">🍲 Recipes of Pure Love</h2>
+          <p class="fam-section-sub" style="text-align:center;">Comfort foods and silent remedies that healed every heartache</p>
 
-        <div class="wax-envelope-wrap mom-wax-envelope" id="momEnvelope">
-          <div class="envelope-back"></div>
-          <div class="envelope-front"></div>
-          <div class="envelope-flap" id="momFlap"></div>
+          <div class="superpowers-grid mother-recipe-grid">
+            ${comfortRecipes.map((r, i) => `
+              <div class="superpower-card mom-comfort-card" data-card="${i}">
+                <span class="sp-icon">${r.icon}</span>
+                <h3>${r.title}</h3>
+                <p>${r.desc}</p>
+                <div class="mom-card-secret-tag">${r.secret}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="4">
+              <span>Cherished Photo Memories 📸</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-          <button class="wax-seal-button" id="momWaxSeal" aria-label="Open letter">
-            <div class="wax-seal-emblem">
-              <span style="font-size:24px;">🌸</span>
-            </div>
-          </button>
-        </div>
-      </section>
+        <!-- PAGE 4: POLAROIDS -->
+        <section class="fam-page-card" data-page="4">
+          <h2 class="fam-section-title" style="text-align:center;">📸 Cherished Memories With Maa</h2>
+          <p class="fam-section-sub" style="text-align:center;">Moments frozen in time, preserved like pressed flowers in my heart</p>
 
-      <!-- MODULE 5: Official Gold-Foiled Certificate -->
-      <section class="fam-section">
-        <div class="luxury-award-certificate gold-cert">
-          <div class="cert-border-corner tl"></div>
-          <div class="cert-border-corner tr"></div>
-          <div class="cert-border-corner bl"></div>
-          <div class="cert-border-corner br"></div>
+          <div class="fam-polaroid-row">
+            ${polaroids.map((p, i) => `
+              <div class="fam-polaroid-card mom-polaroid-card" data-i="${i}">
+                <div class="pressed-flower-pin">🌸</div>
+                <div class="fam-pol-img-wrap">
+                  <img src="${p.image}" alt="${p.title}" onerror="this.src='/images/sunset.jpg'" />
+                </div>
+                <h4 class="fam-pol-title">${p.title}</h4>
+                <p class="fam-pol-note">${p.note || 'Always in my heart'}</p>
+              </div>
+            `).join('')}
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="5">
+              <span>Read Soul Letter 💌</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-          <div class="cert-ribbon">👑 SUPREME IMPERIAL CITATION 👑</div>
-          <h2 class="cert-heading">GREATEST MOTHER IN THE UNIVERSE</h2>
-          <div class="cert-recipient">SOLEMNLY PRESENTED TO: <strong>${data.recipientName || 'MAA'}</strong></div>
-          <p class="cert-body">
-            Awarded with infinite love, honor, and gratitude for your boundless warmth, unconditional forgiveness, 
-            delicious meals made with care, and for being the most precious sanctuary in our lives.
-          </p>
-          <div class="cert-stamp">🌟 FOREVER ADORED &amp; CHERISHED 🌟</div>
-        </div>
-      </section>
+        <!-- PAGE 5: WAX SEAL LETTER -->
+        <section class="fam-page-card" data-page="5">
+          <h2 class="fam-section-title" style="text-align:center;">💌 A Letter From My Deepest Soul</h2>
+          <p class="fam-section-sub" style="text-align:center;">Tap the rose wax seal to unfold words rarely spoken out loud</p>
+
+          <div class="wax-envelope-wrap mom-wax-envelope" id="momEnvelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-flap" id="momFlap"></div>
+
+            <button class="wax-seal-button" id="momWaxSeal" aria-label="Open letter">
+              <div class="wax-seal-emblem">
+                <span style="font-size:24px;">🌸</span>
+              </div>
+            </button>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="4">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="6">
+              <span>Royal Proclamation Award 👑</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 6: CERTIFICATE & SHARE -->
+        <section class="fam-page-card" data-page="6">
+          <div class="luxury-award-certificate gold-cert">
+            <div class="cert-border-corner tl"></div>
+            <div class="cert-border-corner tr"></div>
+            <div class="cert-border-corner bl"></div>
+            <div class="cert-border-corner br"></div>
+
+            <div class="cert-ribbon">👑 SUPREME IMPERIAL CITATION 👑</div>
+            <h2 class="cert-heading">GREATEST MOTHER IN THE UNIVERSE</h2>
+            <div class="cert-recipient">SOLEMNLY PRESENTED TO: <strong>${data.recipientName || 'MAA'}</strong></div>
+            <p class="cert-body">
+              Awarded with infinite love, honor, and gratitude for your boundless warmth, unconditional forgiveness, 
+              delicious meals made with care, and for being the most precious sanctuary in our lives.
+            </p>
+            <div class="cert-stamp">🌟 FOREVER ADORED &amp; CHERISHED 🌟</div>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="5">⬅ Back</button>
+            <button type="button" class="btn-fam-replay" id="btnMomReplay">
+              <span>🌸 Replay Celebration ↺</span>
+            </button>
+          </div>
+        </section>
+      </main>
 
       <!-- Letter Modal Backdrop -->
       <div class="blossom-letter-modal-backdrop" id="momLetterModal">
@@ -159,6 +218,59 @@ export function renderMotherTemplate(container, data) {
       </div>
     </div>
   `;
+
+  // Page switcher engine
+  const momPageTitles = [
+    { num: 1, title: "Royal Maternal Tribute 👑" },
+    { num: 2, title: "Maa's Living Dua Jar 🤲🌸" },
+    { num: 3, title: "Recipes of Pure Love 🍲" },
+    { num: 4, title: "Cherished Photo Memories 📸" },
+    { num: 5, title: "Soul Letter & Wax Seal 💌" },
+    { num: 6, title: "Imperial Proclamation 👑" }
+  ];
+
+  const totalPages = momPageTitles.length;
+  let currentPage = 1;
+
+  function goToPage(page) {
+    currentPage = Math.max(1, Math.min(totalPages, page));
+
+    // Update Progress Bar
+    const progressPct = Math.round((currentPage / totalPages) * 100);
+    const fill = container.querySelector('#momStepProgressFill');
+    if (fill) fill.style.width = `${progressPct}%`;
+
+    // Update Stage Indicator Banner
+    const stepPill = container.querySelector('#momStageStepPill');
+    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
+    const titleText = container.querySelector('#momStageTitleText');
+    if (titleText && momPageTitles[currentPage - 1]) {
+      titleText.textContent = momPageTitles[currentPage - 1].title;
+    }
+
+    // Update Page View
+    container.querySelectorAll('.fam-page-card').forEach(card => {
+      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  // Bind Next / Prev buttons
+  container.querySelectorAll('.btn-fam-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'));
+      goToPage(next);
+    });
+  });
+  container.querySelectorAll('.btn-fam-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'));
+      goToPage(prev);
+    });
+  });
+  container.querySelector('#btnMomReplay')?.addEventListener('click', () => goToPage(1));
 
   // Initialize background music player
   initMusicPlayer(container.querySelector('#momPlayerSlot'), {

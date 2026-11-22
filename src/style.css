@@ -12715,3 +12715,303 @@ svg {
   color: #ff758f !important;
   text-shadow: 0 0 24px rgba(255, 117, 143, 0.65) !important;
 }
+
+
+/* ========================================================
+   UNIVERSAL PAGE-BY-PAGE STORYBOOK ENGINE & STAGE DOCKS
+   (Eliminates static single-page scrolling across all templates)
+   ======================================================== */
+
+.bday-storybook-viewport,
+.fam-storybook-viewport,
+.anni-storybook-viewport,
+.val-storybook-viewport,
+.bff-storybook-viewport {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+  padding: 12px 14px 90px 14px;
+  min-height: 100dvh;
+}
+
+/* Floating Stage Navigation & Progress Tracker */
+.bday-floating-nav,
+.fam-floating-nav,
+.anni-floating-nav,
+.val-floating-nav,
+.bff-floating-nav {
+  position: sticky;
+  top: 12px;
+  z-index: 500;
+  margin-bottom: 20px;
+}
+
+.bday-step-progress-track,
+.fam-step-progress-track,
+.anni-step-progress-track,
+.val-step-progress-track,
+.bff-step-progress-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bday-step-progress-fill,
+.fam-step-progress-fill,
+.anni-step-progress-fill,
+.val-step-progress-fill,
+.bff-step-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37, #f59e0b, #ec4899);
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+.bday-stage-indicator-bar,
+.fam-stage-indicator-bar,
+.anni-stage-indicator-bar,
+.val-stage-indicator-bar,
+.bff-stage-indicator-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(20, 15, 12, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+  user-select: none;
+}
+
+.bday-stage-info-pill,
+.fam-stage-info-pill,
+.anni-stage-info-pill,
+.val-stage-info-pill,
+.bff-stage-info-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+/* Page Containers and Cards */
+.bday-pages-container,
+.fam-pages-container,
+.anni-pages-container,
+.val-pages-container,
+.bff-pages-container {
+  position: relative;
+  min-height: 480px;
+  width: 100%;
+}
+
+.bday-page-card,
+.fam-page-card,
+.anni-page-card,
+.val-page-card,
+.bff-page-card {
+  display: none;
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+}
+
+.bday-page-card.active,
+.fam-page-card.active,
+.anni-page-card.active,
+.val-page-card.active,
+.bff-page-card.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Nav Docks */
+.bday-nav-dock,
+.fam-nav-dock,
+.anni-nav-dock,
+.val-nav-dock,
+.bff-nav-dock {
+  display: flex;
+  gap: 12px;
+  margin-top: 26px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.btn-bday-prev,
+.btn-fam-prev,
+.btn-anni-prev,
+.btn-val-prev,
+.btn-bff-prev {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #e2e8f0;
+  padding: 13px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-bday-prev:hover,
+.btn-fam-prev:hover,
+.btn-anni-prev:hover,
+.btn-val-prev:hover,
+.btn-bff-prev:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  transform: translateX(-2px);
+}
+
+.btn-bday-next,
+.btn-fam-next,
+.btn-anni-next,
+.btn-val-next,
+.btn-bff-next {
+  flex: 1;
+  background: linear-gradient(135deg, #d4af37 0%, #f59e0b 100%);
+  color: #1a0b00;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.35);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-bday-next:hover,
+.btn-fam-next:hover,
+.btn-anni-next:hover,
+.btn-val-next:hover,
+.btn-bff-next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(212, 175, 55, 0.55);
+}
+
+.btn-bday-next:active,
+.btn-fam-next:active,
+.btn-anni-next:active,
+.btn-val-next:active,
+.btn-bff-next:active {
+  transform: scale(0.98);
+}
+
+.btn-bday-replay,
+.btn-fam-replay,
+.btn-anni-replay,
+.btn-val-replay,
+.btn-bff-replay {
+  flex: 1;
+  background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+  color: #fff;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.4);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-bday-replay:hover,
+.btn-fam-replay:hover,
+.btn-anni-replay:hover,
+.btn-val-replay:hover,
+.btn-bff-replay:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(236, 72, 153, 0.6);
+}
+
+/* Birthday Grand Finale Card */
+.bday-finale-card {
+  text-align: center;
+  padding: 30px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(16px);
+}
+
+.bday-finale-cake-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.bday-finale-cake-wrap:hover {
+  transform: scale(1.08);
+}
+
+.bday-cake-emoji {
+  font-size: 72px;
+  filter: drop-shadow(0 8px 24px rgba(251, 191, 36, 0.5));
+  animation: floatBounce 2.5s ease-in-out infinite;
+}
+
+.bday-cake-tap-hint {
+  font-size: 11px;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  background: rgba(251, 191, 36, 0.12);
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.bday-finale-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 10px 0;
+  background: linear-gradient(135deg, #fff 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bday-finale-msg {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin: 0 0 20px 0;
+}

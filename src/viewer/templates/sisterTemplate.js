@@ -1,4 +1,4 @@
-// src/viewer/templates/sisterTemplate.js - The Vault of Secrets, Wardrobe Thief & Forever Bestie (Sister Celebration)
+// src/viewer/templates/sisterTemplate.js - The Vault of Secrets, Wardrobe Thief & Forever Bestie (Sister Celebration - Page-By-Page)
 
 import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
@@ -28,131 +28,192 @@ export function renderSisterTemplate(container, data) {
     <!-- Top Audio Player -->
     <div id="sisPlayerSlot"></div>
 
-    <div class="fam-page-viewport sister-viewport">
+    <div class="fam-page-viewport fam-storybook-viewport sister-viewport">
       <!-- Ambient Terracotta Shimmer Canvas -->
       <canvas id="sisStarCanvas" class="blossom-bg-canvas"></canvas>
 
-      <!-- Warm Terracotta Hero Section -->
-      <header class="fam-hero-section">
-        <div class="fam-badge terracotta-badge">💅 PARTNER IN CRIME, WARDROBE THIEF &amp; FOREVER BESTIE 💖✨</div>
-        <h1 class="fam-hero-title">${data.heroTitle || 'To My Crazy, Annoying, Irreplaceable Sister 💅✨'}</h1>
-        <p class="fam-hero-subtitle">${data.heroSubtitle || "We fight, we steal each other's clothes, we drive each other insane... but no one in this universe has my back like you do!"}</p>
-        
-        <div class="sis-quick-actions">
-          <button class="btn-fam-action btn-sister-tax" id="btnSisterTax">
-            🧋 Claim Mandatory Sibling Snack Tax 🍟
-          </button>
+      <!-- Stage Progress Bar & Passive Indicator -->
+      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
+        <div class="fam-step-progress-track">
+          <div class="fam-step-progress-fill" id="sisStepProgressFill" style="width: 16.6%;"></div>
         </div>
-        <div id="sisTaxFeedback" class="fam-feedback-text"></div>
+        <div class="fam-stage-indicator-bar">
+          <div class="fam-stage-info-pill">
+            <span class="stage-step-tag" id="sisStageStepPill">PAGE 1 OF 6</span>
+            <span class="stage-step-separator">•</span>
+            <span class="stage-title-text" id="sisStageTitleText">Partner in Crime Opening 💅</span>
+          </div>
+        </div>
       </header>
 
-      <!-- MODULE 1: The Interactive Wardrobe Theft Tracker -->
-      <section class="fam-section">
-        <div class="wardrobe-theft-card">
-          <div class="theft-header">
-            <span class="theft-badge">EVIDENCE DOSSIER 🚨</span>
-            <h2 class="fam-section-title" style="margin-bottom:4px;">👗 The Wardrobe Theft Tracker</h2>
-            <p class="fam-section-sub">Tap stolen items to calculate her penalty fines and log the confessions</p>
+      <!-- Multi-Page Content Cards Container -->
+      <main class="fam-pages-container" id="sisPagesContainer">
+        <!-- PAGE 1: HERO -->
+        <section class="fam-page-card active" data-page="1">
+          <header class="fam-hero-section">
+            <div class="fam-badge terracotta-badge">💅 PARTNER IN CRIME, WARDROBE THIEF &amp; FOREVER BESTIE 💖✨</div>
+            <h1 class="fam-hero-title">${data.heroTitle || 'To My Crazy, Annoying, Irreplaceable Sister 💅✨'}</h1>
+            <p class="fam-hero-subtitle">${data.heroSubtitle || "We fight, we steal each other's clothes, we drive each other insane... but no one in this universe has my back like you do!"}</p>
+            
+            <div class="sis-quick-actions">
+              <button class="btn-fam-action btn-sister-tax" id="btnSisterTax">
+                🧋 Claim Mandatory Sibling Snack Tax 🍟
+              </button>
+            </div>
+            <div id="sisTaxFeedback" class="fam-feedback-text"></div>
+          </header>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-next" data-next="2">
+              <span>Wardrobe Theft Tracker 👗</span>
+              <span>➔</span>
+            </button>
           </div>
+        </section>
 
-          <div class="theft-items-grid">
-            ${stolenWardrobeItems.map(item => `
-              <div class="theft-item-box" data-id="${item.id}">
-                <div class="theft-item-icon">${item.icon}</div>
-                <h4 class="theft-item-name">${item.item}</h4>
-                <p class="theft-item-crime">${item.crime}</p>
-                <div class="theft-fine-tag" id="fineTag_${item.id}">${item.fine}</div>
-                <button type="button" class="btn-claim-fine" data-id="${item.id}">Claim Fine 💸</button>
+        <!-- PAGE 2: WARDROBE THEFT TRACKER -->
+        <section class="fam-page-card" data-page="2">
+          <div class="wardrobe-theft-card">
+            <div class="theft-header">
+              <span class="theft-alert-badge">EVIDENCE LOG 🚨</span>
+              <h2 class="fam-section-title" style="margin-bottom:4px; text-align:center;">👗 Stolen Wardrobe Evidence Log</h2>
+              <p class="fam-section-sub" style="text-align:center;">Items mysteriously missing from my closet, currently residing in hers</p>
+            </div>
+
+            <div class="theft-items-grid">
+              ${stolenWardrobeItems.map(item => `
+                <div class="theft-item-box" data-id="${item.id}">
+                  <span class="theft-item-icon">${item.icon}</span>
+                  <div class="theft-item-info">
+                    <h4>${item.item}</h4>
+                    <p class="theft-crime">${item.crime}</p>
+                    <span class="theft-fine">${item.fine}</span>
+                  </div>
+                  <button type="button" class="btn-claim-fine" data-id="${item.id}">Claim Fine 🧋</button>
+                </div>
+              `).join('')}
+            </div>
+            <div class="theft-summary-pill" id="theftSummary">Tap 'Claim Fine' on items to collect sibling tax!</div>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="1">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="3">
+              <span>2 AM Gossip Hotline ☕</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 3: GOSSIP HOTLINE -->
+        <section class="fam-page-card" data-page="3">
+          <h2 class="fam-section-title" style="text-align:center;">☕ The 2 AM Gossip &amp; Code Vault</h2>
+          <p class="fam-section-sub" style="text-align:center;">Top-secret sister signals that nobody else in the family understands</p>
+
+          <div class="gossip-cards-grid">
+            ${gossipHotlineNotes.map(n => `
+              <div class="gossip-signal-card">
+                <span class="gossip-tag">${n.tag}</span>
+                <h4>${n.title}</h4>
+                <p>${n.text}</p>
               </div>
             `).join('')}
           </div>
-          <div class="theft-summary-pill" id="theftSummary">Tap buttons to enforce fines on her stolen loot!</div>
-        </div>
-      </section>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="4">
+              <span>Blackmail Photo Album 📸</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-      <!-- MODULE 2: The 2 AM Gossip Hotline & Secret Code Words -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">🤫 The 2 AM Gossip Vault &amp; Code Words</h2>
-        <p class="fam-section-sub">Unbreakable sisterhood inside jokes and secret protocols</p>
+        <!-- PAGE 4: BLACKMAIL POLAROIDS -->
+        <section class="fam-page-card" data-page="4">
+          <h2 class="fam-section-title" style="text-align:center;">📸 Top-Secret Sibling Leverage Archive</h2>
+          <p class="fam-section-sub" style="text-align:center;">Cute candid moments (and photos kept strictly for blackmail) 😂💅</p>
 
-        <div class="superpowers-grid sister-hotline-grid">
-          ${gossipHotlineNotes.map((g, i) => `
-            <div class="superpower-card sister-gossip-card" data-idx="${i}">
-              <div class="gossip-tag-pill">${g.tag}</div>
-              <h3>${g.title}</h3>
-              <p>${g.text}</p>
-            </div>
-          `).join('')}
-        </div>
-      </section>
-
-      <!-- MODULE 3: Sisterhood Polaroids & Scrapbook -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">📸 Sibling Chaos &amp; Cherished Memories</h2>
-        <p class="fam-section-sub">Proof that we are the coolest, most iconic duo in history</p>
-
-        <div class="fam-polaroid-row">
-          ${polaroids.map((p, i) => `
-            <div class="fam-polaroid-card sister-pol-card" data-i="${i}">
-              <div class="sister-tape-tag">SOUL SISTERS ✨</div>
-              <div class="fam-pol-img-wrap">
-                <img src="${p.image}" alt="${p.title}" onerror="this.src='/images/pretty.jpg'" />
+          <div class="fam-polaroid-row">
+            ${polaroids.map((p, i) => `
+              <div class="fam-polaroid-card sis-polaroid-card" data-i="${i}">
+                <div class="washi-tape-strip">BEHNA</div>
+                <div class="fam-pol-img-wrap">
+                  <img src="${p.image}" alt="${p.title}" onerror="this.src='/images/sunset.jpg'" />
+                </div>
+                <h4 class="fam-pol-title">${p.title}</h4>
+                <p class="fam-pol-note">${p.note || 'Partners in crime forever'}</p>
               </div>
-              <h4 class="fam-pol-title">${p.title}</h4>
-              <p class="fam-pol-note">${p.note || 'Partners in crime'}</p>
-            </div>
-          `).join('')}
-        </div>
-      </section>
+            `).join('')}
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="5">
+              <span>Read Sister Letter 💌</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-      <!-- MODULE 4: Blossom Wax-Seal Sisterhood Letter -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">💌 A Letter For My Forever Bestie</h2>
-        <p class="fam-section-sub">Tap the floral wax seal to unfold words from the bottom of my heart</p>
+        <!-- PAGE 5: SISTER WAX SEAL LETTER -->
+        <section class="fam-page-card" data-page="5">
+          <h2 class="fam-section-title" style="text-align:center;">💌 Blossom Wax-Seal Sisterhood Letter</h2>
+          <p class="fam-section-sub" style="text-align:center;">Tap the terracotta wax seal to unroll words from your partner-in-crime</p>
 
-        <div class="wax-envelope-wrap sis-wax-envelope" id="sisEnvelope">
-          <div class="envelope-back"></div>
-          <div class="envelope-front"></div>
-          <div class="envelope-flap" id="sisFlap"></div>
+          <div class="wax-envelope-wrap sis-wax-envelope" id="sisEnvelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-flap" id="sisFlap"></div>
 
-          <button class="wax-seal-button" id="sisWaxSeal" aria-label="Open letter">
-            <div class="wax-seal-emblem terracotta-emblem">
-              <span style="font-size:24px;">💅</span>
-            </div>
-          </button>
-        </div>
-      </section>
+            <button class="wax-seal-button" id="sisWaxSeal" aria-label="Open letter">
+              <div class="wax-seal-emblem">
+                <span style="font-size:24px;">💅</span>
+              </div>
+            </button>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="4">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="6">
+              <span>Sister of the Universe Award 👑</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-      <!-- MODULE 5: Soul Sister VIP Pass -->
-      <section class="fam-section">
-        <div class="luxury-award-certificate terracotta-cert">
-          <div class="cert-border-corner tl"></div>
-          <div class="cert-border-corner tr"></div>
-          <div class="cert-border-corner bl"></div>
-          <div class="cert-border-corner br"></div>
+        <!-- PAGE 6: CERTIFICATE & SHARE -->
+        <section class="fam-page-card" data-page="6">
+          <div class="luxury-award-certificate gold-cert">
+            <div class="cert-border-corner tl"></div>
+            <div class="cert-border-corner tr"></div>
+            <div class="cert-border-corner bl"></div>
+            <div class="cert-border-corner br"></div>
 
-          <div class="cert-ribbon terracotta-ribbon">💖 LIFETIME SISTERHOOD CHARTER 💖</div>
-          <h2 class="cert-heading" style="color:#f97316;">OFFICIAL SOUL SISTER &amp; QUEEN</h2>
-          <div class="cert-recipient">SOLEMNLY BESTOWED UPON: <strong>${data.recipientName || 'MY SISTER'}</strong></div>
-          <p class="cert-body">
-            Entitled to unlimited 2 AM outfit consultations, lifelong immunity for stolen hoodies, 
-            emergency boba deliveries, and an unbreakable bond that outshines the entire universe.
-          </p>
-          <div class="cert-stamp terracotta-stamp">✨ FOREVER BESTIES ✨</div>
-        </div>
-      </section>
+            <div class="cert-ribbon">👑 OFFICIAL PROCLAMATION 👑</div>
+            <h2 class="cert-heading">BEST SISTER IN THE UNIVERSE</h2>
+            <div class="cert-recipient">SOLEMNLY PRESENTED TO: <strong>${data.recipientName || 'BEHNA'}</strong></div>
+            <p class="cert-body">
+              Awarded for unmatched drama, master-level wardrobe theft, 2 AM gossip loyalty, 
+              and for being the sweetest, most irreplaceable sister in the entire world.
+            </p>
+            <div class="cert-stamp">💖 FOREVER MY SISTER 💖</div>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="5">⬅ Back</button>
+            <button type="button" class="btn-fam-replay" id="btnSisReplay">
+              <span>💅 Replay Celebration ↺</span>
+            </button>
+          </div>
+        </section>
+      </main>
 
       <!-- Letter Modal Backdrop -->
       <div class="blossom-letter-modal-backdrop" id="sisLetterModal">
         <div class="blossom-modal-card">
           <div class="modal-card-header">
-            <span class="modal-badge-tag">FOR MY CRAZY SISTER 💌</span>
+            <span class="modal-badge-tag">FOR MY DEAREST SISTER 💌</span>
             <button class="btn-close-blossom-modal" id="btnCloseSisLetter">✕</button>
           </div>
           <div class="modal-letter-scrollable">
-            <h3 class="modal-letter-title">Dearest Behna,</h3>
+            <h3 class="modal-letter-title">Dear Behna,</h3>
             <div class="modal-typewriter-text" id="sisLetterBody">
-              ${(data.letter || `Dearest Behna,\n\nWe fight over the dumbest things, steal each other's clothes, and know exactly which buttons to push to drive each other crazy...\n\nBut truth is, I don’t know what I would do in this world without you. You are my secret keeper, my comedy partner, and the first person I want to text whenever something funny or dramatic happens.\n\nThank you for always having my back, for giving me honest advice even when I don't want to hear it, and for being the sweetest, funniest sister anyone could ask for.\n\nMay this year bring you endless happiness, all the outfits you dream of, and unstoppable success. Happy Celebration! I love you endlessly, my soul sister! 💅💖✨`).replace(/\n/g, '<br>')}
+              ${(data.letter || `Dear Behna,\n\nEven though you steal my hoodies, use my expensive perfumes, and blame me for everything in front of parents — life without you would be so boring.\n\nThank you for being my 2 AM therapist, my secret keeper, and the only person who understands all my unhinged moods. No matter how much we argue, you are the first person I run to whenever life gets crazy.\n\nKeep shining, keep being dramatic, and remember I will always have your back no matter what.\n\nLove you endlessly! 💅💖✨`).replace(/\n/g, '<br>')}
             </div>
           </div>
         </div>
@@ -160,15 +221,68 @@ export function renderSisterTemplate(container, data) {
     </div>
   `;
 
+  // Page switcher engine
+  const sisPageTitles = [
+    { num: 1, title: "Partner in Crime Opening 💅" },
+    { num: 2, title: "Wardrobe Theft Tracker 👗" },
+    { num: 3, title: "2 AM Gossip Hotline ☕" },
+    { num: 4, title: "Blackmail Photo Album 📸" },
+    { num: 5, title: "Blossom Wax-Seal Letter 💌" },
+    { num: 6, title: "Best Sister in the Universe 👑" }
+  ];
+
+  const totalPages = sisPageTitles.length;
+  let currentPage = 1;
+
+  function goToPage(page) {
+    currentPage = Math.max(1, Math.min(totalPages, page));
+
+    // Update Progress Bar
+    const progressPct = Math.round((currentPage / totalPages) * 100);
+    const fill = container.querySelector('#sisStepProgressFill');
+    if (fill) fill.style.width = `${progressPct}%`;
+
+    // Update Stage Indicator Banner
+    const stepPill = container.querySelector('#sisStageStepPill');
+    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
+    const titleText = container.querySelector('#sisStageTitleText');
+    if (titleText && sisPageTitles[currentPage - 1]) {
+      titleText.textContent = sisPageTitles[currentPage - 1].title;
+    }
+
+    // Update Page View
+    container.querySelectorAll('.fam-page-card').forEach(card => {
+      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  // Bind Next / Prev buttons
+  container.querySelectorAll('.btn-fam-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'));
+      goToPage(next);
+    });
+  });
+  container.querySelectorAll('.btn-fam-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'));
+      goToPage(prev);
+    });
+  });
+  container.querySelector('#btnSisReplay')?.addEventListener('click', () => goToPage(1));
+
   // Initialize background music player
   initMusicPlayer(container.querySelector('#sisPlayerSlot'), {
-    audioTitle: data.audioTitle || "Sisterhood Vibes & Acoustic Track",
-    audioSubtitle: data.audioSubtitle || "SOUL SISTERS FOREVER 💅",
+    audioTitle: data.audioTitle || "Sisterhood Anthems & Pop Acoustic",
+    audioSubtitle: data.audioSubtitle || "SOUL SISTERS FOREVER",
     audioSrc: data.audioSrc || "/audio/alfaaz.mp3",
-    photoRibbon: [{ url: polaroids[0]?.image || "/images/pretty.jpg" }]
+    photoRibbon: [{ url: polaroids[0]?.image || "/images/sunset.jpg" }]
   });
 
-  // Ambient terracotta sparkle canvas
+  // Ambient terracotta shimmer canvas
   const canvas = container.querySelector('#sisStarCanvas');
   if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -177,9 +291,10 @@ export function renderSisterTemplate(container, data) {
     const sparkles = Array.from({ length: 24 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: 1.5 + Math.random() * 3,
-      speedY: 0.4 + Math.random() * 0.8,
-      color: Math.random() > 0.5 ? '#f97316' : '#fed7aa'
+      size: 1 + Math.random() * 2.5,
+      speedY: 0.3 + Math.random() * 0.7,
+      alpha: 0.2 + Math.random() * 0.7,
+      color: '#f97316'
     }));
 
     function anim() {
@@ -188,10 +303,12 @@ export function renderSisterTemplate(container, data) {
         s.y -= s.speedY;
         if (s.y < 0) { s.y = height; s.x = Math.random() * width; }
         ctx.fillStyle = s.color;
+        ctx.globalAlpha = s.alpha;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
         ctx.fill();
       });
+      ctx.globalAlpha = 1;
       requestAnimationFrame(anim);
     }
     anim();
@@ -201,7 +318,7 @@ export function renderSisterTemplate(container, data) {
     });
   }
 
-  // Interactive Wardrobe Theft Tracker logic
+  // Interactive Wardrobe Theft Tracker
   let finesClaimed = 0;
   const theftSummary = container.querySelector('#theftSummary');
   container.querySelectorAll('.btn-claim-fine').forEach(btn => {

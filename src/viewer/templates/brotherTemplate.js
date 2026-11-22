@@ -1,4 +1,4 @@
-// src/viewer/templates/brotherTemplate.js - Chaos Legend, Gaming Rival & Ride-or-Die (Brother Celebration)
+// src/viewer/templates/brotherTemplate.js - Chaos Legend, Gaming Rival & Ride-or-Die (Brother Celebration - Page-By-Page)
 
 import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
@@ -30,138 +30,193 @@ export function renderBrotherTemplate(container, data) {
     <!-- Top Audio Player -->
     <div id="broPlayerSlot"></div>
 
-    <div class="fam-page-viewport brother-viewport">
+    <div class="fam-page-viewport fam-storybook-viewport brother-viewport">
       <!-- Ambient Amber Ember Particles Canvas -->
       <canvas id="broStarCanvas" class="blossom-bg-canvas"></canvas>
 
-      <!-- Streetwear/Legend Hero Section -->
-      <header class="fam-hero-section">
-        <div class="fam-badge amber-badge">🤜🤛 THE LIVING LEGEND &amp; PARTNER IN CHAOS 🔥⚡</div>
-        <h1 class="fam-hero-title">${data.heroTitle || 'To My Brother in Chaos, The Legend 🤜🤛🔥'}</h1>
-        <p class="fam-hero-subtitle">${data.heroSubtitle || "From wrestling over the TV remote to having each other's back through every storm. Brotherhood forever!"}</p>
-        
-        <div class="bro-quick-actions">
-          <button class="btn-fam-action btn-fistbump" id="btnFistBump">
-            🤜🤛 FIST BUMP OF BROTHERHOOD! 🔥
-          </button>
+      <!-- Stage Progress Bar & Passive Indicator -->
+      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
+        <div class="fam-step-progress-track">
+          <div class="fam-step-progress-fill" id="broStepProgressFill" style="width: 16.6%;"></div>
         </div>
-        <div id="fistBumpFeedback" class="fam-feedback-text"></div>
+        <div class="fam-stage-indicator-bar">
+          <div class="fam-stage-info-pill">
+            <span class="stage-step-tag" id="broStageStepPill">PAGE 1 OF 6</span>
+            <span class="stage-step-separator">•</span>
+            <span class="stage-title-text" id="broStageTitleText">The Bhai Bro-Code Opening 🤜🤛</span>
+          </div>
+        </div>
       </header>
 
-      <!-- MODULE 1: The Official Bhai Bro-Code Punchcard -->
-      <section class="fam-section">
-        <div class="bro-code-punchcard">
-          <div class="punchcard-header">
-            <span class="punchcard-tag">OFFICIAL SIBLING PACT</span>
-            <h2 class="punchcard-title">📜 The Sacred Bhai Bro-Code</h2>
-            <p class="punchcard-sub">Tap each clause to stamp it officially enforced and ratify our pact</p>
+      <!-- Multi-Page Content Cards Container -->
+      <main class="fam-pages-container" id="broPagesContainer">
+        <!-- PAGE 1: HERO -->
+        <section class="fam-page-card active" data-page="1">
+          <header class="fam-hero-section">
+            <div class="fam-badge amber-badge">🤜🤛 THE LIVING LEGEND &amp; PARTNER IN CHAOS 🔥⚡</div>
+            <h1 class="fam-hero-title">${data.heroTitle || 'To My Brother in Chaos, The Legend 🤜🤛🔥'}</h1>
+            <p class="fam-hero-subtitle">${data.heroSubtitle || "From wrestling over the TV remote to having each other's back through every storm. Brotherhood forever!"}</p>
+            
+            <div class="bro-quick-actions">
+              <button class="btn-fam-action btn-fistbump" id="btnFistBump">
+                🤜🤛 FIST BUMP OF BROTHERHOOD! 🔥
+              </button>
+            </div>
+            <div id="fistBumpFeedback" class="fam-feedback-text"></div>
+          </header>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-next" data-next="2">
+              <span>The Official Bro-Code 📜</span>
+              <span>➔</span>
+            </button>
           </div>
+        </section>
 
-          <div class="punchcard-items-list">
-            ${broCodeClauses.map(c => `
-              <div class="punchcard-row" data-id="${c.id}">
-                <div class="punch-stamp-slot" id="punchSlot_${c.id}" title="Tap to stamp clause">
-                  <span class="stamp-icon">⭕</span>
+        <!-- PAGE 2: BRO CODE PUNCHCARD -->
+        <section class="fam-page-card" data-page="2">
+          <div class="bhai-code-card">
+            <h2 class="fam-section-title" style="margin-bottom:6px; text-align:center;">📜 The Official Bhai Bro-Code</h2>
+            <p class="fam-section-sub" style="text-align:center;">Tap each rule row below to stamp and officially ratify the sacred laws of brotherhood</p>
+
+            <div class="punchcard-table">
+              ${broCodeClauses.map(c => `
+                <div class="punchcard-row" data-id="${c.id}">
+                  <div class="punch-stamp-slot" id="punchSlot_${c.id}">
+                    <span class="stamp-icon">⭕</span>
+                  </div>
+                  <div class="punch-rule-text">
+                    <h4>${c.title}</h4>
+                    <p>${c.rule}</p>
+                  </div>
                 </div>
-                <div class="punch-content-col">
-                  <h4 class="punch-item-title">${c.title}</h4>
-                  <p class="punch-item-rule">${c.rule}</p>
+              `).join('')}
+            </div>
+            <div class="punch-counter-pill" id="punchCounter">0 / 5 Clauses Ratified (Tap each row above)</div>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="1">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="3">
+              <span>Co-Op Battle &amp; Life Stats 🎮</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 3: STATS METRICS -->
+        <section class="fam-page-card" data-page="3">
+          <h2 class="fam-section-title" style="text-align:center;">🎮 Sibling Co-Op &amp; Battle Stats</h2>
+          <p class="fam-section-sub" style="text-align:center;">Scientific measurement of our chaotic, unstoppable partnership</p>
+
+          <div class="bhai-stats-grid">
+            ${statMetrics.map(s => `
+              <div class="stat-gauge-card">
+                <div class="stat-gauge-header">
+                  <span class="stat-gauge-label">${s.label}</span>
+                  <span class="stat-gauge-val">${s.val}</span>
+                </div>
+                <div class="stat-gauge-track">
+                  <div class="stat-gauge-fill" style="width: ${s.width};"></div>
                 </div>
               </div>
             `).join('')}
           </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="4">
+              <span>Chaos Adventure Polaroids 📸</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-          <div class="punch-counter-pill" id="punchCounter">0 / 5 Clauses Ratified — Tap circles to stamp ✓</div>
-        </div>
-      </section>
+        <!-- PAGE 4: POLAROIDS -->
+        <section class="fam-page-card" data-page="4">
+          <h2 class="fam-section-title" style="text-align:center;">📸 Chronicles of Absolute Chaos</h2>
+          <p class="fam-section-sub" style="text-align:center;">Adventures, bad ideas that seemed great at the time, and timeless wins</p>
 
-      <!-- MODULE 2: Co-Op Battle & Life Stats -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">⚡ Player 1 &amp; Player 2 Battle Stats</h2>
-        <p class="fam-section-sub">Real metrics of our unstoppable co-op duo</p>
-
-        <div class="bro-stats-card">
-          ${statMetrics.map(m => `
-            <div class="bro-stat-meter-row">
-              <div class="meter-info">
-                <span class="meter-label">${m.label}</span>
-                <span class="meter-val">${m.val}</span>
+          <div class="fam-polaroid-row">
+            ${polaroids.map((p, i) => `
+              <div class="fam-polaroid-card bro-polaroid-card" data-i="${i}">
+                <div class="bhai-hazard-tag">LEGEND</div>
+                <div class="fam-pol-img-wrap">
+                  <img src="${p.image}" alt="${p.title}" onerror="this.src='/images/sunset.jpg'" />
+                </div>
+                <h4 class="fam-pol-title">${p.title}</h4>
+                <p class="fam-pol-note">${p.note || 'Ride or die'}</p>
               </div>
-              <div class="meter-track">
-                <div class="meter-fill" style="width: ${m.width};"></div>
+            `).join('')}
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="5">
+              <span>Read Bro Treaty 💌</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- PAGE 5: BRO WAX SEAL LETTER -->
+        <section class="fam-page-card" data-page="5">
+          <h2 class="fam-section-title" style="text-align:center;">💌 The Bro-Fist Sealed Treaty</h2>
+          <p class="fam-section-sub" style="text-align:center;">Tap the wax seal to unlock words from your brother in chaos</p>
+
+          <div class="wax-envelope-wrap bro-wax-envelope" id="broEnvelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-flap" id="broFlap"></div>
+
+            <button class="wax-seal-button" id="broWaxSeal" aria-label="Open letter">
+              <div class="wax-seal-emblem">
+                <span style="font-size:24px;">🤜🤛</span>
               </div>
-            </div>
-          `).join('')}
-        </div>
-      </section>
+            </button>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="4">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="6">
+              <span>Certified Legend Citation 🏆</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </section>
 
-      <!-- MODULE 3: Chaos Adventure Polaroids -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">📸 Brotherhood Hall of Fame</h2>
-        <p class="fam-section-sub">Evidence that we are the wildest, most chaotic duo in history</p>
+        <!-- PAGE 6: CERTIFICATE & SHARE -->
+        <section class="fam-page-card" data-page="6">
+          <div class="luxury-award-certificate gold-cert">
+            <div class="cert-border-corner tl"></div>
+            <div class="cert-border-corner tr"></div>
+            <div class="cert-border-corner bl"></div>
+            <div class="cert-border-corner br"></div>
 
-        <div class="fam-polaroid-row">
-          ${polaroids.map((p, i) => `
-            <div class="fam-polaroid-card bro-pol-card" data-i="${i}">
-              <div class="bro-hazard-tape">HAZARD // BROTHER</div>
-              <div class="fam-pol-img-wrap">
-                <img src="${p.image}" alt="${p.title}" onerror="this.src='/images/sunset.jpg'" />
-              </div>
-              <h4 class="fam-pol-title">${p.title}</h4>
-              <p class="fam-pol-note">${p.note || 'Ride or die'}</p>
-            </div>
-          `).join('')}
-        </div>
-      </section>
-
-      <!-- MODULE 4: Bro-Fist Wax-Seal Treaty -->
-      <section class="fam-section">
-        <h2 class="fam-section-title">💌 An Honest Word To My Brother</h2>
-        <p class="fam-section-sub">Tap the bro-fist wax seal to unlock a message straight from the heart</p>
-
-        <div class="wax-envelope-wrap bro-wax-envelope" id="broEnvelope">
-          <div class="envelope-back"></div>
-          <div class="envelope-front"></div>
-          <div class="envelope-flap" id="broFlap"></div>
-
-          <button class="wax-seal-button" id="broWaxSeal" aria-label="Open letter">
-            <div class="wax-seal-emblem amber-emblem">
-              <span style="font-size:24px;">🤜🤛</span>
-            </div>
-          </button>
-        </div>
-      </section>
-
-      <!-- MODULE 5: Metallic "Certified Legend" Pass -->
-      <section class="fam-section">
-        <div class="luxury-award-certificate amber-cert">
-          <div class="cert-border-corner tl"></div>
-          <div class="cert-border-corner tr"></div>
-          <div class="cert-border-corner bl"></div>
-          <div class="cert-border-corner br"></div>
-
-          <div class="cert-ribbon amber-ribbon">🔥 RIDE OR DIE OFFICIAL CREDENTIALS 🔥</div>
-          <h2 class="cert-heading" style="color:#f59e0b;">CERTIFIED LIVING LEGEND</h2>
-          <div class="cert-recipient">OFFICIALLY ISSUED TO: <strong>${data.recipientName || 'MY GUY / BHAI'}</strong></div>
-          <p class="cert-body">
-            Entitled to lifetime 24/7 wingman backup, emergency bailouts with zero questions asked, 
-            exclusive wardrobe raiding immunities, and unconditional brotherly loyalty forever.
-          </p>
-          <div class="cert-stamp amber-stamp">⚡ BROTHERS FOR LIFE ⚡</div>
-        </div>
-      </section>
+            <div class="cert-ribbon">🔥 BROTHER OF THE YEAR 🔥</div>
+            <h2 class="cert-heading">CERTIFIED LIVING LEGEND</h2>
+            <div class="cert-recipient">SOLEMNLY CONFERRED UPON: <strong>${data.recipientName || 'BHAI'}</strong></div>
+            <p class="cert-body">
+              For elite gaming co-op, emergency ride responsiveness, unwavering loyalty, 
+              and for being the greatest brother on this planet.
+            </p>
+            <div class="cert-stamp">⚡ BROTHERS FOR LIFE ⚡</div>
+          </div>
+          <div class="fam-nav-dock">
+            <button type="button" class="btn-fam-prev" data-prev="5">⬅ Back</button>
+            <button type="button" class="btn-fam-replay" id="btnBroReplay">
+              <span>🔥 Replay Celebration ↺</span>
+            </button>
+          </div>
+        </section>
+      </main>
 
       <!-- Letter Modal Backdrop -->
       <div class="blossom-letter-modal-backdrop" id="broLetterModal">
         <div class="blossom-modal-card">
           <div class="modal-card-header">
-            <span class="modal-badge-tag">BROTHERHOOD DISPATCH 💌</span>
+            <span class="modal-badge-tag">FOR MY BROTHER 💌</span>
             <button class="btn-close-blossom-modal" id="btnCloseBroLetter">✕</button>
           </div>
           <div class="modal-letter-scrollable">
-            <h3 class="modal-letter-title">Yo Brother,</h3>
+            <h3 class="modal-letter-title">Dear Bhai,</h3>
             <div class="modal-typewriter-text" id="broLetterBody">
-              ${(data.letter || `Yo Brother,\n\nNo cringe emotional speeches — you already know what it is.\n\nFrom late-night drives with music blasting to gaming marathons and covering for each other at home, there is literally nobody else on this planet I would rather have in my corner.\n\nPeople come and go, but having a brother who stands by you through every win, every mistake, and every wild adventure is the rarest blessing. Thank you for always being genuine, loyal, and real.\n\nWhatever you grind for this year, go take it. I’ve got your back forever.\n\nRide or die for life, my brother! 👊🔥🧿`).replace(/\n/g, '<br>')}
+              ${(data.letter || `Dear Bhai,\n\nWe have broken things, blamed each other, fought over controllers, and laughed until our stomachs hurt.\n\nYou're not just my brother; you are the one person in this world I can call at any ungodly hour with zero explanation needed. You always have my back, and I will always have yours.\n\nKeep conquering goals, making power moves, and living like the absolute legend you are.\n\nFist bump forever! 🤜🤛🔥`).replace(/\n/g, '<br>')}
             </div>
           </div>
         </div>
@@ -169,38 +224,96 @@ export function renderBrotherTemplate(container, data) {
     </div>
   `;
 
+  // Page switcher engine
+  const broPageTitles = [
+    { num: 1, title: "The Bhai Bro-Code Opening 🤜🤛" },
+    { num: 2, title: "The Official Bro-Code 📜" },
+    { num: 3, title: "Co-Op Battle & Life Stats 🎮" },
+    { num: 4, title: "Chaos Adventure Polaroids 📸" },
+    { num: 5, title: "The Bro-Fist Sealed Treaty 💌" },
+    { num: 6, title: "Certified Legend Citation 🏆" }
+  ];
+
+  const totalPages = broPageTitles.length;
+  let currentPage = 1;
+
+  function goToPage(page) {
+    currentPage = Math.max(1, Math.min(totalPages, page));
+
+    // Update Progress Bar
+    const progressPct = Math.round((currentPage / totalPages) * 100);
+    const fill = container.querySelector('#broStepProgressFill');
+    if (fill) fill.style.width = `${progressPct}%`;
+
+    // Update Stage Indicator Banner
+    const stepPill = container.querySelector('#broStageStepPill');
+    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
+    const titleText = container.querySelector('#broStageTitleText');
+    if (titleText && broPageTitles[currentPage - 1]) {
+      titleText.textContent = broPageTitles[currentPage - 1].title;
+    }
+
+    // Update Page View
+    container.querySelectorAll('.fam-page-card').forEach(card => {
+      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  // Bind Next / Prev buttons
+  container.querySelectorAll('.btn-fam-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'));
+      goToPage(next);
+    });
+  });
+  container.querySelectorAll('.btn-fam-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'));
+      goToPage(prev);
+    });
+  });
+  container.querySelector('#btnBroReplay')?.addEventListener('click', () => goToPage(1));
+
   // Initialize background music player
   initMusicPlayer(container.querySelector('#broPlayerSlot'), {
-    audioTitle: data.audioTitle || "Brotherhood Anthem & Beat",
-    audioSubtitle: data.audioSubtitle || "RIDE OR DIE ⚡",
+    audioTitle: data.audioTitle || "Bhai Anthems & Electric Beats",
+    audioSubtitle: data.audioSubtitle || "THE LEGENDARY BROTHERHOOD",
     audioSrc: data.audioSrc || "/audio/alfaaz.mp3",
     photoRibbon: [{ url: polaroids[0]?.image || "/images/sunset.jpg" }]
   });
 
-  // Ambient warm amber particles canvas
+  // Ambient amber ember particles canvas
   const canvas = container.querySelector('#broStarCanvas');
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
-    const particles = Array.from({ length: 24 }, () => ({
+    const embers = Array.from({ length: 26 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       size: 1.5 + Math.random() * 3,
-      speedY: 0.3 + Math.random() * 0.7,
-      color: Math.random() > 0.5 ? '#f59e0b' : '#d97706'
+      speedY: 0.4 + Math.random() * 0.9,
+      speedX: (Math.random() - 0.5) * 0.6,
+      alpha: 0.3 + Math.random() * 0.6,
+      color: '#f59e0b'
     }));
 
     function anim() {
       ctx.clearRect(0, 0, width, height);
-      particles.forEach(p => {
-        p.y -= p.speedY;
-        if (p.y < 0) { p.y = height; p.x = Math.random() * width; }
-        ctx.fillStyle = p.color;
+      embers.forEach(e => {
+        e.y -= e.speedY;
+        e.x += e.speedX;
+        if (e.y < 0) { e.y = height; e.x = Math.random() * width; }
+        ctx.fillStyle = e.color;
+        ctx.globalAlpha = e.alpha;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
         ctx.fill();
       });
+      ctx.globalAlpha = 1;
       requestAnimationFrame(anim);
     }
     anim();
