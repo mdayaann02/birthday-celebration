@@ -174,35 +174,37 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         </div>
         <div id="blossomCardsList">
           ${blossomCards.map((c, i) => `
-            <div class="sub-card-editor blossom-card-row" data-card-idx="${i}" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px; background:rgba(255,255,255,0.85); border:1px solid #fbcfe8; border-radius:12px; padding:12px;">
-              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <img src="${c.image}" class="bcard-thumb" id="bcardThumb_${i}" style="width:48px; height:48px; border-radius:8px; object-fit:cover; border:2px solid #f472b6; flex-shrink:0;" onerror="this.src='/images/sunset.jpg'" />
-                <div style="flex:1; min-width:140px; display:flex; gap:6px;">
-                  <input type="text" class="form-input bcard-img" data-i="${i}" value="${c.image}" placeholder="Image URL" style="font-size:12px; min-width:0; flex:1;" />
-                  <label class="btn-file-upload-sm" style="flex-shrink:0;" title="Upload from phone">
+            <div class="sub-card-editor blossom-card-row" data-card-idx="${i}">
+              <div class="bcard-top-row">
+                <div class="bcard-thumb-wrap">
+                  <img src="${c.image}" class="bcard-thumb" id="bcardThumb_${i}" onerror="this.src='/images/sunset.jpg'" />
+                  <label class="btn-thumb-upload" title="Upload Photo">
                     📷
                     <input type="file" class="file-upload-blossom-card" data-i="${i}" accept="image/*" style="display:none;" />
                   </label>
                 </div>
-                <select class="form-input select-bcard-preset" data-i="${i}" style="width:auto; font-size:11px; padding:4px 6px; cursor:pointer;">
-                  <option value="">🖼️ Pick photo...</option>
-                  <option value="/images/sunset.jpg">Sunset Glow</option>
-                  <option value="/images/always_you.jpg">Always You</option>
-                  <option value="/images/beautiful.jpg">Beautiful</option>
-                  <option value="/images/pretty.jpg">Pretty</option>
-                  <option value="/images/dream_girl.jpg">Dream Girl</option>
-                  <option value="/images/queen.jpg">Queen</option>
-                  <option value="/images/baddie.jpg">Baddie</option>
-                  <option value="/images/vogue_cover.jpg">Vogue Cover</option>
-                  <option value="/images/blossom/memory_1.jpg">Memory 1</option>
-                  <option value="/images/blossom/memory_2.jpg">Memory 2</option>
-                  <option value="/images/blossom/memory_3.jpg">Memory 3</option>
-                  <option value="/images/blossom/memory_4.jpg">Memory 4</option>
-                  <option value="/images/blossom/memory_5.jpg">Memory 5</option>
-                </select>
-                <button type="button" class="btn-del-blossom-card" data-i="${i}" style="background:#fee2e2; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#dc2626; flex-shrink:0;" title="Delete Card">🗑️</button>
+                <div class="bcard-caption-col">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span class="bcard-num-badge">✨ Memory #${i+1}</span>
+                    <button type="button" class="btn-del-blossom-card" data-i="${i}" title="Delete Card">🗑️</button>
+                  </div>
+                  <input type="text" class="form-input bcard-cap" data-i="${i}" value="${c.caption || ''}" placeholder="Caption (e.g. Sweet moments with you)" />
+                </div>
               </div>
-              <input type="text" class="form-input bcard-cap" data-i="${i}" value="${c.caption || ''}" placeholder="Card Caption (e.g. Sweet moments with you)" style="font-size:13px;" />
+
+              <!-- Quick Pick Photo Chips -->
+              <div class="bcard-presets-chips">
+                <span class="preset-chip-label">Quick Pick:</span>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/queen.jpg">Queen</button>
+                <button type="button" class="btn-quick-preset" data-i="${i}" data-src="/images/baddie.jpg">Baddie</button>
+              </div>
+
+              <div class="bcard-url-row">
+                <input type="text" class="form-input bcard-img" data-i="${i}" value="${c.image}" placeholder="Image URL (or tap 📷 to upload)" />
+              </div>
             </div>
           `).join('')}
         </div>
@@ -219,23 +221,35 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <input type="text" class="form-input" id="edAge" value="${data.age || '15'}" />
       </div>
       
-      <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 16px 0 8px;">📸 Polaroid Photo Cards (Upload or Paste URL):</div>
-      ${(data.polaroids || []).map((p, i) => `
-        <div class="sub-card-editor">
-          <div style="font-size:12px; font-weight:700; color:#fff; margin-bottom:6px;">Polaroid #${i+1}</div>
-          <div class="editor-grid-2">
-            <input type="text" class="form-input pol-t" data-i="${i}" value="${p.title}" placeholder="Caption" />
-            <div style="display:flex; gap:6px;">
-              <input type="text" class="form-input pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL" style="flex:1; min-width:0;" />
-              <label class="btn-file-upload-sm" style="flex-shrink:0;">
-                📷
-                <input type="file" class="file-upload-photo" data-i="${i}" accept="image/*" style="display:none;" />
-              </label>
+      <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 16px 0 8px;">📸 Polaroid Photo Cards (Upload or Quick Pick):</div>
+      <div id="polaroidCardsList">
+        ${(data.polaroids || []).map((p, i) => `
+          <div class="sub-card-editor bday-polaroid-row" data-i="${i}">
+            <div class="bcard-top-row">
+              <div class="bcard-thumb-wrap">
+                <img src="${p.image}" class="bcard-thumb" id="polThumb_${i}" onerror="this.src='/images/always_you.jpg'" />
+                <label class="btn-thumb-upload" title="Upload from phone">
+                  📷
+                  <input type="file" class="file-upload-photo" data-i="${i}" accept="image/*" style="display:none;" />
+                </label>
+              </div>
+              <div class="bcard-caption-col">
+                <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
+                <input type="text" class="form-input pol-t" data-i="${i}" value="${p.title}" placeholder="Caption (e.g. Sunset Glow)" />
+              </div>
             </div>
+            <div class="bcard-presets-chips">
+              <span class="preset-chip-label">Quick Pick:</span>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/beautiful.jpg">Beautiful</button>
+            </div>
+            <input type="text" class="form-input pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap 📷 to upload)" />
+            <input type="text" class="form-input pol-n" data-i="${i}" style="margin-top:6px;" value="${p.note}" placeholder="Secret Note on Click (e.g. My favorite memory)" />
           </div>
-          <input type="text" class="form-input pol-n" data-i="${i}" style="margin-top:6px;" value="${p.note}" placeholder="Secret Note on Click" />
-        </div>
-      `).join('')}
+        `).join('')}
+      </div>
     `;
   } else if (templateId === 'anniversary') {
     specificBox.innerHTML = `
@@ -323,6 +337,33 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (elSrc) elSrc.value = src;
       if (elTitle) elTitle.value = title;
       if (elSub) elSub.value = sub;
+      emitChange();
+    });
+  });
+
+  // Bind quick pick photo chips
+  container.querySelectorAll('.btn-quick-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = btn.getAttribute('data-src');
+      const idx = btn.getAttribute('data-i');
+      const textInput = container.querySelector(`.bcard-img[data-i="${idx}"]`);
+      const thumb = container.querySelector(`#bcardThumb_${idx}`);
+      if (textInput) textInput.value = src;
+      if (thumb) thumb.src = src;
+      if (navigator.vibrate) navigator.vibrate(15);
+      emitChange();
+    });
+  });
+
+  container.querySelectorAll('.btn-quick-pol-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = btn.getAttribute('data-src');
+      const idx = btn.getAttribute('data-i');
+      const textInput = container.querySelector(`.pol-img[data-i="${idx}"]`);
+      const thumb = container.querySelector(`#polThumb_${idx}`);
+      if (textInput) textInput.value = src;
+      if (thumb) thumb.src = src;
+      if (navigator.vibrate) navigator.vibrate(15);
       emitChange();
     });
   });

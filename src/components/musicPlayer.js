@@ -1,105 +1,99 @@
-// src/components/musicPlayer.js - Floating Ambient Music Player Bar
+// src/components/musicPlayer.js - Sleek Spinning Mini CD Player (Upper Right Corner)
 
 export function initMusicPlayer(container, config) {
   const { audioTitle, audioSubtitle, audioSrc } = config.general;
+  const coverUrl = config.photoRibbon?.[0]?.url || config.polaroids?.[0]?.image || '/images/sunset.jpg';
 
   container.innerHTML = `
-    <div class="music-player-bar" id="musicPlayerBar">
-      <div class="vinyl-thumb" id="vinylThumb">
-        <img src="${config.photoRibbon[0]?.url || '/images/sunset.jpg'}" alt="Cover" />
-      </div>
-      <div class="track-info">
-        <div class="track-title" id="playerTitle">${audioTitle || "Alfaaz - Hamza Malik & Zain Zohaib"}</div>
-        <div class="track-sub" id="playerSub">${audioSubtitle || "ROMANTIC SOUNDTRACK"}</div>
-      </div>
-      <div class="player-controls">
-        <button class="btn-play-pause" id="btnPlayPause" aria-label="Play / Pause">
-          <svg id="iconPlay" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-          </svg>
-          <svg id="iconPause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
-            <rect x="6" y="4" width="4" height="16"></rect>
-            <rect x="14" y="4" width="4" height="16"></rect>
-          </svg>
-        </button>
-        <div class="progress-container" id="playerProgressContainer">
-          <div class="progress-bar-fill" id="playerProgressBar"></div>
+    <div class="corner-mini-cd-player" id="cornerCdPlayer" role="button" aria-label="Toggle Music Player" title="Tap to Play / Pause Music">
+      <!-- Spinning Mini Vinyl CD Disc -->
+      <div class="mini-cd-disc" id="miniCdDisc">
+        <div class="cd-groove-rings"></div>
+        <div class="cd-holo-sheen"></div>
+        <div class="cd-center-sticker">
+          <img src="${coverUrl}" class="cd-cover-art" id="cdCoverArt" alt="Cover" onerror="this.src='/images/sunset.jpg'" />
+          <span class="cd-center-spindle"></span>
         </div>
-        <span class="time-display" id="playerTime">0:00</span>
       </div>
+
+      <!-- Compact Audio Status & Track Badge -->
+      <div class="cd-track-pill" id="cdTrackPill">
+        <div class="cd-pill-equalizer" id="cdEqualizer">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="cd-pill-title" id="cdPillTitle">${audioTitle || "Romantic Track"}</span>
+      </div>
+
+      <audio id="globalAudio" preload="auto" loop>
+        <source src="${audioSrc || '/audio/alfaaz.mp3'}" type="audio/mpeg">
+      </audio>
     </div>
-    <audio id="globalAudio" preload="auto">
-      <source src="${audioSrc || '/audio/alfaaz.mp3'}" type="audio/mpeg">
-    </audio>
   `;
 
-  const audio = document.getElementById("globalAudio");
-  const btnPlay = document.getElementById("btnPlayPause");
-  const iconPlay = document.getElementById("iconPlay");
-  const iconPause = document.getElementById("iconPause");
-  const vinylThumb = document.getElementById("vinylThumb");
-  const progressBar = document.getElementById("playerProgressBar");
-  const progressContainer = document.getElementById("playerProgressContainer");
-  const timeDisplay = document.getElementById("playerTime");
+  const audio = container.querySelector('#globalAudio');
+  const cdDisc = container.querySelector('#miniCdDisc');
+  const cdPlayer = container.querySelector('#cornerCdPlayer');
+  const cdPill = container.querySelector('#cdTrackPill');
+  const cdTitle = container.querySelector('#cdPillTitle');
 
   let isPlaying = false;
+  let pillTimer = null;
 
-  function updatePlayState(playing) {
-    isPlaying = playing;
-    if (playing) {
-      iconPlay.style.display = "none";
-      iconPause.style.display = "block";
-      vinylThumb.classList.add("spinning");
-    } else {
-      iconPlay.style.display = "block";
-      iconPause.style.display = "none";
-      vinylThumb.classList.remove("spinning");
+  function showPillBriefly(duration = 2600) {
+    if (cdPill) {
+      cdPill.classList.add('visible');
+      clearTimeout(pillTimer);
+      pillTimer = setTimeout(() => {
+        cdPill.classList.remove('visible');
+      }, duration);
     }
   }
 
-  btnPlay.addEventListener("click", () => {
+  function setPlayingState(playing) {
+    isPlaying = playing;
+    if (playing) {
+      cdDisc.classList.add('spinning');
+      cdPlayer.classList.add('is-playing');
+      showPillBriefly();
+    } else {
+      cdDisc.classList.remove('spinning');
+      cdPlayer.classList.remove('is-playing');
+    }
+  }
+
+  function togglePlay() {
     if (audio.paused) {
-      audio.play().then(() => updatePlayState(true)).catch(err => {
-        console.warn("Audio playback prevented:", err);
+      audio.play().then(() => {
+        setPlayingState(true);
+      }).catch(err => {
+        console.warn("Audio playback waiting for gesture:", err);
       });
     } else {
       audio.pause();
-      updatePlayState(false);
+      setPlayingState(false);
     }
-  });
+    if (navigator.vibrate) navigator.vibrate(20);
+  }
 
-  // Global user interaction trigger for autoplay policy
+  cdPlayer.addEventListener('click', togglePlay);
+
+  // Auto-play on first touch/click anywhere on page
   const onFirstInteraction = () => {
     if (audio.paused && !isPlaying) {
       audio.play().then(() => {
-        updatePlayState(true);
+        setPlayingState(true);
       }).catch(() => {});
     }
-    window.removeEventListener("click", onFirstInteraction);
-    window.removeEventListener("touchstart", onFirstInteraction);
+    window.removeEventListener('click', onFirstInteraction);
+    window.removeEventListener('touchstart', onFirstInteraction);
+    window.removeEventListener('pointerdown', onFirstInteraction);
   };
-  window.addEventListener("click", onFirstInteraction, { once: true });
-  window.addEventListener("touchstart", onFirstInteraction, { once: true });
 
-  audio.addEventListener("timeupdate", () => {
-    if (!audio.duration) return;
-    const pct = (audio.currentTime / audio.duration) * 100;
-    progressBar.style.width = `${pct}%`;
-    const curMins = Math.floor(audio.currentTime / 60);
-    const curSecs = Math.floor(audio.currentTime % 60);
-    timeDisplay.textContent = `${curMins}:${curSecs < 10 ? '0' : ''}${curSecs}`;
-  });
+  window.addEventListener('click', onFirstInteraction, { once: true });
+  window.addEventListener('touchstart', onFirstInteraction, { once: true });
+  window.addEventListener('pointerdown', onFirstInteraction, { once: true });
 
-  audio.addEventListener("ended", () => {
-    updatePlayState(false);
-    progressBar.style.width = "0%";
-  });
-
-  progressContainer.addEventListener("click", (e) => {
-    const rect = progressContainer.getBoundingClientRect();
-    const pos = (e.clientX - rect.left) / rect.width;
-    if (audio.duration) {
-      audio.currentTime = pos * audio.duration;
-    }
-  });
+  audio.addEventListener('play', () => setPlayingState(true));
+  audio.addEventListener('pause', () => setPlayingState(false));
+  audio.addEventListener('ended', () => setPlayingState(false));
 }

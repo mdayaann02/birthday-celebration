@@ -203,12 +203,22 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
               ✏️ <span class="hide-on-tiny">Edit Story</span>
             </button>
           ` : ''}
-          <button class="blossom-music-pill" id="blossomMusicToggle" title="Toggle Music">
-            <span class="blossom-music-icon">🎵</span>
-            <div class="blossom-soundbars">
-              <span></span><span></span><span></span>
+          <div class="corner-mini-cd-player blossom-cd-btn" id="blossomMusicToggle" role="button" title="Toggle Music">
+            <div class="mini-cd-disc" id="blossomMiniCd">
+              <div class="cd-groove-rings"></div>
+              <div class="cd-holo-sheen"></div>
+              <div class="cd-center-sticker">
+                <span style="font-size:12px;">🌸</span>
+                <span class="cd-center-spindle"></span>
+              </div>
             </div>
-          </button>
+            <div class="cd-track-pill" id="blossomTrackPill">
+              <div class="cd-pill-equalizer">
+                <span></span><span></span><span></span>
+              </div>
+              <span class="cd-pill-title">${data.audioTitle || "Blossom Romance"}</span>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -372,13 +382,30 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
   }
   renderPetals();
 
-  // Audio Play / Toggle with Mobile Autoplay Safe Gesture
+  // Audio Play / Toggle with Mobile Autoplay Safe Gesture & Mini Spinning CD
+  const blossomMiniCd = container.querySelector('#blossomMiniCd');
+  const blossomTrackPill = container.querySelector('#blossomTrackPill');
+
+  function updateBlossomPlayState(playing) {
+    audioPlaying = playing;
+    if (playing) {
+      musicToggle?.classList.add('playing');
+      blossomMiniCd?.classList.add('spinning');
+      if (blossomTrackPill) {
+        blossomTrackPill.classList.add('visible');
+        setTimeout(() => blossomTrackPill.classList.remove('visible'), 2600);
+      }
+    } else {
+      musicToggle?.classList.remove('playing');
+      blossomMiniCd?.classList.remove('spinning');
+    }
+  }
+
   function startAutoplayAudio() {
     getAudioCtx();
     if (!audioPlaying) {
       audioEl.play().then(() => {
-        audioPlaying = true;
-        musicToggle.classList.add('playing');
+        updateBlossomPlayState(true);
       }).catch(err => {
         console.log("Audio play postponed until tap gesture:", err);
       });
@@ -389,14 +416,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`,
     getAudioCtx();
     if (audioPlaying) {
       audioEl.pause();
-      audioPlaying = false;
-      musicToggle.classList.remove('playing');
+      updateBlossomPlayState(false);
     } else {
       audioEl.play().then(() => {
-        audioPlaying = true;
-        musicToggle.classList.add('playing');
+        updateBlossomPlayState(true);
       }).catch(e => console.log(e));
     }
+    if (navigator.vibrate) navigator.vibrate(20);
   });
 
   // Drawer Toggle

@@ -1,4 +1,4 @@
-// src/studio/builderApp.js - The Studio Web App Interface (100% Mobile & Desktop Friendly)
+// src/studio/builderApp.js - The Ultra-Cool Mobile-Optimized Studio Interface
 
 import { TEMPLATES } from '../models/templateRegistry.js';
 import { 
@@ -15,17 +15,17 @@ import { renderViewerApp } from '../viewer/viewerApp.js';
 export function renderStudioApp(root) {
   let activeTemplateId = "blossom";
   let activeData = getActiveCelebrationData(activeTemplateId);
-  let currentMobileTab = "editor"; // "editor" | "templates" | "preview"
+  let currentMobileTab = "editor"; // "templates" | "editor" | "preview"
 
   root.innerHTML = `
     <div class="studio-layout">
-      <!-- Studio Mode Alert Bar -->
-      <div class="studio-top-mode-bar" style="background:#1e1b4b; color:#c7d2fe; padding:8px 16px; font-size:12px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #312e81;">
+      <!-- Top Info Banner (Collapsible/Hidden on phone for max screen space) -->
+      <div class="studio-top-mode-bar" id="studioModeBar">
         <div style="display:flex; align-items:center; gap:6px;">
           <span>✏️</span>
-          <span><strong>Studio Editor Active:</strong> You are customizing your website. Recipients will see the clean celebration.</span>
+          <span><strong>Studio Mode:</strong> Customizing celebration. Recipients will see the 100% clean website.</span>
         </div>
-        <a href="/" style="color:#a5f3fc; text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:4px; padding:2px 8px; background:rgba(255,255,255,0.1); border-radius:4px;">
+        <a href="/" class="btn-top-recipient-link">
           👁️ Recipient View &rarr;
         </a>
       </div>
@@ -41,10 +41,10 @@ export function renderStudioApp(root) {
         </div>
 
         <div class="studio-header-actions">
-          <a href="/" class="btn-studio-action btn-header-recipient" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:4px;" title="Open website as recipient">
+          <a href="/" class="btn-studio-action btn-header-recipient" title="Open website as recipient">
             👁️ <span>Recipient View</span>
           </a>
-          <button class="btn-studio-action btn-save-primary" id="btnHeaderSave" style="background:#10b981; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+          <button class="btn-studio-action btn-save-primary" id="btnHeaderSave">
             💾 <span>Save Website</span>
           </button>
           <button class="btn-studio-primary" id="btnSharePublish">
@@ -53,32 +53,33 @@ export function renderStudioApp(root) {
         </div>
       </header>
 
-      <!-- Mobile Segmented Navigation Bar -->
+      <!-- Mobile Segmented Navigation Controller -->
       <nav class="studio-mobile-tabs" id="studioMobileTabs" aria-label="Editor View Tabs">
+        <button class="mobile-tab-btn" data-tab="templates" id="tabBtnTemplates">
+          <span class="tab-btn-icon">🎨</span>
+          <span class="tab-btn-text">Occasions</span>
+        </button>
         <button class="mobile-tab-btn active" data-tab="editor" id="tabBtnEditor">
           <span class="tab-btn-icon">✏️</span>
           <span class="tab-btn-text">Customize</span>
         </button>
-        <button class="mobile-tab-btn" data-tab="templates" id="tabBtnTemplates">
-          <span class="tab-btn-icon">🎨</span>
-          <span class="tab-btn-text">Occasions (${Object.keys(TEMPLATES).length})</span>
-        </button>
         <button class="mobile-tab-btn" data-tab="preview" id="tabBtnPreview">
           <span class="tab-btn-icon">👁️</span>
           <span class="tab-btn-text">Live Preview</span>
+          <span class="tab-live-pulse"></span>
         </button>
       </nav>
 
-      <!-- Main Studio Workspace (Split View on Desktop, Tabbed on Mobile) -->
+      <!-- Main Studio Workspace -->
       <div class="studio-workspace mobile-view-editor" id="studioWorkspace">
         <!-- Controls & Editor Sidebar -->
         <div class="studio-sidebar" id="studioSidebar">
-          <!-- Section 1: Template Gallery (In "templates" tab on mobile, top on desktop) -->
+          <!-- Section 1: Template Gallery (Tab "templates" on mobile) -->
           <div class="studio-tab-section studio-tab-templates" id="tabTemplatesSection">
             <div id="templateSelectorMount"></div>
           </div>
 
-          <!-- Section 2: Visual Customization Form (In "editor" tab on mobile, bottom on desktop) -->
+          <!-- Section 2: Visual Customization Form (Tab "editor" on mobile) -->
           <div class="studio-tab-section studio-tab-editor active" id="tabEditorSection">
             <!-- Mobile Current Occasion Switcher Banner -->
             <div class="studio-occasion-banner" id="studioOccasionBanner"></div>
@@ -88,32 +89,41 @@ export function renderStudioApp(root) {
           </div>
         </div>
 
-        <!-- Live Real-Time Interactive Preview -->
+        <!-- Live Real-Time Interactive Preview Pane -->
         <div class="studio-preview-pane" id="studioPreviewPane">
           <div class="preview-device-header">
-            <span class="device-dot dot-red"></span>
-            <span class="device-dot dot-yellow"></span>
-            <span class="device-dot dot-green"></span>
-            <span class="preview-url-bar" id="previewUrlBar">https://celebration.live/#preview</span>
             <button class="btn-preview-back-mobile" id="btnMobileBackToEditor">
               ✏️ Back to Edit
+            </button>
+            <span class="preview-url-bar" id="previewUrlBar">https://celebration.live/#preview</span>
+            <button class="btn-preview-share-mobile" id="btnMobilePreviewShare">
+              🚀 Share Link
             </button>
           </div>
           <div class="preview-frame-container" id="previewContainer"></div>
         </div>
       </div>
 
-      <!-- Sticky Bottom Dock on Mobile -->
+      <!-- Floating Bottom Dock on Mobile -->
       <div class="studio-mobile-bottom-bar" id="studioMobileBottomBar">
-        <a href="/" class="btn-dock-item btn-dock-recipient" style="text-decoration:none; display:flex; align-items:center; justify-content:center; color:#fff; background:#334155; font-size:12px; font-weight:700;">
-          👁️ Recipient View
-        </a>
-        <button class="btn-dock-item btn-dock-save" id="btnDockSaveDefault" style="background:#059669; color:#fff; font-size:12px; font-weight:700;">
-          💾 Save Website
+        <button class="btn-dock-item btn-dock-save" id="btnDockSaveDefault">
+          <span class="dock-btn-icon">💾</span>
+          <span class="dock-btn-label">Save Website</span>
         </button>
-        <button class="btn-dock-item btn-dock-primary" id="btnDockPublish" style="font-size:12px; font-weight:700;">
-          🚀 Share Link
+        <button class="btn-dock-item btn-dock-preview" id="btnDockPreviewToggle">
+          <span class="dock-btn-icon">👁️</span>
+          <span class="dock-btn-label">Live Preview</span>
         </button>
+        <button class="btn-dock-item btn-dock-primary" id="btnDockPublish">
+          <span class="dock-btn-icon">🚀</span>
+          <span class="dock-btn-label">Share Link</span>
+        </button>
+      </div>
+
+      <!-- Floating Saved Toast -->
+      <div class="studio-floating-toast" id="studioFloatingToast">
+        🎉 <strong>Website Saved!</strong><br />
+        <span>Your custom celebration is ready to share.</span>
       </div>
     </div>
   `;
@@ -123,19 +133,33 @@ export function renderStudioApp(root) {
   const previewContainer = root.querySelector('#previewContainer');
   const occasionBannerMount = root.querySelector('#studioOccasionBanner');
   const studioWorkspace = root.querySelector('#studioWorkspace');
+  const floatingToast = root.querySelector('#studioFloatingToast');
 
   const btnShare = root.querySelector('#btnSharePublish');
   const btnDockPublish = root.querySelector('#btnDockPublish');
   const btnHeaderSave = root.querySelector('#btnHeaderSave');
   const btnDockSaveDefault = root.querySelector('#btnDockSaveDefault');
   const btnMobileBackToEditor = root.querySelector('#btnMobileBackToEditor');
+  const btnMobilePreviewShare = root.querySelector('#btnMobilePreviewShare');
+  const btnDockPreviewToggle = root.querySelector('#btnDockPreviewToggle');
+
+  function showToast(title = "🎉 Website Saved!", subtitle = "Your custom celebration is saved.") {
+    floatingToast.innerHTML = `<strong>${title}</strong><br /><span>${subtitle}</span>`;
+    floatingToast.classList.add('visible');
+    if (navigator.vibrate) navigator.vibrate([20, 30]);
+    setTimeout(() => {
+      floatingToast.classList.remove('visible');
+    }, 2800);
+  }
 
   function renderOccasionBanner() {
     const tmpl = TEMPLATES[activeTemplateId] || TEMPLATES.blossom;
     occasionBannerMount.innerHTML = `
       <div class="occ-banner-card">
         <div class="occ-banner-left">
-          <span class="occ-banner-icon">${tmpl.icon}</span>
+          <div class="occ-banner-icon-wrap">
+            <span class="occ-banner-icon">${tmpl.icon}</span>
+          </div>
           <div class="occ-banner-info">
             <span class="occ-banner-badge">${tmpl.badge}</span>
             <span class="occ-banner-name">${tmpl.name}</span>
@@ -172,6 +196,15 @@ export function renderStudioApp(root) {
     if (tab === 'preview') {
       updateLivePreview();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (btnDockPreviewToggle) {
+        btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon">✏️</span><span class="dock-btn-label">Back to Edit</span>`;
+        btnDockPreviewToggle.classList.add('dock-active-preview');
+      }
+    } else {
+      if (btnDockPreviewToggle) {
+        btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon">👁️</span><span class="dock-btn-label">Live Preview</span>`;
+        btnDockPreviewToggle.classList.remove('dock-active-preview');
+      }
     }
   }
 
@@ -183,7 +216,6 @@ export function renderStudioApp(root) {
     renderOccasionBanner();
     renderVisualEditor(editorMount, activeTemplateId, activeData, (updatedData) => {
       activeData = updatedData;
-      // Automatically save to draft AND active celebration so edits never reset!
       saveActiveCelebration(activeTemplateId, activeData);
       updateLivePreview();
     });
@@ -209,9 +241,20 @@ export function renderStudioApp(root) {
   // Mobile tab click listeners
   root.querySelectorAll('.mobile-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      if (navigator.vibrate) navigator.vibrate(15);
       const tab = btn.getAttribute('data-tab');
       switchMobileTab(tab);
     });
+  });
+
+  // Dock preview toggle listener
+  btnDockPreviewToggle?.addEventListener('click', () => {
+    if (navigator.vibrate) navigator.vibrate(15);
+    if (currentMobileTab === 'preview') {
+      switchMobileTab('editor');
+    } else {
+      switchMobileTab('preview');
+    }
   });
 
   // Back to editor inside preview device header
@@ -222,7 +265,7 @@ export function renderStudioApp(root) {
   // Save Website handler
   function handleSaveWebsite() {
     saveActiveCelebration(activeTemplateId, activeData);
-    alert("🎉 Website Saved Successfully!\n\nAll your customized photos, music, and messages have been saved. When anyone opens your website, they will see this celebration directly!");
+    showToast("🎉 Website Saved!", "All custom photos, music & messages are saved.");
   }
 
   btnHeaderSave?.addEventListener('click', handleSaveWebsite);
@@ -236,4 +279,5 @@ export function renderStudioApp(root) {
 
   btnShare?.addEventListener('click', triggerShare);
   btnDockPublish?.addEventListener('click', triggerShare);
+  btnMobilePreviewShare?.addEventListener('click', triggerShare);
 }
