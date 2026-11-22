@@ -92,7 +92,7 @@ export async function uploadFile(file) {
 export async function publishSiteToServer(templateId, data, customSlug) {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch('/api/sites', {
       method: 'POST',
@@ -118,7 +118,7 @@ export async function publishSiteToServer(templateId, data, customSlug) {
 export async function fetchSiteBySlug(slug) {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch(`/api/sites/${slug}`, { signal: controller.signal });
     clearTimeout(timeoutId);

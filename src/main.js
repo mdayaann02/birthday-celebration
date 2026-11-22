@@ -28,17 +28,7 @@ async function initApp() {
     if (slug) {
       window.isCelebrationEditorMode = false;
 
-      // Priority A: Check if encoded site delta is present in query (?site= or ?data=)
-      const embeddedToken = searchParams.get('site') || searchParams.get('data');
-      if (embeddedToken || window.location.hash.includes('site=')) {
-        const decodedSite = decodeSiteFromUrl();
-        if (decodedSite && decodedSite.data) {
-          renderViewerApp(root, decodedSite.templateId, decodedSite.data, isMakerReview);
-          return;
-        }
-      }
-
-      // Priority B: Fetch from backend server API
+      // Show immediate romantic loader while fetching celebration
       root.innerHTML = `
         <div class="site-loading-screen" style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; color:#fff; background:radial-gradient(circle at 50% 50%, #1c1028 0%, #0c0814 100%); font-family:system-ui, -apple-system, sans-serif; text-align:center; padding:20px;">
           <div style="font-size:46px; margin-bottom:14px; animation: pulse 1.5s infinite;">🌸</div>
@@ -46,10 +36,22 @@ async function initApp() {
           <div style="font-size:13px; color:#fda4af;">Preparing your romantic surprise ✨</div>
         </div>
       `;
+
+      // Priority A: Fetch from backend server API (has full uncompressed state + high-res photos)
       const site = await fetchSiteBySlug(slug);
       if (site && site.data) {
         renderViewerApp(root, site.templateId || 'blossom', site.data, isMakerReview);
         return;
+      }
+
+      // Priority B: Fallback to embedded query/hash token if offline or legacy link
+      const embeddedToken = searchParams.get('site') || searchParams.get('data');
+      if (embeddedToken || window.location.hash.includes('site=')) {
+        const decodedSite = decodeSiteFromUrl();
+        if (decodedSite && decodedSite.data) {
+          renderViewerApp(root, decodedSite.templateId, decodedSite.data, isMakerReview);
+          return;
+        }
       }
 
       // Priority C: Site not found or server offline

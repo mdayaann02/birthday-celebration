@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
+    const timeout = setTimeout(() => controller.abort(), 12000);
     const upstreamRes = await fetch(`http://155.248.255.29:3000/api/sites/${encodeURIComponent(slug)}`, {
       signal: controller.signal
     });
