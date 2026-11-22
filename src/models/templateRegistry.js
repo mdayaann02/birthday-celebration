@@ -143,12 +143,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     icon: "🎂",
     description: "Floating sky lanterns, 3D age milestone, photo loop ribbon, polaroid notes, Vogue flipbook, scratch card, VIP lanyard, and iMessage chat.",
     defaultTheme: {
-      primary: "#ff4d6d",
-      bgGradient: "linear-gradient(180deg, #0c0d14 0%, #171824 100%)",
-      accent: "#d4af37"
+      primary: "#d4af37",
+      bgGradient: "radial-gradient(120% 88% at 50% 24%, #1c1815 0%, #13100e 65%, #0a0807 100%)",
+      accent: "#e11d48"
     },
     defaultData: {
       recipientName: "My Special One",
+      recipientPersona: "special",
       senderName: "Yours Truly",
       eventDate: "2026-11-25T00:00",
       enableCountdownLock: true,
@@ -243,13 +244,14 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     icon: "🥺",
     description: "Deeply sincere apology letter, 'Reasons you mean the world', interactive mood slider, and runaway 'Will You Forgive Me?' button.",
     defaultTheme: {
-      primary: "#748ffc",
-      bgGradient: "linear-gradient(180deg, #0e111a 0%, #171b29 100%)",
-      accent: "#ff8787"
+      primary: "#d4af37",
+      bgGradient: "linear-gradient(180deg, #181513 0%, #201a17 100%)",
+      accent: "#f59e0b"
     },
     defaultData: {
       recipientName: "My Dearest",
       senderName: "Sincerely Yours",
+      creatorPhoto: "/images/always_you.jpg",
       eventDate: "2026-11-22T00:00",
       enableCountdownLock: false,
       passcode: "0000",

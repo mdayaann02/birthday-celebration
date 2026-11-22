@@ -1,7 +1,7 @@
 // src/components/heroSection.js - Ultra-Luxury Hero with Atmospheric Canvas Particles & 3D Number
 
 export function initHeroSection(container, config) {
-  const { recipientName, age, heroTitle, heroSubtitle } = config.general;
+  const { recipientName, age, heroTitle, heroSubtitle, heroBadge } = config.general;
 
   container.innerHTML = `
     <section class="hero-section" id="heroSection">
@@ -14,7 +14,7 @@ export function initHeroSection(container, config) {
       <div class="hero-content">
         <div class="hero-royal-badge">
           <span class="badge-sparkle">✨</span>
-          <span>CELEBRATING A QUEEN</span>
+          <span>${heroBadge || "CELEBRATING A QUEEN"}</span>
           <span class="badge-sparkle">✨</span>
         </div>
 

@@ -119,14 +119,16 @@ export function renderSorryTemplate(container, data) {
     { icon: "👑", title: "Queen For A Day", desc: "He must obey your every cute command for 24 hours." }
   ];
 
+  const creatorPhoto = data.creatorPhoto || "/images/always_you.jpg";
+
   const pageTitles = [
-    { num: 1, icon: "💌", title: "Confession" },
-    { num: 2, icon: "🥊", title: "Vent Room" },
-    { num: 3, icon: "⚖️", title: "Penance" },
-    { num: 4, icon: "📸", title: "Memories" },
-    { num: 5, icon: "📜", title: "Peace Treaty" },
-    { num: 6, icon: "🎟️", title: "Coupons" },
-    { num: 7, icon: "💖", title: "Verdict" }
+    { num: 1, icon: "💌", title: "The Sincere Confession" },
+    { num: 2, icon: "🥊", title: "Interactive Venting Room" },
+    { num: 3, icon: "⚖️", title: "Legal Penance Treaty" },
+    { num: 4, icon: "📸", title: "Cherished Memories" },
+    { num: 5, icon: "📜", title: "Official Peace Treaty" },
+    { num: 6, icon: "🎟️", title: "VIP Reconciliation Coupons" },
+    { num: 7, icon: "💖", title: "The Final Forgiveness Verdict" }
   ];
 
   container.innerHTML = `
@@ -137,20 +139,21 @@ export function renderSorryTemplate(container, data) {
       <!-- Ambient Sparkle Mesh Canvas -->
       <canvas id="sorryCanvas" class="blossom-bg-canvas"></canvas>
 
-      <!-- Floating Header Progress & Page Navigation Capsule -->
-      <header class="sorry-floating-nav">
+      <!-- Untouchable Non-Interactive Stage Progress Bar (Top tabs are disabled & replaced by pure passive progress tracker) -->
+      <header class="sorry-floating-nav" style="pointer-events:none; user-select:none;">
         <div class="sorry-step-progress-track">
           <div class="sorry-step-progress-fill" id="stepProgressFill" style="width: 14%;"></div>
         </div>
 
-        <!-- Passive Story Progress Indicator (Top direct page switching is disabled so sincere steps cannot be skipped) -->
-        <div class="sorry-tabs-capsule sorry-tabs-tracker" id="sorryTabsCapsule" aria-label="Apology Story Progress" style="pointer-events:none; cursor:default; user-select:none;">
-          ${pageTitles.map(p => `
-            <div class="sorry-tab-pill ${p.num === 1 ? 'active' : ''}" data-page="${p.num}" style="pointer-events:none; cursor:default;">
-              <span class="sorry-tab-icon">${p.icon}</span>
-              <span class="sorry-tab-label">${p.title}</span>
-            </div>
-          `).join('')}
+        <div class="sorry-stage-indicator-bar">
+          <div class="sorry-stage-info-pill">
+            <span class="stage-step-tag" id="stageStepPill">STAGE 1 OF 7</span>
+            <span class="stage-step-separator">•</span>
+            <span class="stage-title-text" id="stageTitleText">The Sincere Confession 💌</span>
+          </div>
+          <div class="sorry-stage-locked-tag">
+            <span>🔒 Sincere Order Enforced</span>
+          </div>
         </div>
       </header>
 
@@ -197,7 +200,7 @@ export function renderSorryTemplate(container, data) {
             <div class="sorry-tag">STAGE 2: CATHARTIC VENTING</div>
             <h2 class="sorry-section-title">Take Your Anger Out On Me! 🥊</h2>
             <p class="sorry-section-subtitle">
-              You have every right to be mad. Tap any item below to throw it at me safely!
+              You have every right to be mad. Tap any item below to throw it right at my face!
             </p>
 
             <div class="vent-chamber-card">
@@ -212,38 +215,52 @@ export function renderSorryTemplate(container, data) {
                 </div>
               </div>
 
-              <!-- Interactive Reaction Avatar -->
+              <!-- Interactive Reaction Avatar with Real Photo & Dynamic Stick-On Decals -->
               <div class="vent-avatar-stage">
-                <div class="vent-avatar-character" id="ventAvatar">
-                  <span class="vent-avatar-face" id="avatarFace">🥺</span>
-                  <div class="vent-splat-overlay" id="ventSplat"></div>
+                <div class="vent-avatar-character vent-target-frame" id="ventAvatar">
+                  <img src="${creatorPhoto}" alt="${senderName}" class="vent-creator-img" id="ventCreatorImg" onerror="this.src='/images/always_you.jpg'" />
+                  <div class="vent-decals-layer" id="ventDecalsLayer"></div>
+                  <div class="vent-face-expression-pill" id="avatarFace">🥺</div>
                 </div>
                 <div class="vent-reaction-bubble" id="ventBubble">
                   "I know you're mad at me... I'm listening 🥺"
                 </div>
+                <button type="button" class="btn-wipe-face" id="btnWipeFace">
+                  🧻 Wipe Face Clean
+                </button>
               </div>
 
-              <!-- Throwable Arsenal -->
+              <!-- Throwable Arsenal (Cake, Teddy, Tomato, Slipper, Water, Egg) -->
               <div class="throwables-grid">
-                <button type="button" class="btn-throwable" data-type="pillow" title="Throw Soft Pillow">
+                <button type="button" class="btn-throwable" data-type="cake" title="Throw Birthday Cake">
+                  <span class="throw-icon">🎂</span>
+                  <span class="throw-label">Cake Splat</span>
+                  <span class="throw-sub">Splat! (-20% Mad)</span>
+                </button>
+                <button type="button" class="btn-throwable" data-type="teddy" title="Throw Soft Teddy">
                   <span class="throw-icon">🧸</span>
                   <span class="throw-label">Soft Teddy</span>
                   <span class="throw-sub">Boing! (-15% Mad)</span>
                 </button>
-                <button type="button" class="btn-throwable" data-type="cupcake" title="Throw Cupcake">
-                  <span class="throw-icon">🧁</span>
-                  <span class="throw-label">Cupcake</span>
-                  <span class="throw-sub">Splat! (-20% Mad)</span>
+                <button type="button" class="btn-throwable" data-type="tomato" title="Throw Juicy Tomato">
+                  <span class="throw-icon">🍅</span>
+                  <span class="throw-label">Juicy Tomato</span>
+                  <span class="throw-sub">Squish! (-20% Mad)</span>
+                </button>
+                <button type="button" class="btn-throwable" data-type="slipper" title="Throw Flying Slipper">
+                  <span class="throw-icon">🩴</span>
+                  <span class="throw-label">The Chappal</span>
+                  <span class="throw-sub">WHACK! (-25% Mad)</span>
                 </button>
                 <button type="button" class="btn-throwable" data-type="water" title="Throw Water Balloon">
                   <span class="throw-icon">💧</span>
                   <span class="throw-label">Water Splash</span>
-                  <span class="throw-sub">Splash! (-25% Mad)</span>
+                  <span class="throw-sub">Splash! (-20% Mad)</span>
                 </button>
-                <button type="button" class="btn-throwable" data-type="feather" title="Tickle Feather">
-                  <span class="throw-icon">🪶</span>
-                  <span class="throw-label">Magic Feather</span>
-                  <span class="throw-sub">Tickle! (-20% Mad)</span>
+                <button type="button" class="btn-throwable" data-type="egg" title="Throw Rotten Egg">
+                  <span class="throw-icon">🥚</span>
+                  <span class="throw-label">Rotten Egg</span>
+                  <span class="throw-sub">Crack! (-20% Mad)</span>
                 </button>
               </div>
 
@@ -477,15 +494,18 @@ export function renderSorryTemplate(container, data) {
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
 
-    // Update Tab Pills
-    container.querySelectorAll('.sorry-tab-pill').forEach(btn => {
-      btn.classList.toggle('active', parseInt(btn.getAttribute('data-page')) === currentPage);
-    });
-
     // Update Progress Bar
     const progressPct = Math.round((currentPage / totalPages) * 100);
     const fill = container.querySelector('#stepProgressFill');
     if (fill) fill.style.width = `${progressPct}%`;
+
+    // Update Untouchable Stage Banner (Never clickable pills)
+    const stepPill = container.querySelector('#stageStepPill');
+    if (stepPill) stepPill.textContent = `STAGE ${currentPage} OF ${totalPages}`;
+    const titleText = container.querySelector('#stageTitleText');
+    if (titleText && pageTitles[currentPage - 1]) {
+      titleText.textContent = `${pageTitles[currentPage - 1].title} ${pageTitles[currentPage - 1].icon}`;
+    }
 
     // Update Page View
     container.querySelectorAll('.sorry-page-card').forEach(card => {
@@ -497,8 +517,8 @@ export function renderSorryTemplate(container, data) {
     if (navigator.vibrate) navigator.vibrate(15);
   }
 
-  // Top Tab Pills are passive progress indicators only (jumping ahead is prohibited)
-  // Navigation happens through the interactive story stage buttons below
+  // Top header is a 100% passive progress tracker (jumping ahead is strictly prohibited)
+  // Navigation happens purely through the sincere interactive stage actions below
 
   // Bind Next / Prev buttons
   container.querySelectorAll('.btn-sorry-next').forEach(btn => {
@@ -515,43 +535,76 @@ export function renderSorryTemplate(container, data) {
   });
 
   // ==========================================
-  // STAGE 2: VENTING ROOM INTERACTION
+  // STAGE 2: VENTING ROOM WITH REAL PHOTO & DYNAMIC STICK-ON DECALS
   // ==========================================
   const ventAvatar = container.querySelector('#ventAvatar');
   const avatarFace = container.querySelector('#avatarFace');
   const ventBubble = container.querySelector('#ventBubble');
-  const ventSplat = container.querySelector('#ventSplat');
   const angerGaugeFill = container.querySelector('#angerGaugeFill');
   const angerValText = container.querySelector('#angerValText');
   const ventCounter = container.querySelector('#ventCounterText');
+  const ventDecalsLayer = container.querySelector('#ventDecalsLayer');
+  const btnWipeFace = container.querySelector('#btnWipeFace');
 
   const funnyReactions = [
-    "Ouch! I deserved that throw 🥺",
-    "Direct hit! Your aim is scary good! 🎯",
-    "Still smiling because at least you're looking at me! 😂",
-    "Cupcake frosting is surprisingly sweet though! 🧁",
-    "Water balloon hit! Now I'm cute AND soaked 💧",
-    "I'm staying right here until you feel better ❤️",
-    "Throw one more! I can take it 🧸",
-    "Is that beautiful smile starting to return? 🥺"
+    "Ouch! That cake cream got right in my eye! 🥺🍰",
+    "Direct hit with the chappal! Your aim is legendary 🩴😂",
+    "Tomato squished on my nose! Still smiling because you're cute! 🍅🫶",
+    "A teddy to the cheek! Softer than expected 🧸🥰",
+    "Water balloon exploded! Now I'm cute AND drenched 💧",
+    "Rotten egg hit! Okay I definitely deserved that one 🥚😭",
+    "I'm staying right here until your heart feels warm again ❤️",
+    "Throw another one! I can take a hundred more for you! 🫶",
+    "Is that beautiful smile finally returning? 🥺✨"
   ];
+
+  const throwableMap = {
+    cake: {
+      sound: 'splat',
+      icon: '🎂',
+      decal: '🍰',
+      angerDelta: 20
+    },
+    teddy: {
+      sound: 'boing',
+      icon: '🧸',
+      decal: '🧸',
+      angerDelta: 15
+    },
+    tomato: {
+      sound: 'splat',
+      icon: '🍅',
+      decal: '🍅',
+      angerDelta: 20
+    },
+    slipper: {
+      sound: 'boing',
+      icon: '🩴',
+      decal: '🩴',
+      angerDelta: 25
+    },
+    water: {
+      sound: 'splash',
+      icon: '💧',
+      decal: '💧',
+      angerDelta: 20
+    },
+    egg: {
+      sound: 'splat',
+      icon: '🥚',
+      decal: '🍳',
+      angerDelta: 20
+    }
+  };
 
   container.querySelectorAll('.btn-throwable').forEach(btn => {
     btn.addEventListener('click', () => {
       ventCount++;
-      const type = btn.getAttribute('data-type');
-      
-      // Sound feedback
-      if (type === 'pillow') playSound('boing');
-      else if (type === 'cupcake') playSound('splat');
-      else if (type === 'water') playSound('splash');
-      else playSound('boing');
-
-      // Vibrate
-      if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
+      const type = btn.getAttribute('data-type') || 'cake';
+      const def = throwableMap[type] || throwableMap.cake;
 
       // Deduct anger
-      angerLevel = Math.max(0, angerLevel - (type === 'water' ? 25 : 18));
+      angerLevel = Math.max(0, angerLevel - def.angerDelta);
       if (angerGaugeFill) angerGaugeFill.style.width = `${angerLevel}%`;
       if (angerValText) {
         if (angerLevel > 70) angerValText.textContent = `${angerLevel}% (Furious)`;
@@ -560,15 +613,61 @@ export function renderSorryTemplate(container, data) {
         else angerValText.textContent = `0% (Anger Fully Melted 😇)`;
       }
 
-      // Wobble Avatar
-      ventAvatar?.classList.remove('wobble-hit');
-      void ventAvatar?.offsetWidth; // re-trigger animation
-      ventAvatar?.classList.add('wobble-hit');
+      // Fly projectile from clicked button towards the face center
+      try {
+        const btnRect = btn.getBoundingClientRect();
+        const avatarRect = ventAvatar ? ventAvatar.getBoundingClientRect() : null;
+        if (avatarRect) {
+          const projectile = document.createElement('div');
+          projectile.className = 'flying-projectile';
+          projectile.textContent = def.icon;
+          projectile.style.left = `${btnRect.left + btnRect.width / 2}px`;
+          projectile.style.top = `${btnRect.top + btnRect.height / 2}px`;
+          projectile.style.transform = 'translate(-50%, -50%) scale(0.6)';
+          projectile.style.opacity = '1';
+          document.body.appendChild(projectile);
 
-      // Splat effect for cupcake
-      if (type === 'cupcake' && ventSplat) {
-        ventSplat.style.display = 'block';
-        setTimeout(() => { if (ventSplat) ventSplat.style.display = 'none'; }, 1800);
+          requestAnimationFrame(() => {
+            const targetX = avatarRect.left + avatarRect.width / 2 - (btnRect.left + btnRect.width / 2);
+            const targetY = avatarRect.top + avatarRect.height / 2 - (btnRect.top + btnRect.height / 2);
+            projectile.style.transform = `translate(${targetX}px, ${targetY}px) scale(1.6) rotate(${Math.random() * 360}deg)`;
+          });
+
+          setTimeout(() => {
+            projectile.remove();
+          }, 290);
+        }
+      } catch (err) {
+        console.warn("Projectile animation:", err);
+      }
+
+      // Sound feedback
+      playSound(def.sound);
+
+      // Vibrate
+      if (navigator.vibrate) navigator.vibrate([25, 35, 25]);
+
+      // Wobble Avatar Face
+      if (ventAvatar) {
+        ventAvatar.classList.remove('wobble-hit');
+        void ventAvatar.offsetWidth;
+        ventAvatar.classList.add('wobble-hit');
+      }
+
+      // Dynamically Stick Decal onto Avatar Face!
+      if (ventDecalsLayer) {
+        const decal = document.createElement('div');
+        decal.className = `vent-decal decal-${type}`;
+        // Randomized location inside face boundaries (18% to 76%)
+        const rx = 18 + Math.random() * 58;
+        const ry = 18 + Math.random() * 58;
+        const rot = -35 + Math.random() * 70;
+        const scale = 0.85 + Math.random() * 0.45;
+        decal.style.left = `${rx}%`;
+        decal.style.top = `${ry}%`;
+        decal.style.transform = `translate(-50%, -50%) rotate(${rot}deg) scale(${scale})`;
+        decal.textContent = def.decal;
+        ventDecalsLayer.appendChild(decal);
       }
 
       // Reaction text
@@ -589,9 +688,33 @@ export function renderSorryTemplate(container, data) {
 
       // Counter
       if (ventCounter) {
-        ventCounter.innerHTML = `Hits landed: <strong>${ventCount}</strong> times (Anger dropping fast!)`;
+        ventCounter.innerHTML = `Hits landed: <strong>${ventCount}</strong> items stuck on face!`;
       }
     });
+  });
+
+  // Wipe Face Clean Button
+  btnWipeFace?.addEventListener('click', () => {
+    if (ventDecalsLayer) {
+      ventDecalsLayer.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      ventDecalsLayer.style.opacity = '0';
+      ventDecalsLayer.style.transform = 'scale(0.85)';
+      setTimeout(() => {
+        ventDecalsLayer.innerHTML = '';
+        ventDecalsLayer.style.opacity = '1';
+        ventDecalsLayer.style.transform = 'none';
+        ventDecalsLayer.style.transition = '';
+      }, 260);
+    }
+    if (ventBubble) {
+      ventBubble.textContent = "Face wiped sparkling clean! Ready if you want to throw more 🥺🧻";
+      ventBubble.style.animation = 'none';
+      void ventBubble.offsetWidth;
+      ventBubble.style.animation = 'popBubble 0.3s ease';
+    }
+    if (avatarFace) avatarFace.textContent = "🥺";
+    playSound('boing');
+    if (navigator.vibrate) navigator.vibrate(25);
   });
 
   // ==========================================

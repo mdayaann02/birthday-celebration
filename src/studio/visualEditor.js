@@ -342,7 +342,28 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     `;
   } else if (templateId === 'birthday') {
     specificBox.innerHTML = `
-      <div class="section-title">🎂 Birthday Special Content</div>
+      <div class="section-title">🎂 Birthday Special Content & Themes</div>
+
+      <!-- Recipient Persona Theme Selector -->
+      <div class="form-group" style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 14px; padding: 14px; margin-bottom: 18px;">
+        <label class="form-label" style="font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
+          <span>🎭 Recipient Theme Persona (Adaptive Styling & Messages)</span>
+        </label>
+        <div class="editor-help-text" style="margin-bottom: 10px;">
+          Select who you are sending this to! The website dynamically adapts colors, quotes, magazine chapter, scratch surprise, and VIP pass based on the persona:
+        </div>
+        <select class="form-select" id="edRecipientPersona" style="width: 100%; font-size: 13.5px; padding: 10px 12px; border-radius: 10px; background: rgba(20, 16, 26, 0.9); color: #fff; border: 1px solid rgba(255, 255, 255, 0.22);">
+          <option value="bestfriend_female" ${data.recipientPersona === 'bestfriend_female' ? 'selected' : ''}>👯‍♀️ Best Female Friend (Soul Sister • Blossom Rose & Gold)</option>
+          <option value="bestfriend" ${data.recipientPersona === 'bestfriend' ? 'selected' : ''}>🤜🤛 Best Friend / Bro (Bro Bestie • Electric Cyan & Slate)</option>
+          <option value="brother" ${data.recipientPersona === 'brother' ? 'selected' : ''}>👦 Brother (Bhai / Legend • Royal Cobalt & Amber)</option>
+          <option value="sister" ${data.recipientPersona === 'sister' ? 'selected' : ''}>👧 Sister (Behna • Lavender Silk & Peach)</option>
+          <option value="teacher" ${data.recipientPersona === 'teacher' ? 'selected' : ''}>🎓 Teacher / Mentor (Scholarly Emerald, Warm Parchment & Regal Gold)</option>
+          <option value="mother" ${data.recipientPersona === 'mother' ? 'selected' : ''}>👩 Mother (Maa / Queen • Soft Rose & Warm Pearl)</option>
+          <option value="father" ${data.recipientPersona === 'father' ? 'selected' : ''}>👨 Father (Papa / Hero • Classic Navy & Bronze Gold)</option>
+          <option value="special" ${(!data.recipientPersona || data.recipientPersona === 'special') ? 'selected' : ''}>💖 Special Someone / Romantic (Velvet Rose & Champagne Gold)</option>
+        </select>
+      </div>
+
       <div class="form-group">
         <label class="form-label">Age / Milestone Number</label>
         <input type="text" class="form-input" id="edAge" value="${data.age || '15'}" />
@@ -406,6 +427,28 @@ export function renderVisualEditor(container, templateId, data, onChange) {
 
     specificBox.innerHTML = `
       <div class="section-title">🥺 Multi-Page Apology Details (Stage 1 to 7)</div>
+
+      <!-- Target Face Photo for Stage 2 Vent Room -->
+      <div class="form-group" style="background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.32); border-radius: 14px; padding: 14px; margin-bottom: 18px;">
+        <label class="form-label" style="font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
+          <span>🎯 Your Photo for Vent Room (Stage 2 Target Face)</span>
+        </label>
+        <div class="editor-help-text" style="margin-bottom: 10px;">
+          Upload your face! In Stage 2, your partner can tap items (Birthday Cake, Teddy Bear, Tomato, Slipper, Water Balloon, Egg) to throw them at your face, and they dynamically splat & stick onto your picture!
+        </div>
+        <div style="display: flex; gap: 14px; align-items: center;">
+          <div style="position: relative; width: 68px; height: 68px; border-radius: 50%; overflow: hidden; border: 2.5px solid #fbbf24; flex-shrink: 0; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+            <img src="${data.creatorPhoto || '/images/always_you.jpg'}" id="sorryCreatorThumb" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/always_you.jpg'" />
+            <label class="btn-thumb-upload" title="Upload Face Photo" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.55); cursor: pointer; color: #fff; font-size: 16px;">
+              📷
+              <input type="file" id="fileUploadSorryCreator" accept="image/*" style="display: none;" />
+            </label>
+          </div>
+          <div style="flex: 1;">
+            <input type="text" class="form-input" id="edSorryCreatorPhoto" value="${data.creatorPhoto || '/images/always_you.jpg'}" placeholder="Image URL (or tap 📷 to upload from phone)" />
+          </div>
+        </div>
+      </div>
       
       <div class="form-group">
         <label class="form-label">Sincere Apology Message (Letter)</label>
@@ -463,6 +506,21 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         </div>
       </div>
     `;
+
+    // Creator Face Photo upload listener for Vent Room
+    const creatorInput = specificBox.querySelector('#fileUploadSorryCreator');
+    creatorInput?.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const res = await uploadFile(file);
+      if (res.success && res.url) {
+        const imgInput = specificBox.querySelector('#edSorryCreatorPhoto');
+        const thumb = specificBox.querySelector('#sorryCreatorThumb');
+        if (imgInput) imgInput.value = res.url;
+        if (thumb) thumb.src = res.url;
+        triggerChange();
+      }
+    });
 
     // File upload listeners for sorry photos
     specificBox.querySelectorAll('.file-upload-sorry-photo').forEach(input => {
@@ -933,6 +991,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     } else if (templateId === 'birthday') {
       const elAge = container.querySelector('#edAge');
       if (elAge) updated.age = elAge.value;
+      const elPersona = container.querySelector('#edRecipientPersona');
+      if (elPersona) updated.recipientPersona = elPersona.value;
 
       const newPols = [...(updated.polaroids || [])];
       container.querySelectorAll('.pol-t').forEach(inp => {
@@ -959,9 +1019,11 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const elSorry = container.querySelector('#edSorryMsg');
       const elPenance = container.querySelector('#edSorryPenance');
       const elTreaty = container.querySelector('#edSorryTreaty');
+      const elCreator = container.querySelector('#edSorryCreatorPhoto');
       if (elSorry) updated.apologyMessage = elSorry.value;
       if (elPenance) updated.penances = elPenance.value.split('\n').map(s => s.trim()).filter(Boolean);
       if (elTreaty) updated.treatyClauses = elTreaty.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (elCreator) updated.creatorPhoto = elCreator.value;
 
       const sorryPols = [];
       container.querySelectorAll('.sorry-pol-row').forEach(row => {

@@ -2093,23 +2093,23 @@ body {
 
 
 /* ========================================================
-   STUDIO BUILDER PLATFORM STYLES (GLASSMORPHISM & WARM RADIANT PALETTE)
+   STUDIO BUILDER PLATFORM STYLES (GLASSMORPHISM & NATURAL ELEGANCE PALETTE)
    ======================================================== */
-/* Dynamic Ambient Aurora Glassmorphism Background */
+/* Dynamic Ambient Aurora Glassmorphism Background with Natural Elegance Tones */
 .studio-aurora-bg {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 20%, #170f24 0%, #0c0814 65%, #07050a 100%);
+  background: radial-gradient(circle at 50% 20%, #1a1614 0%, #110f0e 65%, #090807 100%);
 }
 
 .aurora-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(85px);
-  opacity: 0.6;
+  filter: blur(95px);
+  opacity: 0.55;
   will-change: transform;
 }
 
@@ -2118,7 +2118,7 @@ body {
   height: 580px;
   top: -120px;
   left: -80px;
-  background: radial-gradient(circle, rgba(255, 77, 109, 0.5) 0%, rgba(244, 63, 94, 0.22) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.42) 0%, rgba(197, 160, 89, 0.2) 45%, transparent 70%);
   animation: auroraDrift1 22s ease-in-out infinite alternate;
 }
 
@@ -2127,7 +2127,7 @@ body {
   height: 660px;
   top: 5%;
   right: -160px;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.42) 0%, rgba(251, 191, 36, 0.18) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(217, 131, 114, 0.38) 0%, rgba(200, 109, 92, 0.16) 45%, transparent 70%);
   animation: auroraDrift2 28s ease-in-out infinite alternate;
 }
 
@@ -2136,7 +2136,7 @@ body {
   height: 600px;
   bottom: -100px;
   left: 20%;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(52, 211, 153, 0.14) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(120, 134, 107, 0.32) 0%, rgba(95, 110, 84, 0.12) 45%, transparent 70%);
   animation: auroraDrift3 24s ease-in-out infinite alternate;
 }
 
@@ -2145,7 +2145,7 @@ body {
   height: 520px;
   bottom: 15%;
   right: 15%;
-  background: radial-gradient(circle, rgba(244, 114, 182, 0.42) 0%, rgba(225, 29, 72, 0.18) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(224, 149, 120, 0.35) 0%, rgba(186, 112, 75, 0.15) 45%, transparent 70%);
   animation: auroraDrift4 20s ease-in-out infinite alternate;
 }
 
@@ -2184,10 +2184,10 @@ body {
 }
 
 .studio-top-mode-bar {
-  background: rgba(22, 14, 34, 0.65);
+  background: rgba(24, 20, 18, 0.75);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
   color: #f1f5f9;
   font-size: 12px;
   padding: 8px 24px;
@@ -2199,9 +2199,9 @@ body {
 }
 
 .studio-mode-pill {
-  background: rgba(255, 77, 109, 0.18);
-  border: 1px solid rgba(255, 77, 109, 0.45);
-  color: #ff758f;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  color: #fbbf24;
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 10px;
@@ -2216,8 +2216,8 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ff4d6d;
-  box-shadow: 0 0 6px #ff4d6d;
+  background: #fbbf24;
+  box-shadow: 0 0 6px #fbbf24;
   animation: liveDotPulse 1.8s infinite;
 }
 
@@ -2244,10 +2244,10 @@ body {
 
 .studio-header {
   height: 68px;
-  background: rgba(20, 14, 30, 0.68);
+  background: rgba(22, 18, 16, 0.82);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18);
   display: flex;
   justify-content: space-between;
@@ -6409,52 +6409,64 @@ body {
   box-shadow: 0 0 10px rgba(255, 77, 109, 0.6);
 }
 
-.sorry-tabs-capsule {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 6px 8px;
-  background: rgba(20, 14, 30, 0.85);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.sorry-tabs-capsule::-webkit-scrollbar {
-  display: none;
-}
-
-.sorry-tab-pill {
+/* Untouchable Non-Interactive Stage Indicator Bar */
+.sorry-stage-indicator-bar {
   display: flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #cbd5e1;
-  padding: 6px 12px;
-  border-radius: 14px;
-  font-size: 11.5px;
-  font-weight: 700;
-  cursor: default;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(24, 20, 18, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   pointer-events: none;
-  white-space: nowrap;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.sorry-stage-info-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.stage-step-tag {
+  background: linear-gradient(135deg, #d4af37, #f59e0b);
+  color: #000;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  padding: 3px 8px;
+  border-radius: 10px;
   flex-shrink: 0;
 }
 
-.sorry-tab-pill .sorry-tab-icon {
-  font-size: 13px;
+.stage-step-separator {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 12px;
 }
 
-.sorry-tab-pill.active {
-  background: linear-gradient(135deg, rgba(255, 77, 109, 0.32), rgba(245, 158, 11, 0.32));
-  border-color: #ff4d6d;
-  color: #ffffff;
-  box-shadow: 0 2px 12px rgba(255, 77, 109, 0.35);
+.stage-title-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sorry-stage-locked-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  padding: 3px 9px;
+  border-radius: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Page Card Transitions */
@@ -6744,17 +6756,99 @@ body {
 }
 
 .vent-avatar-character {
-  width: 100px;
-  height: 100px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 77, 109, 0.25) 0%, rgba(245, 158, 11, 0.15) 100%);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(245, 158, 11, 0.15) 100%);
+  border: 3.5px solid rgba(251, 191, 36, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(251, 191, 36, 0.35);
   transition: transform 0.15s ease-out;
+  overflow: hidden;
+}
+
+.vent-creator-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.vent-decals-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.vent-face-expression-pill {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  background: rgba(20, 14, 28, 0.92);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 20px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.vent-decal {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  font-size: 32px;
+  line-height: 1;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7));
+  animation: decalSplatPop 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes decalSplatPop {
+  0% { transform: translate(-50%, -50%) scale(0.2) rotate(0deg); opacity: 0; }
+  80% { transform: translate(-50%, -50%) scale(1.3); }
+  100% { opacity: 1; }
+}
+
+.flying-projectile {
+  position: fixed;
+  z-index: 999999;
+  font-size: 36px;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.28s linear;
+  transform-origin: center center;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+}
+
+.btn-wipe-face {
+  margin-top: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 18px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-wipe-face:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  transform: translateY(-1px);
+  border-color: #fbbf24;
 }
 
 .vent-avatar-character.wobble-hit {
@@ -6811,9 +6905,15 @@ body {
 
 .throwables-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   margin-bottom: 14px;
+}
+
+@media (max-width: 480px) {
+  .throwables-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .btn-throwable {
@@ -11434,4 +11534,257 @@ svg {
 
 .blossom-app-viewport.bestie-boy-theme .cd-pill-equalizer span {
   background: #38bdf8 !important;
+}
+
+/* ========================================================
+   DYNAMIC PERSONA-ADAPTIVE BIRTHDAY THEMES & SWITCHER
+   ======================================================== */
+.bday-persona-switcher-wrap {
+  position: sticky;
+  top: 14px;
+  z-index: 9999;
+  width: calc(100% - 24px);
+  max-width: 860px;
+  margin: 10px auto 16px auto;
+  background: rgba(22, 18, 16, 0.85);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 24px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(212, 175, 55, 0.15);
+  box-sizing: border-box;
+}
+
+.bday-persona-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bday-persona-pills-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 0;
+  width: 100%;
+}
+
+.bday-persona-pills-track::-webkit-scrollbar {
+  display: none;
+}
+
+.btn-persona-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.btn-persona-pill:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-persona-pill.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.38), rgba(245, 158, 11, 0.35));
+  border-color: #fbbf24;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(251, 191, 36, 0.4);
+}
+
+.bday-persona-stage {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* 1. TEACHER / MENTOR THEME: Scholarly Emerald & Regal Gold */
+.bday-theme-teacher {
+  --primary: #059669;
+  --primary-light: #34d399;
+  --gold: #d4af37;
+  --dark: #05140e;
+  --dark-surface: #0a2118;
+}
+.bday-theme-teacher .hero-section {
+  background: radial-gradient(circle at 50% 25%, #064e3b 0%, #061912 60%, #020d09 100%) !important;
+}
+.bday-theme-teacher .hero-royal-badge {
+  background: rgba(5, 150, 105, 0.22) !important;
+  border-color: rgba(212, 175, 55, 0.45) !important;
+  color: #fef3c7 !important;
+}
+.bday-theme-teacher .glow-name {
+  color: #34d399 !important;
+  text-shadow: 0 0 24px rgba(52, 211, 153, 0.6) !important;
+}
+
+/* 2. BEST FRIEND FEMALE (Soul Sister): Blossom Rose & Cashmere */
+.bday-theme-bestfriend_female {
+  --primary: #f472b6;
+  --primary-light: #fb7185;
+  --gold: #fde047;
+  --dark: #190c17;
+  --dark-surface: #2b1327;
+}
+.bday-theme-bestfriend_female .hero-section {
+  background: radial-gradient(circle at 50% 25%, #831843 0%, #190c17 60%, #0d060c 100%) !important;
+}
+.bday-theme-bestfriend_female .hero-royal-badge {
+  background: rgba(244, 114, 182, 0.2) !important;
+  border-color: rgba(244, 114, 182, 0.45) !important;
+  color: #fce7f3 !important;
+}
+.bday-theme-bestfriend_female .glow-name {
+  color: #f472b6 !important;
+  text-shadow: 0 0 24px rgba(244, 114, 182, 0.65) !important;
+}
+
+/* 3. BEST FRIEND (BRO): Electric Cyan & Slate Obsidian */
+.bday-theme-bestfriend {
+  --primary: #38bdf8;
+  --primary-light: #7dd3fc;
+  --gold: #fbbf24;
+  --dark: #08111e;
+  --dark-surface: #0f2038;
+}
+.bday-theme-bestfriend .hero-section {
+  background: radial-gradient(circle at 50% 25%, #0369a1 0%, #08111e 60%, #03070d 100%) !important;
+}
+.bday-theme-bestfriend .hero-royal-badge {
+  background: rgba(56, 189, 248, 0.2) !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  color: #e0f2fe !important;
+}
+.bday-theme-bestfriend .glow-name {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 24px rgba(56, 189, 248, 0.65) !important;
+}
+
+/* 4. BROTHER (BHAI): Royal Cobalt & Amber */
+.bday-theme-brother {
+  --primary: #0284c7;
+  --primary-light: #38bdf8;
+  --gold: #f59e0b;
+  --dark: #08121f;
+  --dark-surface: #0e223a;
+}
+.bday-theme-brother .hero-section {
+  background: radial-gradient(circle at 50% 25%, #075985 0%, #08121f 60%, #03080f 100%) !important;
+}
+.bday-theme-brother .hero-royal-badge {
+  background: rgba(2, 132, 199, 0.22) !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  color: #fef3c7 !important;
+}
+.bday-theme-brother .glow-name {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 24px rgba(56, 189, 248, 0.6) !important;
+}
+
+/* 5. SISTER (BEHNA): Lavender Silk & Soft Lilac */
+.bday-theme-sister {
+  --primary: #c084fc;
+  --primary-light: #e879f9;
+  --gold: #f472b6;
+  --dark: #160d24;
+  --dark-surface: #23153a;
+}
+.bday-theme-sister .hero-section {
+  background: radial-gradient(circle at 50% 25%, #581c87 0%, #160d24 60%, #0b0612 100%) !important;
+}
+.bday-theme-sister .hero-royal-badge {
+  background: rgba(192, 132, 252, 0.2) !important;
+  border-color: rgba(244, 114, 182, 0.45) !important;
+  color: #f3e8ff !important;
+}
+.bday-theme-sister .glow-name {
+  color: #c084fc !important;
+  text-shadow: 0 0 24px rgba(192, 132, 252, 0.65) !important;
+}
+
+/* 6. MOTHER (MAA): Warm Rose & Pearl */
+.bday-theme-mother {
+  --primary: #f43f5e;
+  --primary-light: #fb7185;
+  --gold: #fbbf24;
+  --dark: #190e15;
+  --dark-surface: #2b1422;
+}
+.bday-theme-mother .hero-section {
+  background: radial-gradient(circle at 50% 25%, #9f1239 0%, #190e15 60%, #0d060b 100%) !important;
+}
+.bday-theme-mother .hero-royal-badge {
+  background: rgba(244, 63, 94, 0.2) !important;
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: #ffe4e6 !important;
+}
+.bday-theme-mother .glow-name {
+  color: #fb7185 !important;
+  text-shadow: 0 0 24px rgba(251, 113, 133, 0.65) !important;
+}
+
+/* 7. FATHER (PAPA): Classic Navy & Bronze Gold */
+.bday-theme-father {
+  --primary: #3b82f6;
+  --primary-light: #60a5fa;
+  --gold: #fbbf24;
+  --dark: #08101e;
+  --dark-surface: #111e36;
+}
+.bday-theme-father .hero-section {
+  background: radial-gradient(circle at 50% 25%, #1e40af 0%, #08101e 60%, #03070d 100%) !important;
+}
+.bday-theme-father .hero-royal-badge {
+  background: rgba(59, 130, 246, 0.22) !important;
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: #dbeafe !important;
+}
+.bday-theme-father .glow-name {
+  color: #60a5fa !important;
+  text-shadow: 0 0 24px rgba(96, 165, 250, 0.65) !important;
+}
+
+/* 8. SPECIAL SOMEONE: Velvet Rose & Champagne Gold */
+.bday-theme-special {
+  --primary: #e11d48;
+  --primary-light: #ff758f;
+  --gold: #d4af37;
+  --dark: #140b12;
+  --dark-surface: #24111f;
+}
+.bday-theme-special .hero-section {
+  background: radial-gradient(circle at 50% 25%, #881337 0%, #140b12 60%, #0a0509 100%) !important;
+}
+.bday-theme-special .hero-royal-badge {
+  background: rgba(225, 29, 72, 0.22) !important;
+  border-color: rgba(212, 175, 55, 0.45) !important;
+  color: #fef3c7 !important;
+}
+.bday-theme-special .glow-name {
+  color: #ff758f !important;
+  text-shadow: 0 0 24px rgba(255, 117, 143, 0.65) !important;
 }
