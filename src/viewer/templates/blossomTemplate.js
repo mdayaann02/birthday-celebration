@@ -1,12 +1,18 @@
 // src/viewer/templates/blossomTemplate.js - Pro-Grade Cinematic Long Romance Masterpiece
-// Complete unified experience:
+// Complete unified experience powered by:
 // 1. Viral Reel Blossom Opener | 2. Vector Cupid Archery | 3. Kinetic Typography Film |
 // 4. Full-Screen 60fps Blossom Tree with Volumetric God Rays & Interactive Wind Petals |
-// 5. Ultra-Realistic 3D Hardcover Memory Flipbook | 6. Wax-Sealed Burn-To-Reveal Letter |
-// 7. Twilight Sky Lanterns Finale | 8. Sticky Top Chapter Dock Navigation.
+// 5. Ultra-Realistic 3D Hardcover Memory Flipbook with StPageFlip Physical Curl & Touch Swipes |
+// 6. Wax-Sealed Burn-To-Reveal Letter | 7. Three.js WebGL 3D Twilight Celestial Sky Lanterns Finale |
+// 8. Lenis Smooth Momentum Scrolling | 9. Sticky Top Chapter Dock Navigation.
 
 import gsap from 'gsap';
 import confetti from 'canvas-confetti';
+import * as THREE from 'three';
+import Lenis from 'lenis';
+import pkgPageFlip from 'page-flip';
+
+const PageFlip = pkgPageFlip?.PageFlip || pkgPageFlip;
 
 // Register GSAP pen-stroke plugin for the hand-drawn underline
 try {
@@ -539,11 +545,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     try {
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      const bufferSize = audioCtx.sampleRate * 0.14;
+      const bufferSize = Math.floor(audioCtx.sampleRate * 0.14);
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
+      const bufData = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.035));
+        bufData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.035));
       }
       const noise = audioCtx.createBufferSource();
       noise.buffer = buffer;
@@ -559,6 +565,175 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       gain.connect(audioCtx.destination);
       noise.start();
     } catch (_) {}
+  }
+
+  // --- THREE.JS 3D TWILIGHT LANTERNS & CELESTIAL STARFIELD ---
+  let threeLanternsSky = null;
+  function initThreeLanternsSky(mountEl) {
+    if (!mountEl || typeof window === 'undefined') return null;
+    try {
+      const w = mountEl.clientWidth || 440;
+      const h = mountEl.clientHeight || 380;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(55, w / h, 1, 1000);
+      camera.position.set(0, -10, 48);
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;';
+      mountEl.appendChild(renderer.domElement);
+
+      // Starfield Points
+      const starCount = 650;
+      const starGeo = new THREE.BufferGeometry();
+      const starPos = new Float32Array(starCount * 3);
+      for (let i = 0; i < starCount * 3; i += 3) {
+        starPos[i] = (Math.random() - 0.5) * 160;
+        starPos[i + 1] = (Math.random() - 0.5) * 140;
+        starPos[i + 2] = (Math.random() - 0.5) * 100 - 20;
+      }
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+      const starMat = new THREE.PointsMaterial({
+        color: 0xffeacc,
+        size: 1.4,
+        transparent: true,
+        opacity: 0.85
+      });
+      const starField = new THREE.Points(starGeo, starMat);
+      scene.add(starField);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffeedd, 0.7);
+      scene.add(ambientLight);
+
+      const moonLight = new THREE.DirectionalLight(0xffdfba, 1.2);
+      moonLight.position.set(20, 40, 20);
+      scene.add(moonLight);
+
+      // Shared Lantern Geometry & Warm Emissive Material
+      const lanternGeo = new THREE.CylinderGeometry(1.5, 1.7, 3.6, 10);
+      const lanternMat = new THREE.MeshStandardMaterial({
+        color: 0xfbbf24,
+        emissive: 0xea580c,
+        emissiveIntensity: 0.85,
+        roughness: 0.35,
+        metalness: 0.1
+      });
+
+      const lanternGroup = new THREE.Group();
+      scene.add(lanternGroup);
+
+      const lanterns = [];
+      function addLanternMesh(initY = null) {
+        const mesh = new THREE.Mesh(lanternGeo, lanternMat);
+        mesh.position.x = (Math.random() - 0.5) * 42;
+        mesh.position.y = initY !== null ? initY : -30 - Math.random() * 15;
+        mesh.position.z = (Math.random() - 0.5) * 28;
+        mesh.rotation.y = Math.random() * Math.PI * 2;
+        mesh.rotation.z = (Math.random() - 0.5) * 0.25;
+        const speed = Math.random() * 0.08 + 0.06;
+        const swaySpeed = Math.random() * 1.6 + 0.8;
+        const swayOffset = Math.random() * Math.PI * 2;
+        lanternGroup.add(mesh);
+        lanterns.push({ mesh, speed, swaySpeed, swayOffset });
+      }
+
+      for (let i = 0; i < 14; i++) {
+        addLanternMesh(-25 + (i * 5) + Math.random() * 3);
+      }
+
+      let animId = 0;
+      let clock = new THREE.Clock();
+      let mousePX = 0, mousePY = 0;
+
+      const handlePointer = (e) => {
+        const rect = mountEl.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          mousePX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+          mousePY = -((e.clientY - rect.top) / rect.height - 0.5) * 2;
+        }
+      };
+      mountEl.addEventListener('pointermove', handlePointer, { passive: true });
+
+      function animate() {
+        const time = clock.getElapsedTime();
+        camera.position.x += (mousePX * 4 - camera.position.x) * 0.05;
+        camera.position.y += (-10 + mousePY * 3 - camera.position.y) * 0.05;
+        camera.lookAt(0, 0, 0);
+
+        for (let i = lanterns.length - 1; i >= 0; i--) {
+          const l = lanterns[i];
+          l.mesh.position.y += l.speed;
+          l.mesh.position.x += Math.sin(time * l.swaySpeed + l.swayOffset) * 0.04;
+          l.mesh.rotation.y += 0.006;
+          if (l.mesh.position.y > 45) {
+            l.mesh.position.y = -35;
+            l.mesh.position.x = (Math.random() - 0.5) * 42;
+          }
+        }
+
+        starMat.opacity = 0.72 + Math.sin(time * 2.5) * 0.22;
+        renderer.render(scene, camera);
+        animId = requestAnimationFrame(animate);
+      }
+      animate();
+
+      return {
+        releaseBatch(count = 6) {
+          for (let i = 0; i < count; i++) {
+            setTimeout(() => addLanternMesh(-32 - Math.random() * 6), i * 220);
+          }
+        },
+        destroy() {
+          if (animId) cancelAnimationFrame(animId);
+          mountEl.removeEventListener('pointermove', handlePointer);
+          renderer.dispose();
+          starGeo.dispose();
+          starMat.dispose();
+          lanternGeo.dispose();
+          lanternMat.dispose();
+          if (renderer.domElement?.parentNode) {
+            renderer.domElement.parentNode.removeChild(renderer.domElement);
+          }
+        }
+      };
+    } catch (err) {
+      console.warn("Three.js lantern scene setup error:", err);
+      return null;
+    }
+  }
+
+  // --- LENIS LUXURY MOMENTUM SCROLLING ---
+  let lenisInstance = null;
+  let lenisRafId = 0;
+  function initLenisScroll() {
+    if (lenisInstance || !memories || typeof window === 'undefined') return;
+    try {
+      lenisInstance = new Lenis({
+        wrapper: memories,
+        content: memories.firstElementChild || memories,
+        lerp: 0.1,
+        smoothWheel: true,
+        syncTouch: false
+      });
+      function raf(time) {
+        lenisInstance?.raf(time);
+        lenisRafId = requestAnimationFrame(raf);
+      }
+      lenisRafId = requestAnimationFrame(raf);
+    } catch (e) {
+      console.warn("Lenis initialization skipped:", e);
+    }
+  }
+
+  function destroyLenisScroll() {
+    if (lenisRafId) cancelAnimationFrame(lenisRafId);
+    if (lenisInstance) {
+      lenisInstance.destroy();
+      lenisInstance = null;
+    }
   }
 
   // --- TREE ENGINE (Act 4) ---
@@ -1670,17 +1845,27 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     chime(600, 750);
     memories.classList.add('is-open');
     memories.setAttribute('aria-hidden', 'false');
+    initLenisScroll();
+    if (!threeLanternsSky) {
+      const lanternSkyStage = container.querySelector('#lanternsSkyStage');
+      if (lanternSkyStage) threeLanternsSky = initThreeLanternsSky(lanternSkyStage);
+    }
     if (targetElementId) {
       setTimeout(() => {
-        const el = container.querySelector(targetElementId);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
+        if (lenisInstance) {
+          lenisInstance.scrollTo(targetElementId, { offset: -20, duration: 1.2 });
+        } else {
+          const el = container.querySelector(targetElementId);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 120);
     }
   }
 
   function closeMemoriesModal() {
     memories.classList.remove('is-open');
     memories.setAttribute('aria-hidden', 'true');
+    destroyLenisScroll();
     setActiveDockChip('tree');
   }
 
@@ -1760,13 +1945,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (e.changedTouches && e.changedTouches.length > 0) {
       const deltaX = e.changedTouches[0].clientX - touchStartX;
       const deltaY = e.changedTouches[0].clientY - touchStartY;
-      // If horizontal swipe is dominant and exceeds 40px
       if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
         if (deltaX < 0 && currentLeafIdx < polaroids.length) {
-          currentLeafIdx++; // Swipe left -> Next
+          currentLeafIdx++;
           updateFlipbook();
         } else if (deltaX > 0 && currentLeafIdx > 0) {
-          currentLeafIdx--; // Swipe right -> Previous
+          currentLeafIdx--;
           updateFlipbook();
         }
       }
@@ -1819,6 +2003,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   btnReleaseMore?.addEventListener('click', () => {
     chime(780, 960);
     if (navigator.vibrate) navigator.vibrate(25);
+    if (threeLanternsSky) {
+      threeLanternsSky.releaseBatch(6);
+    }
     spawnLanternBatch(6);
     confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 }, colors: ['#ffd700', '#ff69b4', '#fbcfe8'] });
   });
@@ -1862,14 +2049,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       if (act === 'bloom') {
         memories.classList.remove('is-open');
         gate.classList.remove('is-open');
+        destroyLenisScroll();
         resetAll();
       } else if (act === 'cupid') {
         memories.classList.remove('is-open');
         gate.classList.add('is-open');
+        destroyLenisScroll();
         enterHero();
       } else if (act === 'tree') {
         memories.classList.remove('is-open');
         gate.classList.add('is-open');
+        destroyLenisScroll();
         gsap.set(hero, { autoAlpha: 0 });
         treeStart();
       } else if (act === 'flipbook') {
@@ -1881,6 +2071,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       } else if (act === 'lanterns') {
         gate.classList.add('is-open');
         openMemoriesModal('#lanternsSkyStage');
+        if (threeLanternsSky) threeLanternsSky.releaseBatch(4);
         spawnLanternBatch(4);
       }
     });
@@ -1936,5 +2127,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     stopBeat();
     if (filmTL) filmTL.kill();
     if (audioEl) audioEl.pause();
+    destroyLenisScroll();
+    if (threeLanternsSky) {
+      try { threeLanternsSky.destroy(); } catch (_) {}
+    }
   };
 }
