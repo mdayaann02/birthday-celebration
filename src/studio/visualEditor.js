@@ -1,6 +1,7 @@
 // src/studio/visualEditor.js - Comprehensive Customization Editor Form with File Uploads
 
 import { uploadFile } from '../models/siteStorage.js';
+import Sortable from 'sortablejs';
 
 function renderGenPolaroidsBlock(prefix, label, polaroids) {
   return `
@@ -17,7 +18,7 @@ function renderGenPolaroidsBlock(prefix, label, polaroids) {
               </label>
             </div>
             <div class="bcard-caption-col">
-              <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
+              <span class="bcard-num-badge" title="Drag to reorder"><span class="drag-icon">⋮⋮</span> 📸 Polaroid #${i+1}</span>
               <input type="text" class="form-input gen-pol-title" data-prefix="${prefix}" data-i="${i}" value="${p.title || ''}" placeholder="Title / Caption (e.g. Unforgettable Smile)" />
             </div>
           </div>
@@ -61,6 +62,28 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <div class="form-group">
           <label class="form-label">Hero Subtitle</label>
           <input type="text" class="form-input" id="edHeroSubtitle" value="${data.heroSubtitle || ''}" />
+        </div>
+      </div>
+
+      <!-- Section A2: Luxury Theme & Color Styling -->
+      <div class="editor-section">
+        <div class="section-title">🎨 Luxury Styling & Theme Palette</div>
+        <div class="editor-help-text" style="margin-bottom:12px;">
+          Choose your celebration's signature accent color. Live updates reflect instantly across hearts, buttons, glows, and chapter rings!
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" class="btn-theme-swatch" id="btnThemeColorPicker" title="Tap to open pro color picker" style="background:${data.primaryColor || '#d4235c'}; width:38px; height:38px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 12px rgba(212,35,92,0.4); cursor:pointer; flex-shrink:0;"></button>
+            <input type="text" class="form-input" id="edPrimaryColor" value="${data.primaryColor || '#d4235c'}" style="width:110px; font-weight:700; font-family:monospace;" />
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <span style="font-size:11px; color:#cbd5e1; font-weight:600;">1-Tap Presets:</span>
+            <button type="button" class="btn-color-preset" data-color="#d4235c" style="background:#d4235c; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">🌹 Rose</button>
+            <button type="button" class="btn-color-preset" data-color="#ec4899" style="background:#ec4899; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">🌸 Blossom</button>
+            <button type="button" class="btn-color-preset" data-color="#d97706" style="background:#d97706; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">👑 Gold</button>
+            <button type="button" class="btn-color-preset" data-color="#8b5cf6" style="background:#8b5cf6; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">💜 Lavender</button>
+            <button type="button" class="btn-color-preset" data-color="#2563eb" style="background:#2563eb; color:#fff; border:none; border-radius:12px; padding:4px 10px; font-size:11px; font-weight:700; cursor:pointer;">💙 Cobalt</button>
+          </div>
         </div>
       </div>
 
@@ -231,7 +254,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
                 </label>
               </div>
               <div class="bcard-caption-col">
-                <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
+                <span class="bcard-num-badge" title="Drag to reorder"><span class="drag-icon">⋮⋮</span> 📸 Polaroid #${i+1}</span>
                 <input type="text" class="form-input tree-pol-cap" data-i="${i}" value="${p.caption || ''}" placeholder="Caption (e.g. Our favorite sunset walk)" />
               </div>
             </div>
@@ -312,7 +335,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
                 </div>
                 <div class="bcard-caption-col">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <span class="bcard-num-badge">✨ Memory #${i+1}</span>
+                    <span class="bcard-num-badge" title="Drag to reorder"><span class="drag-icon">⋮⋮</span> ✨ Memory #${i+1}</span>
                     <button type="button" class="btn-del-blossom-card" data-i="${i}" title="Delete Card">🗑️</button>
                   </div>
                   <input type="text" class="form-input bcard-cap" data-i="${i}" value="${c.caption || ''}" placeholder="Caption (e.g. Sweet moments with you)" />
@@ -391,7 +414,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
                 </label>
               </div>
               <div class="bcard-caption-col">
-                <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
+                <span class="bcard-num-badge" title="Drag to reorder"><span class="drag-icon">⋮⋮</span> 📸 Polaroid #${i+1}</span>
                 <input type="text" class="form-input pol-t" data-i="${i}" value="${p.title}" placeholder="Caption (e.g. Sunset Glow)" />
               </div>
             </div>
@@ -902,10 +925,9 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (rows.length === 0) return null;
       const arr = [];
       rows.forEach(row => {
-        const i = row.getAttribute('data-i');
-        const img = row.querySelector(`.gen-pol-img[data-prefix="${prefix}"][data-i="${i}"]`)?.value || '/images/sunset.jpg';
-        const title = row.querySelector(`.gen-pol-title[data-prefix="${prefix}"][data-i="${i}"]`)?.value || '';
-        const note = row.querySelector(`.gen-pol-note[data-prefix="${prefix}"][data-i="${i}"]`)?.value || '';
+        const img = row.querySelector('.gen-pol-img')?.value || '/images/sunset.jpg';
+        const title = row.querySelector('.gen-pol-title')?.value || '';
+        const note = row.querySelector('.gen-pol-note')?.value || '';
         arr.push({ image: img, title, note });
       });
       return arr;
@@ -920,6 +942,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     const elAudT = container.querySelector('#edAudioTitle');
     const elAudS = container.querySelector('#edAudioSub');
     const elAudSrc = container.querySelector('#edAudioSrc');
+    const elPrimaryColor = container.querySelector('#edPrimaryColor');
 
     if (elRec) updated.recipientName = elRec.value;
     if (elSend) updated.senderName = elSend.value;
@@ -931,6 +954,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     if (elAudT) updated.audioTitle = elAudT.value;
     if (elAudS) updated.audioSubtitle = elAudS.value;
     if (elAudSrc) updated.audioSrc = elAudSrc.value;
+    if (elPrimaryColor && elPrimaryColor.value.trim()) updated.primaryColor = elPrimaryColor.value.trim();
 
     const cdBgInputs = container.querySelectorAll('.cd-bg-input');
     if (cdBgInputs.length > 0) {
@@ -964,9 +988,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (treeRows.length > 0) {
         const polsArr = [];
         treeRows.forEach(row => {
-          const idx = row.getAttribute('data-i');
-          const imgInp = row.querySelector(`.tree-pol-img[data-i="${idx}"]`);
-          const capInp = row.querySelector(`.tree-pol-cap[data-i="${idx}"]`);
+          const imgInp = row.querySelector('.tree-pol-img');
+          const capInp = row.querySelector('.tree-pol-cap');
           if (imgInp && imgInp.value.trim()) {
             polsArr.push({
               image: imgInp.value.trim(),
@@ -997,9 +1020,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (bcardRows.length > 0) {
         const cardsArr = [];
         bcardRows.forEach(row => {
-          const idx = row.getAttribute('data-card-idx');
-          const imgInp = row.querySelector(`.bcard-img[data-i="${idx}"]`);
-          const capInp = row.querySelector(`.bcard-cap[data-i="${idx}"]`);
+          const imgInp = row.querySelector('.bcard-img');
+          const capInp = row.querySelector('.bcard-cap');
           if (imgInp && imgInp.value.trim()) {
             cardsArr.push({
               image: imgInp.value.trim(),
@@ -1008,6 +1030,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           }
         });
         updated.cards = cardsArr;
+        updated.polaroids = cardsArr;
       }
     } else if (templateId === 'birthday') {
       const elAge = container.querySelector('#edAge');
@@ -1019,10 +1042,9 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (polRows.length > 0) {
         const newPols = [];
         polRows.forEach(row => {
-          const i = row.getAttribute('data-i');
-          const title = row.querySelector(`.pol-t[data-i="${i}"]`)?.value || '';
-          const image = row.querySelector(`.pol-img[data-i="${i}"]`)?.value || '/images/always_you.jpg';
-          const note = row.querySelector(`.pol-n[data-i="${i}"]`)?.value || '';
+          const title = row.querySelector('.pol-t')?.value || '';
+          const image = row.querySelector('.pol-img')?.value || '/images/always_you.jpg';
+          const note = row.querySelector('.pol-n')?.value || '';
           newPols.push({ title, image, note });
         });
         updated.polaroids = newPols;
@@ -1046,10 +1068,9 @@ export function renderVisualEditor(container, templateId, data, onChange) {
 
       const sorryPols = [];
       container.querySelectorAll('.sorry-pol-row').forEach(row => {
-        const i = row.getAttribute('data-i');
-        const img = row.querySelector(`.sorry-pol-img[data-i="${i}"]`)?.value || '/images/sunset.jpg';
-        const cap = row.querySelector(`.sorry-pol-cap[data-i="${i}"]`)?.value || '';
-        const note = row.querySelector(`.sorry-pol-note[data-i="${i}"]`)?.value || '';
+        const img = row.querySelector('.sorry-pol-img')?.value || '/images/sunset.jpg';
+        const cap = row.querySelector('.sorry-pol-cap')?.value || '';
+        const note = row.querySelector('.sorry-pol-note')?.value || '';
         sorryPols.push({ image: img, caption: cap, note });
       });
       if (sorryPols.length > 0) updated.polaroids = sorryPols;
@@ -1101,5 +1122,77 @@ export function renderVisualEditor(container, templateId, data, onChange) {
   container.querySelectorAll('input:not([type="file"]), textarea').forEach(elem => {
     elem.addEventListener('input', debouncedEmitChange);
     elem.addEventListener('change', emitChange);
+  });
+
+  // Vanilla Picker luxury color picker
+  const btnColorPicker = container.querySelector('#btnThemeColorPicker');
+  const inpColor = container.querySelector('#edPrimaryColor');
+  if (btnColorPicker && inpColor) {
+    let pickerInst = null;
+    btnColorPicker.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (pickerInst) {
+        pickerInst.destroy();
+        pickerInst = null;
+        return;
+      }
+      if (typeof window !== 'undefined') {
+        try {
+          const PickerMod = await import('vanilla-picker');
+          const Picker = PickerMod.default || PickerMod;
+          pickerInst = new Picker({
+            parent: btnColorPicker,
+            color: inpColor.value || '#d4235c',
+            popup: 'bottom',
+            onChange: (col) => {
+              const hex = col.hex.slice(0, 7);
+              inpColor.value = hex;
+              btnColorPicker.style.backgroundColor = hex;
+              document.documentElement.style.setProperty('--primary', hex);
+              emitChange();
+            },
+            onClose: () => {
+              pickerInst = null;
+            }
+          });
+          pickerInst.show();
+        } catch (err) {
+          console.warn('Vanilla-picker error:', err);
+        }
+      }
+    });
+
+    container.querySelectorAll('.btn-color-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const col = btn.getAttribute('data-color');
+        if (inpColor) inpColor.value = col;
+        if (btnColorPicker) btnColorPicker.style.backgroundColor = col;
+        document.documentElement.style.setProperty('--primary', col);
+        emitChange();
+      });
+    });
+  }
+
+  // SortableJS drag-and-drop reordering on all polaroid & card lists
+  const sortableLists = container.querySelectorAll('#blossomCardsList, #treePolaroidsList, #polaroidCardsList, #cdPhotosGrid, [id$="PolaroidsList"]');
+  sortableLists.forEach(listEl => {
+    try {
+      Sortable.create(listEl, {
+        animation: 200,
+        handle: '.bcard-num-badge, .bcard-thumb-wrap',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        onEnd: () => {
+          listEl.querySelectorAll('.bcard-num-badge').forEach((badge, idx) => {
+            const isCard = badge.textContent.includes('Memory') || badge.textContent.includes('Card');
+            badge.innerHTML = `<span class="drag-icon">⋮⋮</span> ${isCard ? '✨ Memory' : '📸 Polaroid'} #${idx + 1}`;
+          });
+          emitChange();
+        }
+      });
+    } catch (err) {
+      console.warn('Sortable init error:', err);
+    }
   });
 }

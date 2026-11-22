@@ -316,7 +316,7 @@ export function renderStudioApp(root) {
 
   btnHeaderGuide?.addEventListener('click', () => {
     guideController?.expand();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    guideController?.startTour();
   });
 
   // Mobile tab click listeners

@@ -17,6 +17,10 @@ import { renderBestieGirlTemplate } from './templates/bestieGirlTemplate.js';
 import { renderBestieBoyTemplate } from './templates/bestieBoyTemplate.js';
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
+  if (data?.primaryColor) {
+    container.style.setProperty('--primary', data.primaryColor);
+    container.style.setProperty('--primary-light', data.primaryColor + 'aa');
+  }
   initInteractiveSparkles();
   const lockStatus = checkCountdownLock(data);
   const isMakerReview = isMakerReviewParam || lockStatus.isMakerReview || false;

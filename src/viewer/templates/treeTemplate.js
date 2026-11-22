@@ -3,6 +3,8 @@
 // tap-to-read love notes, polaroid memories scrapbook, and mini spinning CD player.
 
 import gsap from 'gsap';
+import confetti from 'canvas-confetti';
+import html2canvas from 'html2canvas';
 
 // Register GSAP pen-stroke plugin for the hand-drawn underline
 try {
@@ -294,6 +296,9 @@ I love you endlessly. ♡`;
               <figure class="polaroid polaroid--${(i % 5) + 1}">
                 <div class="polaroid__img" style="background-image:url('${p.image || '/images/sunset.jpg'}');"></div>
                 <figcaption>${p.caption || p.title || 'Our Sweet Memory ✎'}</figcaption>
+                <button type="button" class="btn-download-polaroid" title="Save high-res keepsake to photos" style="margin: 8px auto 4px auto;">
+                  📸 Save Keepsake
+                </button>
               </figure>
             `).join('')}
           </div>
@@ -1553,6 +1558,37 @@ I love you endlessly. ♡`;
         }
       }, 24);
     }, 420);
+  });
+
+  // HTML2Canvas Keepsake Polaroid download
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const figure = btn.closest('.polaroid');
+      if (!figure) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.disabled = true;
+      html2canvas(figure, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(cvs => {
+        const a = document.createElement('a');
+        a.download = `polaroid-memory-${Date.now()}.png`;
+        a.href = cvs.toDataURL('image/png');
+        a.click();
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+        btn.innerHTML = '✓ Saved to Photos!';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2200);
+      }).catch(err => {
+        console.error('Download error:', err);
+        btn.innerHTML = 'Download Failed';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2000);
+      });
+    });
   });
 
   // Corner Mini Spinning CD Music Player

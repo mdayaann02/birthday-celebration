@@ -11,6 +11,8 @@ import confetti from 'canvas-confetti';
 import * as THREE from 'three';
 import Lenis from 'lenis';
 import pkgPageFlip from 'page-flip';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 
 const PageFlip = pkgPageFlip?.PageFlip || pkgPageFlip;
 
@@ -350,7 +352,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
                         </div>
                         <h4 class="book-polaroid-caption">${p.caption || 'Our favourite moment 💖'}</h4>
                       </div>
-                      <div class="leaf-page-number">Page ${i * 2 + 1} of ${polaroids.length * 2}</div>
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                        <button type="button" class="btn-download-polaroid" data-leaf-idx="${i}" title="Save Polaroid to Camera Roll">📸 Save Keepsake</button>
+                        <div class="leaf-page-number">Page ${i * 2 + 1} of ${polaroids.length * 2}</div>
+                      </div>
                     </div>
                     <div class="leaf-face leaf-back">
                       <div class="book-note-header">
@@ -1932,6 +1937,43 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     });
   });
 
+  // Medium-Zoom on Polaroid Images for Pro Fullscreen Lightbox
+  let zoomInstance = null;
+  try {
+    zoomInstance = mediumZoom(container.querySelectorAll('.book-polaroid-img'), {
+      background: 'rgba(18, 6, 12, 0.94)',
+      margin: 24
+    });
+  } catch (_) {}
+
+  // HTML2Canvas Download Keepsake Polaroid Card
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const leaf = btn.closest('.book-leaf');
+      const frame = leaf ? leaf.querySelector('.book-polaroid-frame') : null;
+      if (!frame) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.disabled = true;
+      html2canvas(frame, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(cvs => {
+        const a = document.createElement('a');
+        a.download = `polaroid-memory-${Date.now()}.png`;
+        a.href = cvs.toDataURL('image/png');
+        a.click();
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+        btn.innerHTML = '✓ Saved to Photos!';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2200);
+      }).catch(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      });
+    });
+  });
+
   // Touch Swipe on Flipbook for Mobile Devices
   let touchStartX = 0, touchStartY = 0;
   realisticBook?.addEventListener('touchstart', (e) => {
@@ -2128,6 +2170,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (filmTL) filmTL.kill();
     if (audioEl) audioEl.pause();
     destroyLenisScroll();
+    if (zoomInstance) {
+      try { zoomInstance.detach(); } catch (_) {}
+    }
     if (threeLanternsSky) {
       try { threeLanternsSky.destroy(); } catch (_) {}
     }

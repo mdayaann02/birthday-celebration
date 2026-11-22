@@ -1,5 +1,73 @@
 // src/studio/creatorGuide.js - Interactive Step-by-Step Creator Guide & Onboarding
 
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+
+export function startStudioTour({ onSwitchTab, onOpenShare, onFocusEditor } = {}) {
+  try {
+    const driverObj = driver({
+      showProgress: true,
+      animate: true,
+      allowClose: true,
+      overlayColor: 'rgba(15, 10, 25, 0.78)',
+      nextBtnText: 'Next →',
+      prevBtnText: '← Back',
+      doneBtnText: 'Start Creating ✨',
+      onHighlightStarted: (element, step, opts) => {
+        if (opts.index === 0 && onSwitchTab) {
+          onSwitchTab('templates');
+        } else if (opts.index === 1 && onSwitchTab) {
+          onSwitchTab('editor');
+        } else if (opts.index === 2 && onSwitchTab) {
+          onSwitchTab('preview');
+        }
+      },
+      steps: [
+        {
+          element: '#studioOccasionBanner',
+          popover: {
+            title: '🎨 1. Choose Occasion & Template',
+            description: 'Pick who this celebration is for: Long Romance Masterpiece, Cupid & Tree, Birthday, Anniversary, Sorry, and more.',
+            side: 'bottom',
+            align: 'start'
+          }
+        },
+        {
+          element: '#tabEditorSection',
+          popover: {
+            title: '✏️ 2. Customize & Drag-and-Drop',
+            description: 'Upload real polaroid photos, reorder them by dragging, choose background songs, and write heartfelt love letters.',
+            side: 'top',
+            align: 'start'
+          }
+        },
+        {
+          element: '#tabBtnPreview',
+          popover: {
+            title: '👁️ 3. Test Live Physics & 3D Album',
+            description: 'Switch to Live Preview anytime to test realistic 3D paper flipbook physics, touch blooming petals, and launch twilight sky lanterns.',
+            side: 'bottom',
+            align: 'center'
+          }
+        },
+        {
+          element: '#btnSharePublish',
+          popover: {
+            title: '🚀 4. One-Tap WhatsApp Share Link',
+            description: 'When your site is ready, click Get Share Link to generate your permanent, clickable URL for WhatsApp!',
+            side: 'bottom',
+            align: 'end'
+          }
+        }
+      ]
+    });
+
+    driverObj.drive();
+  } catch (err) {
+    console.warn('Driver.js tour error:', err);
+  }
+}
+
 export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocusEditor }) {
   if (!container) return;
 
@@ -98,6 +166,9 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
               <h3 class="guide-main-heading">How to Create Your Website</h3>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
+              <button type="button" class="btn-guide-tour-chip" id="btnGuideInteractiveTour" title="Start interactive 30s tour">
+                ✨ Guided Tour
+              </button>
               <span class="guide-step-counter">Step ${cur.num} of 4</span>
               <button type="button" class="btn-guide-minimize" id="btnCollapseGuide" title="Collapse guide">−</button>
             </div>
@@ -190,6 +261,10 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       isCollapsed = true;
       render();
     });
+
+    container.querySelector('#btnGuideInteractiveTour')?.addEventListener('click', () => {
+      startStudioTour({ onSwitchTab, onOpenShare, onFocusEditor });
+    });
   }
 
   render();
@@ -208,6 +283,9 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
     collapse: () => {
       isCollapsed = true;
       render();
+    },
+    startTour: () => {
+      startStudioTour({ onSwitchTab, onOpenShare, onFocusEditor });
     }
   };
 }
