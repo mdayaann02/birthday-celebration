@@ -13957,11 +13957,14 @@ textarea,
   transition: transform 0.85s cubic-bezier(0.25, 1, 0.5, 1);
   border-radius: 0 12px 12px 0;
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
 }
 
 .book-leaf.flipped {
   transform: rotateY(-180deg);
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .leaf-face {
@@ -14038,6 +14041,8 @@ textarea,
   box-shadow: inset -16px 0 20px -12px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.06);
   z-index: 1;
   text-align: left;
+  border-radius: 12px 0 0 12px;
+  pointer-events: auto;
 }
 
 .book-note-header {
