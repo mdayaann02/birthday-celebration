@@ -847,7 +847,83 @@ export function renderSorryTemplate(container, data) {
     dodgeNo();
   });
 
+  // =========================================================================
+  // LIVING RAIN-TO-SUNSHINE CLEARING SKY CANVAS (60FPS)
+  // =========================================================================
+  let isForgiven = false;
+  const sCanvas = container.querySelector('#sorryCanvas');
+  if (sCanvas) {
+    const sCtx = sCanvas.getContext('2d');
+    let sW = (sCanvas.width = window.innerWidth);
+    let sH = (sCanvas.height = window.innerHeight);
+
+    const raindrops = Array.from({ length: 45 }, () => ({
+      x: Math.random() * sW,
+      y: Math.random() * sH,
+      len: 12 + Math.random() * 15,
+      speedY: 7 + Math.random() * 8,
+      speedX: -1 + (Math.random() - 0.5) * 0.5,
+      alpha: 0.2 + Math.random() * 0.4
+    }));
+
+    const sunnyHearts = Array.from({ length: 28 }, () => ({
+      x: Math.random() * sW,
+      y: sH + Math.random() * 50,
+      size: 8 + Math.random() * 12,
+      speedY: 0.8 + Math.random() * 1.4,
+      rot: Math.random() * 360,
+      alpha: 0.3 + Math.random() * 0.5,
+      color: ['#ff4d6d', '#f43f5e', '#fbbf24', '#f472b6'][Math.floor(Math.random() * 4)]
+    }));
+
+    function animSorry() {
+      sCtx.clearRect(0, 0, sW, sH);
+
+      if (!isForgiven) {
+        sCtx.strokeStyle = 'rgba(186, 230, 253, 0.4)';
+        sCtx.lineWidth = 1.5;
+        sCtx.lineCap = 'round';
+        for (const r of raindrops) {
+          r.y += r.speedY;
+          r.x += r.speedX;
+          if (r.y > sH) {
+            r.y = -20;
+            r.x = Math.random() * sW;
+          }
+          sCtx.beginPath();
+          sCtx.moveTo(r.x, r.y);
+          sCtx.lineTo(r.x + r.speedX * 2, r.y + r.len);
+          sCtx.stroke();
+        }
+      } else {
+        for (const h of sunnyHearts) {
+          h.y -= h.speedY;
+          if (h.y < -20) {
+            h.y = sH + 20;
+            h.x = Math.random() * sW;
+          }
+          sCtx.save();
+          sCtx.translate(h.x, h.y);
+          sCtx.fillStyle = h.color;
+          sCtx.globalAlpha = h.alpha;
+          sCtx.beginPath();
+          sCtx.arc(0, 0, h.size * 0.4, 0, Math.PI * 2);
+          sCtx.fill();
+          sCtx.restore();
+        }
+      }
+      requestAnimationFrame(animSorry);
+    }
+    requestAnimationFrame(animSorry);
+
+    window.addEventListener('resize', () => {
+      sW = sCanvas.width = window.innerWidth;
+      sH = sCanvas.height = window.innerHeight;
+    });
+  }
+
   btnYes?.addEventListener('click', () => {
+    isForgiven = true;
     playSound('chime');
     if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
 
