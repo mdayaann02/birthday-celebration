@@ -1,4 +1,7 @@
 // src/components/polaroidWall.js - Interactive Polaroid Memory Wall with Realism & Butterflies
+import confetti from 'canvas-confetti';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 
 export function initPolaroidWall(container, config) {
   const polaroids = config.polaroids || [];
@@ -40,6 +43,9 @@ export function initPolaroidWall(container, config) {
               <div class="photo-sheen"></div>
             </div>
             <div class="polaroid-caption">${item.title || 'Special Memory'}</div>
+            <button type="button" class="btn-download-polaroid" title="Save keepsake polaroid" style="margin: 6px auto 2px auto; background:rgba(0,0,0,0.7); color:#fff; border:1px solid rgba(255,255,255,0.3); padding:4px 12px; border-radius:14px; font-size:10px; font-weight:700; cursor:pointer;">
+              📸 Save Keepsake
+            </button>
             <div class="polaroid-tap-hint">tap to read note 💌</div>
           </div>
         `).join('')}
@@ -85,5 +91,51 @@ export function initPolaroidWall(container, config) {
     if (e.target === modal) {
       modal.classList.remove("active");
     }
+  });
+
+  // Medium Zoom
+  try {
+    mediumZoom(container.querySelectorAll(".polaroid-photo img"), {
+      background: 'rgba(10, 10, 15, 0.92)',
+      margin: 24
+    });
+  } catch (_) {}
+
+  // Keepsake download
+  container.querySelectorAll(".btn-download-polaroid").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const card = btn.closest(".polaroid-item");
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.style.opacity = '0.7';
+
+      html2canvas(card, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `polaroid-memory-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        btn.innerHTML = '✅ Saved!';
+        confetti({
+          particleCount: 45,
+          spread: 60,
+          origin: { y: 0.7 }
+        });
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.opacity = '1';
+        }, 2200);
+      }).catch(() => {
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+      });
+    });
   });
 }

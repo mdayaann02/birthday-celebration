@@ -2,6 +2,8 @@
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 // Tactile Sound Synthesizer
@@ -184,6 +186,9 @@ export function renderFriendshipTemplate(container, data) {
                   <div class="bff-polaroid-info" style="margin-top:8px; text-align:center;">
                     <h4 class="bff-pol-title" style="margin:0 0 4px 0; font-size:13px; color:#2d1a24;">${p.title || `Memory #${i+1}`}</h4>
                     <p class="bff-pol-note" style="margin:0; font-size:11px; color:#8c7882;">${p.note || p.caption || ''}</p>
+                    <button type="button" class="btn-download-polaroid" title="Save keepsake polaroid" style="margin: 6px auto 2px auto; background:linear-gradient(135deg, #2ed573, #10b981); color:#fff; border:none; padding:5px 12px; border-radius:16px; font-size:11px; font-weight:800; cursor:pointer;">
+                      📸 Save Keepsake
+                    </button>
                   </div>
                 </div>
               `).join('')}
@@ -375,6 +380,54 @@ export function renderFriendshipTemplate(container, data) {
       spread: 90,
       origin: { y: 0.65 },
       colors: ['#2ed573', '#ffa502', '#ff4757', '#ffffff', '#70a1ff']
+    });
+  });
+
+  // =========================================================================
+  // KEEPSAKE POLAROID DOWNLOAD & CINEMATIC MEDIUM ZOOM
+  // =========================================================================
+  try {
+    mediumZoom(container.querySelectorAll('.bff-polaroid-frame img'), {
+      background: 'rgba(10, 10, 15, 0.92)',
+      margin: 24
+    });
+  } catch (_) {}
+
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.bff-polaroid-card');
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.style.opacity = '0.7';
+
+      html2canvas(card, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `bff-keepsake-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        btn.innerHTML = '✅ Saved to Device!';
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#2ed573', '#ffa502', '#ff4757', '#ffffff']
+        });
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.opacity = '1';
+        }, 2200);
+      }).catch(() => {
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+      });
     });
   });
 }

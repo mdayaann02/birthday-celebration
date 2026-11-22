@@ -2,6 +2,8 @@
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 // Tactile Sound Synthesizer
@@ -11,7 +13,33 @@ function playBroTone(type) {
     if (ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
 
-    if (type === 'stamp') {
+    if (type === 'engine') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      const startFreq = 65 + Math.random() * 20;
+      const endFreq = 175 + Math.random() * 45;
+      osc.frequency.setValueAtTime(startFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.24);
+      gain.gain.setValueAtTime(0.24, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.26);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.27);
+    } else if (type === 'nitro') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(120, now);
+      osc.frequency.exponentialRampToValueAtTime(420, now + 0.35);
+      gain.gain.setValueAtTime(0.32, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.4);
+    } else if (type === 'stamp') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
@@ -97,7 +125,37 @@ export function renderBrotherTemplate(container, data) {
             <div class="fam-badge amber-badge">🤜🤛 TO MY BROTHER IN CHAOS &amp; DAY ONE RIVAL 🔥⚡</div>
             <h1 class="fam-hero-title">${data.heroTitle || 'To My Brother in Chaos, The Legend 🤜🤛🔥'}</h1>
             <p class="fam-hero-subtitle">${data.heroSubtitle || 'From wrestling over the TV remote to standing shoulder-to-shoulder through everything. Brotherhood forever!'}</p>
-            
+
+            <!-- DYNAMIC 60FPS SUPERBIKE HIGHWAY SPRINT ARENA -->
+            <div class="bro-bike-arena" id="broBikeArena" style="position:relative; width:100%; max-width:440px; margin:20px auto 14px; border-radius:18px; overflow:hidden; background:linear-gradient(180deg, #090d16 0%, #111827 50%, #1f2937 100%); border:2px solid rgba(245, 158, 11, 0.4); box-shadow:0 12px 35px rgba(0,0,0,0.5), 0 0 20px rgba(245, 158, 11, 0.2);">
+              <!-- Canvas for dynamic road, speed lines, exhaust flames, nitro sparks -->
+              <canvas id="broBikeCanvas" style="width:100%; height:210px; display:block;"></canvas>
+
+              <!-- Speedometer HUD overlay -->
+              <div style="position:absolute; top:12px; left:14px; display:flex; align-items:center; gap:8px; pointer-events:none; z-index:3;">
+                <div style="background:rgba(15, 23, 42, 0.88); border:1px solid #f59e0b; padding:4px 10px; border-radius:8px; display:flex; align-items:baseline; gap:4px; box-shadow:0 4px 10px rgba(0,0,0,0.4);">
+                  <span style="font-size:18px; font-weight:900; color:#fbbf24; font-family:monospace;" id="broSpeedVal">060</span>
+                  <span style="font-size:10px; font-weight:700; color:#94a3b8;">KM/H</span>
+                </div>
+                <div id="broGearPill" style="background:#dc2626; color:#fff; font-size:10px; font-weight:900; padding:2px 8px; border-radius:6px; letter-spacing:1px;">GEAR 3</div>
+              </div>
+
+              <!-- Milestone Banner Overlay that flies past on highway -->
+              <div id="broMilestoneBanner" style="position:absolute; top:14px; right:14px; background:linear-gradient(90deg, #f59e0b, #dc2626); color:#fff; font-size:10px; font-weight:800; padding:4px 10px; border-radius:20px; letter-spacing:0.8px; opacity:0; transform:translateY(-8px); transition:all 0.3s ease; pointer-events:none; z-index:3; box-shadow:0 2px 10px rgba(220,38,38,0.4);">
+                🔥 DAY ONE BROTHER
+              </div>
+
+              <!-- Bottom Interactive Throttle & Boost Controls -->
+              <div style="position:absolute; bottom:10px; inset-x:0; display:flex; justify-content:center; gap:8px; padding:0 12px; z-index:4;">
+                <button type="button" class="btn-bike-throttle" id="btnBroRev" style="flex:1; background:linear-gradient(135deg, #f59e0b, #d97706); color:#000; font-weight:900; font-size:12px; padding:9px 12px; border-radius:12px; border:none; box-shadow:0 4px 12px rgba(245,158,11,0.4); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; user-select:none; -webkit-user-select:none;">
+                  <span>🏍️ HOLD / TAP THROTTLE</span>
+                </button>
+                <button type="button" class="btn-bike-nitro" id="btnBroNitro" style="background:linear-gradient(135deg, #06b6d4, #2563eb); color:#fff; font-weight:900; font-size:12px; padding:9px 14px; border-radius:12px; border:none; box-shadow:0 4px 14px rgba(6,182,212,0.4); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; user-select:none; -webkit-user-select:none;">
+                  <span>🔥 NITRO 200+</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Interactive Slamming Fist Bump Centerpiece -->
             <div class="bro-fist-arena" id="broFistArena" style="position:relative; width:240px; height:120px; margin:20px auto 14px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
               <div id="leftFist" style="font-size:52px; transform:translateX(-40px); transition:transform 0.2s ease;">🤜</div>
@@ -232,6 +290,9 @@ export function renderBrotherTemplate(container, data) {
                   </div>
                   <div class="fam-polaroid-label">${p.title || `Chaos #${i+1}`}</div>
                   <div class="fam-polaroid-note">${p.note || ''}</div>
+                  <button type="button" class="btn-download-polaroid" title="Save high-res keepsake" style="margin: 8px auto 2px auto;">
+                    📸 Save Keepsake
+                  </button>
                 </div>
               `).join('')}
             </div>
@@ -448,6 +509,294 @@ export function renderBrotherTemplate(container, data) {
   }
 
   // =========================================================================
+  // 1B. PAGE 1: 60FPS INTERACTIVE SUPERBIKE HIGHWAY RUN ARENA 🏍️💨
+  // =========================================================================
+  const bikeCanvas = container.querySelector('#broBikeCanvas');
+  const speedValEl = container.querySelector('#broSpeedVal');
+  const gearPillEl = container.querySelector('#broGearPill');
+  const milestoneEl = container.querySelector('#broMilestoneBanner');
+  const btnRev = container.querySelector('#btnBroRev');
+  const btnNitro = container.querySelector('#btnBroNitro');
+
+  if (bikeCanvas) {
+    const bCtx = bikeCanvas.getContext('2d');
+    let bWidth = (bikeCanvas.width = bikeCanvas.offsetWidth || 380);
+    let bHeight = (bikeCanvas.height = 210);
+
+    let currentSpeed = 60; // km/h
+    let targetSpeed = 60;
+    let roadOffset = 0;
+    let isReving = false;
+    let isNitro = false;
+    let flames = [];
+    let smokeParticles = [];
+    let milestoneIndex = 0;
+    const milestones = [
+      "🔥 DAY ONE BROTHER",
+      "⚡ RIDE OR DIE ALLIANCE",
+      "👑 UNSTOPPABLE BROHOOD",
+      "🚀 TOP SPEED 240 KM/H!"
+    ];
+
+    function spawnFlame(isBlue = false) {
+      flames.push({
+        x: bWidth / 2 + (Math.random() - 0.5) * 8,
+        y: bHeight - 32,
+        vx: (Math.random() - 0.5) * 2,
+        vy: 2 + Math.random() * 4,
+        size: 3 + Math.random() * 6,
+        alpha: 1,
+        color: isBlue ? '#06b6d4' : (Math.random() > 0.4 ? '#f59e0b' : '#ef4444')
+      });
+    }
+
+    function spawnSmoke() {
+      smokeParticles.push({
+        x: bWidth / 2 + (Math.random() - 0.5) * 16,
+        y: bHeight - 25,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: 1 + Math.random() * 2,
+        size: 4 + Math.random() * 8,
+        alpha: 0.6
+      });
+    }
+
+    function triggerMilestone() {
+      if (!milestoneEl) return;
+      milestoneEl.textContent = milestones[milestoneIndex % milestones.length];
+      milestoneIndex++;
+      gsap.fromTo(milestoneEl, 
+        { opacity: 0, y: -10, scale: 0.8 }, 
+        { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'back.out(2)' }
+      );
+      setTimeout(() => {
+        gsap.to(milestoneEl, { opacity: 0, y: -8, duration: 0.3 });
+      }, 1800);
+    }
+
+    // Interactive button controls
+    function startRev() {
+      isReving = true;
+      targetSpeed = 160;
+      playBroTone('engine');
+      if (navigator.vibrate) navigator.vibrate([20, 30]);
+    }
+
+    function stopRev() {
+      isReving = false;
+      if (!isNitro) targetSpeed = 60;
+    }
+
+    btnRev?.addEventListener('pointerdown', startRev);
+    btnRev?.addEventListener('pointerup', stopRev);
+    btnRev?.addEventListener('pointercancel', stopRev);
+    btnRev?.addEventListener('click', () => {
+      startRev();
+      setTimeout(stopRev, 600);
+    });
+
+    btnNitro?.addEventListener('click', () => {
+      isNitro = true;
+      targetSpeed = 240;
+      playBroTone('nitro');
+      if (navigator.vibrate) navigator.vibrate([40, 50, 60]);
+      triggerMilestone();
+      confetti({
+        particleCount: 35,
+        spread: 60,
+        origin: { y: 0.4 },
+        colors: ['#06b6d4', '#f59e0b', '#ef4444']
+      });
+      setTimeout(() => {
+        isNitro = false;
+        targetSpeed = isReving ? 160 : 60;
+      }, 2200);
+    });
+
+    function renderBike() {
+      bWidth = bikeCanvas.width = bikeCanvas.offsetWidth || 380;
+      bHeight = bikeCanvas.height = 210;
+
+      // Speed interpolation
+      currentSpeed += (targetSpeed - currentSpeed) * 0.08;
+      roadOffset = (roadOffset + currentSpeed * 0.12) % 60;
+
+      // HUD updates
+      if (speedValEl) speedValEl.textContent = String(Math.round(currentSpeed)).padStart(3, '0');
+      if (gearPillEl) {
+        const gear = currentSpeed > 200 ? 'NITRO' : currentSpeed > 150 ? 'GEAR 6' : currentSpeed > 100 ? 'GEAR 5' : 'GEAR 3';
+        gearPillEl.textContent = gear;
+        gearPillEl.style.background = currentSpeed > 200 ? 'linear-gradient(90deg, #06b6d4, #3b82f6)' : '#dc2626';
+      }
+
+      // Draw Horizon & Sky
+      const skyGrad = bCtx.createLinearGradient(0, 0, 0, 75);
+      skyGrad.addColorStop(0, '#0f172a');
+      skyGrad.addColorStop(0.5, '#451a03');
+      skyGrad.addColorStop(1, '#78350f');
+      bCtx.fillStyle = skyGrad;
+      bCtx.fillRect(0, 0, bWidth, 75);
+
+      // Sunset sun
+      bCtx.fillStyle = '#f59e0b';
+      bCtx.beginPath();
+      bCtx.arc(bWidth / 2, 60, 22, 0, Math.PI * 2);
+      bCtx.fill();
+
+      // Mountain peaks
+      bCtx.fillStyle = '#1e1b4b';
+      bCtx.beginPath();
+      bCtx.moveTo(0, 75);
+      bCtx.lineTo(bWidth * 0.2, 45);
+      bCtx.lineTo(bWidth * 0.4, 75);
+      bCtx.lineTo(bWidth * 0.65, 40);
+      bCtx.lineTo(bWidth * 0.85, 75);
+      bCtx.lineTo(bWidth, 60);
+      bCtx.lineTo(bWidth, 75);
+      bCtx.closePath();
+      bCtx.fill();
+
+      // Draw Perspective Asphalt Road
+      const roadGrad = bCtx.createLinearGradient(0, 75, 0, bHeight);
+      roadGrad.addColorStop(0, '#1e293b');
+      roadGrad.addColorStop(1, '#0f172a');
+      bCtx.fillStyle = roadGrad;
+      bCtx.beginPath();
+      bCtx.moveTo(bWidth * 0.38, 75);
+      bCtx.lineTo(bWidth * 0.62, 75);
+      bCtx.lineTo(bWidth * 0.95, bHeight);
+      bCtx.lineTo(bWidth * 0.05, bHeight);
+      bCtx.closePath();
+      bCtx.fill();
+
+      // Yellow Road center dashed stripes
+      bCtx.strokeStyle = '#fbbf24';
+      bCtx.lineWidth = 4;
+      bCtx.setLineDash([20, 16]);
+      bCtx.lineDashOffset = -roadOffset;
+      bCtx.beginPath();
+      bCtx.moveTo(bWidth / 2, 75);
+      bCtx.lineTo(bWidth / 2, bHeight);
+      bCtx.stroke();
+      bCtx.setLineDash([]);
+
+      // Neon road borders
+      bCtx.strokeStyle = '#f59e0b';
+      bCtx.lineWidth = 2;
+      bCtx.beginPath();
+      bCtx.moveTo(bWidth * 0.38, 75);
+      bCtx.lineTo(bWidth * 0.05, bHeight);
+      bCtx.moveTo(bWidth * 0.62, 75);
+      bCtx.lineTo(bWidth * 0.95, bHeight);
+      bCtx.stroke();
+
+      // Spawn Exhaust flames & smoke when accelerating
+      if (isReving || isNitro || currentSpeed > 100) {
+        spawnFlame(isNitro);
+        if (Math.random() > 0.4) spawnSmoke();
+      }
+
+      // Update & Draw Smoke
+      smokeParticles.forEach((sp, idx) => {
+        sp.y += sp.vy;
+        sp.x += sp.vx;
+        sp.alpha -= 0.02;
+        sp.size += 0.3;
+        if (sp.alpha <= 0) {
+          smokeParticles.splice(idx, 1);
+          return;
+        }
+        bCtx.fillStyle = `rgba(148, 163, 184, ${sp.alpha})`;
+        bCtx.beginPath();
+        bCtx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
+        bCtx.fill();
+      });
+
+      // Update & Draw Exhaust Flames
+      flames.forEach((fl, idx) => {
+        fl.y += fl.vy;
+        fl.x += fl.vx;
+        fl.alpha -= 0.05;
+        fl.size *= 0.92;
+        if (fl.alpha <= 0) {
+          flames.splice(idx, 1);
+          return;
+        }
+        bCtx.fillStyle = fl.color;
+        bCtx.globalAlpha = fl.alpha;
+        bCtx.beginPath();
+        bCtx.arc(fl.x, fl.y, fl.size, 0, Math.PI * 2);
+        bCtx.fill();
+        bCtx.globalAlpha = 1;
+      });
+
+      // Draw Superbike & Rider (Perspective rear view)
+      const bikeX = bWidth / 2 + (Math.sin(Date.now() * 0.015) * (currentSpeed > 150 ? 1.5 : 0.5));
+      const bikeY = bHeight - 48;
+
+      // Bike shadow
+      bCtx.fillStyle = 'rgba(0,0,0,0.45)';
+      bCtx.beginPath();
+      bCtx.ellipse(bikeX, bikeY + 22, 28, 7, 0, 0, Math.PI * 2);
+      bCtx.fill();
+
+      // Rear superbike wheel (wide racing slick)
+      bCtx.fillStyle = '#0f172a';
+      bCtx.beginPath();
+      bCtx.roundRect(bikeX - 10, bikeY + 2, 20, 24, 6);
+      bCtx.fill();
+
+      // Rim reflection
+      bCtx.strokeStyle = isNitro ? '#06b6d4' : '#f59e0b';
+      bCtx.lineWidth = 2.5;
+      bCtx.beginPath();
+      bCtx.arc(bikeX, bikeY + 14, 7, 0, Math.PI * 2);
+      bCtx.stroke();
+
+      // Dual Exhaust Pipes
+      bCtx.fillStyle = '#94a3b8';
+      bCtx.fillRect(bikeX - 15, bikeY + 4, 4, 10);
+      bCtx.fillRect(bikeX + 11, bikeY + 4, 4, 10);
+
+      // Superbike Aerodynamic Tail Cowl
+      bCtx.fillStyle = isNitro ? '#0284c7' : '#ea580c';
+      bCtx.beginPath();
+      bCtx.moveTo(bikeX - 18, bikeY - 2);
+      bCtx.lineTo(bikeX + 18, bikeY - 2);
+      bCtx.lineTo(bikeX + 8, bikeY + 12);
+      bCtx.lineTo(bikeX - 8, bikeY + 12);
+      bCtx.closePath();
+      bCtx.fill();
+
+      // Glowing LED Brake Light
+      bCtx.fillStyle = '#ef4444';
+      bCtx.shadowColor = '#ef4444';
+      bCtx.shadowBlur = 10;
+      bCtx.fillRect(bikeX - 7, bikeY + 1, 14, 4);
+      bCtx.shadowBlur = 0;
+
+      // Rider Torso & Racing Leathers
+      bCtx.fillStyle = '#1e293b';
+      bCtx.beginPath();
+      bCtx.ellipse(bikeX, bikeY - 18, 16, 12, 0, 0, Math.PI * 2);
+      bCtx.fill();
+
+      // Rider Helmet
+      bCtx.fillStyle = '#0f172a';
+      bCtx.beginPath();
+      bCtx.arc(bikeX, bikeY - 30, 11, 0, Math.PI * 2);
+      bCtx.fill();
+
+      // Visor with reflection
+      bCtx.fillStyle = isNitro ? '#38bdf8' : '#fbbf24';
+      bCtx.fillRect(bikeX - 7, bikeY - 32, 14, 4);
+
+      requestAnimationFrame(renderBike);
+    }
+    requestAnimationFrame(renderBike);
+  }
+
+  // =========================================================================
   // 2. PAGE 1: SLAMMING FIST BUMP PHYSICS
   // =========================================================================
   const fistArena = container.querySelector('#broFistArena');
@@ -573,4 +922,43 @@ export function renderBrotherTemplate(container, data) {
   modal?.addEventListener('click', (e) => {
     if (e.target === modal) modal.classList.remove('active');
   });
+
+  // HTML2Canvas Keepsake Polaroid download
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.fam-polaroid-item');
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.disabled = true;
+      html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(cvs => {
+        const a = document.createElement('a');
+        a.download = `bhai-polaroid-keepsake-${Date.now()}.png`;
+        a.href = cvs.toDataURL('image/png');
+        a.click();
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+        btn.innerHTML = '✓ Saved to Photos!';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2200);
+      }).catch(err => {
+        console.error('Download error:', err);
+        btn.innerHTML = 'Download Failed';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2000);
+      });
+    });
+  });
+
+  // Medium Zoom on Polaroid Images
+  try {
+    mediumZoom(container.querySelectorAll('.fam-polaroid-img-frame img'), {
+      margin: 18,
+      background: 'rgba(15, 10, 25, 0.92)'
+    });
+  } catch (e) {}
 }

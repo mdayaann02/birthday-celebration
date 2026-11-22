@@ -2,6 +2,8 @@
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 // Tactile Sound Synthesizer
@@ -189,6 +191,9 @@ export function renderBestieGirlTemplate(container, data) {
                   </div>
                   <div class="fam-polaroid-label">${p.title || `Vibe #${i+1}`}</div>
                   <div class="fam-polaroid-note">${p.note || ''}</div>
+                  <button type="button" class="btn-download-polaroid" title="Save keepsake polaroid" style="margin: 8px auto 2px auto;">
+                    📸 Save Keepsake
+                  </button>
                 </div>
               `).join('')}
             </div>
@@ -610,5 +615,53 @@ export function renderBestieGirlTemplate(container, data) {
   closeBtn?.addEventListener('click', () => modal?.classList.remove('active'));
   modal?.addEventListener('click', (e) => {
     if (e.target === modal) modal.classList.remove('active');
+  });
+
+  // =========================================================================
+  // KEEPSAKE POLAROID DOWNLOAD & CINEMATIC MEDIUM ZOOM
+  // =========================================================================
+  try {
+    mediumZoom(container.querySelectorAll('.fam-polaroid-img-frame img'), {
+      background: 'rgba(10, 10, 15, 0.92)',
+      margin: 24
+    });
+  } catch (_) {}
+
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.fam-polaroid-item');
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.style.opacity = '0.7';
+
+      html2canvas(card, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `bestie-keepsake-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        btn.innerHTML = '✅ Saved to Device!';
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#fbbf24', '#f472b6', '#e11d48', '#ffffff']
+        });
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.opacity = '1';
+        }, 2200);
+      }).catch(() => {
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+      });
+    });
   });
 }

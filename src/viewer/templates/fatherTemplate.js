@@ -2,6 +2,8 @@
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 // Tactile Sound Synthesizer
@@ -104,13 +106,63 @@ export function renderFatherTemplate(container, data) {
             <h1 class="fam-hero-title">${data.heroTitle || 'To My Father: The Unsung Hero 🌟'}</h1>
             <p class="fam-hero-subtitle">${data.heroSubtitle || "A father's sacrifice is quiet, yet it moves mountains. Thank you for being the unshakeable foundation of my life."}</p>
             
-            <!-- Interactive Golden Shield of Honor Centerpiece -->
-            <div class="dad-shield-arena" id="dadShieldArena" style="margin:24px auto 14px; text-align:center; cursor:pointer;">
-              <div class="shield-glowing-ring" id="shieldGlowRing" style="width:110px; height:110px; margin:0 auto; border-radius:50%; background:radial-gradient(circle, rgba(217,119,6,0.35) 0%, rgba(197,155,39,0.15) 60%, transparent 80%); display:flex; align-items:center; justify-content:center; box-shadow:0 0 25px rgba(197,155,39,0.3); transition:transform 0.3s ease;">
-                <span id="dadShieldIcon" style="font-size:52px; filter:drop-shadow(0 4px 12px rgba(180,83,9,0.4)); display:inline-block; transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">🛡️</span>
+            <!-- DYNAMIC 60FPS PAPA'S CELESTIAL COMPASS & LIGHTHOUSE BEACON ARENA -->
+            <div class="dad-beacon-arena" id="dadBeaconArena" style="position:relative; width:100%; max-width:410px; margin:18px auto 14px; min-height:250px; border-radius:20px; overflow:hidden; background:radial-gradient(110% 90% at 50% 25%, #0f172a 0%, #1e1b4b 50%, #09090b 100%); border:2px solid rgba(217, 119, 6, 0.45); box-shadow:0 12px 35px rgba(0,0,0,0.6), 0 0 25px rgba(217, 119, 6, 0.25); text-align:center;">
+              <!-- Canvas for starry night, sweeping lighthouse beam & constellation lines -->
+              <canvas id="dadBeaconCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
+
+              <!-- Vintage Brass Maritime Compass & Lighthouse Assembly -->
+              <div id="dadBeaconRig" style="position:relative; width:190px; margin:16px auto 6px; cursor:pointer; z-index:3; user-select:none; -webkit-user-select:none;">
+                <svg width="190" height="150" viewBox="0 0 190 150" style="display:block; margin:0 auto; overflow:visible;">
+                  <defs>
+                    <radialGradient id="beaconGlowGrad" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
+                      <stop offset="35%" stop-color="#f59e0b" stop-opacity="0.6" />
+                      <stop offset="100%" stop-color="#b45309" stop-opacity="0" />
+                    </radialGradient>
+                    <linearGradient id="brassOuterGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#fbbf24" />
+                      <stop offset="50%" stop-color="#d97706" />
+                      <stop offset="100%" stop-color="#78350f" />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Outer Heavy Brass Bezel Ring -->
+                  <circle cx="95" cy="75" r="58" fill="url(#brassOuterGrad)" stroke="#b45309" stroke-width="2" filter="drop-shadow(0 6px 12px rgba(0,0,0,0.4))" />
+                  <circle cx="95" cy="75" r="51" fill="#0f172a" stroke="#d97706" stroke-width="1.5" />
+
+                  <!-- Compass Degree Ticks -->
+                  <circle cx="95" cy="75" r="46" fill="none" stroke="rgba(245,158,11,0.4)" stroke-width="1" stroke-dasharray="2, 6" />
+
+                  <!-- Cardinal Markings -->
+                  <text x="95" y="38" fill="#fbbf24" font-size="11" font-weight="900" text-anchor="middle" font-family="monospace">N</text>
+                  <text x="135" y="79" fill="#d97706" font-size="10" font-weight="900" text-anchor="middle" font-family="monospace">E</text>
+                  <text x="95" y="118" fill="#d97706" font-size="10" font-weight="900" text-anchor="middle" font-family="monospace">S</text>
+                  <text x="56" y="79" fill="#d97706" font-size="10" font-weight="900" text-anchor="middle" font-family="monospace">W</text>
+
+                  <!-- 8-Point Compass Star in center -->
+                  <polygon points="95,44 98,72 126,75 98,78 95,106 92,78 64,75 92,72" fill="rgba(217,119,6,0.3)" />
+
+                  <!-- MAGNETIC COMPASS NEEDLE WITH SHADOW -->
+                  <g id="dadBeaconNeedle" style="transform-origin: 95px 75px; transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                    <!-- North Pointer (Ruby Red) -->
+                    <polygon points="95,30 100,75 95,71 90,75" fill="#ef4444" filter="drop-shadow(0 2px 5px rgba(239,68,68,0.5))" />
+                    <!-- South Pointer (Silver/Bronze) -->
+                    <polygon points="95,120 100,75 95,79 90,75" fill="#cbd5e1" />
+                    <!-- Center Pivot Brass Cap -->
+                    <circle cx="95" cy="75" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1.5" />
+                    <circle cx="95" cy="75" r="2" fill="#ffffff" />
+                  </g>
+                </svg>
               </div>
-              <div style="margin-top:10px; font-size:12px; font-weight:700; color:#d97706; letter-spacing:1px; text-transform:uppercase;">
-                ✦ Tap Shield of Honor to Forge Strength ✦
+
+              <!-- Constellation Feedback Banner -->
+              <div id="dadConstellationBanner" style="position:relative; z-index:3; display:inline-block; background:linear-gradient(90deg, #d97706, #b45309); color:#fff; font-size:11.5px; font-weight:800; padding:5px 16px; border-radius:20px; box-shadow:0 3px 12px rgba(217,119,6,0.4); margin-top:2px;">
+                🧭 "Papa is the steady lighthouse guiding my path"
+              </div>
+
+              <div style="font-size:11px; font-weight:600; color:#fbbf24; margin:8px 0 10px; letter-spacing:0.5px;">
+                ✦ Tap Compass to Align North Star Beacon ✦
               </div>
             </div>
 
@@ -241,6 +293,9 @@ export function renderFatherTemplate(container, data) {
                   </div>
                   <div class="fam-polaroid-label">${p.title || `Heritage #${i+1}`}</div>
                   <div class="fam-polaroid-note">${p.note || ''}</div>
+                  <button type="button" class="btn-download-polaroid" title="Save high-res keepsake" style="margin: 8px auto 2px auto;">
+                    📸 Save Keepsake
+                  </button>
                 </div>
               `).join('')}
             </div>
@@ -461,28 +516,123 @@ export function renderFatherTemplate(container, data) {
   }
 
   // =========================================================================
-  // 2. PAGE 1: INTERACTIVE GOLDEN SHIELD FORGE
+  // 2. PAGE 1: 60FPS PAPA'S CELESTIAL COMPASS & LIGHTHOUSE BEACON ARENA 🧭⛵
   // =========================================================================
-  const shieldArena = container.querySelector('#dadShieldArena');
-  const shieldIcon = container.querySelector('#dadShieldIcon');
-  const shieldRing = container.querySelector('#shieldGlowRing');
+  const beaconArena = container.querySelector('#dadBeaconArena');
+  const beaconCanvas = container.querySelector('#dadBeaconCanvas');
+  const beaconRig = container.querySelector('#dadBeaconRig');
+  const beaconNeedle = container.querySelector('#dadBeaconNeedle');
+  const constellationBanner = container.querySelector('#dadConstellationBanner');
 
-  shieldArena?.addEventListener('click', () => {
+  if (beaconCanvas) {
+    const bCtx = beaconCanvas.getContext('2d');
+    let bW = (beaconCanvas.width = beaconCanvas.offsetWidth || 390);
+    let bH = (beaconCanvas.height = 250);
+
+    let sweepAngle = 0;
+    // Constellation stars: spell out "PAPA • HERO"
+    const stars = [
+      { x: bW * 0.18, y: 35, r: 2.5 },
+      { x: bW * 0.32, y: 25, r: 3 },
+      { x: bW * 0.5, y: 20, r: 3.5 },
+      { x: bW * 0.68, y: 28, r: 3 },
+      { x: bW * 0.82, y: 38, r: 2.5 }
+    ];
+
+    function renderBeaconSky() {
+      bW = beaconCanvas.width = beaconCanvas.offsetWidth || 390;
+      bH = beaconCanvas.height = 250;
+      bCtx.clearRect(0, 0, bW, bH);
+
+      sweepAngle += 0.018;
+
+      // Draw sweeping lighthouse cone of golden light
+      const cx = bW / 2;
+      const cy = 95;
+      const beamLen = 220;
+      const beamHalfWidth = 0.28;
+
+      const beamGrad = bCtx.createRadialGradient(cx, cy, 10, cx, cy, beamLen);
+      beamGrad.addColorStop(0, 'rgba(254, 240, 138, 0.45)');
+      beamGrad.addColorStop(0.5, 'rgba(245, 158, 11, 0.2)');
+      beamGrad.addColorStop(1, 'rgba(217, 119, 6, 0)');
+
+      bCtx.save();
+      bCtx.fillStyle = beamGrad;
+      bCtx.beginPath();
+      bCtx.moveTo(cx, cy);
+      bCtx.arc(cx, cy, beamLen, sweepAngle - beamHalfWidth, sweepAngle + beamHalfWidth);
+      bCtx.closePath();
+      bCtx.fill();
+      bCtx.restore();
+
+      // Draw constellation starlight lines
+      bCtx.strokeStyle = 'rgba(251, 191, 36, 0.35)';
+      bCtx.lineWidth = 1.2;
+      bCtx.beginPath();
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+        if (i === 0) bCtx.moveTo(s.x, s.y);
+        else bCtx.lineTo(s.x, s.y);
+      }
+      bCtx.stroke();
+
+      // Draw constellation stars
+      stars.forEach(s => {
+        bCtx.fillStyle = '#fef08a';
+        bCtx.shadowColor = '#fbbf24';
+        bCtx.shadowBlur = 8;
+        bCtx.beginPath();
+        bCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        bCtx.fill();
+        bCtx.shadowBlur = 0;
+      });
+
+      requestAnimationFrame(renderBeaconSky);
+    }
+    requestAnimationFrame(renderBeaconSky);
+  }
+
+  let needleAngle = 0;
+  const dadVirtueQuotes = [
+    "🧭 \"Papa's integrity is my true North Star\"",
+    "🛡️ \"Silent sacrifices that moved whole mountains\"",
+    "🌟 \"Teaching us how to stand firm in any storm\"",
+    "👑 \"Unshakeable foundation and forever my hero\"",
+    "⚓ \"The steady anchor of our entire family\""
+  ];
+  let virtueIdx = 0;
+
+  function pulseBeacon() {
     playDadTone('brass');
-    if (navigator.vibrate) navigator.vibrate([40, 50, 60]);
+    if (navigator.vibrate) navigator.vibrate([30, 45]);
 
-    gsap.timeline()
-      .to(shieldIcon, { scale: 1.45, rotate: -10, duration: 0.25, ease: 'back.out(2)' })
-      .to(shieldRing, { scale: 1.3, boxShadow: '0 0 50px rgba(197,155,39,0.7)', duration: 0.3 }, '<')
-      .to(shieldIcon, { scale: 1.15, rotate: 0, duration: 0.35, ease: 'power2.out' })
-      .to(shieldRing, { scale: 1, boxShadow: '0 0 25px rgba(197,155,39,0.3)', duration: 0.35 }, '<');
+    needleAngle += 90 + Math.floor(Math.random() * 4) * 45;
+    if (beaconNeedle) {
+      gsap.to(beaconNeedle, {
+        rotate: needleAngle,
+        duration: 0.65,
+        ease: 'elastic.out(1.2, 0.4)'
+      });
+    }
+
+    virtueIdx = (virtueIdx + 1) % dadVirtueQuotes.length;
+    if (constellationBanner) {
+      constellationBanner.textContent = dadVirtueQuotes[virtueIdx];
+      gsap.fromTo(constellationBanner, { scale: 0.88 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
+    }
 
     confetti({
-      particleCount: 50,
+      particleCount: 45,
       spread: 70,
       origin: { y: 0.4 },
-      colors: ['#c59b27', '#d97706', '#fbbf24', '#ffffff']
+      colors: ['#fbbf24', '#f59e0b', '#d97706', '#ffffff']
     });
+  }
+
+  beaconRig?.addEventListener('click', pulseBeacon);
+  beaconArena?.addEventListener('click', (e) => {
+    if (e.target !== constellationBanner) pulseBeacon();
   });
 
   // =========================================================================
@@ -689,4 +839,43 @@ export function renderFatherTemplate(container, data) {
   modal?.addEventListener('click', (e) => {
     if (e.target === modal) modal.classList.remove('active');
   });
+
+  // HTML2Canvas Keepsake Polaroid download
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.fam-polaroid-item');
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.disabled = true;
+      html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(cvs => {
+        const a = document.createElement('a');
+        a.download = `papa-polaroid-keepsake-${Date.now()}.png`;
+        a.href = cvs.toDataURL('image/png');
+        a.click();
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+        btn.innerHTML = '✓ Saved to Photos!';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2200);
+      }).catch(err => {
+        console.error('Download error:', err);
+        btn.innerHTML = 'Download Failed';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2000);
+      });
+    });
+  });
+
+  // Medium Zoom on Polaroid Images
+  try {
+    mediumZoom(container.querySelectorAll('.fam-polaroid-img-frame img'), {
+      margin: 18,
+      background: 'rgba(15, 20, 30, 0.92)'
+    });
+  } catch (e) {}
 }

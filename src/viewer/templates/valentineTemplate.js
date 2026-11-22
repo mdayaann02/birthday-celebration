@@ -4,6 +4,8 @@
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 export function renderValentineTemplate(container, data) {
@@ -120,6 +122,9 @@ export function renderValentineTemplate(container, data) {
                   <div class="val-polaroid-caption">
                     <h4 class="val-pol-title">${p.title || `Memory #${i+1}`}</h4>
                     <p class="val-pol-note">${p.note || p.caption || ''}</p>
+                    <button type="button" class="btn-download-polaroid" title="Save keepsake polaroid" style="margin: 8px auto 2px auto;">
+                      📸 Save Keepsake
+                    </button>
                   </div>
                 </div>
               `).join('')}
@@ -501,5 +506,53 @@ ${data.letterText || `Dearest ${recipient},\n\nEvery day with you feels like a d
 
   container.querySelector('#btnValReplay')?.addEventListener('click', () => {
     goToPage(1);
+  });
+
+  // =========================================================================
+  // KEEPSAKE POLAROID DOWNLOAD & CINEMATIC MEDIUM ZOOM
+  // =========================================================================
+  try {
+    mediumZoom(container.querySelectorAll('.val-polaroid-img-frame img'), {
+      background: 'rgba(10, 10, 15, 0.92)',
+      margin: 24
+    });
+  } catch (_) {}
+
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.val-polaroid-card');
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.style.opacity = '0.7';
+
+      html2canvas(card, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `valentine-keepsake-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        btn.innerHTML = '✅ Saved to Device!';
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#ff4d6d', '#f43f5e', '#ffd700', '#ffffff']
+        });
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.opacity = '1';
+        }, 2200);
+      }).catch(() => {
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+      });
+    });
   });
 }

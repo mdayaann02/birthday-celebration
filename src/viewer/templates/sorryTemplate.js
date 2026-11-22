@@ -1,6 +1,9 @@
 // src/viewer/templates/sorryTemplate.js - Multi-Page Sincere Apology & Playful Reconciliation Experience
 
 import confetti from 'canvas-confetti';
+import gsap from 'gsap';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 // Web Audio Sound Synthesizer for tactile feedback
@@ -163,12 +166,74 @@ export function renderSorryTemplate(container, data) {
         <!-- PAGE 1: 💌 THE SINCERE CONFESSION -->
         <section class="sorry-page-card active" data-page="1">
           <div class="sorry-hero-wrap">
-            <div class="sorry-heartbeat-box">
-              <span class="heart-pulse-icon">💔</span>
-              <div class="heart-battery-info">
-                <span class="battery-label">BOYFRIEND HEART LEVEL:</span>
-                <div class="battery-bar"><div class="battery-fill" style="width: 12%;"></div></div>
-                <span class="battery-text">12% (Severely Weakened Without You 🥺)</span>
+            <!-- INTERACTIVE 60FPS RAINSTORM TO RADIANT RAINBOW & KINTSUGI MENDED HEART ARENA -->
+            <div class="sorry-rain-arena" id="sorryRainArena" style="position:relative; width:100%; max-width:440px; min-height:260px; margin:14px auto 18px auto; border-radius:22px; overflow:hidden; background:linear-gradient(180deg, rgba(15,23,42,0.94) 0%, rgba(30,41,59,0.96) 100%); border:1.5px solid rgba(148,163,184,0.3); box-shadow:0 12px 36px rgba(0,0,0,0.45); text-align:center; padding:16px 14px 18px 14px; box-sizing:border-box;">
+              
+              <!-- Interactive Rain Canvas -->
+              <canvas id="kintsugiRainCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
+
+              <!-- Radiant Rainbow Arc -->
+              <div id="kintsugiRainbow" style="position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:340px; height:180px; border-radius:180px 180px 0 0; background:radial-gradient(ellipse at bottom, transparent 48%, rgba(255,0,0,0.38) 50%, rgba(255,127,0,0.38) 54%, rgba(255,255,0,0.38) 58%, rgba(0,255,0,0.38) 62%, rgba(0,127,255,0.38) 66%, rgba(75,0,130,0.38) 70%, rgba(148,0,211,0.38) 74%, transparent 78%); opacity:0; pointer-events:none; z-index:2; filter:blur(1px); transition:opacity 0.8s ease;"></div>
+
+              <!-- Header Status Badge -->
+              <div style="position:relative; z-index:3; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 6px;">
+                <span id="stormStatePill" style="font-size:11px; font-weight:800; letter-spacing:0.8px; background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); padding:4px 10px; border-radius:20px; text-transform:uppercase;">
+                  🌧️ Gloomy Storm Active
+                </span>
+                <span id="heartBatteryVal" style="font-size:12px; font-weight:800; color:#fbbf24;">
+                  Heart Level: 12% 💔
+                </span>
+              </div>
+
+              <!-- Kintsugi Heart Stage -->
+              <div class="kintsugi-stage" id="kintsugiStage" style="position:relative; z-index:3; width:160px; height:140px; margin:0 auto 10px auto; cursor:pointer;" title="Tap to mend heart with gold">
+                <!-- Left Heart Half -->
+                <svg id="heartHalfLeft" viewBox="0 0 100 160" style="position:absolute; left:14px; top:0; width:65px; height:125px; filter:drop-shadow(0 6px 14px rgba(225,29,72,0.45)); transform:rotate(-8deg) translateX(-5px); transition:transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+                  <path d="M 95 30 C 95 10, 70 0, 45 0 C 20 0, 0 20, 0 55 C 0 95, 45 130, 95 155 Z" fill="url(#leftHeartGrad)"/>
+                  <defs>
+                    <linearGradient id="leftHeartGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#f43f5e"/>
+                      <stop offset="100%" stop-color="#be123c"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                <!-- Right Heart Half -->
+                <svg id="heartHalfRight" viewBox="0 0 100 160" style="position:absolute; right:14px; top:0; width:65px; height:125px; filter:drop-shadow(0 6px 14px rgba(225,29,72,0.45)); transform:rotate(8deg) translateX(5px); transition:transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+                  <path d="M 5 30 C 5 10, 30 0, 55 0 C 80 0, 100 20, 100 55 C 100 95, 55 130, 5 155 Z" fill="url(#rightHeartGrad)"/>
+                  <defs>
+                    <linearGradient id="rightHeartGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#fb7185"/>
+                      <stop offset="100%" stop-color="#e11d48"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                <!-- Glowing Golden Kintsugi Seam -->
+                <svg id="kintsugiGoldSeam" viewBox="0 0 40 160" style="position:absolute; left:50%; top:0; transform:translateX(-50%); width:34px; height:130px; z-index:4; opacity:0.3; filter:drop-shadow(0 0 6px #ffd700); transition:opacity 0.4s ease;">
+                  <path d="M 20 5 L 26 35 L 14 65 L 25 95 L 16 125 L 20 155" fill="none" stroke="#ffd700" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="26" cy="35" r="3" fill="#ffffff" />
+                  <circle cx="14" cy="65" r="3" fill="#ffffff" />
+                  <circle cx="25" cy="95" r="3" fill="#ffffff" />
+                </svg>
+
+                <!-- Center Healing Golden Aura -->
+                <div id="kintsugiAura" style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); width:75px; height:75px; border-radius:50%; background:radial-gradient(circle, #fde047 0%, #ca8a04 50%, transparent 75%); opacity:0; pointer-events:none; filter:blur(4px); transition:opacity 0.4s ease;"></div>
+              </div>
+
+              <!-- Dynamic Speech / Quote Banner -->
+              <div id="sorryMendBanner" style="position:relative; z-index:3; font-size:12.5px; font-weight:700; color:#f8fafc; background:rgba(0,0,0,0.5); padding:8px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); margin-bottom:12px; min-height:20px; transition:all 0.3s ease;">
+                "Tap heart or button to mend our bond with pure golden kintsugi 🥺✨"
+              </div>
+
+              <!-- Interactive Action Buttons -->
+              <div style="position:relative; z-index:3; display:flex; justify-content:center; gap:8px;">
+                <button type="button" id="btnMendKintsugi" style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%); color:#0f172a; font-weight:900; font-size:12px; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; box-shadow:0 4px 16px rgba(245,158,11,0.4); display:inline-flex; align-items:center; gap:5px;">
+                  ✨ Mend With Gold
+                </button>
+                <button type="button" id="btnWipeStorm" style="background:linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color:#ffffff; font-weight:800; font-size:12px; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; box-shadow:0 4px 14px rgba(2,132,199,0.35); display:inline-flex; align-items:center; gap:5px;">
+                  🌈 Clear Rainstorm
+                </button>
               </div>
             </div>
 
@@ -334,6 +399,9 @@ export function renderSorryTemplate(container, data) {
                         <span class="polaroid-tap-hint">Tap to flip 🔄</span>
                       </div>
                       <div class="polaroid-caption">${p.caption}</div>
+                      <button type="button" class="btn-download-polaroid" title="Save keepsake polaroid" style="margin: 6px auto 2px auto; background: linear-gradient(135deg, #f43f5e, #e11d48); color:#fff; border:none; padding:6px 14px; border-radius:18px; font-size:11px; font-weight:800; cursor:pointer; box-shadow:0 3px 10px rgba(225,29,72,0.3); display:inline-flex; align-items:center; gap:5px; pointer-events:auto;">
+                        📸 Save Keepsake
+                      </button>
                     </div>
                     <!-- Back of Polaroid -->
                     <div class="polaroid-back">
@@ -955,6 +1023,219 @@ export function renderSorryTemplate(container, data) {
       particleCount: 100,
       spread: 120,
       origin: { y: 0.5 }
+    });
+  });
+
+  // =========================================================================
+  // INTERACTIVE 60FPS RAINSTORM TO RADIANT RAINBOW & KINTSUGI MENDED HEART ARENA
+  // =========================================================================
+  const kCanvas = container.querySelector('#kintsugiRainCanvas');
+  const kStage = container.querySelector('#kintsugiStage');
+  const btnMend = container.querySelector('#btnMendKintsugi');
+  const btnWipe = container.querySelector('#btnWipeStorm');
+  const heartLeft = container.querySelector('#heartHalfLeft');
+  const heartRight = container.querySelector('#heartHalfRight');
+  const goldSeam = container.querySelector('#kintsugiGoldSeam');
+  const goldAura = container.querySelector('#kintsugiAura');
+  const rainbow = container.querySelector('#kintsugiRainbow');
+  const stormPill = container.querySelector('#stormStatePill');
+  const battVal = container.querySelector('#heartBatteryVal');
+  const mendBanner = container.querySelector('#sorryMendBanner');
+
+  let isHeartMended = false;
+
+  if (kCanvas) {
+    const kCtx = kCanvas.getContext('2d');
+    let kW = (kCanvas.width = kCanvas.offsetWidth || 380);
+    let kH = (kCanvas.height = 260);
+
+    // Raindrops when storm active, golden sparkle motes when mended
+    const drops = Array.from({ length: 32 }, () => ({
+      x: Math.random() * kW,
+      y: Math.random() * kH,
+      vy: 2.5 + Math.random() * 4,
+      vx: (Math.random() - 0.5) * 0.8,
+      len: 8 + Math.random() * 12,
+      alpha: 0.25 + Math.random() * 0.5
+    }));
+
+    const goldMotes = Array.from({ length: 28 }, () => ({
+      x: Math.random() * kW,
+      y: Math.random() * kH,
+      vy: 0.4 + Math.random() * 0.8,
+      vx: (Math.random() - 0.5) * 0.6,
+      r: 1 + Math.random() * 2.5,
+      alpha: 0.3 + Math.random() * 0.7
+    }));
+
+    function renderKintsugiCanvas() {
+      kW = kCanvas.width = kCanvas.offsetWidth || 380;
+      kH = kCanvas.height = 260;
+      kCtx.clearRect(0, 0, kW, kH);
+
+      if (!isHeartMended) {
+        // Falling rain
+        kCtx.strokeStyle = 'rgba(186, 230, 253, 0.45)';
+        kCtx.lineWidth = 1.5;
+        kCtx.lineCap = 'round';
+        drops.forEach(d => {
+          d.y += d.vy;
+          d.x += d.vx;
+          if (d.y > kH) {
+            d.y = -15;
+            d.x = Math.random() * kW;
+          }
+          kCtx.globalAlpha = d.alpha;
+          kCtx.beginPath();
+          kCtx.moveTo(d.x, d.y);
+          kCtx.lineTo(d.x + d.vx * 2, d.y + d.len);
+          kCtx.stroke();
+        });
+      } else {
+        // Rising golden kintsugi motes
+        goldMotes.forEach(m => {
+          m.y -= m.vy;
+          m.x += m.vx;
+          if (m.y < -10) {
+            m.y = kH + 10;
+            m.x = Math.random() * kW;
+          }
+          kCtx.fillStyle = '#fbbf24';
+          kCtx.globalAlpha = m.alpha;
+          kCtx.beginPath();
+          kCtx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+          kCtx.fill();
+        });
+      }
+      kCtx.globalAlpha = 1;
+      requestAnimationFrame(renderKintsugiCanvas);
+    }
+    requestAnimationFrame(renderKintsugiCanvas);
+  }
+
+  const mendQuotes = [
+    "✨ \"In Japanese Kintsugi, broken things are mended with gold to become even more cherished.\"",
+    "💖 \"Every crack in our journey is filled with pure gold and deeper love.\"",
+    "🌈 \"The storm has passed — only warmth, understanding, and joy ahead.\"",
+    "🫶 \"Thank you for healing our bond. You mean the entire world to me.\""
+  ];
+  let mendQuoteIdx = 0;
+
+  function triggerMendHeart() {
+    isHeartMended = true;
+    playSound('chime');
+    if (navigator.vibrate) navigator.vibrate([40, 80, 40]);
+
+    // Animate heart halves locking together seamlessly
+    gsap.to(heartLeft, {
+      rotate: 0,
+      x: 0,
+      duration: 0.6,
+      ease: 'back.out(1.7)'
+    });
+    gsap.to(heartRight, {
+      rotate: 0,
+      x: 0,
+      duration: 0.6,
+      ease: 'back.out(1.7)'
+    });
+
+    // Flare golden seam and glowing aura
+    gsap.to(goldSeam, {
+      opacity: 1,
+      scale: 1.15,
+      duration: 0.4,
+      yoyo: true,
+      repeat: 1,
+      ease: 'power2.out'
+    });
+    gsap.to(goldAura, {
+      opacity: 0.85,
+      scale: 1.4,
+      duration: 0.5,
+      yoyo: true,
+      repeat: 1,
+      ease: 'power2.out'
+    });
+
+    // Reveal glowing rainbow
+    if (rainbow) rainbow.style.opacity = '1';
+
+    // Update status pills and battery
+    if (stormPill) {
+      stormPill.textContent = "🌈 Radiant Skies • Bond Healed";
+      stormPill.style.background = "rgba(16, 185, 129, 0.25)";
+      stormPill.style.color = "#6ee7b7";
+      stormPill.style.borderColor = "rgba(16, 185, 129, 0.5)";
+    }
+    if (battVal) {
+      battVal.textContent = "Heart Level: 100% 💖 (Fully Restored)";
+      battVal.style.color = "#34d399";
+    }
+
+    mendQuoteIdx = (mendQuoteIdx + 1) % mendQuotes.length;
+    if (mendBanner) {
+      mendBanner.textContent = mendQuotes[mendQuoteIdx];
+      gsap.fromTo(mendBanner, { scale: 0.92 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
+    }
+
+    confetti({
+      particleCount: 55,
+      spread: 75,
+      origin: { y: 0.45 },
+      colors: ['#ffd700', '#f59e0b', '#f43f5e', '#38bdf8', '#ffffff']
+    });
+  }
+
+  kStage?.addEventListener('click', triggerMendHeart);
+  btnMend?.addEventListener('click', triggerMendHeart);
+  btnWipe?.addEventListener('click', triggerMendHeart);
+
+  // =========================================================================
+  // KEEPSAKE POLAROID DOWNLOAD & CINEMATIC MEDIUM ZOOM
+  // =========================================================================
+  try {
+    mediumZoom(container.querySelectorAll('.polaroid-front img'), {
+      background: 'rgba(10, 10, 15, 0.92)',
+      margin: 24
+    });
+  } catch (_) {}
+
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.sorry-polaroid-card') || btn.closest('.polaroid-front');
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.style.opacity = '0.7';
+
+      html2canvas(card, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `apology-keepsake-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        btn.innerHTML = '✅ Saved to Device!';
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#ff4d6d', '#fbbf24', '#f59e0b', '#38bdf8']
+        });
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.opacity = '1';
+        }, 2200);
+      }).catch(() => {
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+      });
     });
   });
 }

@@ -2,6 +2,8 @@
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 // Tactile Sound Synthesizer
@@ -11,7 +13,32 @@ function playSisTone(type) {
     if (ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
 
-    if (type === 'tick') {
+    if (type === 'giggle') {
+      [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + i * 0.05);
+        gain.gain.setValueAtTime(0.2, now + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.05);
+        osc.stop(now + i * 0.05 + 0.32);
+      });
+    } else if (type === 'swing') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(420, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.21);
+    } else if (type === 'tick') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
@@ -97,7 +124,103 @@ export function renderSisterTemplate(container, data) {
             <div class="fam-badge terracotta-badge">💅 TO MY PERPETUAL HEADACHE &amp; FOREVER BEST FRIEND 💖✨</div>
             <h1 class="fam-hero-title">${data.heroTitle || 'To My Crazy, Annoying, Irreplaceable Sister 💅✨'}</h1>
             <p class="fam-hero-subtitle">${data.heroSubtitle || 'We fight, we steal each other’s clothes, we drive each other insane... but no one has my back like you do!'}</p>
-            
+
+            <!-- DYNAMIC 60FPS HANGING PLUSHIE TEDDY BEAR SWING ARENA -->
+            <div class="sis-teddy-arena" id="sisTeddyArena" style="position:relative; width:100%; max-width:400px; margin:16px auto; min-height:260px; text-align:center; overflow:hidden; border-radius:20px; background:radial-gradient(120% 90% at 50% 20%, #fff7ed 0%, #fdf2f8 50%, #fce7f3 100%); border:2px solid rgba(244, 114, 182, 0.45); box-shadow:0 12px 35px rgba(244, 114, 182, 0.22);">
+              <!-- Floating pastel sparkles & hearts canvas -->
+              <canvas id="sisTeddyCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
+
+              <!-- Hanging ribbons & interactive swing assembly -->
+              <div id="sisTeddyRig" style="position:relative; width:180px; margin:0 auto; transform-origin: top center; cursor:grab; touch-action:none; z-index:3; user-select:none; -webkit-user-select:none;">
+                <svg width="180" height="240" viewBox="0 0 180 240" style="display:block; margin:0 auto; overflow:visible;">
+                  <defs>
+                    <linearGradient id="ribbonGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#f472b6" />
+                      <stop offset="100%" stop-color="#fb7185" />
+                    </linearGradient>
+                    <linearGradient id="teddyGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#c28859" />
+                      <stop offset="100%" stop-color="#9a5b2d" />
+                    </linearGradient>
+                    <linearGradient id="bellyGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#f5d7b5" />
+                      <stop offset="100%" stop-color="#e8bf95" />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Left Ribbon -->
+                  <line x1="45" y1="0" x2="45" y2="155" stroke="url(#ribbonGrad)" stroke-width="3" stroke-linecap="round" />
+                  <circle cx="45" cy="15" r="4.5" fill="#fb7185" />
+
+                  <!-- Right Ribbon -->
+                  <line x1="135" y1="0" x2="135" y2="155" stroke="url(#ribbonGrad)" stroke-width="3" stroke-linecap="round" />
+                  <circle cx="135" cy="15" r="4.5" fill="#fb7185" />
+
+                  <!-- Wooden Swing Plank -->
+                  <rect x="25" y="152" width="130" height="12" rx="6" fill="#854d0e" stroke="#713f12" stroke-width="1.5" />
+                  <rect x="30" y="154" width="120" height="3" rx="1.5" fill="#a16207" />
+
+                  <!-- TEDDY BEAR BODY -->
+                  <g id="teddyBearG">
+                    <!-- Left Ear -->
+                    <circle cx="60" cy="72" r="16" fill="url(#teddyGrad)" />
+                    <circle cx="60" cy="72" r="9" fill="#fbcfe8" />
+                    <!-- Right Ear -->
+                    <circle cx="120" cy="72" r="16" fill="url(#teddyGrad)" />
+                    <circle cx="120" cy="72" r="9" fill="#fbcfe8" />
+
+                    <!-- Head -->
+                    <circle cx="90" cy="95" r="34" fill="url(#teddyGrad)" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.15))" />
+
+                    <!-- Muzzle / Snout -->
+                    <ellipse cx="90" cy="104" rx="17" ry="13" fill="url(#bellyGrad)" />
+                    <ellipse cx="90" cy="98" rx="6" ry="4.5" fill="#451a03" />
+                    <path d="M 86 104 Q 90 109 94 104" stroke="#451a03" stroke-width="2" fill="none" stroke-linecap="round" />
+
+                    <!-- Blushing Cheeks -->
+                    <ellipse id="blushLeft" cx="72" cy="102" rx="7" ry="4" fill="#f43f5e" opacity="0.45" />
+                    <ellipse id="blushRight" cx="108" cy="102" rx="7" ry="4" fill="#f43f5e" opacity="0.45" />
+
+                    <!-- Eyes -->
+                    <circle cx="78" cy="90" r="5" fill="#1e1b4b" />
+                    <circle cx="76.5" cy="88.5" r="1.8" fill="#ffffff" />
+                    <circle cx="102" cy="90" r="5" fill="#1e1b4b" />
+                    <circle cx="100.5" cy="88.5" r="1.8" fill="#ffffff" />
+
+                    <!-- Body / Torso -->
+                    <ellipse cx="90" cy="140" rx="30" ry="24" fill="url(#teddyGrad)" />
+                    <ellipse cx="90" cy="140" rx="19" ry="16" fill="url(#bellyGrad)" />
+
+                    <!-- Cute Pink Bowtie -->
+                    <path d="M 80 120 L 90 124 L 80 128 Z" fill="#ec4899" />
+                    <path d="M 100 120 L 90 124 L 100 128 Z" fill="#ec4899" />
+                    <circle cx="90" cy="124" r="3.5" fill="#f43f5e" />
+
+                    <!-- Left & Right Paws holding rope -->
+                    <ellipse id="teddyPawLeft" cx="52" cy="132" rx="11" ry="8" fill="url(#teddyGrad)" transform="rotate(-15 52 132)" />
+                    <circle cx="52" cy="132" r="5" fill="#fbcfe8" />
+                    <ellipse id="teddyPawRight" cx="128" cy="132" rx="11" ry="8" fill="url(#teddyGrad)" transform="rotate(15 128 132)" />
+                    <circle cx="128" cy="132" r="5" fill="#fbcfe8" />
+
+                    <!-- Feet sitting on swing -->
+                    <ellipse cx="65" cy="154" rx="13" ry="9" fill="url(#teddyGrad)" />
+                    <circle cx="65" cy="154" r="5" fill="#fbcfe8" />
+                    <ellipse cx="115" cy="154" rx="13" ry="9" fill="url(#teddyGrad)" />
+                    <circle cx="115" cy="154" r="5" fill="#fbcfe8" />
+                  </g>
+                </svg>
+              </div>
+
+              <!-- Speech Bubble from Teddy -->
+              <div id="teddySpeechBubble" style="position:relative; z-index:4; display:inline-block; background:#fff; padding:6px 14px; border-radius:18px; border:1px solid #f472b6; font-size:12px; font-weight:700; color:#831843; box-shadow:0 4px 12px rgba(244,114,182,0.25); margin-top:4px; transition:transform 0.2s ease;">
+                🌸 "Drag to swing me or tap for sister love!"
+              </div>
+
+              <div style="font-size:11px; font-weight:600; color:#db2777; margin:6px 0 10px; letter-spacing:0.5px;">
+                ✦ Touch &amp; Drag Swing • Tap Teddy to Tickle ✦
+              </div>
+            </div>
+
             <!-- Interactive "Who is Smarter?" Debate Game -->
             <div class="sister-debate-box" style="margin:20px auto 14px; background:#fff7ed; padding:16px; border-radius:14px; border:1px solid #fdba74; text-align:center;">
               <div style="font-size:12px; font-weight:800; color:#ea580c; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
@@ -237,6 +360,9 @@ export function renderSisterTemplate(container, data) {
                   </div>
                   <div class="fam-polaroid-label">${p.title || `Leverage #${i+1}`}</div>
                   <div class="fam-polaroid-note">${p.note || ''}</div>
+                  <button type="button" class="btn-download-polaroid" title="Save high-res keepsake" style="margin: 8px auto 2px auto;">
+                    📸 Save Keepsake
+                  </button>
                 </div>
               `).join('')}
             </div>
@@ -453,6 +579,157 @@ export function renderSisterTemplate(container, data) {
   }
 
   // =========================================================================
+  // 1B. PAGE 1: 60FPS PHYSICS-BASED HANGING PLUSHIE TEDDY BEAR SWING 🧸🌸
+  // =========================================================================
+  const teddyRig = container.querySelector('#sisTeddyRig');
+  const teddySpeech = container.querySelector('#teddySpeechBubble');
+  const teddyCanvas = container.querySelector('#sisTeddyCanvas');
+  const blushLeft = container.querySelector('#blushLeft');
+  const blushRight = container.querySelector('#blushRight');
+  const pawLeft = container.querySelector('#teddyPawLeft');
+  const pawRight = container.querySelector('#teddyPawRight');
+
+  if (teddyRig) {
+    let currentAngle = 0;
+    let targetAngle = 0;
+    let angularVelocity = 0;
+    let isDragging = false;
+    let startX = 0;
+    let quoteIdx = 0;
+
+    const sisterQuotes = [
+      "🌸 \"You're the sweetest sister in the world!\"",
+      "👗 \"Even though you stole my favorite hoodie! 😂\"",
+      "👑 \"Forever my partner-in-crime and best friend!\"",
+      "🧸 \"Always here for warm hugs and iced boba!\"",
+      "✨ \"Nobody understands my humor like you do!\""
+    ];
+
+    // Floating pastel hearts & sparkles canvas
+    if (teddyCanvas) {
+      const tCtx = teddyCanvas.getContext('2d');
+      let tW = (teddyCanvas.width = teddyCanvas.offsetWidth || 380);
+      let tH = (teddyCanvas.height = 260);
+
+      const floaters = Array.from({ length: 18 }, () => ({
+        x: Math.random() * tW,
+        y: Math.random() * tH,
+        vy: 0.4 + Math.random() * 0.6,
+        vx: (Math.random() - 0.5) * 0.5,
+        size: 3 + Math.random() * 5,
+        alpha: 0.3 + Math.random() * 0.5,
+        isHeart: Math.random() > 0.5
+      }));
+
+      function renderFloaters() {
+        tW = teddyCanvas.width = teddyCanvas.offsetWidth || 380;
+        tH = teddyCanvas.height = 260;
+        tCtx.clearRect(0, 0, tW, tH);
+
+        floaters.forEach(f => {
+          f.y -= f.vy;
+          f.x += f.vx;
+          if (f.y < -10) {
+            f.y = tH + 10;
+            f.x = Math.random() * tW;
+          }
+
+          tCtx.globalAlpha = f.alpha;
+          if (f.isHeart) {
+            tCtx.fillStyle = '#f472b6';
+            tCtx.font = `${f.size * 2}px sans-serif`;
+            tCtx.fillText('♥', f.x, f.y);
+          } else {
+            tCtx.fillStyle = '#fbbf24';
+            tCtx.beginPath();
+            tCtx.arc(f.x, f.y, f.size / 2, 0, Math.PI * 2);
+            tCtx.fill();
+          }
+        });
+        tCtx.globalAlpha = 1;
+        requestAnimationFrame(renderFloaters);
+      }
+      requestAnimationFrame(renderFloaters);
+    }
+
+    // Interactive Drag to Swing
+    teddyRig.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      teddyRig.style.cursor = 'grabbing';
+      teddyRig.setPointerCapture(e.pointerId);
+    });
+
+    teddyRig.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - startX;
+      targetAngle = Math.max(-38, Math.min(38, deltaX * 0.28));
+      currentAngle = targetAngle;
+      teddyRig.style.transform = `rotate(${currentAngle}deg)`;
+    });
+
+    function releaseDrag() {
+      if (!isDragging) return;
+      isDragging = false;
+      teddyRig.style.cursor = 'grab';
+      playSisTone('swing');
+      if (navigator.vibrate) navigator.vibrate(15);
+    }
+
+    teddyRig.addEventListener('pointerup', releaseDrag);
+    teddyRig.addEventListener('pointercancel', releaseDrag);
+
+    // Tap Teddy to Tickle & Wave
+    teddyRig.addEventListener('click', (e) => {
+      if (Math.abs(targetAngle) > 8) return;
+      playSisTone('giggle');
+      if (navigator.vibrate) navigator.vibrate([20, 25]);
+
+      // Wave paws & blush
+      gsap.timeline()
+        .to([pawLeft, pawRight], { y: -8, duration: 0.15, yoyo: true, repeat: 3, ease: 'power1.inOut' })
+        .to([blushLeft, blushRight], { opacity: 0.9, duration: 0.2, yoyo: true, repeat: 1 }, '<');
+
+      // Update Speech Bubble
+      quoteIdx = (quoteIdx + 1) % sisterQuotes.length;
+      if (teddySpeech) {
+        teddySpeech.textContent = sisterQuotes[quoteIdx];
+        gsap.fromTo(teddySpeech, { scale: 0.85 }, { scale: 1, duration: 0.25, ease: 'back.out(2)' });
+      }
+
+      confetti({
+        particleCount: 35,
+        spread: 60,
+        origin: { y: 0.35 },
+        colors: ['#f472b6', '#fbcfe8', '#fbbf24', '#ffffff']
+      });
+    });
+
+    // 60FPS Pendulum Spring Physics loop
+    let lastTime = performance.now();
+    function animateSwing(now) {
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+
+      if (!isDragging) {
+        const gravityForce = -currentAngle * 12;
+        angularVelocity += gravityForce * dt;
+        angularVelocity *= 0.965;
+        currentAngle += angularVelocity * dt;
+
+        if (Math.abs(currentAngle) < 0.5 && Math.abs(angularVelocity) < 1) {
+          currentAngle = Math.sin(now * 0.0022) * 4.5;
+        }
+
+        teddyRig.style.transform = `rotate(${currentAngle}deg)`;
+      }
+
+      requestAnimationFrame(animateSwing);
+    }
+    requestAnimationFrame(animateSwing);
+  }
+
+  // =========================================================================
   // 2. PAGE 1: RUNAWAY "WHO IS SMARTER?" BUTTON
   // =========================================================================
   const btnVoteSibling = container.querySelector('#btnVoteSibling');
@@ -608,4 +885,43 @@ export function renderSisterTemplate(container, data) {
   modal?.addEventListener('click', (e) => {
     if (e.target === modal) modal.classList.remove('active');
   });
+
+  // HTML2Canvas Keepsake Polaroid download
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.fam-polaroid-item');
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.disabled = true;
+      html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(cvs => {
+        const a = document.createElement('a');
+        a.download = `behna-polaroid-keepsake-${Date.now()}.png`;
+        a.href = cvs.toDataURL('image/png');
+        a.click();
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+        btn.innerHTML = '✓ Saved to Photos!';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2200);
+      }).catch(err => {
+        console.error('Download error:', err);
+        btn.innerHTML = 'Download Failed';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2000);
+      });
+    });
+  });
+
+  // Medium Zoom on Polaroid Images
+  try {
+    mediumZoom(container.querySelectorAll('.fam-polaroid-img-frame img'), {
+      margin: 18,
+      background: 'rgba(25, 15, 25, 0.92)'
+    });
+  } catch (e) {}
 }

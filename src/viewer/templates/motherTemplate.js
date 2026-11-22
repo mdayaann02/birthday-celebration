@@ -2,6 +2,8 @@
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
+import html2canvas from 'html2canvas';
+import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 // Tactile Sound Synthesizer
@@ -11,7 +13,20 @@ function playMomTone(type) {
     if (ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
 
-    if (type === 'harp') {
+    if (type === 'bell') {
+      [587.33, 880, 1174.66].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.04);
+        gain.gain.setValueAtTime(0.24, now + i * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.85);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.04);
+        osc.stop(now + i * 0.04 + 0.9);
+      });
+    } else if (type === 'harp') {
       [261.63, 329.63, 392.00, 523.25, 659.25, 783.99].forEach((freq, i) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -105,13 +120,76 @@ export function renderMotherTemplate(container, data) {
             <h1 class="fam-hero-title">${data.heroTitle || 'To My Queen, My Beloved Maa ❤️'}</h1>
             <p class="fam-hero-subtitle">${data.heroSubtitle || 'In your gentle smile lies my entire universe, and in your quiet prayers I find my greatest strength.'}</p>
             
-            <!-- Interactive Blooming Lotus Centerpiece -->
-            <div class="mom-lotus-arena" id="momLotusArena" style="margin:24px auto 14px; text-align:center; cursor:pointer;">
-              <div class="lotus-glowing-ring" id="lotusGlowRing" style="width:110px; height:110px; margin:0 auto; border-radius:50%; background:radial-gradient(circle, rgba(254,240,138,0.4) 0%, rgba(244,114,182,0.15) 60%, transparent 80%); display:flex; align-items:center; justify-content:center; box-shadow:0 0 25px rgba(212,175,55,0.25); transition:transform 0.3s ease;">
-                <span id="momLotusIcon" style="font-size:52px; filter:drop-shadow(0 4px 12px rgba(212,35,92,0.3)); display:inline-block; transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">🪷</span>
+            <!-- DYNAMIC 60FPS SACRED LIVING DIYA & BLOOMING GOLDEN LOTUS ARENA -->
+            <div class="mom-diya-arena" id="momDiyaArena" style="position:relative; width:100%; max-width:390px; margin:18px auto 14px; min-height:240px; border-radius:20px; overflow:hidden; background:radial-gradient(110% 90% at 50% 30%, #fffbeb 0%, #fef3c7 40%, #fed7aa 100%); border:2px solid rgba(212, 175, 55, 0.45); box-shadow:0 12px 35px rgba(217, 119, 6, 0.22); text-align:center;">
+              <!-- Canvas for dynamic water ripples, flame god-rays, floating gold dust embers -->
+              <canvas id="momDiyaCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
+
+              <!-- Sacred Golden Lotus & Living Diya Flame Assembly -->
+              <div id="momLotusRig" style="position:relative; width:190px; margin:16px auto 8px; cursor:pointer; z-index:3; user-select:none; -webkit-user-select:none;">
+                <svg width="190" height="150" viewBox="0 0 190 150" style="display:block; margin:0 auto; overflow:visible;">
+                  <defs>
+                    <radialGradient id="flameHaloGrad" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.9" />
+                      <stop offset="40%" stop-color="#f59e0b" stop-opacity="0.5" />
+                      <stop offset="100%" stop-color="#b45309" stop-opacity="0" />
+                    </radialGradient>
+                    <linearGradient id="lotusPinkGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#f472b6" />
+                      <stop offset="60%" stop-color="#fda4af" />
+                      <stop offset="100%" stop-color="#ffffff" />
+                    </linearGradient>
+                    <linearGradient id="brassDiyaGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#fbbf24" />
+                      <stop offset="50%" stop-color="#d97706" />
+                      <stop offset="100%" stop-color="#78350f" />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Water ripples beneath lotus -->
+                  <ellipse cx="95" cy="132" rx="72" ry="14" fill="none" stroke="rgba(217,119,6,0.3)" stroke-width="1.5" />
+                  <ellipse cx="95" cy="132" rx="52" ry="9" fill="none" stroke="rgba(217,119,6,0.4)" stroke-width="1" />
+
+                  <!-- OUTER LOTUS PETALS -->
+                  <g id="momOuterPetals" style="transform-origin: 95px 132px; transition:transform 0.4s ease;">
+                    <path d="M 45 130 C 20 100 35 60 55 90 C 70 115 55 130 45 130 Z" fill="url(#lotusPinkGrad)" opacity="0.85" />
+                    <path d="M 145 130 C 170 100 155 60 135 90 C 120 115 135 130 145 130 Z" fill="url(#lotusPinkGrad)" opacity="0.85" />
+                    <path d="M 68 132 C 40 90 70 45 82 85 C 90 110 75 132 68 132 Z" fill="url(#lotusPinkGrad)" opacity="0.9" />
+                    <path d="M 122 132 C 150 90 120 45 108 85 C 100 110 115 132 122 132 Z" fill="url(#lotusPinkGrad)" opacity="0.9" />
+                  </g>
+
+                  <!-- INNER LOTUS PETALS -->
+                  <g id="momInnerPetals" style="transform-origin: 95px 132px; transition:transform 0.4s ease;">
+                    <path d="M 95 132 C 78 85 88 55 95 40 C 102 55 112 85 95 132 Z" fill="url(#lotusPinkGrad)" />
+                  </g>
+
+                  <!-- BRASS DIYA / OIL LAMP VESSEL -->
+                  <ellipse cx="95" cy="115" rx="36" ry="14" fill="url(#brassDiyaGrad)" stroke="#b45309" stroke-width="1.5" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.2))" />
+                  <ellipse cx="95" cy="112" rx="30" ry="9" fill="#78350f" />
+                  <ellipse cx="95" cy="112" rx="27" ry="7" fill="#f59e0b" opacity="0.8" />
+
+                  <!-- PULSING VOLUMETRIC FLAME HALO -->
+                  <circle id="momFlameHalo" cx="95" cy="80" r="38" fill="url(#flameHaloGrad)" opacity="0.6" />
+
+                  <!-- DANCING GOLDEN FLAME -->
+                  <g id="momFlameBody" style="transform-origin: 95px 105px;">
+                    <!-- Outer flame (Golden amber) -->
+                    <path d="M 95 108 C 82 104 80 88 95 55 C 110 88 108 104 95 108 Z" fill="#f59e0b" />
+                    <!-- Inner flame (Brilliant core) -->
+                    <path d="M 95 106 C 88 102 87 92 95 72 C 103 92 102 102 95 106 Z" fill="#fef08a" />
+                    <!-- White-hot teardrop tip -->
+                    <ellipse cx="95" cy="98" rx="3.5" ry="5.5" fill="#ffffff" />
+                  </g>
+                </svg>
               </div>
-              <div style="margin-top:10px; font-size:12px; font-weight:700; color:#b45309; letter-spacing:1px; text-transform:uppercase;">
-                ✦ Tap Lotus to Unfurl Maa's Blessing ✦
+
+              <!-- Glowing Dua / Blessing ribbon -->
+              <div id="momBlessingBanner" style="position:relative; z-index:3; display:inline-block; background:linear-gradient(90deg, #d97706, #b45309); color:#fff; font-size:11.5px; font-weight:800; padding:5px 16px; border-radius:20px; box-shadow:0 3px 12px rgba(180,83,9,0.3); margin-top:2px;">
+                🪔 "Maa's prayers are the light of our universe"
+              </div>
+
+              <div style="font-size:11px; font-weight:600; color:#b45309; margin:8px 0 10px; letter-spacing:0.5px;">
+                ✦ Tap Diya to Kindle Mother's Warmth &amp; Dua ✦
               </div>
             </div>
 
@@ -221,6 +299,9 @@ export function renderMotherTemplate(container, data) {
                   </div>
                   <div class="fam-polaroid-label">${p.title || `Memory #${i+1}`}</div>
                   <div class="fam-polaroid-note">${p.note || ''}</div>
+                  <button type="button" class="btn-download-polaroid" title="Save high-res keepsake" style="margin: 8px auto 2px auto;">
+                    📸 Save Keepsake
+                  </button>
                 </div>
               `).join('')}
             </div>
@@ -454,29 +535,112 @@ export function renderMotherTemplate(container, data) {
   }
 
   // =========================================================================
-  // 2. PAGE 1: INTERACTIVE BLOOMING LOTUS BLESSING
+  // 2. PAGE 1: 60FPS SACRED LIVING DIYA & BLOOMING GOLDEN LOTUS ARENA 🪔🌸
   // =========================================================================
-  const lotusArena = container.querySelector('#momLotusArena');
-  const lotusIcon = container.querySelector('#momLotusIcon');
-  const lotusRing = container.querySelector('#lotusGlowRing');
+  const diyaArena = container.querySelector('#momDiyaArena');
+  const diyaCanvas = container.querySelector('#momDiyaCanvas');
+  const lotusRig = container.querySelector('#momLotusRig');
+  const outerPetals = container.querySelector('#momOuterPetals');
+  const innerPetals = container.querySelector('#momInnerPetals');
+  const flameHalo = container.querySelector('#momFlameHalo');
+  const flameBody = container.querySelector('#momFlameBody');
+  const blessingBanner = container.querySelector('#momBlessingBanner');
 
-  lotusArena?.addEventListener('click', () => {
-    playMomTone('harp');
-    if (navigator.vibrate) navigator.vibrate([30, 40, 50]);
+  if (diyaCanvas) {
+    const dCtx = diyaCanvas.getContext('2d');
+    let dW = (diyaCanvas.width = diyaCanvas.offsetWidth || 380);
+    let dH = (diyaCanvas.height = 240);
 
-    // GSAP blossom bloom & glow expansion
+    // Floating gold dust embers
+    const embers = Array.from({ length: 22 }, () => ({
+      x: Math.random() * dW,
+      y: Math.random() * dH,
+      vy: 0.3 + Math.random() * 0.7,
+      vx: (Math.random() - 0.5) * 0.4,
+      size: 1.5 + Math.random() * 3,
+      alpha: 0.2 + Math.random() * 0.6
+    }));
+
+    function renderDiyaEmbers() {
+      dW = diyaCanvas.width = diyaCanvas.offsetWidth || 380;
+      dH = diyaCanvas.height = 240;
+      dCtx.clearRect(0, 0, dW, dH);
+
+      embers.forEach(em => {
+        em.y -= em.vy;
+        em.x += em.vx;
+        if (em.y < -5) {
+          em.y = dH + 5;
+          em.x = Math.random() * dW;
+        }
+
+        dCtx.fillStyle = '#f59e0b';
+        dCtx.globalAlpha = em.alpha;
+        dCtx.beginPath();
+        dCtx.arc(em.x, em.y, em.size, 0, Math.PI * 2);
+        dCtx.fill();
+      });
+      dCtx.globalAlpha = 1;
+      requestAnimationFrame(renderDiyaEmbers);
+    }
+    requestAnimationFrame(renderDiyaEmbers);
+  }
+
+  // Flame gentle dancing idle loop
+  if (flameBody) {
+    gsap.to(flameBody, {
+      scaleY: 1.12,
+      scaleX: 0.94,
+      rotate: 2,
+      duration: 0.28,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inOut'
+    });
+  }
+
+  const momDuaQuotes = [
+    "🪔 \"Maa's prayers are the light of our universe\"",
+    "🌸 \"In your gentle smile lies my greatest peace\"",
+    "🤍 \"May Allah bless you with eternal health & joy\"",
+    "👑 \"Forever the queen of my heart, dearest Maa\"",
+    "✨ \"A mother's love is heaven brought down to earth\""
+  ];
+  let quoteIndex = 0;
+
+  function kindleDiya() {
+    playMomTone('bell');
+    if (navigator.vibrate) navigator.vibrate([25, 35, 45]);
+
+    // GSAP Flame bloom & Petals bloom
     gsap.timeline()
-      .to(lotusIcon, { scale: 1.5, rotate: 15, duration: 0.3, ease: 'back.out(2)' })
-      .to(lotusRing, { scale: 1.35, boxShadow: '0 0 45px rgba(212,175,55,0.6)', duration: 0.4 }, '<')
-      .to(lotusIcon, { scale: 1.15, rotate: 0, duration: 0.35, ease: 'power2.out' })
-      .to(lotusRing, { scale: 1, boxShadow: '0 0 25px rgba(212,175,55,0.25)', duration: 0.4 }, '<');
+      .to(flameHalo, { scale: 1.6, opacity: 0.9, duration: 0.35, ease: 'back.out(2)' })
+      .to(flameBody, { scale: 1.4, duration: 0.25 }, '<')
+      .to(outerPetals, { scale: 1.15, transformOrigin: '95px 132px', duration: 0.4, ease: 'back.out(1.8)' }, '<')
+      .to(innerPetals, { scale: 1.1, transformOrigin: '95px 132px', duration: 0.4 }, '<')
+      .to(flameHalo, { scale: 1, opacity: 0.6, duration: 0.5, ease: 'power2.out' }, '+=0.2')
+      .to(flameBody, { scale: 1, duration: 0.4 }, '<')
+      .to(outerPetals, { scale: 1, duration: 0.5 }, '<')
+      .to(innerPetals, { scale: 1, duration: 0.5 }, '<');
+
+    // Update blessing banner
+    quoteIndex = (quoteIndex + 1) % momDuaQuotes.length;
+    if (blessingBanner) {
+      blessingBanner.textContent = momDuaQuotes[quoteIndex];
+      gsap.fromTo(blessingBanner, { scale: 0.88 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
+    }
 
     confetti({
-      particleCount: 50,
-      spread: 75,
-      origin: { y: 0.42 },
-      colors: ['#d4af37', '#fef08a', '#f472b6', '#ffffff']
+      particleCount: 45,
+      spread: 70,
+      origin: { y: 0.4 },
+      colors: ['#fbbf24', '#f59e0b', '#f472b6', '#ffffff']
     });
+  }
+
+  lotusRig?.addEventListener('click', kindleDiya);
+  diyaArena?.addEventListener('click', (e) => {
+    if (e.target !== blessingBanner) kindleDiya();
   });
 
   // =========================================================================
@@ -755,4 +919,43 @@ export function renderMotherTemplate(container, data) {
   modal?.addEventListener('click', (e) => {
     if (e.target === modal) modal.classList.remove('active');
   });
+
+  // HTML2Canvas Keepsake Polaroid download
+  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.fam-polaroid-item');
+      if (!card) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Rendering...';
+      btn.disabled = true;
+      html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(cvs => {
+        const a = document.createElement('a');
+        a.download = `maa-polaroid-keepsake-${Date.now()}.png`;
+        a.href = cvs.toDataURL('image/png');
+        a.click();
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+        btn.innerHTML = '✓ Saved to Photos!';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2200);
+      }).catch(err => {
+        console.error('Download error:', err);
+        btn.innerHTML = 'Download Failed';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2000);
+      });
+    });
+  });
+
+  // Medium Zoom on Polaroid Images
+  try {
+    mediumZoom(container.querySelectorAll('.fam-polaroid-img-frame img'), {
+      margin: 18,
+      background: 'rgba(25, 20, 15, 0.92)'
+    });
+  } catch (e) {}
 }
