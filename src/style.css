@@ -6439,7 +6439,8 @@ body {
   border-radius: 14px;
   font-size: 11.5px;
   font-weight: 700;
-  cursor: pointer;
+  cursor: default;
+  pointer-events: none;
   white-space: nowrap;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
@@ -11402,4 +11403,35 @@ svg {
   font-size: 14.5px;
   color: #fbcfe8;
   letter-spacing: 0.5px;
+}
+
+/* ========================================================
+   BESTIE BOY (BRO / RIDE-OR-DIE) THEME OVERRIDES
+   ======================================================== */
+.blossom-app-viewport.bestie-boy-theme {
+  background: radial-gradient(circle at 50% 35%, #0b1329 0%, #070c18 55%, #03060c 100%) !important;
+  color: #f0f9ff !important;
+}
+
+.blossom-app-viewport.bestie-boy-theme .blossom-calligraphy-text {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 25px rgba(56, 189, 248, 0.6) !important;
+}
+
+.blossom-app-viewport.bestie-boy-theme .blossom-nav-pill-btn {
+  background: rgba(56, 189, 248, 0.15) !important;
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
+}
+
+.blossom-app-viewport.bestie-boy-theme .cd-track-pill {
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+.blossom-app-viewport.bestie-boy-theme .cd-pill-title {
+  color: #38bdf8 !important;
+}
+
+.blossom-app-viewport.bestie-boy-theme .cd-pill-equalizer span {
+  background: #38bdf8 !important;
 }

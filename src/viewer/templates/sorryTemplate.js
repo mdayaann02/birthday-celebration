@@ -143,14 +143,15 @@ export function renderSorryTemplate(container, data) {
           <div class="sorry-step-progress-fill" id="stepProgressFill" style="width: 14%;"></div>
         </div>
 
-        <nav class="sorry-tabs-capsule" id="sorryTabsCapsule" aria-label="Apology Story Pages">
+        <!-- Passive Story Progress Indicator (Top direct page switching is disabled so sincere steps cannot be skipped) -->
+        <div class="sorry-tabs-capsule sorry-tabs-tracker" id="sorryTabsCapsule" aria-label="Apology Story Progress" style="pointer-events:none; cursor:default; user-select:none;">
           ${pageTitles.map(p => `
-            <button type="button" class="sorry-tab-pill ${p.num === 1 ? 'active' : ''}" data-page="${p.num}">
+            <div class="sorry-tab-pill ${p.num === 1 ? 'active' : ''}" data-page="${p.num}" style="pointer-events:none; cursor:default;">
               <span class="sorry-tab-icon">${p.icon}</span>
               <span class="sorry-tab-label">${p.title}</span>
-            </button>
+            </div>
           `).join('')}
-        </nav>
+        </div>
       </header>
 
       <!-- Multi-Page Content Slider Container -->
@@ -496,13 +497,8 @@ export function renderSorryTemplate(container, data) {
     if (navigator.vibrate) navigator.vibrate(15);
   }
 
-  // Bind Tab Pills
-  container.querySelectorAll('.sorry-tab-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const p = parseInt(btn.getAttribute('data-page'));
-      goToPage(p);
-    });
-  });
+  // Top Tab Pills are passive progress indicators only (jumping ahead is prohibited)
+  // Navigation happens through the interactive story stage buttons below
 
   // Bind Next / Prev buttons
   container.querySelectorAll('.btn-sorry-next').forEach(btn => {

@@ -331,6 +331,116 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     }
   },
 
+  bestie_girl: {
+    id: "bestie_girl",
+    name: "Girl Bestie (Soul Sister)",
+    badge: "Girl Bestie 💅🌸",
+    icon: "💅",
+    description: "The viral Blossom-style girl bestie journey: Touch the Friendship Charm bloom opener, secret bestie passcode keypad, heartfelt intro note, match flame to light the celebration cake, tap-to-blow candles, 3D memory flip cards, hanging fairy light string pull, wax-sealed sisterhood letter, and bestie awards.",
+    defaultTheme: {
+      primary: "#f472b6",
+      bgGradient: "radial-gradient(circle at 50% 35%, #fff1f2 0%, #fdf2f8 50%, #ffe4e6 100%)",
+      accent: "#ec4899"
+    },
+    defaultData: {
+      recipientName: "My Bestie",
+      senderName: "Your Soul Sister",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Bestie Forever Soundtrack",
+      audioSubtitle: "SOUL SISTER VIBES",
+      audioSrc: "/audio/blossom_song.mp3",
+      blossomPrompt: "Touch the friendship charm 🌸",
+      keypadTitle: "Bestie Security Check 🔐",
+      keypadSubtitle: "Enter our secret code",
+      introHeading: "Hey Gorgeous ✨",
+      introLine1: "We do crazy, unhinged things together every day...",
+      introLine2: "So I made this special website just for you.",
+      flamePrompt: "Touch the sparkler to light ✨",
+      cakeHeadline: "Happy Birthday to My Bestie! 🎂",
+      cakeSubtext: "Make a wish and tap the candles ✨",
+      memoriesHeading: "CRAZY BESTIE MEMORIES",
+      memoriesSubtitle: "Swipe the cards ✨",
+      cards: [
+        { image: "/images/sunset.jpg", caption: "Sunset gossips & iced coffee runs ☕🌅" },
+        { image: "/images/always_you.jpg", caption: "Laughing so hard our stomachs hurt 😂" },
+        { image: "/images/pretty.jpg", caption: "Serving absolute main character energy 💅" },
+        { image: "/images/dream_girl.jpg", caption: "Partners in crime through everything 👯‍♀️" },
+        { image: "/images/queen.jpg", caption: "Forever my favorite human in the world 👑" }
+      ],
+      lampPrompt: "DRAG THE FAIRY LIGHT STRING DOWN",
+      letterPrompt: "A Letter, Just For You",
+      letterSubprompt: "Tap the envelope to unseal",
+      letterModalTitle: "Happy Birthday Bestie ✨",
+      letterModalSub: "For my soul sister ♡",
+      letterBody: `Happiest Birthday to my favorite girl! 🧚‍♀️💖
+
+I honestly don’t know what I would do without our 2 AM rants, emergency outfit approvals, and laughing at things nobody else finds funny.
+
+You are the sister I got to choose. Thank you for always listening, never judging, and being the warmest, brightest light in my life.
+
+I hope this year brings you all the happiness, luxury, peace, and dreams you truly deserve. You are the main character and don’t you ever forget it! 🥰
+
+I love you endlessly, my soul sister! 🫂🧿✨`
+    }
+  },
+
+  bestie_boy: {
+    id: "bestie_boy",
+    name: "Bro Bestie (Ride or Die)",
+    badge: "Bro Bestie 👊⚡",
+    icon: "👊",
+    description: "The ultimate interactive brotherhood journey: Fist-bump shockwave unlock, bro-code security keypad, hype intro note, lighter flame to ignite the celebration cake/torch, blowable candles, 3D polaroid roast & memory wall, tactical neon switch, and sealed brotherhood letter.",
+    defaultTheme: {
+      primary: "#38bdf8",
+      bgGradient: "linear-gradient(180deg, #090e1a 0%, #0d1527 100%)",
+      accent: "#0284c7"
+    },
+    defaultData: {
+      recipientName: "Bhai / My Guy",
+      senderName: "Your Bro",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Brotherhood Anthem",
+      audioSubtitle: "RIDE OR DIE ⚡",
+      audioSrc: "/audio/blossom_song.mp3",
+      blossomPrompt: "Fist bump to unlock the bro vault 👊⚡",
+      keypadTitle: "Bro-Code Security Vault 🛡️",
+      keypadSubtitle: "Only real ones enter",
+      introHeading: "Yo Brother 👑",
+      introLine1: "No cringe emotional speeches, you already know what it is...",
+      introLine2: "I built this legendary website just for you, my guy.",
+      flamePrompt: "Touch the lighter flame to ignite 🔥",
+      cakeHeadline: "Happy Birthday to My Brother! 🎂",
+      cakeSubtext: "Make a wish and blow out the candles 👑",
+      memoriesHeading: "LEGENDARY BRO MEMORIES",
+      memoriesSubtitle: "Swipe the cards ✨",
+      cards: [
+        { image: "/images/sunset.jpg", caption: "Late night drives & deep life talks 🚗💨" },
+        { image: "/images/always_you.jpg", caption: "Surviving chaos together since day one ⚡" },
+        { image: "/images/dream_girl.jpg", caption: "Epic gaming sessions until 4 AM 🎮" },
+        { image: "/images/pretty.jpg", caption: "Brothers by choice, legends by birth 👑" },
+        { image: "/images/queen.jpg", caption: "To 100 more years of crazy adventures 🍻" }
+      ],
+      lampPrompt: "PULL DOWN THE TACTICAL NEON SWITCH",
+      letterPrompt: "A Letter, Just For You",
+      letterSubprompt: "Tap the seal to unlock",
+      letterModalTitle: "Happy Birthday, My Brother 👑",
+      letterModalSub: "Ride or Die Forever ⚡",
+      letterBody: `Happiest Birthday, my brother! 👑🎂
+
+People come and go, but having a brother who always has your back through every high and low is the rarest blessing in this world.
+
+From late-night drives and gaming grinds to pushing each other to level up in life — thank you for being the most genuine, loyal guy I know.
+
+I pray this year brings you unstoppable success, big money, peace, and everything you are grinding for.
+
+Brothers for life, no matter where life takes us. Ride or die forever! 👊🔥🧿`
+    }
+  },
+
   friendship: {
     id: "friendship",
     name: "Bestie Celebration",

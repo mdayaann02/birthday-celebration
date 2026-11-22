@@ -13,6 +13,8 @@ import { renderMotherTemplate } from './templates/motherTemplate.js';
 import { renderFatherTemplate } from './templates/fatherTemplate.js';
 import { renderSisterTemplate } from './templates/sisterTemplate.js';
 import { renderBrotherTemplate } from './templates/brotherTemplate.js';
+import { renderBestieGirlTemplate } from './templates/bestieGirlTemplate.js';
+import { renderBestieBoyTemplate } from './templates/bestieBoyTemplate.js';
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
   initInteractiveSparkles();
@@ -75,6 +77,12 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
       break;
     case 'brother':
       renderBrotherTemplate(root, data);
+      break;
+    case 'bestie_girl':
+      renderBestieGirlTemplate(root, data, isMakerReview);
+      break;
+    case 'bestie_boy':
+      renderBestieBoyTemplate(root, data, isMakerReview);
       break;
     case 'birthday':
     default:

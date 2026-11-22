@@ -248,7 +248,10 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         `).join('')}
       </div>
     `;
-  } else if (templateId === 'blossom') {
+  } else if (templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
+    const isGirl = templateId === 'bestie_girl';
+    const isBoy = templateId === 'bestie_boy';
+    const sectionTitle = isGirl ? "💅 Girl Bestie (Soul Sister) Details" : isBoy ? "👊 Bro Bestie (Ride or Die) Details" : "🌸 Blossom Romance Details (Viral Pastel Story)";
     const blossomCards = (data.cards && data.cards.length > 0) ? data.cards : [
       { image: "/images/blossom/memory_1.jpg", caption: "Sweet moments with you" },
       { image: "/images/blossom/memory_2.jpg", caption: "Adventures in cold snow" },
@@ -258,7 +261,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     ];
 
     specificBox.innerHTML = `
-      <div class="section-title">🌸 Blossom Romance Details (Viral Pastel Story)</div>
+      <div class="section-title">${sectionTitle}</div>
       <div class="editor-grid-2">
         <div class="form-group">
           <label class="form-label">4-Digit Passcode (Keypad)</label>
@@ -894,7 +897,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         });
         if (polsArr.length > 0) updated.polaroids = polsArr;
       }
-    } else if (templateId === 'blossom') {
+    } else if (templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
       const elPin = container.querySelector('#edBlossomPin');
       const elKeyTitle = container.querySelector('#edBlossomKeypadTitle');
       const elPrompt = container.querySelector('#edBlossomPrompt');
