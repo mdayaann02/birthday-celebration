@@ -819,168 +819,617 @@ body {
   border-color: var(--primary);
 }
 
-/* 3D Magazine Spread */
-.book-wrap {
-  width: 100%;
-  max-width: 960px;
-  min-height: 540px;
-  margin: 0 auto;
-  perspective: 1600px;
+/* ========================================================
+   TRUE REALISTIC 3D HARDCOVER FLIPBOOK ENGINE
+   ======================================================== */
+.real3d-magazine-section {
+  padding: 80px 16px 100px;
+  background: radial-gradient(circle at 50% 30%, #1a1622 0%, #0d0b12 100%);
+  text-align: center;
   position: relative;
-}
-
-.book-spread {
-  display: flex;
-  width: 100%;
-  background: #fbf9f4;
-  color: #1a1a1a;
-  border-radius: 8px;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.08);
-  min-height: 520px;
   overflow: hidden;
-  position: relative;
-  transition: transform 0.6s ease;
 }
 
-.book-page-left, .book-page-right {
-  flex: 1;
-  padding: 36px 32px;
-  position: relative;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
+.real3d-mag-header {
+  margin-bottom: 24px;
 }
 
-.book-page-left {
-  border-right: 1px solid #e2ddd4;
-  background: linear-gradient(to right, #faf7f2 94%, #e2ddd4 100%);
-}
-
-.book-page-right {
-  background: linear-gradient(to left, #faf7f2 94%, #e8e4db 100%);
-}
-
-/* Page content */
-.editorial-header {
+.real3d-mag-tag {
   font-family: 'Cinzel', serif;
   font-size: 11px;
   letter-spacing: 3px;
-  color: #888;
-  margin-bottom: 8px;
+  color: #d4af37;
   text-transform: uppercase;
+  margin-bottom: 6px;
 }
 
-.editorial-chapter {
-  font-family: 'Cinzel', serif;
-  font-size: 14px;
-  color: #a87d36;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.editorial-title {
+.real3d-mag-title {
   font-family: 'Playfair Display', serif;
-  font-size: 26px;
+  font-size: clamp(26px, 4.5vw, 42px);
+  color: #ffffff;
   font-weight: 700;
-  color: #111;
   letter-spacing: 1px;
-  margin: 4px 0;
 }
 
-.editorial-subtitle {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: #777;
-  text-transform: uppercase;
-  margin-bottom: 20px;
+.real3d-mag-hint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 6px;
 }
 
-.editorial-img-box {
-  width: 100%;
-  height: 220px;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 18px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.editorial-img-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.editorial-quote {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #444;
-  border-left: 2px solid #a87d36;
-  padding-left: 12px;
-  margin-top: auto;
-}
-
-/* Right page: List of traits */
-.traits-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 16px;
-  margin-top: 10px;
-}
-
-.trait-item {
-  font-size: 11px;
-  line-height: 1.35;
-}
-
-.trait-num {
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
-  color: #a87d36;
-  margin-right: 4px;
-}
-
-.trait-name {
-  font-weight: 700;
-  color: #111;
-  letter-spacing: 0.5px;
-}
-
-.trait-desc {
-  color: #666;
-  font-size: 10px;
-  margin-top: 2px;
-}
-
-.book-nav-bar {
+.real3d-mag-toolbar {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 18px;
-  margin-top: 20px;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
 }
 
-.btn-book-nav {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 12px;
+.real3d-tool-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
 }
 
-.btn-book-nav:hover {
-  background: #fff;
-  color: #000;
+.real3d-tool-btn:hover {
+  background: rgba(212, 175, 55, 0.25);
+  border-color: #d4af37;
+  color: #d4af37;
+  transform: translateY(-1px);
 }
 
-.page-counter {
-  font-size: 12px;
-  color: #aaa;
+.real3d-tool-btn.active-pill {
+  background: linear-gradient(135deg, #d4af37, #b8860b);
+  border-color: #d4af37;
+  color: #1a1622;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+}
+
+/* 3D Presentation Stage */
+.real3d-book-stage {
+  perspective: 2400px;
+  perspective-origin: center 46%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 560px;
+  padding: 20px 0;
+}
+
+/* Table Surface Drop Shadow */
+.real3d-table-shadow {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(840px, 92vw);
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+/* The Physical 3D Book Container */
+.real3d-book {
+  position: relative;
+  width: min(880px, 94vw);
+  height: clamp(440px, 60vw, 560px);
+  transform-style: preserve-3d;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 3D Spine and Satin Ribbon */
+.real3d-book-spine {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  bottom: -4px;
+  width: 14px;
+  transform: translateX(-50%) translateZ(4px);
+  background: linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(255,255,255,0.15) 50%, rgba(0,0,0,0.5) 100%);
+  z-index: 25;
+  pointer-events: none;
+  box-shadow: 0 0 16px rgba(0,0,0,0.4);
+}
+
+.real3d-satin-bookmark {
+  position: absolute;
+  left: 50%;
+  top: -8px;
+  width: 18px;
+  height: 85%;
+  transform: translateX(-50%) translateZ(28px);
+  background: linear-gradient(180deg, #d4235c, #9d0f3e);
+  border-radius: 0 0 4px 4px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 88%, 0 100%);
+  box-shadow: 2px 4px 10px rgba(0,0,0,0.45);
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* Left & Right Static Base Pages */
+.real3d-base-left,
+.real3d-base-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: #fbf9f4;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.real3d-base-left {
+  left: 0;
+  border-radius: 8px 0 0 8px;
+  background: linear-gradient(to right, #f4eee3 94%, #dfd5c4 100%);
+  border-right: 1px solid #d4c8b2;
+}
+
+.real3d-base-right {
+  right: 0;
+  border-radius: 0 8px 8px 0;
+  background: linear-gradient(to left, #f4eee3 94%, #dfd5c4 100%);
+}
+
+.real3d-page-inner.base-inner {
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.mag-gold-monogram {
+  font-size: 38px;
+  color: #d4af37;
+  margin-bottom: 12px;
+}
+
+.mag-chapter-head {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  letter-spacing: 2.5px;
+  color: #4a3820;
+  margin-bottom: 12px;
+}
+
+.mag-chapter-body {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #6a5742;
+  max-width: 320px;
+}
+
+.mag-photo-mini-polaroid {
+  margin-top: 24px;
+  background: #ffffff;
+  padding: 8px 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  transform: rotate(-3deg);
+  width: 170px;
+}
+
+.mag-photo-mini-polaroid img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.mag-photo-mini-polaroid span {
+  font-family: 'Great Vibes', cursive;
+  font-size: 15px;
+  color: #d4235c;
+  display: block;
+  margin-top: 6px;
+}
+
+.btn-mag-wish-burst {
+  margin-top: 24px;
+  background: linear-gradient(135deg, #d4235c, #9d0f3e);
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(212, 35, 92, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.btn-mag-wish-burst:hover {
+  transform: scale(1.05);
+}
+
+/* 3D TURNING LEAF */
+.real3d-leaf {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  cursor: grab;
+  will-change: transform, z-index;
+}
+
+.real3d-leaf:active {
+  cursor: grabbing;
+}
+
+/* Double-Sided Faces */
+.real3d-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  background: #fbf9f4;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.28);
+}
+
+.real3d-front {
+  transform: rotateY(0deg);
+  border-radius: 0 8px 8px 0;
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+  background: linear-gradient(to right, #eae3d2 0%, #faf7f0 8%, #fbf9f4 100%);
+}
+
+.real3d-back {
+  transform: rotateY(180deg);
+  border-radius: 8px 0 0 8px;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  background: linear-gradient(to left, #eae3d2 0%, #faf7f0 8%, #fbf9f4 100%);
+}
+
+/* Specular Shading Overlay for Turning Paper */
+.real3d-page-shadow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.08) 35%, transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+}
+
+/* Hardcover Front Styling (Leaf 0 Front) */
+.leaf-cover-front {
+  background: radial-gradient(circle at 60% 40%, #1c1424 0%, #0c0812 100%) !important;
+  color: #ffffff;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.7), inset 0 0 0 2px #d4af37 !important;
+}
+
+.cover-gold-border {
+  border: 1.5px solid rgba(212, 175, 55, 0.6);
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  position: relative;
+  box-shadow: inset 0 0 25px rgba(212, 175, 55, 0.12);
+}
+
+.cover-top-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 10.5px;
+  letter-spacing: 3px;
+  color: #d4af37;
+  text-transform: uppercase;
+}
+
+.cover-vogue-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(38px, 6vw, 64px);
+  font-weight: 900;
+  letter-spacing: 5px;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.5), 0 2px 4px rgba(0,0,0,0.9);
+  margin: 10px 0 0;
+}
+
+.cover-sub-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: #e5c977;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.cover-gold-crest {
+  margin: 10px 0;
+}
+
+.cover-quote-preview {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 290px;
+}
+
+.cover-corner-fold {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 65px;
+  height: 65px;
+  background: linear-gradient(135deg, transparent 50%, #d4af37 50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 6px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.cover-corner-fold span {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  color: #1a1622;
   letter-spacing: 1px;
+}
+
+/* Interior Pages Styling */
+.real3d-page-inner {
+  padding: 34px 28px;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  text-align: left;
+}
+
+.reasons-spread-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+}
+
+.traits-list-3d {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.trait-item-3d {
+  border-bottom: 1px dashed #ded4c0;
+  padding-bottom: 6px;
+}
+
+.trait-num-3d {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  color: #a87d36;
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+.trait-title-3d {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  color: #222;
+}
+
+.trait-desc-3d {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+.page-footer-num {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: #a0907c;
+  letter-spacing: 2px;
+  text-align: right;
+  margin-top: auto;
+}
+
+/* Scrapbook Spread (Leaf 2 Front) */
+.scrapbook-inner {
+  background: #fdfbf7;
+}
+
+.scrapbook-washi {
+  width: 90px;
+  height: 18px;
+  background: rgba(244, 114, 182, 0.45);
+  transform: rotate(-4deg);
+  margin: -10px auto 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.scrapbook-polaroids-duo {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.scrap-polaroid {
+  background: #fff;
+  padding: 8px 8px 12px;
+  border-radius: 3px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  width: 48%;
+  box-sizing: border-box;
+}
+
+.scrap-polaroid img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.scrap-polaroid span {
+  font-family: 'Great Vibes', cursive;
+  font-size: 14px;
+  color: #8a3a4a;
+  text-align: center;
+  display: block;
+  margin-top: 6px;
+}
+
+.scrap-left {
+  transform: rotate(-3deg);
+}
+
+.scrap-right {
+  transform: rotate(4deg);
+}
+
+/* Letter Page (Leaf 2 Back) */
+.letter-inner {
+  background: #faf6ed;
+}
+
+.letter-stamp-seal {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  border: 1.5px solid #d4af37;
+  color: #d4af37;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.handwritten-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 28px;
+  color: #9d0f3e;
+  margin: 12px 0;
+}
+
+.handwritten-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #4a3525;
+  font-style: italic;
+  flex: 1;
+}
+
+.handwritten-sign {
+  font-family: 'Great Vibes', cursive;
+  font-size: 24px;
+  color: #9d0f3e;
+  text-align: right;
+  margin-top: 10px;
+}
+
+/* Spread Indicators */
+.real3d-nav-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 26px;
+}
+
+.real3d-spread-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.spread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.spread-dot.active {
+  background: #d4af37;
+  transform: scale(1.3);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+.real3d-spread-text {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Mobile Responsiveness for 3D Book */
+@media (max-width: 680px) {
+  .real3d-book {
+    height: 480px;
+  }
+
+  .cover-vogue-title {
+    font-size: 42px;
+  }
+
+  .real3d-page-inner {
+    padding: 20px 16px;
+  }
+
+  .reasons-spread-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .trait-desc-3d {
+    display: none;
+  }
+
+  .scrap-polaroid img {
+    height: 90px;
+  }
+
+  .handwritten-text {
+    font-size: 13px;
+    line-height: 1.5;
+  }
 }
 
 /* ========================================================
@@ -7574,4 +8023,521 @@ svg {
   .archery {
     width: clamp(90px, 22vw, 135px);
   }
+}
+
+
+/* ============================================================ */
+/* BLOSSOM ENHANCED: CUPID ARCHERY, WISHING TREE, CONSTELLATION */
+/* ============================================================ */
+
+/* Top Nav 3D Book Pill */
+.blossom-nav-pill-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(244, 114, 182, 0.35);
+  color: #db2777;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 4px 12px rgba(244, 114, 182, 0.2);
+  transition: all 0.2s ease;
+}
+.blossom-nav-pill-btn:hover {
+  background: #fdf2f8;
+  transform: translateY(-1px);
+}
+
+/* SCENE 3: CUPID SAKURA ARCHERY MINI-GAME */
+.scene-cupid-archery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 20px 16px 40px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.cupid-header-wrap {
+  text-align: center;
+  z-index: 5;
+  margin-top: 10px;
+}
+
+.cupid-cursive-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(32px, 6vw, 48px);
+  color: #e11d48;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(244, 114, 182, 0.3);
+}
+
+.cupid-sub-hint {
+  font-size: 13px;
+  color: #9d174d;
+  font-weight: 600;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* Floating Winged Heart Balloon Target */
+.cupid-target-container {
+  position: relative;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: floatHeart 3s ease-in-out infinite;
+  z-index: 6;
+  cursor: pointer;
+}
+
+@keyframes floatHeart {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-12px) scale(1.04); }
+}
+
+.cupid-heart-balloon {
+  position: relative;
+  filter: drop-shadow(0 8px 24px rgba(225, 29, 72, 0.45));
+}
+
+.cupid-wings-pair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140px;
+  height: 60px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.cupid-wing-svg {
+  position: absolute;
+  top: 0;
+  width: 44px;
+  height: 38px;
+}
+.cupid-wing-svg.wing-left {
+  left: -24px;
+  transform-origin: right center;
+  animation: flapWingLeft 1.8s ease-in-out infinite;
+}
+.cupid-wing-svg.wing-right {
+  right: -24px;
+  transform-origin: left center;
+  animation: flapWingRight 1.8s ease-in-out infinite;
+}
+@keyframes flapWingLeft {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-18deg); }
+}
+@keyframes flapWingRight {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(18deg); }
+}
+
+/* Lower Archery Rig */
+.cupid-rig-bottom {
+  position: relative;
+  width: min(320px, 86vw);
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 8;
+  touch-action: none;
+}
+
+.cupid-aim-guide {
+  position: absolute;
+  bottom: 80px;
+  width: 2px;
+  height: 140px;
+  background: linear-gradient(to top, rgba(244, 114, 182, 0.8), transparent);
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.cupid-bow-wrap {
+  position: relative;
+  width: 220px;
+  height: 140px;
+  cursor: grab;
+}
+.cupid-bow-wrap:active {
+  cursor: grabbing;
+}
+
+.cupid-bow-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 6px 14px rgba(136, 19, 55, 0.25));
+}
+
+.cupid-arrow-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 140px;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(212, 175, 55, 0.4));
+  transition: transform 0.08s ease-out;
+}
+
+.cupid-draw-hint {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #db2777;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 14px;
+  animation: pulseHint 1.8s ease-in-out infinite;
+}
+@keyframes pulseHint {
+  0%, 100% { opacity: 0.6; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+/* SCENE 7: 3D BLOSSOM WISHING TREE & LOVE WHISPERS */
+.scene-blossom-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 18px 16px 36px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.tree-header-col {
+  text-align: center;
+  z-index: 5;
+}
+
+.tree-main-heading {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(34px, 6.5vw, 50px);
+  color: #e11d48;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(244, 114, 182, 0.25);
+}
+
+.tree-sub-desc {
+  font-size: 13px;
+  color: #be185d;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.tree-interactive-stage {
+  position: relative;
+  width: min(440px, 92vw);
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+}
+
+.tree-svg-art {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 12px 28px rgba(244, 114, 182, 0.35));
+}
+
+/* Interactive Blossom Nodes on Tree */
+.tree-node-blossom {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  transform-origin: center center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tree-node-blossom:hover {
+  transform: scale(1.25) rotate(15deg);
+}
+.tree-node-blossom.bloomed {
+  transform: scale(1.15);
+}
+
+.node-sakura-icon {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 10px rgba(244, 63, 94, 0.4));
+  animation: sakuraPulse 2.8s ease-in-out infinite;
+}
+@keyframes sakuraPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.tree-whisper-popup {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -20px) scale(0.9);
+  width: min(320px, 86vw);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(244, 114, 182, 0.4);
+  padding: 16px 20px;
+  border-radius: 18px;
+  box-shadow: 0 16px 36px rgba(225, 29, 72, 0.22);
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 20;
+}
+.tree-whisper-popup.visible {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+  pointer-events: auto;
+}
+
+.whisper-popup-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #9d174d;
+  font-style: italic;
+  margin: 0;
+}
+
+.whisper-counter-pill {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #e11d48;
+  margin-top: 8px;
+  display: block;
+}
+
+/* SCENE 9: TWILIGHT CONSTELLATIONS & MAKE-A-WISH STAR */
+.scene-twilight-stars {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 20px 16px 36px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #1c142c 0%, #0d091a 100%);
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.twilight-stars-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.constellation-sky-box {
+  position: relative;
+  width: min(380px, 92vw);
+  height: 340px;
+  z-index: 5;
+}
+
+.constellation-svg-net {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.constellation-star-btn {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+}
+
+.star-point-glow {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #fef08a 50%, rgba(250, 204, 21, 0) 100%);
+  box-shadow: 0 0 16px 4px rgba(250, 204, 21, 0.7);
+  transition: transform 0.25s ease, background 0.25s ease;
+  animation: starTwinkle 2.4s ease-in-out infinite;
+}
+@keyframes starTwinkle {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+
+.constellation-star-btn.connected .star-point-glow {
+  background: radial-gradient(circle, #ffffff 0%, #f472b6 60%, rgba(244, 114, 182, 0) 100%);
+  box-shadow: 0 0 22px 6px rgba(244, 114, 182, 0.9);
+  transform: scale(1.4);
+}
+
+.btn-make-wish-shooting-star {
+  background: linear-gradient(135deg, #f59e0b, #ec4899);
+  border: none;
+  color: #ffffff;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+.btn-make-wish-shooting-star:hover {
+  transform: scale(1.05);
+}
+
+/* SCENE 10: GOLDEN HOLOGRAPHIC SCRATCH TICKET */
+.scene-scratch-ticket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 24px 16px 36px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.scratch-ticket-container {
+  position: relative;
+  width: min(380px, 92vw);
+  height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(225, 29, 72, 0.25), 0 0 0 2px rgba(212, 175, 55, 0.4);
+  z-index: 6;
+}
+
+.scratch-card-underlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #fff1f2 0%, #fdf2f8 50%, #ffe4e6 100%);
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 2px dashed #f472b6;
+  border-radius: 16px;
+}
+
+.scratch-ticket-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 10.5px;
+  letter-spacing: 2px;
+  color: #e11d48;
+  font-weight: 700;
+}
+
+.scratch-prize-text {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(24px, 5.5vw, 34px);
+  color: #be185d;
+  margin: 10px 0;
+  line-height: 1.2;
+}
+
+.scratch-barcode-box {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: #9d174d;
+  margin-top: 6px;
+}
+
+.scratch-foil-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  z-index: 10;
+  touch-action: none;
+}
+
+/* 3D Flipbook Full-Screen Modal */
+.blossom-flipbook-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 8, 18, 0.94);
+  backdrop-filter: blur(14px);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s ease, visibility 0s 0.35s;
+}
+
+.blossom-flipbook-modal-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.35s ease;
+}
+
+.flipbook-modal-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+.flipbook-modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.flipbook-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 0;
 }
