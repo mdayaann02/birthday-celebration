@@ -345,22 +345,25 @@ export function renderSorryTemplate(container, data) {
         <section class="sorry-page-card" data-page="3">
           <div class="sorry-section-wrap">
             <div class="sorry-tag">STAGE 3: ATONEMENT & PENANCE</div>
-            <h2 class="sorry-section-title">Pick My Punishments! ⚖️</h2>
+            <h2 class="sorry-section-title">Pick & Add My Punishments! ⚖️</h2>
             <p class="sorry-section-subtitle">
-              I agree to execute all of these for you with zero complaining:
+              Check off what you want me to do, or type your own custom punishments below! I promise to execute all of them with zero complaining:
             </p>
 
-            <div class="penance-grid" id="penanceGrid">
-              ${penances.map((p, i) => `
-                <div class="penance-item-card checked" data-i="${i}">
-                  <div class="penance-check-box">✓</div>
-                  <div class="penance-item-content">
-                    <span class="penance-badge">PUNISHMENT #0${i+1}</span>
-                    <p class="penance-text">${p}</p>
-                  </div>
-                </div>
-              `).join('')}
+            <!-- Viewer Custom Punishment Input -->
+            <div class="add-punishment-bar" style="margin-bottom:16px; display:flex; gap:8px;">
+              <input type="text" id="inpCustomPunishment" class="inp-custom-punishment" placeholder="Type custom punishment (e.g. Buy me 5 bobas, fold laundry)..." maxlength="120" style="flex:1; background:rgba(255,255,255,0.08); border:1.5px solid rgba(251,191,36,0.4); border-radius:14px; padding:12px 14px; color:#fff; font-size:13px; outline:none; transition:border-color 0.2s;" />
+              <button type="button" id="btnAddPunishment" class="btn-add-punishment" style="background:linear-gradient(135deg, #fbbf24, #f59e0b); color:#1c1216; border:none; padding:0 18px; border-radius:14px; font-weight:800; font-size:13px; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 14px rgba(251,191,36,0.35); transition:transform 0.15s;">
+                <span>+ Add</span>
+              </button>
             </div>
+
+            <!-- Summary badge -->
+            <div id="punishmentCountBadge" style="margin-bottom:12px; font-size:12px; color:#fbbf24; font-weight:700;">
+              ⚖️ Loading punishments...
+            </div>
+
+            <div class="penance-grid" id="penanceGrid"></div>
 
             <!-- Legally Binding Acceptance Stamp -->
             <div class="penance-signing-dock">
@@ -448,19 +451,45 @@ export function renderSorryTemplate(container, data) {
                 `).join('')}
               </div>
 
-              <!-- Interactive Fingerprint Scanner -->
-              <div class="fingerprint-scanner-area">
-                <div class="scanner-pad" id="scannerPad" role="button" aria-label="Press and hold to sign">
-                  <div class="scanner-laser-line"></div>
-                  <span class="scanner-icon">👆</span>
-                  <div class="scanner-ring"></div>
+              <!-- Interactive 2-Second Hold Seal & Wax Stamp Arena -->
+              <div class="treaty-holding-dock" style="margin-top:16px; display:flex; flex-direction:column; align-items:center;">
+                <!-- Circular Progress Press-and-Hold Button -->
+                <div class="treaty-hold-seal-wrapper" style="position:relative; width:104px; height:104px; margin:0 auto; user-select:none; -webkit-user-select:none; touch-action:none;">
+                  <!-- SVG Progress Ring -->
+                  <svg class="treaty-hold-svg" width="104" height="104" viewBox="0 0 104 104" style="position:absolute; top:0; left:0; transform:rotate(-90deg); pointer-events:none;">
+                    <circle cx="52" cy="52" r="46" stroke="rgba(217, 119, 6, 0.22)" stroke-width="7" fill="none" />
+                    <circle id="treatyHoldRing" cx="52" cy="52" r="46" stroke="#d97706" stroke-width="7" stroke-linecap="round" fill="none"
+                      stroke-dasharray="289" stroke-dashoffset="289" style="transition: stroke-dashoffset 0.05s linear;" />
+                  </svg>
+                  <!-- Center Hold Button -->
+                  <div class="treaty-hold-button" id="treatyHoldButton" role="button" aria-label="Hold for 2 seconds to ratify peace treaty"
+                    style="position:absolute; inset:8px; border-radius:50%; background:radial-gradient(circle, #78350f 0%, #451a03 100%); border:3px solid #f59e0b; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(180,83,9,0.5); transition:transform 0.15s, box-shadow 0.15s;">
+                    <span class="treaty-btn-icon" id="treatyBtnIcon" style="font-size:32px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">👑</span>
+                  </div>
                 </div>
-                <div class="scanner-instruction" id="scannerInstruction">
-                  Press & Hold Your Thumb For 2 Seconds To Ratify
+
+                <!-- Linear Progress Bar -->
+                <div class="treaty-hold-timer-bar-wrap" style="width:200px; height:6px; background:rgba(0,0,0,0.15); border-radius:10px; margin-top:14px; overflow:hidden;">
+                  <div id="treatyHoldLinearBar" style="width:0%; height:100%; background:linear-gradient(90deg, #f59e0b, #ef4444); border-radius:10px; transition:width 0.05s linear;"></div>
                 </div>
-                <div class="treaty-gold-seal" id="treatyGoldSeal" style="display:none;">
-                  <span class="seal-icon">🎖️</span>
-                  <span>RATIFIED WITH LOVE BY HER MAJESTY</span>
+
+                <!-- Real-time instruction text -->
+                <div class="treaty-hold-instruction" id="treatyHoldInstruction" style="margin-top:8px; font-size:12.5px; font-weight:800; color:#78350f;">
+                  👆 Press & Hold for 2 Seconds to Ratify Peace Treaty!
+                </div>
+
+                <!-- Celebratory YAYYY! CONVINCED! Banner (Appears after 2s hold) -->
+                <div class="treaty-convinced-card" id="treatyConvincedCard" style="display:none; margin-top:18px; width:100%; max-width:440px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius:20px; padding:20px 16px; color:#fff; box-shadow:0 12px 35px rgba(16,185,129,0.45); border:2px solid #34d399; text-align:center;">
+                  <div class="convinced-badge-emoji" style="font-size:42px; margin-bottom:4px; animation:bounce 0.8s infinite;">🎉🥳💖</div>
+                  <h3 style="font-family:'Playfair Display',serif; font-size:24px; font-weight:900; margin:0 0 6px 0; color:#fff; letter-spacing:0.5px;">
+                    YAYYY! CONVINCED! 🎉
+                  </h3>
+                  <p style="font-size:13.5px; margin:0 0 12px 0; line-height:1.45; color:#ecfdf5;">
+                    The Peace Treaty is officially ratified & sealed by Her Majesty! We are back together! 🥰💖
+                  </p>
+                  <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(0,0,0,0.22); padding:6px 14px; border-radius:20px; font-size:11.5px; font-weight:800; border:1px solid rgba(255,255,255,0.3);">
+                    <span>👑 SIGNED & SEALED BY QUEEN ${recipientName.toUpperCase()}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -786,10 +815,123 @@ export function renderSorryTemplate(container, data) {
   });
 
   // ==========================================
-  // STAGE 3: PENANCES SIGNING
+  // STAGE 3: INTERACTIVE PENANCES & VIEWER PUNISHMENTS
   // ==========================================
+  let viewerPunishments = [
+    ...(penances && penances.length > 0 ? penances : [
+      "Buy your favorite Iced Boba / Treat right now 🧋",
+      "30-minute soothing massage whenever you ask 💆‍♀️",
+      "Order whatever food you are craving tonight, my treat 🍕",
+      "Watch 3 chick flicks / K-dramas with zero groaning 🍿",
+      "Fold all your laundry & do your chores this weekend 🧹",
+      "Write 100 cute post-it notes of things I adore about you 📝"
+    ])
+  ].map((text, i) => ({
+    id: `punishment_default_${i}`,
+    text,
+    checked: true,
+    isCustom: false
+  }));
+
+  const penanceGrid = container.querySelector('#penanceGrid');
+  const punishmentCountBadge = container.querySelector('#punishmentCountBadge');
+  const inpCustomPunishment = container.querySelector('#inpCustomPunishment');
+  const btnAddPunishment = container.querySelector('#btnAddPunishment');
   const btnSignPenance = container.querySelector('#btnSignPenance');
   const penanceStampedBadge = container.querySelector('#penanceStampedBadge');
+
+  function renderPenanceGrid() {
+    if (!penanceGrid) return;
+
+    penanceGrid.innerHTML = viewerPunishments.map((item, i) => `
+      <div class="penance-item-card ${item.checked ? 'checked' : ''}" data-id="${item.id}" style="cursor:pointer; user-select:none; transition:all 0.2s ease;">
+        <div class="penance-check-box" style="${item.checked ? '' : 'background:rgba(255,255,255,0.15); color:transparent; box-shadow:none;'}">
+          ${item.checked ? '✓' : ''}
+        </div>
+        <div class="penance-item-content">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="penance-badge" style="${item.isCustom ? 'color:#38bdf8;' : ''}">
+              ${item.isCustom ? '⭐ CUSTOM PUNISHMENT' : `PUNISHMENT #0${i + 1}`}
+            </span>
+            ${item.isCustom ? `
+              <button type="button" class="btn-del-penance" data-id="${item.id}" title="Remove custom punishment" style="background:transparent; border:none; color:#f87171; font-size:14px; cursor:pointer; padding:2px 6px;">✕</button>
+            ` : ''}
+          </div>
+          <p class="penance-text" style="${item.checked ? '' : 'opacity:0.55; text-decoration:line-through;'}">${item.text}</p>
+        </div>
+      </div>
+    `).join('');
+
+    const activeCount = viewerPunishments.filter(p => p.checked).length;
+    if (punishmentCountBadge) {
+      if (activeCount === 0) {
+        punishmentCountBadge.textContent = "⚖️ No punishments selected (He got off easy! Tap items to select or add above)";
+        punishmentCountBadge.style.color = "#94a3b8";
+      } else {
+        punishmentCountBadge.textContent = `⚖️ ${activeCount} punishment${activeCount > 1 ? 's' : ''} assigned to boyfriend!`;
+        punishmentCountBadge.style.color = "#fbbf24";
+      }
+    }
+
+    // Toggle punishment check
+    penanceGrid.querySelectorAll('.penance-item-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-del-penance')) return;
+        const id = card.getAttribute('data-id');
+        const target = viewerPunishments.find(p => p.id === id);
+        if (target) {
+          target.checked = !target.checked;
+          playSound(target.checked ? 'boing' : 'splat');
+          if (navigator.vibrate) navigator.vibrate(18);
+          renderPenanceGrid();
+        }
+      });
+    });
+
+    // Delete custom item
+    penanceGrid.querySelectorAll('.btn-del-penance').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        viewerPunishments = viewerPunishments.filter(p => p.id !== id);
+        playSound('splat');
+        if (navigator.vibrate) navigator.vibrate(20);
+        renderPenanceGrid();
+      });
+    });
+  }
+
+  function handleAddCustomPunishment() {
+    if (!inpCustomPunishment) return;
+    const val = inpCustomPunishment.value.trim();
+    if (!val) {
+      inpCustomPunishment.focus();
+      return;
+    }
+    viewerPunishments.push({
+      id: `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      text: val,
+      checked: true,
+      isCustom: true
+    });
+    inpCustomPunishment.value = '';
+    renderPenanceGrid();
+    playSound('chime');
+    if (navigator.vibrate) navigator.vibrate(30);
+    confetti({
+      particleCount: 30,
+      spread: 50,
+      origin: { y: 0.6 }
+    });
+  }
+
+  btnAddPunishment?.addEventListener('click', handleAddCustomPunishment);
+  inpCustomPunishment?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddCustomPunishment();
+    }
+  });
 
   btnSignPenance?.addEventListener('click', () => {
     penancesSigned = true;
@@ -800,7 +942,15 @@ export function renderSorryTemplate(container, data) {
       penanceStampedBadge.style.display = 'inline-block';
       penanceStampedBadge.style.animation = 'stampPop 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
     }
+    confetti({
+      particleCount: 45,
+      spread: 60,
+      origin: { y: 0.65 }
+    });
   });
+
+  // Initial render of punishment deed
+  renderPenanceGrid();
 
   // ==========================================
   // STAGE 4: POLAROIDS 3D FLIP
@@ -813,48 +963,134 @@ export function renderSorryTemplate(container, data) {
   });
 
   // ==========================================
-  // STAGE 5: PEACE TREATY SCANNER
+  // STAGE 5: PEACE TREATY - 2-SECOND HOLD & YAYYY CONVINCED ANIMATION
   // ==========================================
-  const scannerPad = container.querySelector('#scannerPad');
-  const scannerInstruction = container.querySelector('#scannerInstruction');
-  const treatyGoldSeal = container.querySelector('#treatyGoldSeal');
-  let scanTimer = null;
+  const treatyHoldBtn = container.querySelector('#treatyHoldButton');
+  const treatyHoldRing = container.querySelector('#treatyHoldRing');
+  const treatyHoldLinearBar = container.querySelector('#treatyHoldLinearBar');
+  const treatyHoldInstruction = container.querySelector('#treatyHoldInstruction');
+  const treatyConvincedCard = container.querySelector('#treatyConvincedCard');
+  const treatyBtnIcon = container.querySelector('#treatyBtnIcon');
 
-  function startScan(e) {
+  const ringCircumference = 289; // 2 * PI * 46
+  const requiredHoldMs = 2000; // Exact 2.0s hold
+  let holdStartTime = 0;
+  let holdRafId = null;
+  let isHoldActive = false;
+
+  function onHoldStart(e) {
     if (treatySigned) return;
     if (e.cancelable) e.preventDefault();
-    scannerPad?.classList.add('scanning');
-    if (scannerInstruction) scannerInstruction.textContent = "Scanning Royal Fingerprint... Hold Still! ⏳";
+    isHoldActive = true;
+    holdStartTime = performance.now();
+    treatyHoldBtn?.classList.add('holding');
 
-    scanTimer = setTimeout(() => {
-      treatySigned = true;
-      playSound('stamp');
-      playSound('chime');
-      if (navigator.vibrate) navigator.vibrate([40, 80, 40]);
-      scannerPad?.classList.remove('scanning');
-      scannerPad?.classList.add('scanned-success');
-      if (scannerInstruction) scannerInstruction.textContent = "Fingerprint Verified! Treaty Formally Sealed ✨";
-      if (treatyGoldSeal) {
-        treatyGoldSeal.style.display = 'flex';
-        treatyGoldSeal.style.animation = 'stampPop 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+    if (treatyHoldInstruction) {
+      treatyHoldInstruction.textContent = "Hold firmly... Signing peace treaty... ⏳";
+      treatyHoldInstruction.style.color = "#d97706";
+    }
+    if (navigator.vibrate) navigator.vibrate(25);
+
+    function step(now) {
+      if (!isHoldActive) return;
+      const elapsed = now - holdStartTime;
+      const progress = Math.min(1, elapsed / requiredHoldMs);
+
+      // Smooth SVG Progress Ring
+      if (treatyHoldRing) {
+        treatyHoldRing.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
       }
-      confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-    }, 1800);
+      // Linear Progress Fill
+      if (treatyHoldLinearBar) {
+        treatyHoldLinearBar.style.width = `${progress * 100}%`;
+      }
+
+      if (progress >= 1) {
+        onHoldComplete();
+      } else {
+        holdRafId = requestAnimationFrame(step);
+      }
+    }
+
+    holdRafId = requestAnimationFrame(step);
   }
 
-  function cancelScan() {
+  function onHoldEnd() {
     if (treatySigned) return;
-    if (scanTimer) clearTimeout(scanTimer);
-    scannerPad?.classList.remove('scanning');
-    if (scannerInstruction) scannerInstruction.textContent = "Press & Hold Your Thumb For 2 Seconds To Ratify";
+    if (!isHoldActive) return;
+    isHoldActive = false;
+    if (holdRafId) cancelAnimationFrame(holdRafId);
+    treatyHoldBtn?.classList.remove('holding');
+
+    // Smooth reset
+    if (treatyHoldRing) {
+      treatyHoldRing.style.strokeDashoffset = `${ringCircumference}`;
+    }
+    if (treatyHoldLinearBar) {
+      treatyHoldLinearBar.style.width = `0%`;
+    }
+    if (treatyHoldInstruction) {
+      treatyHoldInstruction.textContent = "👆 Press & Hold for 2 full seconds to sign!";
+      treatyHoldInstruction.style.color = "#78350f";
+    }
   }
 
-  scannerPad?.addEventListener('mousedown', startScan);
-  scannerPad?.addEventListener('mouseup', cancelScan);
-  scannerPad?.addEventListener('mouseleave', cancelScan);
-  scannerPad?.addEventListener('touchstart', startScan, { passive: false });
-  scannerPad?.addEventListener('touchend', cancelScan);
-  scannerPad?.addEventListener('touchcancel', cancelScan);
+  function onHoldComplete() {
+    treatySigned = true;
+    isHoldActive = false;
+    if (holdRafId) cancelAnimationFrame(holdRafId);
+
+    // Audio effects
+    playSound('stamp');
+    setTimeout(() => playSound('chime'), 200);
+
+    // Tactile vibration
+    if (navigator.vibrate) navigator.vibrate([60, 100, 60, 140]);
+
+    if (treatyBtnIcon) treatyBtnIcon.textContent = "✅";
+    if (treatyHoldBtn) {
+      treatyHoldBtn.style.background = "#10b981";
+      treatyHoldBtn.style.borderColor = "#34d399";
+      treatyHoldBtn.style.transform = "scale(1.05)";
+    }
+    if (treatyHoldInstruction) {
+      treatyHoldInstruction.textContent = "✨ Treaty Officially Ratified by Her Majesty!";
+      treatyHoldInstruction.style.color = "#059669";
+    }
+
+    // Celebratory YAYYY! CONVINCED! Confetti Blast
+    confetti({
+      particleCount: 110,
+      spread: 90,
+      origin: { y: 0.65 },
+      colors: ['#ff4d6d', '#fbbf24', '#10b981', '#38bdf8', '#ffd700']
+    });
+    setTimeout(() => {
+      confetti({
+        particleCount: 75,
+        spread: 120,
+        origin: { y: 0.5 },
+        colors: ['#34d399', '#f43f5e', '#a855f7', '#fbbf24']
+      });
+    }, 380);
+
+    // Pop up the YAYYY! CONVINCED! Banner with elastic bounce
+    if (treatyConvincedCard) {
+      treatyConvincedCard.style.display = 'block';
+      gsap.fromTo(treatyConvincedCard,
+        { scale: 0.65, opacity: 0, y: 30 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.65, ease: 'back.out(2)' }
+      );
+    }
+  }
+
+  // Pointer & Touch Events for 100% Mobile & Desktop Accuracy
+  treatyHoldBtn?.addEventListener('pointerdown', onHoldStart);
+  window.addEventListener('pointerup', onHoldEnd);
+  window.addEventListener('pointercancel', onHoldEnd);
+  treatyHoldBtn?.addEventListener('touchstart', onHoldStart, { passive: false });
+  window.addEventListener('touchend', onHoldEnd);
+  window.addEventListener('touchcancel', onHoldEnd);
 
   // ==========================================
   // STAGE 6: COUPONS CLAIMING
@@ -1010,8 +1246,18 @@ export function renderSorryTemplate(container, data) {
       successCard.style.animation = 'scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
     }
 
-    // Set WhatsApp hug link
-    const hugMsg = `I forgive you, ${senderName}! ❤️🫂 But you still owe me my boba, massage, and penance tasks! 🥰✨`;
+    // Compile chosen and custom punishments assigned by the viewer
+    const chosenList = viewerPunishments.filter(p => p.checked).map(p => p.text);
+    let punishmentsText = "";
+    if (chosenList.length > 0) {
+      punishmentsText = `\n\n⚖️ Here are the punishments you MUST complete for me:\n` +
+        chosenList.map((p, idx) => `${idx + 1}. ${p}`).join('\n');
+    } else {
+      punishmentsText = `\n\nYou got off easy with no punishments this time, but don't mess up again! 😜`;
+    }
+
+    // Set WhatsApp hug link with punishments list
+    const hugMsg = `I forgive you, ${senderName}! ❤️🫂${punishmentsText}\n\nOur peace treaty is officially signed! See you soon 🥰✨`;
     if (btnWhatsappHug) {
       btnWhatsappHug.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(hugMsg)}`;
     }

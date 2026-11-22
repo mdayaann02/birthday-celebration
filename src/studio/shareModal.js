@@ -1,4 +1,4 @@
-// src/studio/shareModal.js - Share & Export Modal (Clean Short-Links + 1-Tap Universal WhatsApp)
+// src/studio/shareModal.js - Share & Export Modal (Clean Short-Links + Dedicated Occasion WhatsApp Messages)
 
 import confetti from 'canvas-confetti';
 import { encodeSiteToUrl, publishSiteToServer } from '../models/siteStorage.js';
@@ -16,6 +16,103 @@ export function toWhatsAppSafeUrl(rawUrl) {
     s = 'https://' + s;
   }
   return s;
+}
+
+// Dedicated WhatsApp Message Generator for Every Occasion and Persona
+export function getOccasionWhatsAppMessage(templateId, data, safeUrl) {
+  const recipientName = data?.recipientName || 'Someone Special';
+  const senderName = data?.senderName || 'Yours Truly';
+  const persona = (data?.recipientPersona || '').toLowerCase();
+  const tid = (templateId || '').toLowerCase();
+
+  // 1. Birthday Celebration (Dedicated by Persona)
+  if (tid === 'birthday') {
+    if (persona === 'brother') {
+      return `Happy Birthday to the best brother in the universe, ${recipientName}! 🎂👑\n\nBro, I made a special celebration website just for you with our craziest memories, music & surprises. Open your surprise here:\n${safeUrl}\n\nParty hard today! 🥳🎉`;
+    }
+    if (persona === 'sister') {
+      return `Happy Birthday to the sweetest sister ever, ${recipientName}! 🎂💖\n\nBehna, I built a custom celebration website just for you with your favorite songs, photos, and endless love! Tap to open:\n${safeUrl}\n\nHave the most magical birthday! 🌸✨`;
+    }
+    if (persona === 'bestfriend_female') {
+      return `Happy Birthday to my absolute favourite human, ${recipientName}! 🎂✨\n\nBestie, you deserve the whole universe! I made you this exclusive VIP celebration website with our best moments & music. Check it out:\n${safeUrl}\n\nLove you loads! 🥳💖`;
+    }
+    if (persona === 'bestfriend') {
+      return `Happy Birthday to the realest one, ${recipientName}! 🎂🔥\n\nBhai, I coded a special celebration website just for you loaded with our legendary memories and music. Tap the link:\n${safeUrl}\n\nTreat kab de raha hai? 🍕🍻`;
+    }
+    if (persona === 'mother') {
+      return `Happy Birthday to the most wonderful mother, ${recipientName}! 🎂💐\n\nMom, words can never express how much you mean to us. I created a special celebration website filled with memories and love just for you:\n${safeUrl}\n\nMay God bless you with infinite health & happiness! 🌸❤️`;
+    }
+    if (persona === 'father') {
+      return `Happy Birthday to our greatest superhero and guide, ${recipientName}! 🎂👑\n\nDad, thank you for being our pillar of strength. I made this special celebration website in your honour:\n${safeUrl}\n\nWishing you boundless health, peace, and joy! 🌟🙌`;
+    }
+    if (persona === 'teacher') {
+      return `Happy Birthday to an inspiring teacher & mentor, ${recipientName}! 🎂🎓\n\nThank you for guiding us with wisdom and patience. I created this special celebration tribute in your honour:\n${safeUrl}\n\nWishing you joy, peace, and prosperity! 📚🌟`;
+    }
+    return `Happy Birthday, ${recipientName}! 🎂🎉✨\n\nI made something very special and unforgettable just for you! Open your personalized celebration website with music, memories & surprises:\n${safeUrl}\n\nHope this brings the biggest smile to your face today! 🥰🎁`;
+  }
+
+  // 2. Long Romance Masterpiece
+  if (tid === 'long_romance') {
+    return `To my one and only love, ${recipientName}... 🌸🏹❤️\n\nI built a continuous romantic story website of us — with Cupid's bow, our blooming memory tree, Polaroid scrapbook, and twilight sky lanterns with our song playing in the background.\n\nOpen our love story here:\n${safeUrl}\n\nI love you endlessly, today and forever! 🫶✨`;
+  }
+
+  // 3. Cupid & Blossom Tree / Blossom Romance
+  if (tid === 'tree' || tid === 'blossom') {
+    return `To the most special person in my heart, ${recipientName}... 🏹🌸💖\n\nI created an interactive cinematic love story for you. Shoot Cupid's bow, tap the blooming blossom tree for secret love notes, and open our memories with our special soundtrack.\n\nUnwrap your surprise here:\n${safeUrl}\n\nForever yours! 🥰✨`;
+  }
+
+  // 4. Valentine's Proposal / Love Story
+  if (tid === 'valentine') {
+    return `Happy Valentine's Day, ${recipientName}! 💘🌹✨\n\nYou make my heart flutter every single day. I created this romantic interactive Valentine surprise website just for you, filled with our sweetest moments and a question straight from my heart.\n\nOpen your Valentine surprise here:\n${safeUrl}\n\nWill you be my Valentine forever? 💖🥂`;
+  }
+
+  // 5. Anniversary Celebration
+  if (tid === 'anniversary') {
+    return `Happy Anniversary to my favorite person, ${recipientName}! 🥂💍✨\n\nEvery moment spent with you is a memory I treasure forever. I designed a special milestone celebration website to celebrate our beautiful journey and eternal love.\n\nRelive our love story here:\n${safeUrl}\n\nHere's to a lifetime of us! ❤️🥂`;
+  }
+
+  // 6. Sincere Apology & Reconciliation (Sorry)
+  if (tid === 'sorry') {
+    return `Dearest ${recipientName}, I am so truly sorry... 🥺💔\n\nMy universe feels heavy and incomplete without you. I made this sincere multi-stage apology website for you — you can vent your anger at me, assign me any punishments you want, and sign our official peace treaty.\n\nPlease hear my confession here:\n${safeUrl}\n\nI love you more than anything, please forgive me 🫶🥺`;
+  }
+
+  // 7. Mother's Tribute
+  if (tid === 'mother') {
+    return `To the world's most incredible Mom, ${recipientName}! 🌸👑❤️\n\nThank you for your unconditional love, sacrifices, and endless warmth. I created a dedicated celebration website to honour you with our cherished family memories, audio, and heartfelt wishes.\n\nOpen your special tribute here:\n${safeUrl}\n\nLove you beyond words, Ma! 💐✨`;
+  }
+
+  // 8. Father's Tribute
+  if (tid === 'father') {
+    return `To the best Dad and real superhero, ${recipientName}! 👑👔🌟\n\nThank you for always shielding us, guiding us, and inspiring us every single day. I made this custom website to celebrate you and everything you do for us.\n\nOpen your celebration website here:\n${safeUrl}\n\nWith all my respect and love, Dad! 🏆🙌`;
+  }
+
+  // 9. Sister's Celebration
+  if (tid === 'sister') {
+    return `To the world's sweetest (and most dramatic!) sister, ${recipientName}! 🌸🧸💖\n\nFrom silly fights to being my biggest supporter, you are irreplaceable. I made this playful and aesthetic celebration website just for you with our photos, coupons & sweet surprises!\n\nOpen your surprise here:\n${safeUrl}\n\nKeep shining always, Behna! 🥳✨`;
+  }
+
+  // 10. Brother's Celebration
+  if (tid === 'brother') {
+    return `To my partner-in-crime and the coolest brother, ${recipientName}! 🏍️🔥👑\n\nNo matter how much we argue, you're always my rock. I built this celebration website loaded with our legendary adventures, bike physics & memories.\n\nCheck out your website here:\n${safeUrl}\n\nParty on, Bhai! 👊🎉`;
+  }
+
+  // 11. Bestie Girl
+  if (tid === 'bestie_girl') {
+    return `To my soul sister and ultimate bestie, ${recipientName}! 💖👯‍♀️✨\n\nLife is a hundred times more fun and chaotic with you! I made you an exclusive aesthetic celebration website packed with our craziest photos, bestie promises & soundtrack.\n\nOpen your surprise bestie website:\n${safeUrl}\n\nBest friends forever & ever! 🫶🎉`;
+  }
+
+  // 12. Bestie Boy
+  if (tid === 'bestie_boy') {
+    return `To my brother from another mother, ${recipientName}! 👊🔥🍕\n\nThrough thick and thin, you've always had my back. I coded this celebration website packed with our epic moments, games, and memories.\n\nOpen your website here:\n${safeUrl}\n\nBrothers for life! 🍻🚀`;
+  }
+
+  // 13. Friendship Celebration
+  if (tid === 'friendship') {
+    return `To an unforgettable friend, ${recipientName}! 🌟🤝✨\n\nTrue friendship is rare, and I'm so grateful to have you in my life. I created a celebration website to celebrate our bond, laughter, and memories.\n\nOpen your friendship website here:\n${safeUrl}\n\nHere's to many more adventures together! 🥂💫`;
+  }
+
+  // Default fallback
+  return `I made something very special just for you, ${recipientName}! ❤️✨\n\nOpen your surprise celebration website here:\n${safeUrl}`;
 }
 
 export function openShareModal(templateId, data) {
@@ -157,7 +254,7 @@ export function openShareModal(templateId, data) {
     if (linkTestCreator) linkTestCreator.href = activeMakerUrl;
 
     const safeUrl = toWhatsAppSafeUrl(activeRecipientUrl);
-    const shareMsg = `I made something very special just for you, ${recipientName}! ❤️✨\n\nOpen your surprise website here:\n${safeUrl}`;
+    const shareMsg = getOccasionWhatsAppMessage(templateId, data, safeUrl);
     if (btnShareWhatsapp) {
       btnShareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(shareMsg)}`;
     }
@@ -166,7 +263,7 @@ export function openShareModal(templateId, data) {
   // Handle WhatsApp button click - always ensure latest active URL is encoded
   btnShareWhatsapp?.addEventListener('click', function() {
     const safeUrl = toWhatsAppSafeUrl(activeRecipientUrl);
-    const shareMsg = `I made something very special just for you, ${recipientName}! ❤️✨\n\nOpen your surprise website here:\n${safeUrl}`;
+    const shareMsg = getOccasionWhatsAppMessage(templateId, data, safeUrl);
     this.href = `https://wa.me/?text=${encodeURIComponent(shareMsg)}`;
   });
 

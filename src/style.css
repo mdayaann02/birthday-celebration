@@ -7441,11 +7441,70 @@ body {
   margin: 2px 0 0 0;
 }
 
-.fingerprint-scanner-area {
+/* Stage 5: Relationship Peace Treaty 2-Second Hold & Convinced Animations */
+.treaty-holding-dock {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 10px;
+}
+
+.treaty-hold-seal-wrapper {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  margin: 0 auto;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.treaty-hold-button {
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
+}
+
+.treaty-hold-button.holding {
+  transform: scale(0.92) !important;
+  box-shadow: 0 2px 10px rgba(180, 83, 9, 0.7), 0 0 25px rgba(245, 158, 11, 0.6) !important;
+  border-color: #ef4444 !important;
+}
+
+.treaty-hold-instruction {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #78350f;
+  margin-top: 8px;
+  letter-spacing: 0.2px;
+  transition: color 0.2s ease;
+}
+
+.treaty-convinced-card {
+  animation: convincedPop 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes convincedPop {
+  0% { transform: scale(0.65) translateY(20px); opacity: 0; }
+  60% { transform: scale(1.04) translateY(-4px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.inp-custom-punishment:focus {
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.35);
+}
+
+.btn-add-punishment:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(251, 191, 36, 0.5) !important;
+}
+
+.btn-add-punishment:active {
+  transform: scale(0.95);
+}
+
+.btn-del-penance:hover {
+  color: #ef4444 !important;
+  transform: scale(1.2);
 }
 
 .scanner-pad {
