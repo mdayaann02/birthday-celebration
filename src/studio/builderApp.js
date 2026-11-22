@@ -13,19 +13,30 @@ import { openShareModal } from './shareModal.js';
 import { renderViewerApp } from '../viewer/viewerApp.js';
 
 export function renderStudioApp(root) {
-  let activeTemplateId = "blossom";
+  const searchParams = new URLSearchParams(window.location.search);
+  const hash = window.location.hash.replace(/^#/, '');
+  const urlTid = searchParams.get('template') || (hash.startsWith('template=') ? hash.substring(9) : null) || (TEMPLATES[hash] ? hash : null);
+  let activeTemplateId = (urlTid && TEMPLATES[urlTid]) ? urlTid : "blossom";
   let activeData = getActiveCelebrationData(activeTemplateId);
   let currentMobileTab = "editor"; // "templates" | "editor" | "preview"
 
   root.innerHTML = `
     <div class="studio-layout">
+      <!-- Dynamic Ambient Aurora Glassmorphism Background -->
+      <div class="studio-aurora-bg" aria-hidden="true">
+        <div class="aurora-orb aurora-orb-1"></div>
+        <div class="aurora-orb aurora-orb-2"></div>
+        <div class="aurora-orb aurora-orb-3"></div>
+        <div class="aurora-orb aurora-orb-4"></div>
+      </div>
+
       <!-- Top Info Banner (Collapsible/Hidden on phone for max screen space) -->
       <div class="studio-top-mode-bar" id="studioModeBar">
-        <div style="display:flex; align-items:center; gap:6px;">
-          <span>✏️</span>
-          <span><strong>Studio Mode:</strong> Customizing celebration. Recipients will see the 100% clean website.</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="studio-mode-pill"><span class="pill-dot"></span> LIVE EDITOR</span>
+          <span>Customizing celebration. Recipients see the clean celebration website.</span>
         </div>
-        <a href="/" class="btn-top-recipient-link">
+        <a href="/?mode=view" target="_blank" rel="noopener noreferrer" class="btn-top-recipient-link">
           👁️ Recipient View &rarr;
         </a>
       </div>
@@ -33,15 +44,20 @@ export function renderStudioApp(root) {
       <!-- Studio Header -->
       <header class="studio-header">
         <div class="studio-brand">
-          <span class="studio-logo-spark">✨</span>
+          <div class="studio-logo-gem">
+            <span class="studio-logo-spark">✨</span>
+          </div>
           <div class="studio-title-wrap">
-            <h1 class="studio-title">Celebration Studio</h1>
-            <span class="studio-tagline">Create & Share Emotional Custom Websites</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h1 class="studio-title">Celebration Studio</h1>
+              <span class="studio-version-tag">2.0 PRO</span>
+            </div>
+            <span class="studio-tagline">Craft emotional luxury websites with live physics & music</span>
           </div>
         </div>
 
         <div class="studio-header-actions">
-          <a href="/" class="btn-studio-action btn-header-recipient" title="Open website as recipient">
+          <a href="/?mode=view" target="_blank" rel="noopener noreferrer" class="btn-studio-action btn-header-recipient" title="Open website as recipient">
             👁️ <span>Recipient View</span>
           </a>
           <button class="btn-studio-action btn-save-primary" id="btnHeaderSave">

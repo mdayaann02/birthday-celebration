@@ -277,9 +277,9 @@ export function encodeSiteToUrl(templateId, data, isReview = false) {
     const jsonStr = JSON.stringify(compactPayload);
     const compressed = LZString.compressToEncodedURIComponent(jsonStr);
 
-    const basePath = `${window.location.origin}${window.location.pathname}`;
-    const reviewQuery = isReview ? '?review=true' : '';
-    return `${basePath}${reviewQuery}#site=${compressed}`;
+    const origin = window.location.origin;
+    const viewQuery = isReview ? '?mode=view&review=true' : '?mode=view';
+    return `${origin}/${viewQuery}#site=${compressed}`;
   } catch (err) {
     console.error("LZString encoding error, using safe fallback:", err);
     try {
@@ -289,11 +289,11 @@ export function encodeSiteToUrl(templateId, data, isReview = false) {
       let binString = '';
       for (let i = 0; i < bytes.length; i++) binString += String.fromCharCode(bytes[i]);
       const base64 = btoa(binString).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-      const basePath = `${window.location.origin}${window.location.pathname}`;
-      const reviewQuery = isReview ? '?review=true' : '';
-      return `${basePath}${reviewQuery}#site=${base64}`;
+      const origin = window.location.origin;
+      const viewQuery = isReview ? '?mode=view&review=true' : '?mode=view';
+      return `${origin}/${viewQuery}#site=${base64}`;
     } catch {
-      return window.location.href;
+      return `${window.location.origin}/?mode=view`;
     }
   }
 }

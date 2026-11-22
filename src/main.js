@@ -1,4 +1,4 @@
-// src/main.js - Application Router & Main Entry (Viewer Mode by Default, Short-Links Supported)
+// src/main.js - Application Router & Main Entry (Editor Website by Default, Viewer on Share Links or Explicit View)
 
 import './style.css';
 import { TEMPLATES } from './models/templateRegistry.js';
@@ -18,37 +18,19 @@ async function initApp() {
   const searchParams = new URLSearchParams(window.location.search);
   const hash = window.location.hash.replace(/^#/, '');
 
-  // 1. STUDIO / EDITOR MODE: Only open if creator explicitly requested it
-  // (e.g. ?edit=true, ?mode=studio, #studio, #editor, /studio, /edit)
-  const isEditMode = searchParams.get('edit') === 'true' ||
-                     searchParams.get('studio') === 'true' ||
-                     searchParams.get('mode') === 'studio' ||
-                     searchParams.get('mode') === 'editor' ||
-                     hash === 'edit' ||
-                     hash === 'editor' ||
-                     hash === 'studio' ||
-                     hash.startsWith('studio=') ||
-                     window.location.pathname.endsWith('/studio') ||
-                     window.location.pathname.endsWith('/edit');
-
-  if (isEditMode) {
-    renderStudioApp(root);
-    return;
-  }
-
   // Maker review bypass flag (?review=true)
   const isMakerReview = searchParams.get('review') === 'true' || hash.includes('review=true');
 
-  // 2. SERVER SHORT LINK ROUTE: Check if URL path is /s/:slug
+  // 1. SERVER SHORT LINK ROUTE: Check if URL path is /s/:slug (Recipient Celebration)
   const pathname = window.location.pathname;
   if (pathname.startsWith('/s/')) {
     const slug = pathname.split('/s/')[1]?.replace(/\/$/, '').toLowerCase();
     if (slug) {
       root.innerHTML = `
-        <div class="site-loading-screen" style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; color:#fff; background:#0c0d14; font-family:system-ui, -apple-system, sans-serif; text-align:center; padding:20px;">
-          <div style="font-size:42px; margin-bottom:14px; animation: pulse 1.5s infinite;">🌸</div>
-          <div style="font-size:18px; font-weight:700; margin-bottom:6px; letter-spacing:0.5px;">Opening Celebration...</div>
-          <div style="font-size:13px; color:#f472b6;">Preparing your romantic surprise ✨</div>
+        <div class="site-loading-screen" style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; color:#fff; background:radial-gradient(circle at 50% 50%, #1c1028 0%, #0c0814 100%); font-family:system-ui, -apple-system, sans-serif; text-align:center; padding:20px;">
+          <div style="font-size:46px; margin-bottom:14px; animation: pulse 1.5s infinite;">🌸</div>
+          <div style="font-size:20px; font-weight:700; margin-bottom:6px; letter-spacing:0.5px; background:linear-gradient(135deg, #ff4d6d, #fbbf24); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Opening Celebration...</div>
+          <div style="font-size:13px; color:#fda4af;">Preparing your romantic surprise ✨</div>
         </div>
       `;
       const site = await fetchSiteBySlug(slug);
@@ -59,23 +41,36 @@ async function initApp() {
     }
   }
 
-  // 3. SHARED CELEBRATION LINK: Check if URL contains shared site token (#site=... or ?site=...)
+  // 2. SHARED CELEBRATION LINK: Check if URL contains shared site token (#site=... or ?site=...)
   const decodedSite = decodeSiteFromUrl();
   if (decodedSite && decodedSite.isShared) {
     renderViewerApp(root, decodedSite.templateId, decodedSite.data, decodedSite.isMakerReview);
     return;
   }
 
-  // 4. SPECIFIC OCCASION VIEW: Check direct template param (e.g. ?template=blossom or #template=blossom)
-  const tmplQuery = searchParams.get('template') || 
-                    (hash.startsWith('template=') ? hash.substring(9) : null) ||
-                    (hash === 'blossom' ? 'blossom' : null);
+  // 3. EXPLICIT RECIPIENT VIEWER MODE:
+  // Only open the clean viewer website if requested explicitly (e.g. ?mode=view, ?view=true, #view, #recipient)
+  const isExplicitViewer = searchParams.get('mode') === 'view' ||
+                           searchParams.get('mode') === 'recipient' ||
+                           searchParams.get('view') === 'true' ||
+                           searchParams.get('recipient') === 'true' ||
+                           hash === 'view' ||
+                           hash === 'recipient' ||
+                           hash.startsWith('view=') ||
+                           hash.startsWith('recipient=');
 
-  const activeTemplateId = (tmplQuery && TEMPLATES[tmplQuery]) ? tmplQuery : getPublishedTemplateId();
-  const celebrationData = getActiveCelebrationData(activeTemplateId);
+  if (isExplicitViewer) {
+    const tmplQuery = searchParams.get('template') || 
+                      (hash.startsWith('template=') ? hash.substring(9) : null);
+    const activeTemplateId = (tmplQuery && TEMPLATES[tmplQuery]) ? tmplQuery : getPublishedTemplateId();
+    const celebrationData = getActiveCelebrationData(activeTemplateId);
+    renderViewerApp(root, activeTemplateId, celebrationData, isMakerReview);
+    return;
+  }
 
-  // 5. DEFAULT: Always open the romantic celebration viewer for the recipient!
-  renderViewerApp(root, activeTemplateId, celebrationData, isMakerReview);
+  // 4. DEFAULT ROUTE: Always open the Glassmorphic Celebration Studio Editor!
+  // Creators land directly on the editor website to customize everything seamlessly.
+  renderStudioApp(root);
 }
 
 // React to URL hash changes
