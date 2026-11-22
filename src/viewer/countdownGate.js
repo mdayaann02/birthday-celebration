@@ -111,6 +111,11 @@ export function renderCountdownGate(container, data, onUnlock) {
           <button class="btn-maker-review" id="btnMakerReview">
             👁️ Are you the creator? Review Website
           </button>
+          <div style="margin-top:8px;">
+            <button type="button" class="btn-test-curtains" id="btnTestCurtains" style="background:none; border:none; color:#f472b6; font-size:11.5px; text-decoration:underline; cursor:pointer;">
+              🎭 Preview Curtains Opening Animation
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -146,6 +151,55 @@ export function renderCountdownGate(container, data, onUnlock) {
     }, 5500);
   }
 
+  // Theatrical 3D Velvet Curtains Opening Animation
+  function playCurtainsReveal(onFinish) {
+    clearInterval(timerInterval);
+
+    // Multi-burst celebration confetti
+    confetti({ particleCount: 130, spread: 85, origin: { y: 0.5 } });
+    setTimeout(() => {
+      confetti({ particleCount: 160, spread: 110, origin: { y: 0.6 } });
+    }, 350);
+
+    const overlay = document.createElement("div");
+    overlay.className = "curtains-stage-overlay";
+    overlay.id = "curtainsStageOverlay";
+    overlay.innerHTML = `
+      <div class="curtain-pelmet"></div>
+      <div class="curtain-panel curtain-left">
+        <div class="curtain-tassel"></div>
+      </div>
+      <div class="curtain-panel curtain-right">
+        <div class="curtain-tassel"></div>
+      </div>
+      <div class="curtain-center-badge">
+        <div class="badge-icon">🎉</div>
+        <div class="badge-title">The Moment Has Arrived! ✨</div>
+        <div class="badge-sub">Unfolding your romantic surprise celebration...</div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Unseal and mount website underneath so it is completely ready when curtains part
+    if (onFinish) onFinish();
+
+    // Trigger smooth theatrical drawing open after anticipation delay
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        overlay.classList.add("curtains-open");
+      }, 450);
+    });
+
+    // Fade out and remove curtain stage
+    setTimeout(() => {
+      overlay.classList.add("fade-out");
+      setTimeout(() => {
+        overlay.remove();
+      }, 850);
+    }, 2700);
+  }
+
   // Timer loop
   const elDays = document.getElementById("cdDays");
   const elHours = document.getElementById("cdHours");
@@ -156,8 +210,9 @@ export function renderCountdownGate(container, data, onUnlock) {
     const remaining = targetTime - Date.now();
     if (remaining <= 0) {
       clearInterval(timerInterval);
-      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-      onUnlock(false);
+      playCurtainsReveal(() => {
+        onUnlock(false);
+      });
       return;
     }
 
@@ -175,13 +230,22 @@ export function renderCountdownGate(container, data, onUnlock) {
   updateClock();
   const timerInterval = setInterval(updateClock, 1000);
 
+  // Curtains animation preview button
+  document.getElementById("btnTestCurtains")?.addEventListener("click", () => {
+    playCurtainsReveal(() => {
+      onUnlock(true);
+    });
+  });
+
   // Maker review bypass handler
   document.getElementById("btnMakerReview").addEventListener("click", () => {
     const entered = prompt("Enter Maker Passcode to preview early (Default: " + (data.passcode || "1234") + "):", "");
     if (entered === (data.passcode || "1234") || entered === "admin") {
       sessionStorage.setItem("maker_review_unlocked", "true");
       clearInterval(timerInterval);
-      onUnlock(true);
+      playCurtainsReveal(() => {
+        onUnlock(true);
+      });
     } else if (entered !== null) {
       alert("Incorrect passcode! Only the website creator can unlock early review mode.");
     }

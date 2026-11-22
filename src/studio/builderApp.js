@@ -11,6 +11,7 @@ import { renderTemplateSelector } from './templateSelector.js';
 import { renderVisualEditor } from './visualEditor.js';
 import { openShareModal } from './shareModal.js';
 import { renderViewerApp } from '../viewer/viewerApp.js';
+import { renderCreatorGuide } from './creatorGuide.js';
 
 export function renderStudioApp(root) {
   // Flag that editor mode is active so audio players never auto-play on click/touch in editor
@@ -60,6 +61,9 @@ export function renderStudioApp(root) {
         </div>
 
         <div class="studio-header-actions">
+          <button class="btn-studio-action btn-header-guide" id="btnHeaderGuide" title="Step-by-step creator guide">
+            🧭 <span>Guide</span>
+          </button>
           <a href="/?mode=view" target="_blank" rel="noopener noreferrer" class="btn-studio-action btn-header-recipient" title="Open website as recipient">
             👁️ <span>Recipient View</span>
           </a>
@@ -93,6 +97,9 @@ export function renderStudioApp(root) {
       <div class="studio-workspace mobile-view-editor" id="studioWorkspace">
         <!-- Controls & Editor Sidebar -->
         <div class="studio-sidebar" id="studioSidebar">
+          <!-- Step-by-Step Interactive Creator Journey Guide -->
+          <div id="creatorGuideMount"></div>
+
           <!-- Section 1: Template Gallery (Tab "templates" on mobile) -->
           <div class="studio-tab-section studio-tab-templates" id="tabTemplatesSection">
             <div id="templateSelectorMount"></div>
@@ -199,6 +206,10 @@ export function renderStudioApp(root) {
   function switchMobileTab(tab) {
     currentMobileTab = tab;
 
+    if (tab === 'templates') guideController?.setStep(1);
+    else if (tab === 'editor') guideController?.setStep(2);
+    else if (tab === 'preview') guideController?.setStep(3);
+
     root.querySelectorAll('.mobile-tab-btn').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
     });
@@ -262,6 +273,26 @@ export function renderStudioApp(root) {
   updateLivePreview();
   renderOccasionBanner();
 
+  // Initialize Creator Journey Step-by-Step Guide
+  const guideMount = root.querySelector('#creatorGuideMount');
+  const btnHeaderGuide = root.querySelector('#btnHeaderGuide');
+  const guideController = renderCreatorGuide(guideMount, {
+    onSwitchTab: (tab) => switchMobileTab(tab),
+    onOpenShare: () => triggerShare(),
+    onFocusEditor: () => {
+      const firstInput = root.querySelector('#tabEditorSection input[type="text"], #tabEditorSection textarea');
+      if (firstInput) {
+        firstInput.focus();
+        firstInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  });
+
+  btnHeaderGuide?.addEventListener('click', () => {
+    guideController?.expand();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
   // Mobile tab click listeners
   root.querySelectorAll('.mobile-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -298,6 +329,7 @@ export function renderStudioApp(root) {
   // Share/Deploy triggers
   function triggerShare() {
     saveActiveCelebration(activeTemplateId, activeData);
+    guideController?.setStep(4);
     openShareModal(activeTemplateId, activeData);
   }
 
