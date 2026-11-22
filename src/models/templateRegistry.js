@@ -1,6 +1,72 @@
 // src/models/templateRegistry.js - Templates Registry & Schema
 
 export const TEMPLATES = {
+  tree: {
+    id: "tree",
+    name: "Cupid & Blossom Tree",
+    badge: "Cinematic Film 🏹🌸",
+    icon: "🏹",
+    description: "A 4-act interactive film: gift unwrap gate, Cupid's bow shooting the beating heart, rose color flood, kinetic typography wish, blooming canvas tree with tap-to-read love notes, polaroid scrapbook & typewriter letter.",
+    defaultTheme: {
+      primary: "#d4235c",
+      bgGradient: "radial-gradient(120% 88% at 50% 24%, #fff8f1 0%, #fff6ee 38%, #f9e2d2 74%, #f2c9b8 100%)",
+      accent: "#ffcf6a"
+    },
+    defaultData: {
+      recipientName: "My Love",
+      senderName: "Cupid",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      audioSubtitle: "ROMANTIC SCORE",
+      audioSrc: "/audio/alfaaz.mp3",
+      gateLabel: "tap to unwrap",
+      eyebrow: "a little something, for you",
+      hint: "pull & release",
+      kEyebrow: "make a wish…",
+      wLine1: "Happy",
+      wLine2: "Birthday",
+      kSub: "to someone worth celebrating",
+      wEyebrow: "and… make it count",
+      wHero: "Happy Birthday",
+      wSub: "here’s to a year that blooms",
+      loveHint: "✦ tap the blossoms ✦",
+      loveNotes: [
+        "You are the prettiest sight in my entire world 🌸",
+        "Every moment with you feels like pure magic ✨",
+        "Your smile is my absolute favourite thing in life 🥰",
+        "I love you more than words can ever describe 💖",
+        "Thank you for being my constant happy place 🫶",
+        "Here's to a lifetime of love and unforgettable memories 🥂"
+      ],
+      scrapbookEyebrow: "a little scrapbook",
+      scrapbookTitle: "Memory Lane",
+      polaroids: [
+        { image: "/images/sunset.jpg", caption: "Our favourite sunset walk 🌅" },
+        { image: "/images/always_you.jpg", caption: "Always laughing with you 🫶" },
+        { image: "/images/pretty.jpg", caption: "Your breathtaking smile ✨" },
+        { image: "/images/dream_girl.jpg", caption: "Adventures of a lifetime 💫" },
+        { image: "/images/queen.jpg", caption: "Forever my queen 👑" }
+      ],
+      reasons: [
+        "The way your eyes light up whenever you laugh",
+        "How you make every single day feel like home",
+        "Your endless kindness and the purest heart",
+        "How we can talk for hours about absolutely everything"
+      ],
+      shuffleCompliments: [
+        "You make my entire universe brighter just by existing 🌟",
+        "You are the definition of breathtaking beauty inside and out 💖",
+        "I fall in love with you all over again every single day 🌸",
+        "Your gentle touch calms any storm in my life 🕊️",
+        "Nobody in the world could ever replace you 👑",
+        "Your happiness is my highest priority forever and always ✨"
+      ],
+      letterText: "Dear you, Happy birthday! From the moment you walked into my life, you brought colors, laughter, and a warmth I never knew existed. Watching you grow, smile, and achieve your dreams is my greatest joy. Thank you for being my partner, my best friend, and my whole heart. Here is to celebrating you today and always. I love you endlessly. ♡"
+    }
+  },
+
   blossom: {
     id: "blossom",
     name: "Blossom Romance (Viral Reel)",

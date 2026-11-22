@@ -124,7 +124,96 @@ export function renderVisualEditor(container, templateId, data, onChange) {
 
   const specificBox = container.querySelector('#templateSpecificFields');
 
-  if (templateId === 'blossom') {
+  if (templateId === 'tree') {
+    const treePolaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { image: "/images/sunset.jpg", caption: "Our favourite sunset walk 🌅" },
+      { image: "/images/always_you.jpg", caption: "Always laughing with you 🫶" },
+      { image: "/images/pretty.jpg", caption: "Your breathtaking smile ✨" },
+      { image: "/images/dream_girl.jpg", caption: "Adventures of a lifetime 💫" },
+      { image: "/images/queen.jpg", caption: "Forever my queen 👑" }
+    ];
+
+    specificBox.innerHTML = `
+      <div class="section-title">🏹 Cupid & Blossom Tree Cinematic Details</div>
+      
+      <div class="editor-grid-2">
+        <div class="form-group">
+          <label class="form-label">Gate Label (Unwrap Prompt)</label>
+          <input type="text" class="form-input" id="edTreeGateLabel" value="${data.gateLabel || 'tap to unwrap'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bow Hint (Act 1)</label>
+          <input type="text" class="form-input" id="edTreeHint" value="${data.hint || 'pull & release'}" />
+        </div>
+      </div>
+
+      <div class="editor-grid-2">
+        <div class="form-group">
+          <label class="form-label">Kinetic Line 1 (Act 3)</label>
+          <input type="text" class="form-input" id="edTreeWLine1" value="${data.wLine1 || 'Happy'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kinetic Line 2 (Act 3)</label>
+          <input type="text" class="form-input" id="edTreeWLine2" value="${data.wLine2 || 'Birthday'}" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kinetic Subtitle (Act 3)</label>
+        <input type="text" class="form-input" id="edTreeKSub" value="${data.kSub || 'to someone worth celebrating'}" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Blossom Tree Canopy Hero Wish (Act 4)</label>
+        <input type="text" class="form-input" id="edTreeWHero" value="${data.wHero || 'Happy Birthday'}" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Blossom Subtitle (Act 4)</label>
+        <input type="text" class="form-input" id="edTreeWSub" value="${data.wSub || 'here’s to a year that blooms'}" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Act 5 Sealed Envelope Letter (Typewriter Animation)</label>
+        <textarea class="form-textarea" id="edTreeLetter" rows="4">${data.letterText || ''}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Secret Blossom Love Notes (1 per line - revealed on tap)</label>
+        <textarea class="form-textarea" id="edTreeLoveNotes" rows="4">${(data.loveNotes || []).join('\n')}</textarea>
+      </div>
+
+      <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 16px 0 8px;">📸 Scrapbook Polaroid Photos:</div>
+      <div id="treePolaroidsList">
+        ${treePolaroids.map((p, i) => `
+          <div class="sub-card-editor tree-polaroid-row" data-i="${i}">
+            <div class="bcard-top-row">
+              <div class="bcard-thumb-wrap">
+                <img src="${p.image}" class="bcard-thumb" id="treePolThumb_${i}" onerror="this.src='/images/sunset.jpg'" />
+                <label class="btn-thumb-upload" title="Upload from phone">
+                  📷
+                  <input type="file" class="file-upload-tree-polaroid" data-i="${i}" accept="image/*" style="display:none;" />
+                </label>
+              </div>
+              <div class="bcard-caption-col">
+                <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
+                <input type="text" class="form-input tree-pol-cap" data-i="${i}" value="${p.caption || ''}" placeholder="Caption (e.g. Our favorite sunset walk)" />
+              </div>
+            </div>
+            <div class="bcard-presets-chips">
+              <span class="preset-chip-label">Quick Pick:</span>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/queen.jpg">Queen</button>
+              <button type="button" class="btn-quick-tree-preset" data-i="${i}" data-src="/images/baddie.jpg">Baddie</button>
+            </div>
+            <input type="text" class="form-input tree-pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap 📷 to upload)" />
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (templateId === 'blossom') {
     const blossomCards = (data.cards && data.cards.length > 0) ? data.cards : [
       { image: "/images/blossom/memory_1.jpg", caption: "Sweet moments with you" },
       { image: "/images/blossom/memory_2.jpg", caption: "Adventures in cold snow" },
@@ -484,6 +573,38 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     });
   });
 
+  // Tree template polaroids presets & upload
+  container.querySelectorAll('.btn-quick-tree-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = btn.getAttribute('data-i');
+      const src = btn.getAttribute('data-src');
+      const imgInp = container.querySelector(`.tree-pol-img[data-i="${idx}"]`);
+      const thumb = container.querySelector(`#treePolThumb_${idx}`);
+      if (imgInp) imgInp.value = src;
+      if (thumb) thumb.src = src;
+      emitChange();
+    });
+  });
+
+  container.querySelectorAll('.file-upload-tree-polaroid').forEach(fileInput => {
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const idx = fileInput.getAttribute('data-i');
+      const textInput = container.querySelector(`.tree-pol-img[data-i="${idx}"]`);
+      const thumb = container.querySelector(`#treePolThumb_${idx}`);
+      if (textInput) textInput.value = "Uploading photo...";
+      const res = await uploadFile(file);
+      if (res.success) {
+        if (textInput) textInput.value = res.url;
+        if (thumb) thumb.src = res.url;
+        emitChange();
+      } else {
+        alert(res.error || "Upload failed. Please try a different photo.");
+      }
+    });
+  });
+
   const uploadTimerBg = container.querySelector('#uploadTimerBgPhoto');
   uploadTimerBg?.addEventListener('change', async (e) => {
     const file = e.target.files[0];
@@ -527,7 +648,46 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       updated.countdownBackgroundImages = Array.from(cdBgInputs).map(i => i.value.trim()).filter(Boolean);
     }
 
-    if (templateId === 'blossom') {
+    if (templateId === 'tree') {
+      const elGate = container.querySelector('#edTreeGateLabel');
+      const elHint = container.querySelector('#edTreeHint');
+      const elW1 = container.querySelector('#edTreeWLine1');
+      const elW2 = container.querySelector('#edTreeWLine2');
+      const elKSub = container.querySelector('#edTreeKSub');
+      const elWHero = container.querySelector('#edTreeWHero');
+      const elWSub = container.querySelector('#edTreeWSub');
+      const elLet = container.querySelector('#edTreeLetter');
+      const elLove = container.querySelector('#edTreeLoveNotes');
+
+      if (elGate) updated.gateLabel = elGate.value;
+      if (elHint) updated.hint = elHint.value;
+      if (elW1) updated.wLine1 = elW1.value;
+      if (elW2) updated.wLine2 = elW2.value;
+      if (elKSub) updated.kSub = elKSub.value;
+      if (elWHero) updated.wHero = elWHero.value;
+      if (elWSub) updated.wSub = elWSub.value;
+      if (elLet) updated.letterText = elLet.value;
+      if (elLove) {
+        updated.loveNotes = elLove.value.split('\n').map(s => s.trim()).filter(Boolean);
+      }
+
+      const treeRows = container.querySelectorAll('.tree-polaroid-row');
+      if (treeRows.length > 0) {
+        const polsArr = [];
+        treeRows.forEach(row => {
+          const idx = row.getAttribute('data-i');
+          const imgInp = row.querySelector(`.tree-pol-img[data-i="${idx}"]`);
+          const capInp = row.querySelector(`.tree-pol-cap[data-i="${idx}"]`);
+          if (imgInp && imgInp.value.trim()) {
+            polsArr.push({
+              image: imgInp.value.trim(),
+              caption: capInp ? capInp.value.trim() : ""
+            });
+          }
+        });
+        if (polsArr.length > 0) updated.polaroids = polsArr;
+      }
+    } else if (templateId === 'blossom') {
       const elPin = container.querySelector('#edBlossomPin');
       const elKeyTitle = container.querySelector('#edBlossomKeypadTitle');
       const elPrompt = container.querySelector('#edBlossomPrompt');

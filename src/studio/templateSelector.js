@@ -6,7 +6,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
   let activeFilter = 'all';
 
   const categories = [
-    { id: 'all', label: '✨ All (10)' },
+    { id: 'all', label: `✨ All (${Object.keys(TEMPLATES).length})` },
     { id: 'romance', label: '🌸 Romance' },
     { id: 'birthday', label: '🎂 Birthday' },
     { id: 'family', label: '👨‍👩‍👧 Family' },
@@ -14,7 +14,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
   ];
 
   function getTemplateCategory(tid) {
-    if (['blossom', 'valentine', 'anniversary', 'sorry'].includes(tid)) return 'romance';
+    if (['tree', 'blossom', 'valentine', 'anniversary', 'sorry'].includes(tid)) return 'romance';
     if (['birthday'].includes(tid)) return 'birthday';
     if (['mother', 'father', 'sister', 'brother'].includes(tid)) return 'family';
     if (['friendship'].includes(tid)) return 'friends';

@@ -2,6 +2,7 @@
 
 import { checkCountdownLock, renderCountdownGate } from './countdownGate.js';
 import { initInteractiveSparkles } from './sparkleEffect.js';
+import { renderTreeTemplate } from './templates/treeTemplate.js';
 import { renderBlossomTemplate } from './templates/blossomTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
 import { renderAnniversaryTemplate } from './templates/anniversaryTemplate.js';
@@ -45,6 +46,9 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   const root = container.querySelector('#templateRoot');
 
   switch (templateId) {
+    case 'tree':
+      renderTreeTemplate(root, data, isMakerReview);
+      break;
     case 'blossom':
       renderBlossomTemplate(root, data, isMakerReview);
       break;
