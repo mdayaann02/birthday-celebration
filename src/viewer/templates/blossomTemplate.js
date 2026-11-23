@@ -121,23 +121,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   container.innerHTML = `
     <div class="tree-film-stage scene" id="treeFilmStage">
-      <!-- TOP STICKY CHAPTER NAVIGATION DOCK -->
-      <nav class="romance-nav-dock" id="romanceNavDock" aria-label="Story Chapters">
-        <div class="romance-dock-top">
-          <span class="dock-step-pill" id="dockStepPill">CHAPTER NAVIGATION</span>
-          <span class="dock-chapter-title" id="dockChapterTitle">🌸 Blossom Romance Flagship</span>
-        </div>
-        <div class="romance-dock-chips" id="dockChips">
-          <button type="button" class="romance-chip-btn active" data-act="bloom">🌸 Bloom</button>
-          <button type="button" class="romance-chip-btn" data-act="cupid">🏹 Cupid's Bow</button>
-          <button type="button" class="romance-chip-btn" data-act="tree">🌳 Blossom Tree</button>
-          <button type="button" class="romance-chip-btn" data-act="flipbook">📖 3D Flipbook</button>
-          <button type="button" class="romance-chip-btn" data-act="letter">💌 Love Letter</button>
-          <button type="button" class="romance-chip-btn" data-act="lanterns">🏮 Sky Lanterns</button>
-        </div>
-      </nav>
-
-      <!-- ACT 0: VIRAL REEL BLOSSOM OPENING GATE -->
+      <!-- ACT 0: VIRAL REEL BLOSSOM OPENING GATE (SCENE 1) -->
       <div class="gate" id="treeGate" role="button" tabindex="0" aria-label="Touch the blossom to unwrap">
         <div class="gate__sparkles" aria-hidden="true">
           <span></span><span></span><span></span><span></span><span></span><span></span>
@@ -344,8 +328,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       </button>
 
       <button class="memoriesBtn tree-story-cta" id="treeMemoriesBtn" type="button" hidden>
-        <span class="tree-story-cta-icon">📖</span>
-        <span class="tree-story-cta-text">✦ Step into Our Storybook • 10 Romantic Chapters ✦</span>
+        <span class="tree-story-cta-icon">✨</span>
+        <span class="tree-story-cta-text">✦ Continue Our Story • Written in the Stars ❯ ✦</span>
       </button>
 
       <!-- UPPER-RIGHT SPINNING MINI VINYL CD PLAYER -->
@@ -367,380 +351,331 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         </audio>
       </div>
 
-      <!-- ACT 5: MEMORIES OVERLAY (3D FLIPBOOK + WAX LETTER + SKY LANTERNS) -->
-      <div class="memories" id="treeMemories" aria-hidden="true">
-        <div class="memories__inner" style="padding-top:72px;">
-          <!-- FLOATING STORYBOOK PROGRESS HEADER -->
-          <header class="romance-storybook-header" id="romanceStorybookHeader">
-            <div class="story-progress-indicator">
-              <div class="story-progress-track">
-                <div class="story-progress-fill" id="storyProgressFill" style="width: 40%;"></div>
-              </div>
-              <div class="story-stage-bar">
-                <span class="story-step-badge" id="storyStepBadge">PAGE 4 OF 10</span>
-                <span class="story-stage-sep">•</span>
-                <span class="story-stage-name" id="storyStageName">Written in the Stars ✨</span>
-              </div>
-            </div>
-            <button class="memories__close" id="treeMemoriesClose" type="button" aria-label="Close" title="Back to Blossom Tree">✕</button>
-          </header>
+      <!-- ================= SCENE 4: CELESTIAL CONSTELLATION MAP ================= -->
+      <section class="romance-fullscreen-scene" data-scene="4" id="sceneConstellation" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap">
+          <div class="romance-chapter-header">
+            <span class="chapter-num-pill">CHAPTER IV</span>
+            <h3 class="chapter-title">Written in the Stars</h3>
+            <p class="chapter-desc">Tap the glowing celestial stars to trace our memory constellation across the cosmos 💫</p>
+          </div>
 
-          <!-- ================= PAGE 4 (ACT IV): CELESTIAL CONSTELLATION MAP ================= -->
-          <section class="romance-page-card active" data-romance-page="4" id="chapterConstellation">
-            <div class="romance-chapter-header">
-              <span class="chapter-num-pill">CHAPTER IV</span>
-              <h3 class="chapter-title">Written in the Stars</h3>
-              <p class="chapter-desc">Tap the glowing celestial stars to trace our memory constellation across the cosmos 💫</p>
-            </div>
-
-            <div class="constellation-canvas-container" id="constellationStage">
-              <canvas id="constellationCanvas" class="constellation-canvas"></canvas>
-              
-              <!-- Floating Active Constellation Card -->
-              <div class="constellation-memory-card" id="constellationMemoryCard" style="display:none;">
-                <div class="constellation-card-header">
-                  <span class="constellation-star-icon">⭐</span>
-                  <div class="constellation-title-wrap">
-                    <h4 class="constellation-node-title" id="constNodeTitle">The First Spark</h4>
-                    <span class="constellation-node-date" id="constNodeDate">Where It Began</span>
-                  </div>
-                  <button type="button" class="btn-constellation-close" id="btnConstClose" aria-label="Close Note">✕</button>
-                </div>
-                <p class="constellation-node-note" id="constNodeNote">The exact moment the universe guided my eyes to yours.</p>
-              </div>
-
-              <!-- Quick Star Selector Chips -->
-              <div class="constellation-star-chips" id="constStarChips">
-                ${constellationsList.map((c, i) => `
-                  <button type="button" class="const-star-chip ${i === 0 ? 'active' : ''}" data-idx="${i}">
-                    <span>✦</span> ${c.title}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- Page Bottom Nav Bar -->
-            <div class="romance-page-nav-bar">
-              <button type="button" class="btn-romance-page-prev" data-target-page="3" data-prev="3">❮ Blossom Tree</button>
-              <span class="romance-page-stepper-pill">PAGE 4 OF 10</span>
-              <button type="button" class="btn-romance-page-next" data-target-page="5" data-next="5">Keepsake Album ❯</button>
-            </div>
-          </section>
-
-          <!-- ================= PAGE 5 (ACT V): REALISTIC 3D HARDCOVER MEMORY FLIPBOOK ================= -->
-          <section class="romance-page-card" data-romance-page="5" id="chapterFlipbook" style="display:none;">
-            <div class="romance-chapter-header">
-              <span class="chapter-num-pill">CHAPTER V</span>
-              <h3 class="chapter-title">Treasured Keepsakes</h3>
-              <p class="chapter-desc">Turn the pages of our 3D hardcover keepsake album &amp; save your favorite polaroids 📸</p>
-            </div>
+          <div class="constellation-canvas-container" id="constellationStage">
+            <canvas id="constellationCanvas" class="constellation-canvas"></canvas>
             
-            <div class="realistic-flipbook-wrap" style="margin-bottom:20px;">
-              <div class="realistic-book" id="realisticBook">
-                <div class="book-hardcover-back"></div>
-                <div class="book-spine-crease"></div>
-
-                ${polaroids.map((p, i) => {
-                  const rot = ((i % 2 === 0 ? -1.5 : 1.5) * (1 + (i % 3) * 0.5)).toFixed(1);
-                  const noteText = p.note || loveNotesList[i % loveNotesList.length] || "Every moment by your side is a memory I treasure forever.";
-                  return `
-                    <div class="book-leaf" data-leaf="${i}" style="z-index: ${polaroids.length - i};">
-                      <div class="leaf-face leaf-front">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                          <span style="font-size:11px; font-weight:800; color:#d4235c; letter-spacing:0.1em;">OUR STORY</span>
-                          <span style="font-size:11px; color:#8a6070; font-weight:700;">VOL. I</span>
-                        </div>
-                        <div class="book-polaroid-frame" style="--rot:${rot}deg;">
-                          <div class="book-polaroid-img-wrap">
-                            <img src="${p.image || '/images/sunset.jpg'}" class="book-polaroid-img" alt="Memory ${i+1}" onerror="this.src='/images/sunset.jpg'" />
-                          </div>
-                          <h4 class="book-polaroid-caption">${p.caption || 'Our favourite moment 💖'}</h4>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-                          <button type="button" class="btn-download-polaroid" data-leaf-idx="${i}" title="Save Polaroid to Camera Roll">📸 Save Keepsake</button>
-                          <div class="leaf-page-number">Page ${i * 2 + 1} of ${polaroids.length * 2}</div>
-                        </div>
-                      </div>
-                      <div class="leaf-face leaf-back">
-                        <div class="book-note-header">
-                          <span class="book-note-stamp">MEMORIES &amp; HEARTBEATS</span>
-                          <span style="font-size:14px;">💌</span>
-                        </div>
-                        <div class="book-note-body">
-                          "${noteText}"
-                        </div>
-                        <div class="book-note-footer">
-                          Forever with you ♡
-                        </div>
-                        <div class="leaf-page-number" style="text-align:left;">Page ${i * 2 + 2} of ${polaroids.length * 2}</div>
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
+            <!-- Floating Active Constellation Card -->
+            <div class="constellation-memory-card" id="constellationMemoryCard" style="display:none;">
+              <div class="constellation-card-header">
+                <span class="constellation-star-icon">⭐</span>
+                <div class="constellation-title-wrap">
+                  <h4 class="constellation-node-title" id="constNodeTitle">The First Spark</h4>
+                  <span class="constellation-node-date" id="constNodeDate">Where It Began</span>
+                </div>
+                <button type="button" class="btn-constellation-close" id="btnConstClose" aria-label="Close Note">✕</button>
               </div>
-
-              <!-- Flip Controls -->
-              <div class="flipbook-controls-bar">
-                <button type="button" class="btn-flip-book" id="btnFlipPrev" disabled>❮ Previous</button>
-                <span class="flipbook-page-indicator" id="flipIndicator">Memory 1 of ${polaroids.length}</span>
-                <button type="button" class="btn-flip-book" id="btnFlipNext">Next ❯</button>
-              </div>
+              <p class="constellation-node-note" id="constNodeNote">The exact moment the universe guided my eyes to yours.</p>
             </div>
 
-            <!-- Page Bottom Nav Bar -->
-            <div class="romance-page-nav-bar">
-              <button type="button" class="btn-romance-page-prev" data-target-page="4" data-prev="4">❮ Constellations</button>
-              <span class="romance-page-stepper-pill">PAGE 5 OF 10</span>
-              <button type="button" class="btn-romance-page-next" data-target-page="6" data-next="6">Soundtrack of Us ❯</button>
-            </div>
-          </section>
-
-          <!-- ================= PAGE 6 (ACT VI): VINTAGE CASSETTE & REASONS ================= -->
-          <section class="romance-page-card" data-romance-page="6" id="chapterCassette" style="display:none;">
-            <div class="romance-chapter-header">
-              <span class="chapter-num-pill">CHAPTER VI</span>
-              <h3 class="chapter-title">The Soundtrack of Us</h3>
-              <p class="chapter-desc">Our special melody, spinning vintage tape reels, and endless reasons why you hold my heart 📻</p>
-            </div>
-
-            <div class="vintage-cassette-deck" id="vintageCassetteDeck">
-              <div class="cassette-body">
-                <div class="cassette-screws"><span>+</span><span>+</span><span>+</span><span>+</span></div>
-                <div class="cassette-label-sticker">
-                  <span class="cassette-side-badge">SIDE A</span>
-                  <span class="cassette-title-text">MIXTAPE FOR ${recipient.toUpperCase()} ♡</span>
-                  <div class="cassette-eq-bars" id="cassetteEqBars">
-                    <span></span><span></span><span></span><span></span><span></span>
-                  </div>
-                </div>
-                
-                <div class="cassette-window">
-                  <!-- Left Spool -->
-                  <div class="cassette-spool spool-left" id="spoolLeft">
-                    <div class="spool-core"></div>
-                    <div class="spool-teeth"></div>
-                  </div>
-                  <!-- Tape Bridge -->
-                  <div class="cassette-tape-ribbon"></div>
-                  <!-- Right Spool -->
-                  <div class="cassette-spool spool-right" id="spoolRight">
-                    <div class="spool-core"></div>
-                    <div class="spool-teeth"></div>
-                  </div>
-                </div>
-
-                <div class="cassette-controls-row">
-                  <button type="button" class="btn-cassette-play" id="btnCassettePlay">
-                    <span id="cassettePlayIcon">▶</span>
-                    <span id="cassettePlayLabel">Play Melody</span>
-                  </button>
-                  <span class="cassette-track-meta">${data.audioTitle || "Alfaaz - Romantic Score"}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- REASONS HERO SHOWCASE -->
-            <div class="reasons-showcase-wrap" style="margin-top:20px;">
-              <h4 class="reasons-section-subhead">A Few of a Thousand Reasons Why I Love You 💖</h4>
-              
-              <div class="reasons-interactive-deck" id="reasonsInteractiveDeck">
-                <div class="reason-hero-card" id="reasonHeroCard">
-                  <div class="reason-card-badge" id="reasonCardBadge">REASON #1</div>
-                  <div class="reason-card-body" id="reasonCardBody">
-                    "${reasonsList[0]}"
-                  </div>
-                  <div class="reason-card-footer">
-                    <span>Yours Always ♡</span>
-                    <span style="font-size:16px;">🌸</span>
-                  </div>
-                </div>
-                
-                <button type="button" class="btn-shuffle-reasons" id="btnShuffleReasons">
-                  🔀 Discover Another Reason
+            <!-- Quick Star Selector Chips -->
+            <div class="constellation-star-chips" id="constStarChips">
+              ${constellationsList.map((c, i) => `
+                <button type="button" class="const-star-chip ${i === 0 ? 'active' : ''}" data-idx="${i}">
+                  <span>✦</span> ${c.title}
                 </button>
-              </div>
-
-              <!-- Compact Reasons Grid -->
-              <div class="reasons-mini-grid">
-                ${reasonsList.map((r, i) => `
-                  <div class="reason-pill-item ${i === 0 ? 'active' : ''}" data-reason-idx="${i}">
-                    <span class="reason-num">#${i + 1}</span>
-                    <p class="reason-text">${r}</p>
-                  </div>
-                `).join('')}
-              </div>
+              `).join('')}
             </div>
+          </div>
 
-            <!-- Page Bottom Nav Bar -->
-            <div class="romance-page-nav-bar">
-              <button type="button" class="btn-romance-page-prev" data-target-page="5" data-prev="5">❮ Keepsake Album</button>
-              <span class="romance-page-stepper-pill">PAGE 6 OF 10</span>
-              <button type="button" class="btn-romance-page-next" data-target-page="7" data-next="7">Our Milestones ❯</button>
-            </div>
-          </section>
-
-          <!-- ================= PAGE 7 (ACT VII): LOVE MILESTONES TIMELINE ================= -->
-          <section class="romance-page-card" data-romance-page="7" id="chapterTimeline" style="display:none;">
-            <div class="romance-chapter-header">
-              <span class="chapter-num-pill">CHAPTER VII</span>
-              <h3 class="chapter-title">Our Timeless Milestones</h3>
-              <p class="chapter-desc">Every step, laughter, and turning point that led us to this beautiful moment ⏳</p>
-            </div>
-
-            <div class="romance-timeline-container">
-              <div class="timeline-gold-track"></div>
-              
-              <div class="timeline-milestones-list">
-                ${milestonesList.map((m, idx) => `
-                  <div class="timeline-milestone-card" data-milestone="${idx + 1}">
-                    <div class="milestone-badge-dot">
-                      <span>${m.icon}</span>
-                    </div>
-                    <div class="milestone-card-glass">
-                      <div class="milestone-header">
-                        <span class="milestone-tag">${m.tag}</span>
-                        <span class="milestone-num">${m.num}</span>
-                      </div>
-                      <h4 class="milestone-title">${m.title}</h4>
-                      <p class="milestone-desc">${m.desc}</p>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- Page Bottom Nav Bar -->
-            <div class="romance-page-nav-bar">
-              <button type="button" class="btn-romance-page-prev" data-target-page="6" data-prev="6">❮ Soundtrack of Us</button>
-              <span class="romance-page-stepper-pill">PAGE 7 OF 10</span>
-              <button type="button" class="btn-romance-page-next" data-target-page="8" data-next="8">The Sacred Letter ❯</button>
-            </div>
-          </section>
-
-          <!-- ================= PAGE 8 (ACT VIII): WAX-SEALED BURN-TO-REVEAL LETTER ================= -->
-          <section class="romance-page-card" data-romance-page="8" id="chapterLetter" style="display:none;">
-            <div class="romance-chapter-header">
-              <span class="chapter-num-pill">CHAPTER VIII</span>
-              <h3 class="chapter-title">The Sacred Letter</h3>
-              <p class="chapter-desc">Strike the golden match to burn the wax seal and unfold my deepest words 🕯️</p>
-            </div>
-
-            <div class="burn-letter-stage" style="margin-bottom:24px;">
-              <div class="wax-envelope-card" id="waxEnvelopeCard">
-                <div class="wax-seal-wrapper" id="waxSealWrapper">
-                  <div class="wax-seal-stamp" id="waxSealStamp">
-                    <span>💌</span>
-                  </div>
-                  <button type="button" class="btn-strike-match" id="btnStrikeMatch">
-                    🕯️ Strike Match &amp; Burn Seal
-                  </button>
-                </div>
-                <div class="parchment-letter-unfolded" id="parchmentLetter">
-                  <div class="letter-greeting">Dearest ${recipient},</div>
-                  <div class="letter-paragraph">${letterBody}</div>
-                  <div class="letter-signature">With all my love,<br/>${sender} ♡</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Page Bottom Nav Bar -->
-            <div class="romance-page-nav-bar">
-              <button type="button" class="btn-romance-page-prev" data-target-page="7" data-prev="7">❮ Our Milestones</button>
-              <span class="romance-page-stepper-pill">PAGE 8 OF 10</span>
-              <button type="button" class="btn-romance-page-next" data-target-page="9" data-next="9">Twilight Lanterns ❯</button>
-            </div>
-          </section>
-
-          <!-- ================= PAGE 9 (ACT IX): TWILIGHT SKY LANTERNS FINALE ================= -->
-          <section class="romance-page-card" data-romance-page="9" id="chapterLanterns" style="display:none;">
-            <div class="romance-chapter-header">
-              <span class="chapter-num-pill">CHAPTER IX</span>
-              <h3 class="chapter-title">Twilight Sky Lanterns</h3>
-              <p class="chapter-desc">Watch floating golden lanterns rise across the evening cosmos, carrying our wishes 🏮</p>
-            </div>
-
-            <div class="lanterns-sky-stage" id="lanternsSkyStage">
-              <div class="twilight-starfield"></div>
-              <div id="floatingLanternField" style="position:absolute; inset:0; pointer-events:none;"></div>
-            </div>
-
-            <div style="text-align:center; margin:16px 0 14px;">
-              <button type="button" class="btn-release-lanterns-glow" id="btnReleaseMoreLanterns">
-                ✨ Release More Sky Lanterns 🏮
-              </button>
-            </div>
-
-            <!-- MAKE A WISH BUTTON -->
-            <div style="text-align:center; margin-bottom:20px;">
-              <button class="wishBtn" id="treeWishBtn" type="button">🌠 make a wish</button>
-            </div>
-
-            <!-- Page Bottom Nav Bar -->
-            <div class="romance-page-nav-bar">
-              <button type="button" class="btn-romance-page-prev" data-target-page="8" data-prev="8">❮ The Sacred Letter</button>
-              <span class="romance-page-stepper-pill">PAGE 9 OF 10</span>
-              <button type="button" class="btn-romance-page-next" data-target-page="10" data-next="10">Our Lifetime Vow ❯</button>
-            </div>
-          </section>
-
-          <!-- ================= PAGE 10 (ACT X): OUR LIFETIME PROMISE & GRAND FINALE ================= -->
-          <section class="romance-page-card romance-grand-finale-card" data-romance-page="10" id="chapterFinale" style="display:none;">
-            <div class="romance-chapter-header">
-              <span class="chapter-num-pill">CHAPTER X • GRAND FINALE</span>
-              <h3 class="chapter-title">Our Lifetime Promise</h3>
-              <p class="chapter-desc">Sealed in my heart today, tomorrow, and through all our years to come 💍</p>
-            </div>
-
-            <div class="certificate-glass-frame" id="certificateGlassFrame">
-              <div class="cert-gold-border">
-                <div class="cert-badge">✦ ETERNAL LOVE VOW ✦</div>
-                <h2 class="cert-headline">To ${recipient}</h2>
-                <div class="cert-body-quote">
-                  "In a world where everything changes, you are my one constant. I promise to hold your hand through every season, to celebrate your happiest triumphs, to comfort your quietest worries, and to love you more with every beat of my heart."
-                </div>
-                <div class="cert-signatures-row">
-                  <div class="cert-sig-block">
-                    <span class="cert-sig-lbl">BOUND FOR</span>
-                    <strong class="cert-sig-val">Eternity</strong>
-                  </div>
-                  <div class="cert-seal-gold">
-                    <span>💍</span>
-                  </div>
-                  <div class="cert-sig-block">
-                    <span class="cert-sig-lbl">WITH ALL MY HEART</span>
-                    <strong class="cert-sig-val">${sender} ♡</strong>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Interactive Vow Buttons -->
-              <div class="finale-action-bar">
-                <button type="button" class="btn-seal-vow" id="btnSealForeverVow">
-                  💍 Seal Our Forever Promise 💖
-                </button>
-              </div>
-            </div>
-
-            <!-- WATCH AGAIN / RELIVE EXPERIENCE (AS REQUESTED) -->
-            <div class="watch-again-container">
-              <div class="watch-again-glow-ring"></div>
-              <p class="watch-again-eyebrow">WANT TO RELIVE OUR ENTIRE JOURNEY?</p>
-              <button type="button" class="btn-watch-again-masterpiece" id="btnWatchAgainMasterpiece" title="Watch our story again from the very beginning">
-                <span class="watch-again-icon">↺</span>
-                <span class="watch-again-text">Watch Again &amp; Relive Our Story 🌸</span>
-              </button>
-              <p class="watch-again-note">Takes you back to the opening bloom with music playing ✨</p>
-            </div>
-
-            <!-- Page Bottom Nav Bar -->
-            <div class="romance-page-nav-bar">
-              <button type="button" class="btn-romance-page-prev" data-target-page="9" data-prev="9">❮ Twilight Lanterns</button>
-              <span class="romance-page-stepper-pill">PAGE 10 OF 10 • FINALE</span>
-              <span style="width:80px;"></span>
-            </div>
-          </section>
+          <div class="fullscreen-scene-nav">
+            <button type="button" class="btn-scene-prev" data-target="3" data-prev="3">❮ Blossom Tree</button>
+            <button type="button" class="btn-scene-next" data-target="5" data-next="5">Keepsake Album ❯</button>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <!-- ================= SCENE 5: REALISTIC 3D HARDCOVER MEMORY FLIPBOOK ================= -->
+      <section class="romance-fullscreen-scene" data-scene="5" id="sceneFlipbook" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap">
+          <div class="romance-chapter-header">
+            <span class="chapter-num-pill">CHAPTER V</span>
+            <h3 class="chapter-title">Treasured Keepsakes</h3>
+            <p class="chapter-desc">A tactile hardcover book of our most radiant moments. Flip pages or swipe to turn 📸</p>
+          </div>
+
+          <div class="realistic-flipbook-wrap" style="margin-bottom:20px;">
+            <div class="realistic-book" id="realisticBook">
+              ${polaroids.map((p, idx) => `
+                <div class="book-leaf leaf-${idx + 1}" data-leaf="${idx}">
+                  <div class="leaf-page page-front">
+                    <div class="book-polaroid-frame">
+                      <div class="polaroid-pin">📍</div>
+                      <img src="${p.image}" class="book-polaroid-img" alt="${p.caption}" loading="lazy" />
+                      <div class="polaroid-caption">${p.caption}</div>
+                      <div class="polaroid-date-stamp">MEMORIES • VOL. 1</div>
+                    </div>
+                  </div>
+                  <div class="leaf-page page-back">
+                    <div class="back-parchment-content">
+                      <span class="back-quote-mark">“</span>
+                      <p class="back-page-note">${p.note || 'Every beat of my heart whispers your name.'}</p>
+                      <button type="button" class="btn-download-polaroid" data-leaf-idx="${idx}">
+                        💾 Save Keepsake Photo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="flipbook-controls">
+              <button type="button" class="btn-flip-ctrl" id="btnFlipPrev" disabled>❮ Previous Page</button>
+              <span class="flip-page-indicator" id="flipIndicator">Memory 1 of ${polaroids.length}</span>
+              <button type="button" class="btn-flip-ctrl" id="btnFlipNext">Next Page ❯</button>
+            </div>
+          </div>
+
+          <div class="fullscreen-scene-nav">
+            <button type="button" class="btn-scene-prev" data-target="4" data-prev="4">❮ Celestial Stars</button>
+            <button type="button" class="btn-scene-next" data-target="6" data-next="6">Soundtrack of Us ❯</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCENE 6: VINTAGE CASSETTE & REASONS ================= -->
+      <section class="romance-fullscreen-scene" data-scene="6" id="sceneCassette" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap">
+          <div class="romance-chapter-header">
+            <span class="chapter-num-pill">CHAPTER VI</span>
+            <h3 class="chapter-title">The Soundtrack of Us</h3>
+            <p class="chapter-desc">Press play on our mixtape &amp; uncover why my soul loves you forever 📻</p>
+          </div>
+
+          <div class="vintage-cassette-wrap" style="margin-bottom:20px;">
+            <div class="cassette-body" id="vintageCassettePlayer">
+              <div class="cassette-top-ridge"></div>
+              <div class="cassette-label-area">
+                <div class="cassette-label-header">
+                  <span class="cassette-brand">STEREO MIXTAPE 90</span>
+                  <span class="cassette-side">SIDE A • FOR ${recipient.toUpperCase()}</span>
+                </div>
+                <div class="cassette-title-line">
+                  <span class="cassette-title-text">${data.audioTitle || "Our Eternal Love Track"}</span>
+                </div>
+                <div class="cassette-window">
+                  <div class="cassette-spool left-spool" id="spoolLeft">
+                    <div class="spool-cog"></div>
+                    <div class="tape-pack tape-pack-left" id="tapePackLeft"></div>
+                  </div>
+                  <div class="cassette-tape-bridge">
+                    <div class="tape-ribbon-line"></div>
+                  </div>
+                  <div class="cassette-spool right-spool" id="spoolRight">
+                    <div class="spool-cog"></div>
+                    <div class="tape-pack tape-pack-right" id="tapePackRight"></div>
+                  </div>
+                </div>
+                <div class="cassette-bottom-accent">
+                  <span class="cassette-magnetic-head"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cassette-deck-controls">
+              <button type="button" class="btn-cassette-play" id="btnCassettePlay">
+                <span class="cassette-play-icon">▶</span>
+                <span class="cassette-play-label">Play Mixtape</span>
+              </button>
+              <div class="cassette-eq-bars" id="cassetteEq">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reasons-showcase-wrap" style="width:100%; max-width:540px; margin-bottom:20px;">
+            <div class="reasons-deck-header">
+              <span class="reasons-deck-badge">WHY I LOVE YOU</span>
+              <h4 class="reasons-deck-title">Reasons You Own My Heart</h4>
+            </div>
+
+            <div class="reason-hero-card" id="reasonHeroCard">
+              <div class="reason-card-gold-shine"></div>
+              <span class="reason-card-badge" id="reasonCardBadge">REASON #1</span>
+              <p class="reason-card-body" id="reasonCardBody">"${reasonsList[0]}"</p>
+              <div class="reason-card-footer">
+                <span class="reason-author">Forever Yours ♡</span>
+                <span class="reason-card-heart">💖</span>
+              </div>
+            </div>
+
+            <div class="reasons-actions-row">
+              <button type="button" class="btn-shuffle-reasons" id="btnShuffleReasons">
+                <span>✦</span> Shuffle Another Reason
+              </button>
+            </div>
+
+            <div class="reasons-quick-pills" id="reasonsPills">
+              ${reasonsList.map((_, i) => `
+                <button type="button" class="reason-pill-item ${i === 0 ? 'active' : ''}" data-reason-idx="${i}">
+                  #${i + 1}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="fullscreen-scene-nav">
+            <button type="button" class="btn-scene-prev" data-target="5" data-prev="5">❮ Keepsake Album</button>
+            <button type="button" class="btn-scene-next" data-target="7" data-next="7">Our Milestones ❯</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCENE 7: TIMELESS MILESTONES ================= -->
+      <section class="romance-fullscreen-scene" data-scene="7" id="sceneTimeline" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap">
+          <div class="romance-chapter-header">
+            <span class="chapter-num-pill">CHAPTER VII</span>
+            <h3 class="chapter-title">Our Timeless Milestones</h3>
+            <p class="chapter-desc">Every defining landmark of our story, carved into golden memory ⏳</p>
+          </div>
+
+          <div class="romance-timeline-container" id="romanceTimeline">
+            <div class="timeline-gold-track"></div>
+            ${milestonesList.map((m, i) => `
+              <div class="timeline-milestone-node node-${i + 1}" data-node-idx="${i}">
+                <div class="milestone-badge-column">
+                  <span class="milestone-num">${m.num}</span>
+                  <div class="milestone-icon-bubble">${m.icon}</div>
+                </div>
+                <div class="milestone-card-glass">
+                  <span class="milestone-tag">${m.tag}</span>
+                  <h4 class="milestone-title">${m.title}</h4>
+                  <p class="milestone-desc">${m.desc}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="fullscreen-scene-nav">
+            <button type="button" class="btn-scene-prev" data-target="6" data-prev="6">❮ Soundtrack of Us</button>
+            <button type="button" class="btn-scene-next" data-target="8" data-next="8">The Sacred Letter ❯</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCENE 8: WAX-SEALED LETTER ================= -->
+      <section class="romance-fullscreen-scene" data-scene="8" id="sceneLetter" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap">
+          <div class="romance-chapter-header">
+            <span class="chapter-num-pill">CHAPTER VIII</span>
+            <h3 class="chapter-title">The Sacred Letter</h3>
+            <p class="chapter-desc">A sealed parchment written directly from the depth of my heart 💌</p>
+          </div>
+
+          <div class="wax-envelope-container">
+            <div class="wax-envelope-card" id="waxEnvelope">
+              <div class="wax-seal-wrapper" id="waxSealWrapper">
+                <div class="wax-seal-stamp" id="waxSealStamp">
+                  <span class="wax-monogram">M&amp;D</span>
+                </div>
+                <button type="button" class="btn-strike-match" id="btnStrikeMatch">
+                  <span class="match-icon">🔥</span> Strike Match to Melt Seal
+                </button>
+              </div>
+              <div class="parchment-letter-body" id="parchmentLetter">
+                <div class="parchment-header-crest">✦ AMOR VINCIT OMNIA ✦</div>
+                <div class="letter-text-flow">${letterBody.split('\n\n').join('<br/><br/>').split('\n').join('<br/>')}</div>
+                <div class="letter-signoff">
+                  <div class="signoff-quote">"Always &amp; Forever"</div>
+                  <div class="signoff-heart">♡</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fullscreen-scene-nav">
+            <button type="button" class="btn-scene-prev" data-target="7" data-prev="7">❮ Our Milestones</button>
+            <button type="button" class="btn-scene-next" data-target="9" data-next="9">Twilight Lanterns ❯</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCENE 9: TWILIGHT SKY LANTERNS ================= -->
+      <section class="romance-fullscreen-scene" data-scene="9" id="sceneLanterns" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap">
+          <div class="romance-chapter-header">
+            <span class="chapter-num-pill">CHAPTER IX</span>
+            <h3 class="chapter-title">Twilight Sky Lanterns</h3>
+            <p class="chapter-desc">Watch our glowing lanterns drift into the cosmos. Tap to release personal wishes 🏮</p>
+          </div>
+
+          <div class="sky-lanterns-wrapper">
+            <div class="lanterns-threejs-container" id="lanternsSkyStage"></div>
+            <div class="floating-lantern-field" id="floatingLanternField" aria-hidden="true"></div>
+            <div class="lanterns-actions">
+              <button type="button" class="btn-release-lantern" id="btnReleaseMoreLanterns">
+                ✨ Release 6 Sky Lanterns ✨
+              </button>
+            </div>
+          </div>
+
+          <div class="fullscreen-scene-nav">
+            <button type="button" class="btn-scene-prev" data-target="8" data-prev="8">❮ The Sacred Letter</button>
+            <button type="button" class="btn-scene-next" data-target="10" data-next="10">Our Lifetime Vow ❯</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCENE 10: LIFETIME PROMISE & GRAND FINALE ================= -->
+      <section class="romance-fullscreen-scene romance-grand-finale-scene" data-scene="10" id="sceneFinale" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap">
+          <div class="romance-chapter-header">
+            <span class="chapter-num-pill" style="background:rgba(244,63,94,0.18); border-color:#f43f5e; color:#f43f5e;">CHAPTER X • GRAND FINALE</span>
+            <h3 class="chapter-title" style="font-size:clamp(28px, 6vw, 42px); color:#ffffff; text-shadow:0 0 20px rgba(244,63,94,0.6);">Our Lifetime Promise</h3>
+            <p class="chapter-desc" style="color:rgba(255,255,255,0.85);">A sacred vow sealed under the stars. Today, tomorrow, and eternity 💍</p>
+          </div>
+
+          <div class="certificate-glass-frame">
+            <div class="cert-gold-border">
+              <div class="cert-seal-top">👑</div>
+              <span class="cert-sub">CERTIFICATE OF ETERNAL LOVE</span>
+              <h4 class="cert-headline">To My Dearest ${recipient}</h4>
+              <p class="cert-text">
+                "I promise to love you on peaceful mornings and in wild storms, to cherish your laugh, to support your dreams, and to walk hand-in-hand with you through every tomorrow."
+              </p>
+              <div class="cert-footer-row">
+                <div class="cert-sign-col">
+                  <span class="cert-sign-title">GIVEN WITH LOVE</span>
+                  <span class="cert-sign-hand">Forever &amp; Always</span>
+                </div>
+                <div class="cert-wax-seal-badge">
+                  <span class="cert-wax-text">SEALED</span>
+                </div>
+                <div class="cert-sign-col">
+                  <span class="cert-sign-title">DATE</span>
+                  <span class="cert-sign-date">${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+              </div>
+              <button type="button" class="btn-seal-forever-vow" id="btnSealForeverVow">
+                💍 Seal Our Forever Promise
+              </button>
+            </div>
+          </div>
+
+          <!-- GRAND FINALE: RELIVE OUR STORY CENTERPIECE -->
+          <div class="masterpiece-watch-again-block">
+            <button type="button" class="btn-watch-again-masterpiece" id="btnWatchAgainMasterpiece" title="Watch our story again from the very beginning">
+              <span class="watch-again-icon">↺</span>
+              <span class="watch-again-text">Watch Again &amp; Relive Our Story 🌸</span>
+            </button>
+            <p class="watch-again-note">Relive our 10-chapter romantic journey from the beginning</p>
+          </div>
+
+          <div class="fullscreen-scene-nav" style="margin-top:28px;">
+            <button type="button" class="btn-scene-prev" data-target="9" data-prev="9">❮ Twilight Lanterns</button>
+            <span style="flex:1;"></span>
+          </div>
+        </div>
+      </section>
 
       <!-- VIGNETTE & FINE GRAIN LENS -->
       <div class="grade" aria-hidden="true">
@@ -2153,84 +2088,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   });
 
   // =========================================================================
-  // ACTS IV - X: MULTI-PAGE STORYBOOK & SMOOTH GSAP TRANSITIONS
+  // ACTS IV - X: FULL-SCREEN CINEMATIC SCENE TRANSITIONS (NO PROGRESS BAR)
   // =========================================================================
-  let currentStoryPage = 4;
-  let isPageTransitioning = false;
+  let currentScene = 1;
+  let isTransitioning = false;
 
-  const PAGE_TITLES = {
-    1: "Opening Blossom Gate 🌸",
-    2: "Cupid's Bow & Arrow 🏹",
-    3: "The Living Blossom Tree 🌳",
-    4: "Written in the Stars ✨",
-    5: "Treasured Keepsakes 📸",
-    6: "The Soundtrack of Us 📻",
-    7: "Our Timeless Milestones ⏳",
-    8: "The Sacred Letter 💌",
-    9: "Twilight Sky Lanterns 🏮",
-    10: "Our Lifetime Promise 💍"
-  };
-
-  const PAGE_CHIP_MAP = {
-    1: 'bloom',
-    2: 'cupid',
-    3: 'tree',
-    4: 'constellation',
-    5: 'flipbook',
-    6: 'cassette',
-    7: 'timeline',
-    8: 'letter',
-    9: 'lanterns',
-    10: 'vow'
-  };
-
-  const CHIP_PAGE_MAP = {
-    'bloom': 1,
-    'cupid': 2,
-    'tree': 3,
-    'constellation': 4,
-    'flipbook': 5,
-    'cassette': 6,
-    'timeline': 7,
-    'letter': 8,
-    'lanterns': 9,
-    'vow': 10
-  };
-
-  const ID_PAGE_MAP = {
-    '#chapterConstellation': 4,
-    '#chapterFlipbook': 5,
-    '#chapterCassette': 6,
-    '#chapterTimeline': 7,
-    '#chapterLetter': 8,
-    '#chapterLanterns': 9,
-    '#chapterFinale': 10
-  };
-
-  const storyProgressFill = container.querySelector('#storyProgressFill');
-  const storyStepBadge = container.querySelector('#storyStepBadge');
-  const storyStageName = container.querySelector('#storyStageName');
-  const allRomancePageCards = container.querySelectorAll('.romance-page-card');
-
-  function updateStoryHeader(pageNum) {
-    if (storyProgressFill) storyProgressFill.style.width = `${(pageNum / 10) * 100}%`;
-    if (storyStepBadge) {
-      if (pageNum === 10) {
-        storyStepBadge.textContent = 'PAGE 10 OF 10 • FINALE';
-      } else {
-        storyStepBadge.textContent = `PAGE ${pageNum} OF 10`;
-      }
-    }
-    if (storyStageName) storyStageName.textContent = PAGE_TITLES[pageNum] || 'Our Love Story';
-    if (PAGE_CHIP_MAP[pageNum]) setActiveDockChip(PAGE_CHIP_MAP[pageNum]);
-  }
-
-  function onPageEnter(pageNum) {
-    if (pageNum === 4) {
+  function onSceneEnter(sceneNum) {
+    if (sceneNum === 4) {
       initConstellationStage();
-    } else if (pageNum === 6) {
+    } else if (sceneNum === 6) {
       updateCassetteState(isPlaying);
-    } else if (pageNum === 9) {
+    } else if (sceneNum === 9) {
       if (!threeLanternsSky) {
         const lanternSkyStage = container.querySelector('#lanternsSkyStage');
         if (lanternSkyStage) threeLanternsSky = initThreeLanternsSky(lanternSkyStage);
@@ -2240,119 +2108,122 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
   }
 
-  function transitionToStoryPage(targetPage) {
-    if (isPageTransitioning || targetPage === currentStoryPage) return;
-    if (targetPage < 4) {
-      closeMemoriesModal();
-      return;
-    }
-    const currentCard = container.querySelector(`.romance-page-card[data-romance-page="${currentStoryPage}"]`);
-    const nextCard = container.querySelector(`.romance-page-card[data-romance-page="${targetPage}"]`);
-    if (!nextCard) return;
+  function goToScene(targetScene) {
+    if (isTransitioning || targetScene === currentScene) return;
+    if (targetScene < 1 || targetScene > 10) return;
 
-    isPageTransitioning = true;
-    const dir = targetPage > currentStoryPage ? 1 : -1;
+    isTransitioning = true;
     soundFx.whoosh();
     if (navigator.vibrate) navigator.vibrate(12);
 
-    updateStoryHeader(targetPage);
+    const prevScene = currentScene;
 
-    if (currentCard) {
-      gsap.to(currentCard, {
-        opacity: 0,
-        x: -dir * 60,
-        scale: 0.95,
-        duration: 0.26,
-        ease: 'power2.in',
-        onComplete: () => {
-          currentCard.classList.remove('active');
-          currentCard.style.display = 'none';
-          gsap.set(currentCard, { x: 0, scale: 1 });
-        }
+    // Leaving previous scene
+    if (prevScene === 1) {
+      gate.classList.add('is-open');
+    } else if (prevScene === 2) {
+      gsap.to(hero, { autoAlpha: 0, duration: 0.35 });
+    } else if (prevScene === 3) {
+      if (replay) replay.classList.remove('is-shown');
+      if (memoriesBtn) memoriesBtn.classList.remove('is-shown');
+      gsap.to(canvas, { opacity: 0, duration: 0.35 });
+    } else {
+      const prevEl = container.querySelector(`.romance-fullscreen-scene[data-scene="${prevScene}"]`);
+      if (prevEl) {
+        gsap.to(prevEl, {
+          opacity: 0,
+          scale: 0.94,
+          duration: 0.32,
+          ease: 'power2.in',
+          onComplete: () => {
+            prevEl.classList.remove('active');
+            prevEl.style.display = 'none';
+            gsap.set(prevEl, { scale: 1 });
+          }
+        });
+      }
+    }
+
+    // Entering target scene
+    if (targetScene === 1) {
+      container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
+        sc.classList.remove('active');
+        sc.style.display = 'none';
+        gsap.set(sc, { opacity: 0 });
       });
-    }
-
-    nextCard.style.display = 'block';
-    nextCard.classList.add('active');
-    gsap.fromTo(nextCard,
-      { opacity: 0, x: dir * 60, scale: 0.95 },
-      {
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        duration: 0.38,
-        ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
-        delay: 0.1,
-        onComplete: () => {
-          currentStoryPage = targetPage;
-          isPageTransitioning = false;
-          memories.scrollTo({ top: 0, behavior: 'smooth' });
-          onPageEnter(targetPage);
-        }
-      }
-    );
-  }
-
-  function openMemoriesModal(target = 4) {
-    chime(600, 750);
-    let targetPageNum = 4;
-    if (typeof target === 'number') {
-      targetPageNum = target;
-    } else if (typeof target === 'string') {
-      if (ID_PAGE_MAP[target]) targetPageNum = ID_PAGE_MAP[target];
-      else if (CHIP_PAGE_MAP[target]) targetPageNum = CHIP_PAGE_MAP[target];
-    }
-    if (targetPageNum < 4) targetPageNum = 4;
-    if (targetPageNum > 10) targetPageNum = 10;
-
-    allRomancePageCards.forEach(card => {
-      const p = parseInt(card.getAttribute('data-romance-page') || '0', 10);
-      if (p === targetPageNum) {
-        card.style.display = 'block';
-        card.classList.add('active');
-        gsap.set(card, { opacity: 1, x: 0, scale: 1 });
+      gate.classList.remove('is-open');
+      gsap.set(gate, { opacity: 1, pointerEvents: 'auto' });
+      resetAll();
+      currentScene = 1;
+      isTransitioning = false;
+    } else if (targetScene === 2) {
+      container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
+        sc.classList.remove('active');
+        sc.style.display = 'none';
+        gsap.set(sc, { opacity: 0 });
+      });
+      gsap.set(canvas, { opacity: 0 });
+      enterHero();
+      currentScene = 2;
+      isTransitioning = false;
+    } else if (targetScene === 3) {
+      container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
+        sc.classList.remove('active');
+        sc.style.display = 'none';
+        gsap.set(sc, { opacity: 0 });
+      });
+      gsap.set(hero, { autoAlpha: 0 });
+      gsap.to(canvas, { opacity: 1, duration: 0.4 });
+      if (!treeRAF) treeStart();
+      armReplay();
+      currentScene = 3;
+      isTransitioning = false;
+    } else {
+      const nextEl = container.querySelector(`.romance-fullscreen-scene[data-scene="${targetScene}"]`);
+      if (nextEl) {
+        nextEl.style.display = 'flex';
+        nextEl.classList.add('active');
+        nextEl.scrollTop = 0;
+        gsap.fromTo(nextEl,
+          { opacity: 0, scale: 1.05 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.42,
+            ease: 'power2.out',
+            delay: 0.1,
+            onComplete: () => {
+              currentScene = targetScene;
+              isTransitioning = false;
+              onSceneEnter(targetScene);
+            }
+          }
+        );
       } else {
-        card.style.display = 'none';
-        card.classList.remove('active');
+        isTransitioning = false;
       }
-    });
-
-    currentStoryPage = targetPageNum;
-    updateStoryHeader(targetPageNum);
-    memories.classList.add('is-open');
-    memories.setAttribute('aria-hidden', 'false');
-    memories.scrollTo({ top: 0 });
-
-    onPageEnter(targetPageNum);
+    }
   }
 
-  function closeMemoriesModal() {
-    memories.classList.remove('is-open');
-    memories.setAttribute('aria-hidden', 'true');
-    destroyLenisScroll();
-    setActiveDockChip('tree');
-  }
-
+  // Tree Memories Button transitions to Scene 4 (Written in the Stars)
   memoriesBtn?.addEventListener('click', () => {
-    openMemoriesModal(4);
-    setActiveDockChip('constellation');
+    goToScene(4);
   });
 
-  memoriesClose?.addEventListener('click', closeMemoriesModal);
-
-  container.querySelectorAll('.btn-romance-page-next').forEach(btn => {
+  // Wire up all Next & Prev buttons across all full-screen scenes
+  container.querySelectorAll('.btn-scene-next').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const target = parseInt(btn.getAttribute('data-target-page') || btn.getAttribute('data-next') || '0', 10);
-      if (target) transitionToStoryPage(target);
+      const target = parseInt(btn.getAttribute('data-target') || btn.getAttribute('data-next') || '0', 10);
+      if (target) goToScene(target);
     });
   });
 
-  container.querySelectorAll('.btn-romance-page-prev').forEach(btn => {
+  container.querySelectorAll('.btn-scene-prev').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const target = parseInt(btn.getAttribute('data-target-page') || btn.getAttribute('data-prev') || '0', 10);
-      if (target) transitionToStoryPage(target);
+      const target = parseInt(btn.getAttribute('data-target') || btn.getAttribute('data-prev') || '0', 10);
+      if (target) goToScene(target);
     });
   });
 
@@ -2556,40 +2427,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     shuffleText.textContent = loveNotesList[i];
   });
 
-  // Top Chapter Dock navigation chips
-  dockChips.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const act = btn.getAttribute('data-act');
-      chime(600, 750);
-      setActiveDockChip(act);
-
-      if (act === 'bloom') {
-        memories.classList.remove('is-open');
-        gate.classList.remove('is-open');
-        destroyLenisScroll();
-        resetAll();
-      } else if (act === 'cupid') {
-        memories.classList.remove('is-open');
-        gate.classList.add('is-open');
-        destroyLenisScroll();
-        enterHero();
-      } else if (act === 'tree') {
-        memories.classList.remove('is-open');
-        gate.classList.add('is-open');
-        destroyLenisScroll();
-        gsap.set(hero, { autoAlpha: 0 });
-        treeStart();
-      } else if (CHIP_PAGE_MAP[act]) {
-        gate.classList.add('is-open');
-        const targetPage = CHIP_PAGE_MAP[act];
-        if (memories.classList.contains('is-open')) {
-          transitionToStoryPage(targetPage);
-        } else {
-          openMemoriesModal(targetPage);
-        }
-      }
-    });
-  });
+// Dock chips removed in full-screen sequential mode
 
   // Corner Mini Spinning CD Music Player
   let isPlaying = false;
@@ -2907,35 +2745,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     soundFx.whoosh();
     if (navigator.vibrate) navigator.vibrate([25, 45, 25]);
 
-    // 1. Close memories overlay smoothly
-    memories.classList.remove('is-open');
-    memories.setAttribute('aria-hidden', 'true');
-    destroyLenisScroll();
-
-    // 2. Reset story cards to page 4
-    currentStoryPage = 4;
-    allRomancePageCards.forEach(card => {
-      const p = parseInt(card.getAttribute('data-romance-page') || '0', 10);
-      if (p === 4) {
-        card.style.display = 'block';
-        card.classList.add('active');
-        gsap.set(card, { opacity: 1, x: 0, scale: 1 });
-      } else {
-        card.style.display = 'none';
-        card.classList.remove('active');
-      }
+    // 1. Hide all fullscreen scenes
+    container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
+      sc.classList.remove('active');
+      sc.style.display = 'none';
+      gsap.set(sc, { opacity: 0 });
     });
-    updateStoryHeader(4);
 
-    // 3. Reset gate and all acts
-    gate.classList.remove('is-open');
-    resetAll();
+    // 2. Fullscreen transition back to Scene 1 (Gate)
+    goToScene(1);
 
-    // 4. Smoothly scroll container/window back to the top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (stage) stage.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // 5. Rewind audio to 0 and play
+    // 3. Rewind audio to 0:00 and autoplay
     if (audioEl) {
       audioEl.currentTime = 0;
       audioEl.play().then(() => {
@@ -2944,14 +2764,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       }).catch(() => {});
     }
 
-    // 6. Reset active chip
-    setActiveDockChip('bloom');
-
-    // 7. Welcoming confetti
+    // 4. Celebratory Confetti
     confetti({
-      particleCount: 65,
-      spread: 85,
-      origin: { y: 0.5 },
+      particleCount: 85,
+      spread: 90,
+      origin: { y: 0.45 },
       colors: ['#ff758c', '#ff7eb3', '#ffffff', '#fbbf24']
     });
   });

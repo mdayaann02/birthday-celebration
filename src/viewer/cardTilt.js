@@ -17,7 +17,10 @@ export function initCardTilt(root = document) {
     '.gate-card',
     '.tree-card',
     '.blossom-card',
-    '.romance-page-card'
+    '.romance-page-card',
+    '.certificate-glass-frame',
+    '.wax-envelope-card',
+    '.vintage-cassette-wrap'
   ];
 
   const selectorStr = SELECTORS.join(', ');
