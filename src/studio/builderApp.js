@@ -29,125 +29,145 @@ export function renderStudioApp(root) {
 
   root.innerHTML = `
     <div class="studio-layout">
-      <!-- 1. CLEAN FUNCTIONAL NAVBAR -->
-      <header class="studio-navbar" id="studioNavbar">
-        <div class="navbar-inner">
+      <!-- Pure CSS Subtle Ambient Mesh Canvas Background -->
+      <div class="studio-ambient-mesh" aria-hidden="true">
+        <div class="mesh-orb mesh-orb-1"></div>
+        <div class="mesh-orb mesh-orb-2"></div>
+        <div class="mesh-orb mesh-orb-3"></div>
+      </div>
+
+      <!-- 1. FLOATING GLASS NAVBAR (Sticky) -->
+      <header class="studio-navbar-glass" id="studioNavbar">
+        <div class="navbar-glass-inner">
           <!-- Brand Mark -->
           <a href="/" class="studio-brand-link">
-            <span class="brand-name">Celebration Studio</span>
-            <span class="brand-tagline">Private Web Platform</span>
+            <div class="studio-brand-gem">
+              <i data-lucide="sparkles"></i>
+            </div>
+            <div class="studio-brand-meta">
+              <div class="brand-title-row">
+                <span class="brand-name">Celebration Studio</span>
+                <span class="badge-free-pill">100% Free</span>
+              </div>
+              <span class="brand-subtext">Instant Interactive Wishing Websites</span>
+            </div>
           </a>
 
-          <!-- Simple Navigation Links -->
-          <nav class="navbar-nav-links" id="navbarOccasionLinks" aria-label="Main Navigation">
-            <a href="#templatesSection" class="nav-text-link">Templates</a>
-            <a href="#customizerSection" class="nav-text-link">Customizer</a>
-            <button type="button" class="nav-text-link" id="navPreviewLink">Live Preview</button>
-            <a href="#proofSection" class="nav-text-link">Standards</a>
-            <a href="#contactSection" class="nav-text-link">Contact</a>
+          <!-- Quick Occasion Jump Links (Desktop) -->
+          <nav class="navbar-nav-links" id="navbarOccasionLinks" aria-label="Occasion Categories">
+            <button type="button" class="nav-occasion-link active" data-filter="all">All</button>
+            <button type="button" class="nav-occasion-link" data-filter="romance">Romance</button>
+            <button type="button" class="nav-occasion-link" data-filter="birthday">Birthday</button>
+            <button type="button" class="nav-occasion-link" data-filter="family">Family</button>
+            <button type="button" class="nav-occasion-link" data-filter="friends">Friends</button>
           </nav>
 
-          <!-- Primary Actions (1 Consistent Button Style) -->
+          <!-- Primary Actions -->
           <div class="navbar-actions-group">
-            <button type="button" class="btn-studio-secondary" id="btnEditorThemeToggle" title="Toggle Theme">
-              <span id="themeToggleLabel">Light Mode</span>
+            <button type="button" class="btn-nav-glass btn-theme-toggle" id="btnEditorThemeToggle" title="Toggle Dark / Light Mode">
+              <i data-lucide="moon" id="themeToggleIcon"></i>
+              <span class="hide-mobile" id="themeToggleLabel">Theme</span>
             </button>
-            <a href="/?mode=view" target="_blank" rel="noopener noreferrer" class="btn-studio-secondary" title="Preview sample celebration">
-              Recipient View
+            <button type="button" class="btn-nav-glass btn-nav-guide" id="btnHeaderGuide" title="Step-by-step creator guide">
+              <i data-lucide="compass"></i>
+              <span class="hide-mobile">Guide</span>
+            </button>
+            <a href="/?mode=view" target="_blank" rel="noopener noreferrer" class="btn-nav-glass btn-nav-recipient" title="Preview as recipient in new tab">
+              <i data-lucide="eye"></i>
+              <span class="hide-mobile">Recipient View</span>
             </a>
-            <button type="button" class="btn-studio-secondary" id="btnHeaderSave" title="Save celebration website">
-              Save Website
+            <button type="button" class="btn-nav-glass btn-nav-save" id="btnHeaderSave" title="Save celebration website">
+              <i data-lucide="save"></i>
+              <span class="hide-mobile">Save</span>
             </button>
-            <button type="button" class="btn-studio-primary" id="btnSharePublish" title="Generate shareable link">
-              Share Link
+            <button type="button" class="btn-nav-primary" id="btnCreateWishNav" title="Create a celebration wish">
+              <i data-lucide="wand-2"></i>
+              <span class="hide-mobile">Create a Wish</span>
+            </button>
+            <button type="button" class="btn-nav-share" id="btnSharePublish" title="Get permanent shareable link">
+              <i data-lucide="share-2"></i>
+              <span class="hide-mobile">Share Link</span>
             </button>
           </div>
         </div>
       </header>
 
-      <!-- Mobile Segmented Navigation Tabs -->
+      <!-- Mobile Segmented Navigation Tabs (Sticky Under Navbar on Mobile Viewports) -->
       <nav class="studio-mobile-tabs" id="studioMobileTabs" aria-label="Editor View Tabs">
         <button type="button" class="mobile-tab-btn" data-tab="templates" id="tabBtnTemplates">
-          <span class="tab-btn-text">Templates</span>
+          <span class="tab-btn-icon"><i data-lucide="palette"></i></span>
+          <span class="tab-btn-text">Occasions</span>
         </button>
         <button type="button" class="mobile-tab-btn active" data-tab="editor" id="tabBtnEditor">
+          <span class="tab-btn-icon"><i data-lucide="wand-2"></i></span>
           <span class="tab-btn-text">Customize</span>
         </button>
         <button type="button" class="mobile-tab-btn" data-tab="preview" id="tabBtnPreview">
+          <span class="tab-btn-icon"><i data-lucide="eye"></i></span>
           <span class="tab-btn-text">Live Preview</span>
+          <span class="tab-live-pulse"></span>
         </button>
       </nav>
 
-      <!-- 2. HOME PAGE HERO: CLEAR DESCRIPTIVE HEADLINE & SHORT LEFT-ALIGNED COPY -->
+      <!-- 2. FOCUSED HERO SECTION -->
       <section class="studio-hero-section" id="heroSection">
         <div class="hero-inner-container">
           <div class="hero-content-col">
-            <div class="hero-category-label">CELEBRATION WEBSITE PLATFORM</div>
-
-            <h1 class="editor-page-heading">
-              Interactive Celebration Websites for Private Milestones
-            </h1>
-
-            <p class="editor-hero-copy">
-              Design and share private celebration websites for birthdays, romantic anniversaries, and personal milestones. Customize templates with music, interactive photo scrapbooks, and personal letters, delivered through a single private link.
-            </p>
-
-            <div class="editor-cta-group">
-              <button type="button" class="btn-studio-primary" id="btnHeroCreate">
-                Open Customizer
-              </button>
-              <button type="button" class="btn-studio-secondary" id="btnHeroBrowse">
-                Browse 14 Templates
-              </button>
+            <div class="hero-badge-strip">
+              <span class="hero-pill-badge">
+                <i data-lucide="sparkles" style="width:12px; height:12px; color:#d4235c;"></i>
+                <span>100% Free Forever • Zero Sign-Up • Instant WhatsApp Link</span>
+              </span>
             </div>
 
-            <!-- Specific Service Specifications -->
-            <div class="editor-service-specs">
-              <div class="service-spec-item">
-                <span class="spec-label">14 Themes</span>
-                <span class="spec-desc">Romance, Birthdays, Family & Friends</span>
-              </div>
-              <div class="service-spec-item">
-                <span class="spec-label">60 FPS Canvas</span>
-                <span class="spec-desc">Procedural blooming tree & star engine</span>
-              </div>
-              <div class="service-spec-item">
-                <span class="spec-label">Soundtracks</span>
-                <span class="spec-desc">Audio files, Spotify & YouTube</span>
-              </div>
-              <div class="service-spec-item">
-                <span class="spec-label">Private Links</span>
-                <span class="spec-desc">WhatsApp & SMS ready with no login</span>
-              </div>
+            <h1 class="hero-headline">
+              Craft Unforgettable Celebration Websites In Seconds
+            </h1>
+
+            <p class="hero-subheadline">
+              Design interactive wishing experiences with 3D polaroids, real music, physics & personal messages — 100% free with no credit card or account needed.
+            </p>
+
+            <div class="hero-cta-cluster">
+              <button type="button" class="btn-hero-primary" id="btnHeroCreate">
+                <i data-lucide="wand-2"></i>
+                <span>Start Creating — It's Free ✨</span>
+              </button>
+              <button type="button" class="btn-hero-secondary" id="btnHeroBrowse">
+                <i data-lucide="palette"></i>
+                <span>Explore 14 Templates ↓</span>
+              </button>
             </div>
           </div>
 
-          <!-- Real Business Product Showcase -->
+          <!-- Hero Sample Preview Glass Showcase Card -->
           <div class="hero-showcase-col">
-            <div class="hero-showcase-card" id="heroSampleCard">
-              <div class="showcase-card-top">
-                <span class="showcase-status-badge">ACTIVE TEMPLATE</span>
-                <span class="showcase-meta-spec">60 FPS ENGINE</span>
+            <div class="hero-showcase-glass-card" id="heroSampleCard">
+              <div class="showcase-card-header">
+                <div class="showcase-header-left">
+                  <span class="showcase-pulse-dot"></span>
+                  <span class="showcase-live-tag">LIVE CELEBRATION PREVIEW</span>
+                </div>
+                <span class="showcase-free-pill">Free Template</span>
               </div>
 
               <div class="showcase-card-preview-body">
-                <div class="showcase-img-wrap">
-                  <img src="/images/sunset.jpg" class="showcase-real-photo" alt="Celebration Website Demo" />
-                </div>
+                <div class="showcase-icon-bubble" id="showcaseTmplIcon">🏹🌸</div>
                 <h3 class="showcase-tmpl-title" id="showcaseTmplName">Long Romance Masterpiece</h3>
                 <p class="showcase-tmpl-desc" id="showcaseTmplDesc">
-                  Cupid archery, blooming canvas tree, 3D polaroid scrapbook, and twilight sky lanterns with full soundtrack.
+                  Cupid's recurve bow, blooming canvas tree, 3D polaroid scrapbook, and twilight sky lanterns with full soundtrack.
                 </p>
-                <div class="showcase-specs-list">
-                  <span class="showcase-spec-bullet">• 9 Full-Screen Continuous Acts</span>
-                  <span class="showcase-spec-bullet">• Real Signature Pad & Wax Seal</span>
-                  <span class="showcase-spec-bullet">• Full Mobile Safari & Chrome Support</span>
+                <div class="showcase-tags-row">
+                  <span class="showcase-tag">✨ 60FPS Physics</span>
+                  <span class="showcase-tag">🎵 Real Music</span>
+                  <span class="showcase-tag">📱 100% Responsive</span>
                 </div>
               </div>
 
               <div class="showcase-card-footer">
-                <button type="button" class="btn-studio-primary btn-full-width" id="btnShowcaseCustomize">
-                  Select &amp; Customize Template
+                <button type="button" class="btn-showcase-customize" id="btnShowcaseCustomize">
+                  <i data-lucide="wand-2"></i>
+                  <span>Customize This Template</span>
                 </button>
               </div>
             </div>
@@ -155,14 +175,55 @@ export function renderStudioApp(root) {
         </div>
       </section>
 
-      <!-- 3. TEMPLATES GALLERY (SPECIFIC SERVICE DESCRIPTIONS) -->
+      <!-- 3. COMPACT 3-STEP STRIP -->
+      <section class="studio-3step-strip" aria-label="How it works">
+        <div class="step-strip-inner">
+          <div class="step-strip-card">
+            <div class="step-num-pill">01</div>
+            <div class="step-info">
+              <h4 class="step-title">Pick Occasion</h4>
+              <p class="step-desc">Choose from 14 handcrafted themes for Romance, Birthdays, Family & Besties.</p>
+            </div>
+          </div>
+
+          <div class="step-strip-divider" aria-hidden="true">
+            <i data-lucide="arrow-right"></i>
+          </div>
+
+          <div class="step-strip-card">
+            <div class="step-num-pill">02</div>
+            <div class="step-info">
+              <h4 class="step-title">Personalize Story</h4>
+              <p class="step-desc">Add your polaroid photos, choose favorite songs & type heartfelt letters.</p>
+            </div>
+          </div>
+
+          <div class="step-strip-divider" aria-hidden="true">
+            <i data-lucide="arrow-right"></i>
+          </div>
+
+          <div class="step-strip-card">
+            <div class="step-num-pill">03</div>
+            <div class="step-info">
+              <h4 class="step-title">Share in 1-Tap</h4>
+              <p class="step-desc">Get an instant, permanent WhatsApp-ready link with zero sign-up required.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. OCCASION FILTER & BENTO TEMPLATE GALLERY SECTION -->
       <section class="studio-gallery-section" id="templatesSection">
-        <div class="section-container">
-          <div class="section-header-left">
-            <h2 class="section-title">Celebration Templates</h2>
-            <p class="section-subtitle">
-              Select an occasion theme to begin customizing. Each template provides tailored layouts, procedural canvas animations, and dedicated story components.
-            </p>
+        <div class="section-glass-container">
+          <div class="section-header-row">
+            <div>
+              <div class="section-step-badge">
+                <i data-lucide="palette"></i>
+                <span>STEP 1: CHOOSE OCCASION</span>
+              </div>
+              <h2 class="section-title">Handcrafted Celebration Gallery</h2>
+              <p class="section-subtitle">Select any template below to customize its special story, live physics & animations:</p>
+            </div>
           </div>
 
           <!-- Template Selector Mount -->
@@ -170,55 +231,62 @@ export function renderStudioApp(root) {
         </div>
       </section>
 
-      <!-- 4. INTERACTIVE CUSTOMIZER & DUAL-VIEWPORT WORKSPACE -->
+      <!-- 5. INTERACTIVE CUSTOMIZER & DUAL-VIEWPORT WORKSPACE -->
       <section class="studio-customizer-section" id="customizerSection">
         <div class="studio-workspace mobile-view-editor" id="studioWorkspace">
           <!-- Controls & Editor Sidebar -->
           <div class="studio-sidebar" id="studioSidebar">
-            <!-- Creator Guide Mount -->
+            <!-- Step-by-Step Interactive Creator Journey Guide Mount -->
             <div id="creatorGuideMount"></div>
 
             <!-- Current Occasion Active Switcher Banner -->
             <div class="studio-occasion-banner" id="studioOccasionBanner"></div>
 
             <div class="customizer-subheading">
-              <span>Personalize Content &amp; Media</span>
+              <i data-lucide="sliders"></i>
+              <span>STEP 2: PERSONALIZE EVERYTHING</span>
             </div>
 
-            <!-- Visual Editor Mount -->
+            <!-- Visual Editor Mount (Collapsible Accordion Form Cards) -->
             <div id="visualEditorMount"></div>
           </div>
 
           <!-- Live Real-Time Interactive Preview Pane -->
           <div class="studio-preview-pane" id="studioPreviewPane">
             <div class="preview-device-header">
-              <button type="button" class="btn-studio-secondary btn-mobile-only" id="btnMobileBackToEditor">
-                Back to Edit
+              <button type="button" class="btn-preview-back-mobile" id="btnMobileBackToEditor">
+                <i data-lucide="wand-2"></i>
+                <span>Back to Edit</span>
               </button>
 
-              <!-- Viewport Switcher (1 Consistent Button Style) -->
+              <!-- Viewport Switcher -->
               <div class="preview-viewport-switcher" id="viewportSwitcher" role="group" aria-label="Preview Device Viewports">
-                <button type="button" class="btn-viewport-toggle active" data-viewport="mobile" title="Mobile Phone View">
-                  Mobile (9:16)
+                <button type="button" class="btn-viewport-toggle active" data-viewport="mobile" title="Mobile Phone View (9:16 Aspect Ratio)">
+                  <i data-lucide="smartphone"></i>
+                  <span class="viewport-label">9:16 Mobile</span>
                 </button>
-                <button type="button" class="btn-viewport-toggle" data-viewport="tablet" title="Tablet View">
-                  Tablet
+                <button type="button" class="btn-viewport-toggle" data-viewport="tablet" title="Tablet View (768px)">
+                  <i data-lucide="tablet"></i>
+                  <span class="viewport-label">Tablet</span>
                 </button>
                 <button type="button" class="btn-viewport-toggle" data-viewport="desktop" title="Desktop Full-Width View">
-                  Desktop
+                  <i data-lucide="monitor"></i>
+                  <span class="viewport-label">Desktop</span>
                 </button>
               </div>
 
               <span class="preview-url-bar" id="previewUrlBar">
-                <span class="url-text">https://celebrationstudio.live/s/sample</span>
+                <i data-lucide="lock" style="width:11px; height:11px; color:#10b981;"></i>
+                <span class="url-text">https://celebration.live/#preview</span>
               </span>
 
               <div class="preview-device-actions">
-                <button type="button" class="btn-studio-secondary btn-icon-only" id="btnPreviewReload" title="Reload celebration physics">
-                  ↻
+                <button type="button" class="btn-preview-reload" id="btnPreviewReload" title="Reload celebration physics">
+                  <i data-lucide="rotate-ccw"></i>
                 </button>
-                <button type="button" class="btn-studio-primary btn-mobile-only" id="btnMobilePreviewShare">
-                  Share
+                <button type="button" class="btn-preview-share-mobile" id="btnMobilePreviewShare">
+                  <i data-lucide="share-2"></i>
+                  <span>Share</span>
                 </button>
               </div>
             </div>
@@ -228,119 +296,59 @@ export function renderStudioApp(root) {
         </div>
       </section>
 
-      <!-- 5. VERIFIED PLATFORM STANDARDS & CUSTOMER PROOF -->
-      <section class="studio-proof-section" id="proofSection">
-        <div class="section-container">
-          <div class="section-header-left">
-            <h2 class="section-title">Verified Platform Standards</h2>
-            <p class="section-subtitle">
-              Every celebration website is engineered for reliable playback, privacy, and zero software installation.
-            </p>
-          </div>
-
-          <div class="proof-grid">
-            <div class="proof-card">
-              <h4 class="proof-card-title">Performance Verified</h4>
-              <p class="proof-card-desc">
-                Procedural canvas engines run at 60 FPS on both mobile Safari (iOS 15+) and Google Chrome (Android & Desktop) with lightweight bundle delivery under 450 KB.
-              </p>
-              <div class="proof-link-wrap">
-                <a href="/?mode=view&template=long_romance" target="_blank" rel="noopener noreferrer" class="proof-text-link">Inspect Romance Masterpiece →</a>
-              </div>
-            </div>
-
-            <div class="proof-card">
-              <h4 class="proof-card-title">Privacy &amp; Security</h4>
-              <p class="proof-card-desc">
-                Surprise links are private and unlisted. No recipient account, login, or tracking cookies are required to experience the celebration.
-              </p>
-              <div class="proof-link-wrap">
-                <a href="/?mode=view&template=birthday" target="_blank" rel="noopener noreferrer" class="proof-text-link">Inspect Birthday Demo →</a>
-              </div>
-            </div>
-
-            <div class="proof-card">
-              <h4 class="proof-card-title">Direct Messaging Delivery</h4>
-              <p class="proof-card-desc">
-                Generates pre-formatted WhatsApp and SMS greeting texts with direct clickable URLs tailored to the recipient's relation and celebration occasion.
-              </p>
-              <div class="proof-link-wrap">
-                <a href="/?mode=view&template=blossom" target="_blank" rel="noopener noreferrer" class="proof-text-link">Inspect Cupid Blossom Demo →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- Floating Bottom Dock on Mobile -->
       <div class="studio-mobile-bottom-bar" id="studioMobileBottomBar">
-        <button type="button" class="btn-studio-secondary" id="btnDockSaveDefault">
-          Save
+        <button type="button" class="btn-dock-item btn-dock-save" id="btnDockSaveDefault">
+          <span class="dock-btn-icon"><i data-lucide="save"></i></span>
+          <span class="dock-btn-label">Save</span>
         </button>
-        <button type="button" class="btn-studio-secondary" id="btnDockPreviewToggle">
-          Live Preview
+        <button type="button" class="btn-dock-item btn-dock-preview" id="btnDockPreviewToggle">
+          <span class="dock-btn-icon"><i data-lucide="eye"></i></span>
+          <span class="dock-btn-label">Live Preview</span>
         </button>
-        <button type="button" class="btn-studio-primary" id="btnDockPublish">
-          Share Link
+        <button type="button" class="btn-dock-item btn-dock-primary" id="btnDockPublish">
+          <span class="dock-btn-icon"><i data-lucide="share-2"></i></span>
+          <span class="dock-btn-label">Share Link</span>
         </button>
       </div>
 
-      <!-- 6. VISIBLE CONTACT DETAILS & FUNCTIONAL BUSINESS FOOTER -->
-      <footer class="studio-footer" id="contactSection">
-        <div class="footer-container">
-          <div class="footer-grid">
-            <div class="footer-info-col">
-              <div class="footer-brand-title">Celebration Studio</div>
-              <p class="footer-desc">
-                Web platform for creating and sharing private celebration experiences for birthdays, romance, and life milestones.
-              </p>
-              <div class="footer-contact-details">
-                <div class="contact-row">
-                  <span class="contact-label">Support Email:</span>
-                  <a href="mailto:support@celebrationstudio.live" class="contact-value">support@celebrationstudio.live</a>
-                </div>
-                <div class="contact-row">
-                  <span class="contact-label">Turnaround:</span>
-                  <span class="contact-value">Inquiries answered within 24 hours on business days</span>
-                </div>
-                <div class="contact-row">
-                  <span class="contact-label">Business Hours:</span>
-                  <span class="contact-value">Monday – Friday, 9:00 AM – 6:00 PM EST</span>
-                </div>
-              </div>
+      <!-- 6. MINIMAL CLEAN FOOTER -->
+      <footer class="studio-footer-glass">
+        <div class="footer-glass-inner">
+          <div class="footer-brand-col">
+            <div class="footer-brand-title">
+              <div class="footer-gem"><i data-lucide="sparkles"></i></div>
+              <span>Celebration Studio</span>
+              <span class="footer-free-badge">100% Free Open Platform</span>
             </div>
+            <p class="footer-desc">
+              Create, customize, and share interactive celebration websites for birthdays, romance, apologies, anniversaries, and family.
+            </p>
+          </div>
 
-            <div class="footer-links-col">
-              <span class="footer-col-heading">Navigation</span>
-              <a href="#templatesSection" class="footer-link">Templates Gallery</a>
-              <a href="#customizerSection" class="footer-link">Customizer Workspace</a>
-              <a href="#proofSection" class="footer-link">Platform Standards</a>
-              <a href="/?mode=view" target="_blank" rel="noopener noreferrer" class="footer-link">Live Sample View</a>
-            </div>
-
-            <div class="footer-links-col">
-              <span class="footer-col-heading">Templates</span>
-              <a href="/?template=long_romance" class="footer-link">Romance Masterpiece</a>
-              <a href="/?template=birthday" class="footer-link">Birthday Celebration</a>
-              <a href="/?template=blossom" class="footer-link">Cupid &amp; Blossom</a>
-              <a href="/?template=friendship" class="footer-link">Best Friends Tribute</a>
-            </div>
+          <div class="footer-links-col">
+            <span class="footer-col-heading">Quick Actions</span>
+            <button type="button" class="footer-link-btn" id="btnFooterTemplates">Occasion Gallery</button>
+            <button type="button" class="footer-link-btn" id="btnFooterCustomizer">Live Customizer</button>
+            <a href="/?mode=view" target="_blank" rel="noopener noreferrer" class="footer-link-btn">Recipient View →</a>
           </div>
 
           <div class="footer-bottom-row">
-            <span>&copy; 2026 Celebration Studio. All rights reserved. Clean web delivery with zero third-party tracking.</span>
+            <span>© 2026 Celebration Studio • Built with Love • No payment or signup required.</span>
           </div>
         </div>
       </footer>
 
       <!-- Floating Saved Toast -->
       <div class="studio-floating-toast" id="studioFloatingToast" role="alert" aria-live="polite">
+        <i data-lucide="check-circle-2" style="color:#22c55e;"></i>
         <div>
-          <strong id="toastTitle">Website Saved</strong><br />
+          <strong id="toastTitle">Website Saved!</strong><br />
           <span id="toastSubtitle">Your custom celebration is ready to share.</span>
         </div>
       </div>
-    </div>`;
+    </div>
+  `;
 
   renderStudioIcons(root);
 

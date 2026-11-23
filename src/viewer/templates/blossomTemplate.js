@@ -2798,23 +2798,29 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   function getNodePositions() {
     const isMobile = cW < 640;
+    // Guaranteed 100% unobstructed celestial constellation layout:
+    // Every star is positioned in the open celestial sky between y: 19% and y: 52%
+    // Well below the top header and completely above the bottom memory card
     const coords = isMobile ? [
-      { x: 0.22, y: 0.22 },
-      { x: 0.74, y: 0.20 },
-      { x: 0.82, y: 0.42 },
-      { x: 0.20, y: 0.44 },
-      { x: 0.50, y: 0.52 }
+      { x: 0.18, y: 0.32 }, // Star 1: The First Spark (Left sky)
+      { x: 0.38, y: 0.21 }, // Star 2: Midnight Drives (Upper-center sky)
+      { x: 0.78, y: 0.23 }, // Star 3: Quiet Safe Harbor (Upper-right sky)
+      { x: 0.82, y: 0.44 }, // Star 4: The Turning Point (Mid-right sky)
+      { x: 0.48, y: 0.50 }  // Star 5: Our North Star (Lower-center apex)
     ] : [
-      { x: 0.22, y: 0.28 },
-      { x: 0.45, y: 0.20 },
-      { x: 0.78, y: 0.26 },
-      { x: 0.32, y: 0.56 },
-      { x: 0.70, y: 0.58 }
+      { x: 0.20, y: 0.34 }, // Star 1
+      { x: 0.40, y: 0.22 }, // Star 2
+      { x: 0.75, y: 0.25 }, // Star 3
+      { x: 0.80, y: 0.46 }, // Star 4
+      { x: 0.50, y: 0.52 }  // Star 5
     ];
 
     return coords.map((c, i) => ({
-      x: (constellationsList[i]?.x ? (constellationsList[i].x / 100) : c.x) * cW,
-      y: (constellationsList[i]?.y ? (constellationsList[i].y / 100) : c.y) * cH
+      x: c.x * cW,
+      y: c.y * cH,
+      title: constellationsList[i]?.title || `Star 0${i + 1}`,
+      date: constellationsList[i]?.date || '',
+      num: `0${i + 1}`
     }));
   }
 
@@ -3031,31 +3037,47 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         cCtx.restore();
       }
 
-      // 5. Calculate node positions
+      // 5. Calculate node positions (Guaranteed 100% visible in open sky)
       const points = getNodePositions();
 
-      // 6. Draw connecting constellation lines
+      // 6. Faint Astrological Constellation Guide Lines (Shows full constellation map immediately)
+      cCtx.save();
+      cCtx.beginPath();
+      cCtx.setLineDash([4, 6]);
+      cCtx.lineWidth = 1.2;
+      cCtx.strokeStyle = 'rgba(251, 191, 36, 0.22)';
+      points.forEach((pt, i) => {
+        if (i === 0) cCtx.moveTo(pt.x, pt.y);
+        else cCtx.lineTo(pt.x, pt.y);
+      });
+      cCtx.closePath();
+      cCtx.stroke();
+      cCtx.restore();
+
+      // 7. Active Illuminated Stardust Constellation Beams
       if (activeConstIdx > 0) {
+        cCtx.save();
         cCtx.beginPath();
-        cCtx.lineWidth = 2.4;
-        cCtx.strokeStyle = 'rgba(251, 191, 36, 0.75)';
+        cCtx.lineWidth = 2.8;
+        cCtx.strokeStyle = '#fbbf24';
         cCtx.shadowColor = '#fbbf24';
-        cCtx.shadowBlur = 10;
+        cCtx.shadowBlur = 12;
         for (let i = 0; i <= Math.min(beamFromIdx, activeConstIdx); i++) {
           if (i === 0) cCtx.moveTo(points[i].x, points[i].y);
           else cCtx.lineTo(points[i].x, points[i].y);
         }
         cCtx.stroke();
-        cCtx.shadowBlur = 0;
+        cCtx.restore();
       }
 
-      // Draw animated stardust beam from beamFromIdx to beamToIdx
+      // Draw animated stardust laser beam from beamFromIdx to beamToIdx
       if (beamProgress < 1 && beamToIdx > beamFromIdx) {
         const p1 = points[beamFromIdx];
         const p2 = points[beamToIdx];
         const curX = p1.x + (p2.x - p1.x) * beamProgress;
         const curY = p1.y + (p2.y - p1.y) * beamProgress;
 
+        cCtx.save();
         cCtx.beginPath();
         cCtx.lineWidth = 3.6;
         cCtx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
@@ -3064,54 +3086,100 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         cCtx.moveTo(p1.x, p1.y);
         cCtx.lineTo(curX, curY);
         cCtx.stroke();
-        cCtx.shadowBlur = 0;
+        cCtx.restore();
 
-        cCtx.fillStyle = '#ffffff';
+        // Glowing sparkle at beam tip
         cCtx.beginPath();
-        cCtx.arc(curX, curY, 4, 0, Math.PI * 2);
+        cCtx.arc(curX, curY, 4.5, 0, Math.PI * 2);
+        cCtx.fillStyle = '#ffffff';
+        cCtx.shadowColor = '#fbbf24';
+        cCtx.shadowBlur = 10;
         cCtx.fill();
+        cCtx.shadowBlur = 0;
 
         beamProgress += 0.045;
       }
 
-      // 7. Draw the 5 Great Stars
+      // 8. Draw the 5 Great Celestial Stars (Accurate, Assigned, and Radiant)
       points.forEach((pt, idx) => {
         const isActive = (idx === activeConstIdx);
         const isVisited = (idx <= activeConstIdx);
         const pulse = Math.sin(elapsed * 3.5 + idx) * 3;
-        const outerR = isActive ? 22 + pulse : (isVisited ? 14 + pulse * 0.4 : 10);
+        const outerR = isActive ? 24 + pulse : (isVisited ? 15 + pulse * 0.4 : 11);
 
-        // Outer starlight halo
+        // A. Pulsating Starlight Corona Halo
         cCtx.beginPath();
         cCtx.arc(pt.x, pt.y, Math.max(4, outerR), 0, Math.PI * 2);
-        cCtx.strokeStyle = isActive ? 'rgba(251, 191, 36, 0.95)' : (isVisited ? 'rgba(244, 63, 94, 0.7)' : 'rgba(255, 255, 255, 0.25)');
+        cCtx.strokeStyle = isActive ? 'rgba(251, 191, 36, 0.95)' : (isVisited ? 'rgba(244, 63, 94, 0.7)' : 'rgba(255, 255, 255, 0.3)');
         cCtx.lineWidth = isActive ? 2.5 : 1.2;
         cCtx.stroke();
 
-        // 4-Point rotating diffraction spikes for active star
-        if (isActive || isVisited) {
-          const spikeLen = isActive ? 18 + pulse * 0.5 : 10;
-          const spikeRot = elapsed * 0.4 + idx;
-          cCtx.save();
-          cCtx.translate(pt.x, pt.y);
-          cCtx.rotate(spikeRot);
-          cCtx.strokeStyle = isActive ? 'rgba(255, 255, 255, 0.85)' : 'rgba(251, 191, 36, 0.5)';
-          cCtx.lineWidth = 1.5;
-          cCtx.beginPath();
-          cCtx.moveTo(-spikeLen, 0); cCtx.lineTo(spikeLen, 0);
-          cCtx.moveTo(0, -spikeLen); cCtx.lineTo(0, spikeLen);
-          cCtx.stroke();
-          cCtx.restore();
+        // B. 6 Microscopic Orbiting Celestial Photons for Active Star
+        if (isActive) {
+          for (let k = 0; k < 6; k++) {
+            const photonAngle = elapsed * 2.2 + (k * Math.PI / 3);
+            const px = pt.x + Math.cos(photonAngle) * (outerR + 6);
+            const py = pt.y + Math.sin(photonAngle) * ((outerR + 6) * 0.65);
+            cCtx.beginPath();
+            cCtx.arc(px, py, 1.4, 0, Math.PI * 2);
+            cCtx.fillStyle = '#ffffff';
+            cCtx.shadowColor = '#fbbf24';
+            cCtx.shadowBlur = 6;
+            cCtx.fill();
+            cCtx.shadowBlur = 0;
+          }
         }
 
-        // Diamond core star
+        // C. Rotating Diamond Diffraction Spikes
+        const spikeLen = isActive ? 22 + pulse * 0.6 : 12;
+        const spikeRot = elapsed * 0.35 + idx;
+        cCtx.save();
+        cCtx.translate(pt.x, pt.y);
+        cCtx.rotate(spikeRot);
+        cCtx.strokeStyle = isActive ? '#fbbf24' : (isVisited ? 'rgba(251, 191, 36, 0.65)' : 'rgba(255, 255, 255, 0.3)');
+        cCtx.lineWidth = isActive ? 2 : 1.2;
+        cCtx.shadowColor = '#fbbf24';
+        cCtx.shadowBlur = isActive ? 12 : 4;
         cCtx.beginPath();
-        cCtx.arc(pt.x, pt.y, isActive ? 6.5 : (isVisited ? 4.5 : 3.5), 0, Math.PI * 2);
+        cCtx.moveTo(-spikeLen, 0); cCtx.lineTo(spikeLen, 0);
+        cCtx.moveTo(0, -spikeLen); cCtx.lineTo(0, spikeLen);
+        cCtx.stroke();
+        // Secondary 45-degree subtle starburst cross
+        cCtx.rotate(Math.PI / 4);
+        cCtx.strokeStyle = isActive ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.15)';
+        cCtx.lineWidth = 1;
+        cCtx.beginPath();
+        cCtx.moveTo(-spikeLen * 0.55, 0); cCtx.lineTo(spikeLen * 0.55, 0);
+        cCtx.moveTo(0, -spikeLen * 0.55); cCtx.lineTo(0, spikeLen * 0.55);
+        cCtx.stroke();
+        cCtx.restore();
+
+        // D. Diamond Core Star
+        cCtx.beginPath();
+        cCtx.arc(pt.x, pt.y, isActive ? 7 : (isVisited ? 5 : 3.8), 0, Math.PI * 2);
         cCtx.fillStyle = isActive ? '#ffffff' : (isVisited ? '#fef08a' : '#d1d5db');
         cCtx.shadowColor = isActive ? '#fbbf24' : '#f43f5e';
-        cCtx.shadowBlur = isActive ? 18 : 6;
+        cCtx.shadowBlur = isActive ? 20 : 6;
         cCtx.fill();
         cCtx.shadowBlur = 0;
+
+        // E. Assigned Astrological Label on Canvas
+        cCtx.save();
+        cCtx.font = isActive ? 'bold 11px system-ui, sans-serif' : '500 10px system-ui, sans-serif';
+        cCtx.textAlign = (pt.x > cW * 0.6) ? 'right' : 'left';
+        const textX = (pt.x > cW * 0.6) ? pt.x - (outerR + 8) : pt.x + (outerR + 8);
+        const textY = pt.y + 4;
+        if (isActive) {
+          cCtx.fillStyle = '#fbbf24';
+          cCtx.shadowColor = '#fbbf24';
+          cCtx.shadowBlur = 10;
+        } else if (isVisited) {
+          cCtx.fillStyle = 'rgba(255, 235, 245, 0.85)';
+        } else {
+          cCtx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+        }
+        cCtx.fillText(`✦ ${pt.num} ${pt.title}`, textX, textY);
+        cCtx.restore();
       });
 
       constRafId = requestAnimationFrame(renderConstellationLoop);

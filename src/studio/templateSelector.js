@@ -1,4 +1,4 @@
-// src/studio/templateSelector.js - Clean Authentic Business Template Gallery
+// src/studio/templateSelector.js - Ultra-Aesthetic Occasion Bento Gallery with Instant Actions
 
 import { TEMPLATES } from '../models/templateRegistry.js';
 import { renderStudioIcons } from './icons.js';
@@ -7,11 +7,11 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
   let activeFilter = initialCategory;
 
   const categories = [
-    { id: 'all', label: `All (${Object.keys(TEMPLATES).length})` },
-    { id: 'romance', label: 'Romance' },
-    { id: 'birthday', label: 'Birthday' },
-    { id: 'family', label: 'Family' },
-    { id: 'friends', label: 'Friends' }
+    { id: 'all', icon: 'sparkles', label: `All (${Object.keys(TEMPLATES).length})` },
+    { id: 'romance', icon: 'heart', label: 'Romance' },
+    { id: 'birthday', icon: 'calendar', label: 'Birthday' },
+    { id: 'family', icon: 'shield-check', label: 'Family' },
+    { id: 'friends', icon: 'sparkle', label: 'Friends' }
   ];
 
   function getTemplateCategory(tid) {
@@ -30,16 +30,17 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
 
     container.innerHTML = `
       <div class="template-selector-wrap" id="templatesSelectorWrap">
-        <!-- Filter Chips Strip (1 Consistent Button Style) -->
+        <!-- Filter Chips Strip -->
         <div class="template-filter-chips" id="tmplFilterChips" role="tablist" aria-label="Filter occasions">
           ${categories.map(c => `
-            <button type="button" role="tab" aria-selected="${c.id === activeFilter}" class="btn-studio-secondary tmpl-filter-chip ${c.id === activeFilter ? 'active' : ''}" data-cat="${c.id}">
+            <button type="button" role="tab" aria-selected="${c.id === activeFilter}" class="tmpl-filter-chip ${c.id === activeFilter ? 'active' : ''}" data-cat="${c.id}">
+              <i data-lucide="${c.icon}"></i>
               <span>${c.label}</span>
             </button>
           `).join('')}
         </div>
 
-        <!-- Responsive Clean Grid -->
+        <!-- Responsive Bento Grid -->
         <div class="template-cards-bento-grid">
           ${list.map(tmpl => {
             const isSel = tmpl.id === activeTemplateId;
@@ -47,10 +48,13 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
               <div class="template-bento-card ${isSel ? 'selected' : ''}" data-tid="${tmpl.id}">
                 <div class="tmpl-card-header">
                   <span class="tmpl-badge">${tmpl.badge}</span>
-                  ${isSel ? '<span class="tmpl-active-badge">Active</span>' : ''}
+                  ${isSel ? '<span class="tmpl-active-badge"><i data-lucide="check-circle-2"></i> Selected</span>' : ''}
                 </div>
 
                 <div class="tmpl-card-main">
+                  <div class="tmpl-icon-gem">
+                    <span class="tmpl-icon">${tmpl.icon}</span>
+                  </div>
                   <div class="tmpl-card-text">
                     <h4 class="tmpl-title">${tmpl.name}</h4>
                     <p class="tmpl-description">${tmpl.description}</p>
@@ -58,16 +62,17 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
                 </div>
 
                 <div class="tmpl-card-meta">
-                  <span class="tmpl-meta-tag">60 FPS Canvas</span>
-                  <span class="tmpl-meta-tag">Audio Soundtrack</span>
-                  <span class="tmpl-meta-tag">Private Link</span>
+                  <span class="tmpl-meta-tag"><i data-lucide="sparkles" style="width:11px; height:11px;"></i> 60FPS Physics</span>
+                  <span class="tmpl-meta-tag"><i data-lucide="music" style="width:11px; height:11px;"></i> Audio Soundtrack</span>
                 </div>
 
                 <div class="tmpl-card-actions">
-                  <button type="button" class="btn-studio-primary btn-card-action ${isSel ? 'active' : ''}" data-action="customize" data-tid="${tmpl.id}" aria-label="Select ${tmpl.name}">
-                    <span>${isSel ? 'Active Template' : 'Select Template'}</span>
+                  <button type="button" class="btn-card-action btn-card-customize ${isSel ? 'active' : ''}" data-action="customize" data-tid="${tmpl.id}" aria-label="Customize ${tmpl.name}">
+                    <i data-lucide="${isSel ? 'check' : 'wand-2'}"></i>
+                    <span>${isSel ? 'Editing Now' : 'Customize Wish'}</span>
                   </button>
-                  <button type="button" class="btn-studio-secondary btn-card-action" data-action="preview" data-tid="${tmpl.id}" title="Preview in device viewport" aria-label="Preview ${tmpl.name}">
+                  <button type="button" class="btn-card-action btn-card-preview" data-action="preview" data-tid="${tmpl.id}" title="Preview in device viewport" aria-label="Preview ${tmpl.name}">
+                    <i data-lucide="eye"></i>
                     <span>Preview</span>
                   </button>
                 </div>
@@ -90,7 +95,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
     });
 
     // Bind card actions
-    container.querySelectorAll('[data-action="customize"]').forEach(btn => {
+    container.querySelectorAll('.btn-card-customize').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (navigator.vibrate) navigator.vibrate(18);
@@ -99,7 +104,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
       });
     });
 
-    container.querySelectorAll('[data-action="preview"]').forEach(btn => {
+    container.querySelectorAll('.btn-card-preview').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (navigator.vibrate) navigator.vibrate(14);
