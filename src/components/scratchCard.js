@@ -37,8 +37,10 @@ export function initScratchCard(container, config) {
 
   function initCanvas() {
     const rect = wrapper.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
+    const w = rect.width > 0 ? rect.width : (wrapper.parentElement?.clientWidth ? Math.min(wrapper.parentElement.clientWidth - 20, 440) : 340);
+    const h = rect.height > 0 ? rect.height : 320;
+    canvas.width = w;
+    canvas.height = h;
 
     // Draw luxury metallic brushed gold
     const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
@@ -74,6 +76,17 @@ export function initScratchCard(container, config) {
   window.addEventListener("resize", () => {
     if (!scratchedCleaned) initCanvas();
   });
+
+  if (typeof IntersectionObserver !== "undefined") {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && !scratchedCleaned && canvas.width < 100) {
+          initCanvas();
+        }
+      });
+    }, { threshold: 0.1 });
+    obs.observe(wrapper);
+  }
 
   function scratch(x, y) {
     ctx.globalCompositeOperation = "destination-out";

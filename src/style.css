@@ -1436,29 +1436,32 @@ body {
    SCRATCH-OFF REVEAL BIRTHDAY CARD
    ======================================================== */
 .scratch-section {
-  padding: 100px 20px;
-  background: radial-gradient(circle at 50% 50%, #1f1b29 0%, #0d0e14 100%);
+  padding: 20px 10px;
+  background: transparent;
   text-align: center;
   position: relative;
 }
 
 .scratch-card-wrapper {
-  max-width: 620px;
-  margin: 30px auto 0;
+  max-width: 440px;
+  margin: 16px auto 0;
   position: relative;
-  background: #ffffff;
-  border-radius: 16px;
+  background: rgba(24, 18, 34, 0.88);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 30px rgba(255, 77, 109, 0.2);
-  min-height: 340px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  min-height: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .scratch-content-underneath {
-  padding: 40px 30px;
-  color: #222;
+  padding: 28px 20px;
+  color: #f8fafc;
   text-align: center;
   width: 100%;
   user-select: none;
@@ -1466,33 +1469,39 @@ body {
 
 .scratch-badge {
   font-family: 'Cinzel', serif;
-  font-size: 12px;
-  letter-spacing: 3px;
-  color: #b5893a;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #fbbf24;
   margin-bottom: 8px;
 }
 
 .scratch-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(32px, 6vw, 46px);
-  color: #111;
-  margin-bottom: 12px;
+  font-size: clamp(24px, 5vw, 32px);
+  color: #ffffff;
+  margin-bottom: 10px;
+  font-weight: 800;
 }
 
 .scratch-subtitle {
-  font-size: 15px;
-  color: #666;
-  max-width: 480px;
-  margin: 0 auto 16px;
-  line-height: 1.6;
+  font-size: 13.5px;
+  color: #cbd5e1;
+  max-width: 380px;
+  margin: 0 auto 14px;
+  line-height: 1.5;
 }
 
 .scratch-secret {
   font-family: 'Caveat', cursive;
-  font-size: 22px;
-  color: var(--primary);
+  font-size: 20px;
+  color: #fde047;
   font-weight: 700;
   margin-top: 10px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: inline-block;
 }
 
 .scratch-canvas {
@@ -1504,12 +1513,14 @@ body {
   cursor: grab;
   z-index: 2;
   transition: opacity 0.5s ease;
+  touch-action: none;
 }
 
 .scratch-hint {
-  margin-top: 16px;
-  font-size: 13px;
-  color: #aaa;
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fbbf24;
   letter-spacing: 0.5px;
 }
 
@@ -1517,8 +1528,8 @@ body {
    3D VIP LANYARD PASS SECTION
    ======================================================== */
 .lanyard-section {
-  padding: 90px 20px;
-  background: linear-gradient(180deg, #0d0e14 0%, #171822 100%);
+  padding: 20px 10px;
+  background: transparent;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -1528,13 +1539,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
   perspective: 1000px;
 }
 
 .lanyard-strap {
   width: 24px;
-  height: 140px;
+  height: 90px;
   background: repeating-linear-gradient(
     45deg,
     #1b1c24,
@@ -1561,12 +1572,15 @@ body {
 }
 
 .vip-badge-card {
-  width: 260px;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-  color: #111;
-  border-radius: 14px;
-  padding: 20px 16px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 20px rgba(255, 77, 109, 0.25);
+  width: 250px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 18px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 24px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 24px rgba(212, 35, 92, 0.2);
   margin-top: 16px;
   transform-origin: top center;
   transition: transform 0.1s ease-out;
@@ -2177,27 +2191,28 @@ body {
    PRO GLASSMORHPISM DESIGN SYSTEM 3.0 (Celebration Studio Free-App Flow)
    ========================================================================= */
 :root {
-  --glass-canvas-bg: radial-gradient(circle at 10% 15%, rgba(255, 235, 240, 0.85) 0%, transparent 42%),
-                     radial-gradient(circle at 90% 10%, rgba(254, 243, 199, 0.8) 0%, transparent 40%),
-                     radial-gradient(circle at 50% 45%, rgba(253, 242, 248, 0.65) 0%, transparent 48%),
-                     radial-gradient(circle at 82% 82%, rgba(238, 242, 255, 0.85) 0%, transparent 42%),
-                     radial-gradient(circle at 14% 88%, rgba(254, 240, 138, 0.55) 0%, transparent 36%),
+  --glass-canvas-bg: radial-gradient(circle at 10% 12%, rgba(255, 230, 238, 0.9) 0%, transparent 45%),
+                     radial-gradient(circle at 90% 8%, rgba(254, 240, 199, 0.88) 0%, transparent 42%),
+                     radial-gradient(circle at 50% 48%, rgba(253, 242, 248, 0.75) 0%, transparent 50%),
+                     radial-gradient(circle at 85% 85%, rgba(238, 242, 255, 0.92) 0%, transparent 44%),
+                     radial-gradient(circle at 12% 90%, rgba(254, 240, 138, 0.65) 0%, transparent 38%),
                      #faf6f0;
 
   --glass-surface-nav: rgba(255, 255, 255, 0.84);
-  --glass-surface: rgba(255, 255, 255, 0.74);
-  --glass-surface-elevated: rgba(255, 255, 255, 0.92);
+  --glass-surface: rgba(255, 255, 255, 0.78);
+  --glass-surface-elevated: rgba(255, 255, 255, 0.9);
+  --glass-surface-card: rgba(255, 255, 255, 0.86);
   --glass-surface-opaque: #ffffff;
   
   --glass-blur: 14px; /* Capped under 16px for silky 60fps mobile scroll */
   
-  --glass-border: 1px solid rgba(255, 255, 255, 0.8);
-  --glass-border-subtle: 1px solid rgba(212, 175, 55, 0.24);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.85);
+  --glass-border-subtle: 1px solid rgba(212, 175, 55, 0.22);
   --glass-border-accent: 1px solid rgba(212, 35, 92, 0.35);
 
-  --glass-shadow-sm: 0 4px 16px -2px rgba(28, 18, 22, 0.05), 0 1px 3px rgba(28, 18, 22, 0.04);
-  --glass-shadow-md: 0 12px 32px -4px rgba(28, 18, 22, 0.08), 0 2px 6px rgba(28, 18, 22, 0.04);
-  --glass-shadow-lg: 0 20px 48px -6px rgba(28, 18, 22, 0.12), 0 4px 12px rgba(28, 18, 22, 0.05);
+  --glass-shadow-sm: 0 4px 16px -2px rgba(28, 18, 22, 0.05), 0 1px 3px rgba(28, 18, 22, 0.03);
+  --glass-shadow-md: 0 12px 36px -4px rgba(28, 18, 22, 0.07), 0 2px 8px rgba(28, 18, 22, 0.03);
+  --glass-shadow-lg: 0 24px 54px -6px rgba(28, 18, 22, 0.1), 0 4px 14px rgba(28, 18, 22, 0.04);
 
   --text-main: #1c1216;
   --text-muted: #524049;
@@ -2795,14 +2810,16 @@ body {
 }
 
 .template-bento-card {
-  background: #ffffff; /* Strictly solid opaque fill to maintain crisp depth without nested blur */
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: var(--glass-surface-card);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 18px;
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 16px rgba(28, 18, 22, 0.04);
+  box-shadow: 0 4px 18px rgba(28, 18, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95);
   cursor: pointer;
   position: relative;
 }
@@ -2810,13 +2827,13 @@ body {
 .template-bento-card:hover {
   transform: translateY(-3px);
   border-color: rgba(212, 35, 92, 0.45);
-  box-shadow: 0 10px 28px rgba(212, 35, 92, 0.12);
+  box-shadow: 0 12px 32px rgba(212, 35, 92, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .template-bento-card.selected {
   border: 2px solid #d4235c;
-  background: #fffdfd;
-  box-shadow: 0 8px 26px rgba(212, 35, 92, 0.18);
+  background: rgba(255, 253, 254, 0.96);
+  box-shadow: 0 10px 30px rgba(212, 35, 92, 0.2), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .tmpl-card-header {
@@ -3503,19 +3520,27 @@ body {
 }
 
 .editor-section {
-  background: #ffffff;
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
   padding: 18px 16px;
   margin-bottom: 16px;
-  box-shadow: 0 4px 18px rgba(180, 140, 120, 0.08);
+  box-shadow: 0 6px 22px rgba(180, 140, 120, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
   color: #1c1216;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.editor-section:hover {
+  border-color: rgba(212, 35, 92, 0.3);
+  box-shadow: 0 10px 28px rgba(212, 35, 92, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .highlight-section {
-  background: linear-gradient(135deg, rgba(254, 242, 242, 0.8), rgba(255, 251, 235, 0.8));
+  background: linear-gradient(135deg, rgba(254, 242, 242, 0.88), rgba(255, 251, 235, 0.88));
   border-color: rgba(212, 35, 92, 0.4);
-  box-shadow: 0 4px 20px rgba(212, 35, 92, 0.12);
+  box-shadow: 0 8px 24px rgba(212, 35, 92, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .section-title {
@@ -5532,19 +5557,21 @@ body {
   100% { transform: translate(20px, -90px) rotate(5deg); }
 }
 
-/* iPhone 16 Pro Upgrade */
+/* iPhone 16 Pro Upgrade (9:16 Responsive Glass Chassis) */
 .iphone-16-pro {
-  width: 325px;
-  height: 650px;
+  width: 100%;
+  max-width: 320px;
+  height: 580px;
   background: #000;
-  border-radius: 52px;
-  margin: 30px auto 0;
-  border: 9px solid #36373f;
-  box-shadow: 0 35px 90px rgba(0,0,0,0.9), 0 0 35px rgba(255, 77, 109, 0.35);
+  border-radius: 44px;
+  margin: 16px auto 0;
+  border: 7px solid #2d2e36;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 35px rgba(212, 35, 92, 0.25);
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .phone-glass-glare {
@@ -13514,82 +13541,72 @@ svg {
 /* ========================================================
    DYNAMIC PERSONA-ADAPTIVE BIRTHDAY THEMES & SWITCHER
    ======================================================== */
+.bday-persona-selector-dock,
 .bday-persona-switcher-wrap {
   position: sticky;
-  top: 14px;
-  z-index: 9999;
-  width: calc(100% - 24px);
-  max-width: 860px;
-  margin: 10px auto 16px auto;
-  background: rgba(22, 18, 16, 0.85);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: 24px;
-  padding: 8px 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(212, 175, 55, 0.15);
+  top: 10px;
+  z-index: 900;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto 14px auto;
   box-sizing: border-box;
 }
 
-.bday-persona-label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 800;
-  color: #fbbf24;
-  letter-spacing: 0.6px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
+.bday-persona-scroll,
 .bday-persona-pills-track {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  padding: 2px 0;
-  width: 100%;
+  padding: 6px 10px;
+  background: rgba(24, 16, 32, 0.82);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
+.bday-persona-scroll::-webkit-scrollbar,
 .bday-persona-pills-track::-webkit-scrollbar {
   display: none;
 }
 
+.bday-persona-chip,
 .btn-persona-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: #cbd5e1;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 16px;
   font-size: 11.5px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
+  touch-action: manipulation;
 }
 
+.bday-persona-chip:hover,
 .btn-persona-pill:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
   transform: translateY(-1px);
 }
 
+.bday-persona-chip.active,
 .btn-persona-pill.active {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.38), rgba(245, 158, 11, 0.35));
   border-color: #fbbf24;
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 2px 12px rgba(251, 191, 36, 0.4);
+  box-shadow: 0 2px 14px rgba(251, 191, 36, 0.45);
 }
 
 .bday-persona-stage {
@@ -13770,7 +13787,20 @@ svg {
    (Eliminates static single-page scrolling across all templates)
    ======================================================== */
 
-.bday-storybook-viewport,
+.bday-storybook-viewport {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+  padding: 12px 14px 90px 14px;
+  min-height: 100dvh;
+  background: radial-gradient(ellipse at 50% 12%, #2d143c 0%, #150a20 48%, #09040e 100%);
+  color: #f8fafc;
+  overflow-x: hidden;
+}
+
 .fam-storybook-viewport,
 .anni-storybook-viewport,
 .val-storybook-viewport,
@@ -13831,12 +13861,12 @@ svg {
   align-items: center;
   justify-content: space-between;
   padding: 8px 16px;
-  background: rgba(20, 15, 12, 0.88);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(24, 16, 32, 0.82);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   pointer-events: none;
   user-select: none;
 }
@@ -13849,6 +13879,27 @@ svg {
   display: flex;
   align-items: center;
   gap: 8px;
+  overflow: hidden;
+}
+
+.stage-step-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 1px;
+}
+
+.stage-step-separator {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 11px;
+}
+
+.stage-title-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   overflow: hidden;
 }
 
@@ -13885,6 +13936,85 @@ svg {
   transform: translateY(0) scale(1);
 }
 
+/* Stage 1: Interactive Balloons Glass Tray & Mini-Game */
+.bday-interactive-balloons-box {
+  margin: 18px 0;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  padding: 16px 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.balloon-pop-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.pop-balloon {
+  width: 48px;
+  height: 60px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s, opacity 0.2s;
+  position: relative;
+  box-shadow: inset 0 -6px 12px rgba(0,0,0,0.35), inset 0 4px 6px rgba(255,255,255,0.4), 0 8px 18px rgba(0,0,0,0.35);
+  touch-action: manipulation;
+}
+
+.pop-balloon:hover {
+  transform: translateY(-4px) scale(1.08);
+}
+
+.pop-balloon:active {
+  transform: scale(0.92);
+}
+
+.pop-balloon.popped {
+  opacity: 0.25;
+  transform: scale(0.7);
+  pointer-events: none;
+  filter: grayscale(1);
+}
+
+.pop-balloon span {
+  font-size: 10px;
+  font-weight: 900;
+  background: rgba(0,0,0,0.35);
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-top: 2px;
+}
+
+.pop-balloon.b-red { background: linear-gradient(135deg, #ff4d6d, #c9184a); }
+.pop-balloon.b-gold { background: linear-gradient(135deg, #fbbf24, #d97706); }
+.pop-balloon.b-pink { background: linear-gradient(135deg, #f472b6, #db2777); }
+.pop-balloon.b-blue { background: linear-gradient(135deg, #38bdf8, #0284c7); }
+.pop-balloon.b-purple { background: linear-gradient(135deg, #c084fc, #9333ea); }
+
+.balloon-wish-bubble {
+  margin-top: 12px;
+  min-height: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fef08a;
+  transition: all 0.3s ease;
+}
+
 /* Nav Docks */
 .bday-nav-dock,
 .fam-nav-dock,
@@ -13905,7 +14035,7 @@ svg {
 .btn-val-prev,
 .btn-bff-prev {
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #e2e8f0;
   padding: 13px 18px;
   border-radius: 14px;
@@ -13917,6 +14047,7 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  backdrop-filter: blur(8px);
 }
 
 .btn-bday-prev:hover,
@@ -13937,13 +14068,13 @@ svg {
   flex: 1;
   background: linear-gradient(135deg, #d4af37 0%, #f59e0b 100%);
   color: #1a0b00;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 14px 20px;
   border-radius: 14px;
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
@@ -13957,7 +14088,7 @@ svg {
 .btn-val-next:hover,
 .btn-bff-next:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(212, 175, 55, 0.55);
+  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .btn-bday-next:active,
@@ -13976,13 +14107,13 @@ svg {
   flex: 1;
   background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
   color: #fff;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 14px 20px;
   border-radius: 14px;
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.4);
+  box-shadow: 0 4px 18px rgba(236, 72, 153, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
@@ -13996,42 +14127,160 @@ svg {
 .btn-val-replay:hover,
 .btn-bff-replay:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(236, 72, 153, 0.6);
+  box-shadow: 0 8px 28px rgba(236, 72, 153, 0.65);
 }
 
-/* Birthday Grand Finale Card */
+/* Stage 7: Birthday Grand Finale Card & 3D Cake Physics */
 .bday-finale-card {
   text-align: center;
-  padding: 30px 18px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 26px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.35);
   border-radius: 24px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
 
-.bday-finale-cake-wrap {
+.realistic-cake-stage {
   position: relative;
+  width: 220px;
+  height: 190px;
+  margin: 0 auto 16px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cake-candles-row {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin-bottom: 2px;
+  position: relative;
+  z-index: 5;
+}
+
+.cake-candle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.candle-flame {
+  width: 12px;
+  height: 18px;
+  background: radial-gradient(ellipse at 50% 80%, #fff 0%, #fbbf24 45%, #ef4444 85%, transparent 100%);
+  border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+  box-shadow: 0 0 14px #fbbf24, 0 0 28px rgba(239, 68, 68, 0.6);
+  animation: flameFlicker 0.15s infinite alternate ease-in-out;
+  transform-origin: bottom center;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.candle-flame.extinguished {
+  opacity: 0;
+  transform: scale(0.2) translateY(-10px);
+}
+
+@keyframes flameFlicker {
+  0% { transform: scale(1) rotate(-1deg); }
+  100% { transform: scale(1.08, 0.96) rotate(1.5deg); }
+}
+
+.candle-wick {
+  width: 2px;
+  height: 6px;
+  background: #1e293b;
+}
+
+.candle-body {
+  width: 8px;
+  height: 32px;
+  background: repeating-linear-gradient(45deg, #ff4d6d, #ff4d6d 4px, #fff 4px, #fff 8px);
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.candle-smoke-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.smoke-particle {
+  position: absolute;
+  top: 30px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(226, 232, 240, 0.8) 0%, transparent 80%);
+  animation: smokeFloatUp 1.8s forwards ease-out;
+}
+
+@keyframes smokeFloatUp {
+  0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0.8; }
+  50% { transform: translate3d(8px, -40px, 0) scale(1.4); opacity: 0.5; }
+  100% { transform: translate3d(-10px, -90px, 0) scale(2.2); opacity: 0; }
+}
+
+.cake-tier {
+  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+}
+
+.tier-top {
   width: 140px;
-  height: 140px;
-  margin: 0 auto 20px auto;
+  height: 52px;
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  border-top: 4px solid #f472b6;
+  margin-bottom: -4px;
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 70%);
+}
+
+.cake-berries {
+  font-size: 14px;
+  letter-spacing: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.tier-base {
+  width: 190px;
+  height: 64px;
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  border-top: 5px solid #fb923c;
+  position: relative;
+  z-index: 2;
+}
+
+.cake-ribbon {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: #d4235c;
+}
+
+.cake-plate {
+  width: 220px;
+  height: 12px;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
   border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.25s ease;
-}
-
-.bday-finale-cake-wrap:hover {
-  transform: scale(1.08);
-}
-
-.bday-cake-emoji {
-  font-size: 72px;
-  filter: drop-shadow(0 8px 24px rgba(251, 191, 36, 0.5));
-  animation: floatBounce 2.5s ease-in-out infinite;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  margin-top: -6px;
+  position: relative;
+  z-index: 1;
 }
 
 .bday-cake-tap-hint {
@@ -14039,26 +14288,27 @@ svg {
   font-weight: 800;
   color: #fbbf24;
   letter-spacing: 1px;
-  margin-top: 8px;
+  margin-top: 10px;
   background: rgba(251, 191, 36, 0.12);
-  padding: 4px 12px;
-  border-radius: 12px;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  padding: 5px 14px;
+  border-radius: 14px;
   display: inline-block;
 }
 
 .bday-finale-title {
   font-family: 'Playfair Display', serif;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 800;
   color: #fff;
-  margin: 0 0 10px 0;
+  margin: 14px 0 8px 0;
   background: linear-gradient(135deg, #fff 0%, #fbbf24 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .bday-finale-msg {
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.6;
   color: #cbd5e1;
   margin: 0 0 20px 0;
@@ -14096,11 +14346,13 @@ button, select, input, textarea, a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff;
-  border: 1px solid rgba(212, 175, 55, 0.28);
-  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
   padding: 12px 16px;
-  box-shadow: 0 4px 18px rgba(180, 140, 120, 0.08);
+  box-shadow: 0 6px 20px rgba(180, 140, 120, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
   gap: 12px;
 }
 
@@ -14220,23 +14472,24 @@ button, select, input, textarea, a {
 }
 
 .form-input, .form-textarea, select.form-input {
-  background: #fffdfa;
-  border: 1.5px solid #ebd8c8;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.5px solid rgba(212, 175, 55, 0.28);
   color: #1c1216;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 10px 14px;
-  font-size: 16px;
+  font-size: 15px;
   min-height: 44px;
   width: 100%;
   box-sizing: border-box;
   font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .form-input:focus, .form-textarea:focus, select.form-input:focus {
   outline: none;
   border-color: #d4235c;
-  box-shadow: 0 0 0 3px rgba(212, 35, 92, 0.14);
+  box-shadow: 0 0 0 3px rgba(212, 35, 92, 0.14), 0 2px 8px rgba(212, 35, 92, 0.06);
   background: #ffffff;
 }
 

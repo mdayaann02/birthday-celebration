@@ -196,18 +196,18 @@ export function renderBirthdayTemplate(container, data) {
           <div id="tpHeroSlot"></div>
 
           <!-- Interactive Balloon Pop Game -->
-          <div class="bday-interactive-balloons-box" style="margin: 20px 0; text-align:center;">
-            <p style="font-size:12px; font-weight:800; letter-spacing:1px; color:#f59e0b; margin-bottom:10px;">
+          <div class="bday-interactive-balloons-box">
+            <p style="font-size:12px; font-weight:800; letter-spacing:1px; color:#fbbf24; margin: 0 0 10px 0;">
               🎈 TAP THE BALLOONS TO POP BIRTHDAY WISHES 🎈
             </p>
-            <div class="balloon-pop-row" id="balloonPopRow" style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
+            <div class="balloon-pop-row" id="balloonPopRow">
               <div class="pop-balloon b-red" data-wish="Boundless Joy 🌟" role="button" tabindex="0">🎈<span>1</span></div>
               <div class="pop-balloon b-gold" data-wish="Big Success 🏆" role="button" tabindex="0">🎈<span>2</span></div>
               <div class="pop-balloon b-pink" data-wish="Infinite Love 💖" role="button" tabindex="0">🎈<span>3</span></div>
               <div class="pop-balloon b-blue" data-wish="Wild Adventures 🚀" role="button" tabindex="0">🎈<span>4</span></div>
               <div class="pop-balloon b-purple" data-wish="Lifelong Smiles ✨" role="button" tabindex="0">🎈<span>5</span></div>
             </div>
-            <div class="balloon-wish-bubble" id="balloonWishBubble" style="margin-top:12px; min-height:24px; font-size:13px; font-weight:700; color:#fff;"></div>
+            <div class="balloon-wish-bubble" id="balloonWishBubble"></div>
           </div>
 
           <div class="bday-nav-dock">
@@ -324,7 +324,7 @@ export function renderBirthdayTemplate(container, data) {
               Wishing you a year filled with boundless laughter, wild dreams fulfilled, and infinite blessings! ✨
             </p>
 
-            <button type="button" class="btn-fam-action btn-blow-cake-action" id="btnBlowCandles" style="width:100%; max-width:320px; font-size:14px; padding:12px 20px; border-radius:14px; background:linear-gradient(135deg, #d4235c, #e11d48); color:#fff; border:none; font-weight:800; cursor:pointer; box-shadow:0 6px 20px rgba(212,35,92,0.4);">
+            <button type="button" class="btn-fam-action btn-blow-cake-action" id="btnBlowCandles" style="width:100%; max-width:320px; font-size:14px; padding:13px 20px; border-radius:14px; color:#fff; font-weight:800; cursor:pointer; margin-top:8px;">
               💨 Blow Out Candles &amp; Make A Wish 🎂
             </button>
           </div>
