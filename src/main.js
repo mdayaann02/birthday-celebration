@@ -102,15 +102,27 @@ async function initApp() {
 
   // 4. DEFAULT ROUTE: Always open the Glassmorphic Celebration Studio Editor!
   // Creators land directly on the editor website to customize everything seamlessly.
+  window.isCelebrationEditorMode = true;
   renderStudioApp(root);
 }
 
 // React to URL hash changes
 window.addEventListener('hashchange', initApp);
 
-// Automatic full screen trigger on user interaction (touch, tap, click)
+// Automatic full screen trigger on user interaction (ONLY in viewer mode, NEVER in studio editor)
 export function requestAutoFullscreen() {
   if (typeof document === 'undefined') return;
+  // If in editor mode or active element is an input/textarea, do NOT enter fullscreen to prevent lag & interruption
+  if (window.isCelebrationEditorMode || 
+      document.querySelector('.studio-layout') || 
+      document.querySelector('.studio-container')) {
+    return;
+  }
+  const activeEl = document.activeElement;
+  if (activeEl && ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(activeEl.tagName)) {
+    return;
+  }
+
   const docEl = document.documentElement;
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
     const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
@@ -120,27 +132,18 @@ export function requestAutoFullscreen() {
   }
 }
 
-['click', 'touchstart', 'touchend', 'pointerdown', 'mousedown', 'keydown'].forEach(ev => {
-  window.addEventListener(ev, requestAutoFullscreen, { passive: true });
-  if (typeof document !== 'undefined') {
-    document.addEventListener(ev, requestAutoFullscreen, { passive: true });
-  }
-});
-
-// Attempt immediate fullscreen upon DOM load if browser environment permits
-if (typeof window !== 'undefined') {
-  window.addEventListener('load', () => {
-    try { requestAutoFullscreen(); } catch (_) {}
-  });
-}
+// Only trigger auto-fullscreen on clean user click/tap when inside viewer mode
+window.addEventListener('click', (e) => {
+  if (window.isCelebrationEditorMode) return;
+  if (e.target && e.target.closest && e.target.closest('.studio-layout')) return;
+  requestAutoFullscreen();
+}, { passive: true });
 
 // Mount when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    try { requestAutoFullscreen(); } catch (_) {}
     initApp();
   });
 } else {
-  try { requestAutoFullscreen(); } catch (_) {}
   initApp();
 }

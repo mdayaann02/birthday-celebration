@@ -1463,19 +1463,19 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     groundY = H * 0.93;
 
     bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-    bgGrad.addColorStop(0, '#240a1b');
-    bgGrad.addColorStop(0.46, '#180613');
-    bgGrad.addColorStop(0.78, '#12040e');
-    bgGrad.addColorStop(1, '#0a0208');
+    bgGrad.addColorStop(0, '#fff3e9');
+    bgGrad.addColorStop(0.46, '#ffe7d6');
+    bgGrad.addColorStop(0.78, '#fcd9c4');
+    bgGrad.addColorStop(1, '#f3c4b5');
 
     glowGrad = ctx.createRadialGradient(cx, cy, ry * 0.1, cx, cy, ry * 1.55);
-    glowGrad.addColorStop(0, 'rgba(251, 207, 232, 0.45)');
-    glowGrad.addColorStop(0.5, 'rgba(244, 63, 94, 0.2)');
-    glowGrad.addColorStop(1, 'rgba(244, 63, 94, 0)');
+    glowGrad.addColorStop(0, 'rgba(255,219,170,0.6)');
+    glowGrad.addColorStop(0.5, 'rgba(255,170,150,0.2)');
+    glowGrad.addColorStop(1, 'rgba(255,170,150,0)');
 
     groundGrad = ctx.createRadialGradient(cx, H * 1.02, ry * 0.2, cx, H * 1.02, ry * 1.6);
-    groundGrad.addColorStop(0, 'rgba(244, 63, 94, 0.3)');
-    groundGrad.addColorStop(1, 'rgba(244, 63, 94, 0)');
+    groundGrad.addColorStop(0, 'rgba(255,205,165,0.5)');
+    groundGrad.addColorStop(1, 'rgba(255,205,165,0)');
 
     for (let i = 0; i < 11; i++) {
       orbs.push({
@@ -1594,9 +1594,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       const hw = 0.035 + 0.02 * (0.5 + 0.5 * Math.sin(t * 0.5 + i * 1.7));
       const a1 = a - hw, a2 = a + hw;
       const g = ctx.createLinearGradient(ox, oy, ox + Math.cos(a) * R, oy + Math.sin(a) * R);
-      g.addColorStop(0, `rgba(251, 207, 232, ${0.14 * intensity})`);
-      g.addColorStop(0.5, `rgba(244, 63, 94, ${0.07 * intensity})`);
-      g.addColorStop(1, 'rgba(244, 63, 94, 0)');
+      g.addColorStop(0, `rgba(255,232,190,${0.10 * intensity})`);
+      g.addColorStop(0.5, `rgba(255,214,170,${0.05 * intensity})`);
+      g.addColorStop(1, 'rgba(255,214,170,0)');
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.moveTo(ox, oy);
@@ -3145,25 +3145,25 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         return;
       }
 
-      // 1. Deep Galactic Space Gradient with Nebula Glow (Velvet Sakura Midnight)
-      const bgGrad = cCtx.createRadialGradient(cW * 0.5, cH * 0.4, 50, cW * 0.5, cH * 0.4, Math.max(cW, cH) * 0.85);
-      bgGrad.addColorStop(0, '#2a0e20');
-      bgGrad.addColorStop(0.35, '#190714');
-      bgGrad.addColorStop(0.75, '#10030d');
-      bgGrad.addColorStop(1, '#080106');
+      // 1. Ethereal Blossom Twilight Cosmos with Sakura Nebula
+      const bgGrad = cCtx.createRadialGradient(cW * 0.5, cH * 0.35, 30, cW * 0.5, cH * 0.45, Math.max(cW, cH) * 0.9);
+      bgGrad.addColorStop(0, '#fff0f5'); // luminous soft blossom dawn
+      bgGrad.addColorStop(0.35, '#fde2ec'); // soft sakura blush
+      bgGrad.addColorStop(0.70, '#f9a8d4'); // glowing rose twilight
+      bgGrad.addColorStop(1, '#e11d48'); // rich cherry blossom dusk
       cCtx.fillStyle = bgGrad;
       cCtx.fillRect(0, 0, cW, cH);
 
       // Breathing Sakura Nebula Clouds
       const breathe = Math.sin(elapsed * 0.8) * 0.03;
       const neb1 = cCtx.createRadialGradient(cW * 0.3, cH * 0.35, 10, cW * 0.3, cH * 0.35, cW * 0.45);
-      neb1.addColorStop(0, `rgba(244, 63, 94, ${(0.14 + breathe).toFixed(3)})`);
+      neb1.addColorStop(0, `rgba(244, 63, 94, ${(0.18 + breathe).toFixed(3)})`);
       neb1.addColorStop(1, 'transparent');
       cCtx.fillStyle = neb1;
       cCtx.fillRect(0, 0, cW, cH);
 
       const neb2 = cCtx.createRadialGradient(cW * 0.7, cH * 0.45, 10, cW * 0.7, cH * 0.45, cW * 0.5);
-      neb2.addColorStop(0, `rgba(251, 113, 133, ${(0.12 - breathe).toFixed(3)})`);
+      neb2.addColorStop(0, `rgba(251, 113, 133, ${(0.16 - breathe).toFixed(3)})`);
       neb2.addColorStop(1, 'transparent');
       cCtx.fillStyle = neb2;
       cCtx.fillRect(0, 0, cW, cH);
