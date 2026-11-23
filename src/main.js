@@ -109,7 +109,7 @@ async function initApp() {
 window.addEventListener('hashchange', initApp);
 
 // Automatic full screen trigger on user interaction (touch, tap, click)
-function requestAutoFullscreen() {
+export function requestAutoFullscreen() {
   if (typeof document === 'undefined') return;
   const docEl = document.documentElement;
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -120,13 +120,27 @@ function requestAutoFullscreen() {
   }
 }
 
-['click', 'touchstart', 'pointerdown'].forEach(ev => {
+['click', 'touchstart', 'touchend', 'pointerdown', 'mousedown', 'keydown'].forEach(ev => {
   window.addEventListener(ev, requestAutoFullscreen, { passive: true });
+  if (typeof document !== 'undefined') {
+    document.addEventListener(ev, requestAutoFullscreen, { passive: true });
+  }
 });
+
+// Attempt immediate fullscreen upon DOM load if browser environment permits
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    try { requestAutoFullscreen(); } catch (_) {}
+  });
+}
 
 // Mount when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
+  document.addEventListener('DOMContentLoaded', () => {
+    try { requestAutoFullscreen(); } catch (_) {}
+    initApp();
+  });
 } else {
+  try { requestAutoFullscreen(); } catch (_) {}
   initApp();
 }

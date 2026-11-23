@@ -414,6 +414,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         <span class="btn-next-arrow">❯</span>
       </button>
 
+      <!-- UPPER-LEFT FLOATING FULLSCREEN TOGGLE -->
+      <button type="button" class="corner-fullscreen-btn" id="romanceFullscreenBtn" aria-label="Toggle Full Screen" title="Toggle Fullscreen Edge-to-Edge">
+        <span class="fs-icon">⛶</span>
+        <span class="fs-text">Full Screen</span>
+      </button>
+
       <!-- UPPER-RIGHT SPINNING MINI VINYL CD PLAYER -->
       <div class="corner-mini-cd-player" id="treeMusicToggle" role="button" aria-label="Toggle Music Player" title="Tap to Play / Pause Music">
         <div class="mini-cd-disc" id="treeMiniCd">
@@ -979,6 +985,39 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const trackPill = container.querySelector('#treeTrackPill');
   const audioEl = container.querySelector('#treeAudio');
 
+  // Fullscreen button & auto-fullscreen controls
+  const fullscreenBtn = container.querySelector('#romanceFullscreenBtn');
+  function toggleFullscreen() {
+    try {
+      const docEl = document.documentElement;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+        if (fn) fn.call(docEl).catch(() => {});
+      } else {
+        const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+        if (exit) exit.call(document).catch(() => {});
+      }
+    } catch (_) {}
+  }
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    fullscreenBtn.addEventListener('touchend', (e) => {
+      try { e.preventDefault(); } catch (_) {}
+      toggleFullscreen();
+    });
+  }
+
+  function updateFsButton() {
+    if (!fullscreenBtn) return;
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    const icon = fullscreenBtn.querySelector('.fs-icon');
+    const text = fullscreenBtn.querySelector('.fs-text');
+    if (icon) icon.textContent = isFs ? '✕' : '⛶';
+    if (text) text.textContent = isFs ? 'Exit' : 'Full Screen';
+  }
+  document.addEventListener('fullscreenchange', updateFsButton);
+  document.addEventListener('webkitfullscreenchange', updateFsButton);
+
   // Chapter Dock Chips
   const dockChips = container.querySelectorAll('.romance-chip-btn');
   function setActiveDockChip(actName) {
@@ -1424,19 +1463,19 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     groundY = H * 0.93;
 
     bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-    bgGrad.addColorStop(0, '#fff3e9');
-    bgGrad.addColorStop(0.46, '#ffe7d6');
-    bgGrad.addColorStop(0.78, '#fcd9c4');
-    bgGrad.addColorStop(1, '#f3c4b5');
+    bgGrad.addColorStop(0, '#240a1b');
+    bgGrad.addColorStop(0.46, '#180613');
+    bgGrad.addColorStop(0.78, '#12040e');
+    bgGrad.addColorStop(1, '#0a0208');
 
     glowGrad = ctx.createRadialGradient(cx, cy, ry * 0.1, cx, cy, ry * 1.55);
-    glowGrad.addColorStop(0, 'rgba(255,219,170,0.6)');
-    glowGrad.addColorStop(0.5, 'rgba(255,170,150,0.2)');
-    glowGrad.addColorStop(1, 'rgba(255,170,150,0)');
+    glowGrad.addColorStop(0, 'rgba(251, 207, 232, 0.45)');
+    glowGrad.addColorStop(0.5, 'rgba(244, 63, 94, 0.2)');
+    glowGrad.addColorStop(1, 'rgba(244, 63, 94, 0)');
 
     groundGrad = ctx.createRadialGradient(cx, H * 1.02, ry * 0.2, cx, H * 1.02, ry * 1.6);
-    groundGrad.addColorStop(0, 'rgba(255,205,165,0.5)');
-    groundGrad.addColorStop(1, 'rgba(255,205,165,0)');
+    groundGrad.addColorStop(0, 'rgba(244, 63, 94, 0.3)');
+    groundGrad.addColorStop(1, 'rgba(244, 63, 94, 0)');
 
     for (let i = 0; i < 11; i++) {
       orbs.push({
@@ -1555,9 +1594,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       const hw = 0.035 + 0.02 * (0.5 + 0.5 * Math.sin(t * 0.5 + i * 1.7));
       const a1 = a - hw, a2 = a + hw;
       const g = ctx.createLinearGradient(ox, oy, ox + Math.cos(a) * R, oy + Math.sin(a) * R);
-      g.addColorStop(0, `rgba(255,232,190,${0.10 * intensity})`);
-      g.addColorStop(0.5, `rgba(255,214,170,${0.05 * intensity})`);
-      g.addColorStop(1, 'rgba(255,214,170,0)');
+      g.addColorStop(0, `rgba(251, 207, 232, ${0.14 * intensity})`);
+      g.addColorStop(0.5, `rgba(244, 63, 94, ${0.07 * intensity})`);
+      g.addColorStop(1, 'rgba(244, 63, 94, 0)');
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.moveTo(ox, oy);
@@ -2765,6 +2804,15 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (isTransitioning || targetScene === currentScene) return;
     if (targetScene < 1 || targetScene > 9) return;
 
+    // Ensure edge-to-edge full screen on scene progression
+    try {
+      const docEl = document.documentElement;
+      const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      if (fn && !document.fullscreenElement && !document.webkitFullscreenElement) {
+        fn.call(docEl).catch(() => {});
+      }
+    } catch (_) {}
+
     clearAllSceneTimers();
     isTransitioning = true;
     soundFx.whoosh();
@@ -3097,25 +3145,25 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         return;
       }
 
-      // 1. Deep Galactic Space Gradient with Nebula Glow
+      // 1. Deep Galactic Space Gradient with Nebula Glow (Velvet Sakura Midnight)
       const bgGrad = cCtx.createRadialGradient(cW * 0.5, cH * 0.4, 50, cW * 0.5, cH * 0.4, Math.max(cW, cH) * 0.85);
-      bgGrad.addColorStop(0, '#1c0c2e');
-      bgGrad.addColorStop(0.35, '#130721');
-      bgGrad.addColorStop(0.75, '#0a0311');
-      bgGrad.addColorStop(1, '#050208');
+      bgGrad.addColorStop(0, '#2a0e20');
+      bgGrad.addColorStop(0.35, '#190714');
+      bgGrad.addColorStop(0.75, '#10030d');
+      bgGrad.addColorStop(1, '#080106');
       cCtx.fillStyle = bgGrad;
       cCtx.fillRect(0, 0, cW, cH);
 
-      // Breathing Nebula Clouds
+      // Breathing Sakura Nebula Clouds
       const breathe = Math.sin(elapsed * 0.8) * 0.03;
       const neb1 = cCtx.createRadialGradient(cW * 0.3, cH * 0.35, 10, cW * 0.3, cH * 0.35, cW * 0.45);
-      neb1.addColorStop(0, `rgba(244, 63, 94, ${(0.13 + breathe).toFixed(3)})`);
+      neb1.addColorStop(0, `rgba(244, 63, 94, ${(0.14 + breathe).toFixed(3)})`);
       neb1.addColorStop(1, 'transparent');
       cCtx.fillStyle = neb1;
       cCtx.fillRect(0, 0, cW, cH);
 
       const neb2 = cCtx.createRadialGradient(cW * 0.7, cH * 0.45, 10, cW * 0.7, cH * 0.45, cW * 0.5);
-      neb2.addColorStop(0, `rgba(168, 85, 247, ${(0.13 - breathe).toFixed(3)})`);
+      neb2.addColorStop(0, `rgba(251, 113, 133, ${(0.12 - breathe).toFixed(3)})`);
       neb2.addColorStop(1, 'transparent');
       cCtx.fillStyle = neb2;
       cCtx.fillRect(0, 0, cW, cH);

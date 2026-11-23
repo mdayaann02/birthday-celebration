@@ -10991,9 +10991,9 @@ body {
 
 :root{
   /* --- warm paper (Act 1 + the tree's dawn) --- */
-  --paper-0:  #fff6ee;
-  --paper-1:  #f9e2d2;
-  --paper-2:  #f2c9b8;
+  --paper-0:  #240a1b;
+  --paper-1:  #180613;
+  --paper-2:  #12040e;
 
   /* --- rose flood (Acts 2–3) --- */
   --rose-deep: #a80f43;
@@ -11004,9 +11004,9 @@ body {
   /* --- accents / ink --- */
   --gold-1:    #ffcf6a;
   --gold-2:    #e8a23d;
-  --ink:       #7a4a55;   /* dusty rose ink        */
-  --ink-soft:  #a9808a;   /* muted eyebrow / sub   */
-  --cream:     #fff3ea;
+  --ink:       #fff1f2;   /* glowing sakura white */
+  --ink-soft:  #fce7f3;   /* soft petal blush     */
+  --cream:     #fff5f7;
 
   --ease-out:  cubic-bezier(.2,.7,.2,1);
 }
@@ -11015,13 +11015,23 @@ body {
 /* html, body */
 
 .tree-film-stage {
-  background: #12060c;
+  background: #150610;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-.tree-film-stage.scene{ position:fixed; inset:0; overflow:hidden; }
+.tree-film-stage.scene{
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #150610 !important;
+}
 
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px;
@@ -11050,12 +11060,12 @@ body {
 .hero__bg{
   position:absolute; inset:0;
   background:
-    radial-gradient(120% 88% at 50% 24%, #fff8f1 0%, var(--paper-0) 38%, var(--paper-1) 74%, var(--paper-2) 100%);
+    radial-gradient(120% 88% at 50% 24%, #280b1e 0%, #170613 60%, #0a0208 100%) !important;
 }
 .hero__bg::after{               /* a soft warm pool of light behind the heart */
   content:""; position:absolute; left:50%; top:44%;
   width:min(78vw,720px); aspect-ratio:1; transform:translate(-50%,-50%);
-  background:radial-gradient(circle, rgba(255,190,150,.55), rgba(255,150,170,.16) 46%, transparent 70%);
+  background:radial-gradient(circle, rgba(244,63,94,.35), rgba(225,29,72,.12) 46%, transparent 70%) !important;
   filter:blur(6px);
 }
 
@@ -11063,19 +11073,19 @@ body {
 .hero__motes{ position:absolute; inset:0; pointer-events:none; }
 .mote{
   position:absolute; border-radius:50%;
-  background:radial-gradient(circle, rgba(255,236,214,.9), rgba(255,206,180,.15) 55%, transparent 72%);
+  background:radial-gradient(circle, rgba(251,207,232,.9), rgba(244,63,94,.2) 55%, transparent 72%) !important;
   will-change:transform, opacity;
 }
 
 .hero__eyebrow{
   position:absolute; top:13%; left:0; right:0;
   text-align:center;
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-style:italic; font-weight:600;
-  font-size:clamp(15px, 3.6vw, 26px);
-  letter-spacing:.06em;
-  color:#a85069;
-  text-shadow:0 1px 10px rgba(255,248,241,.9);
+  font-family:"Playfair Display", Georgia, serif !important;
+  font-style:italic !important; font-weight:600 !important;
+  font-size:clamp(18px, 4.2vw, 30px) !important;
+  letter-spacing:.08em !important;
+  color:#fda4af !important;
+  text-shadow:0 0 20px rgba(244,63,94,.7), 0 2px 4px rgba(0,0,0,.8) !important;
   opacity:0;                          /* GSAP reveals */
 }
 
@@ -11165,11 +11175,12 @@ body {
 .hero__hint{
   position:absolute; bottom:8.5%; left:0; right:0;
   text-align:center;
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-weight:600; font-style:italic;
-  font-size:clamp(13px, 3.1vw, 19px);
-  letter-spacing:.16em; text-transform:uppercase;
-  color:#b06a7c;
+  font-family:"Playfair Display", Georgia, serif !important;
+  font-weight:600 !important; font-style:italic !important;
+  font-size:clamp(13px, 3.1vw, 19px) !important;
+  letter-spacing:.18em !important; text-transform:uppercase !important;
+  color:#fbcfe8 !important;
+  text-shadow:0 0 12px rgba(244,63,94,.5) !important;
   opacity:0;                          /* GSAP reveals */
 }
 .hero__ring{ display:none; }
@@ -11201,7 +11212,7 @@ body {
   pointer-events:none;
   overflow:hidden;
   background:
-    radial-gradient(120% 100% at 50% 8%, #d5265f 0%, var(--rose) 42%, var(--rose-deep) 78%, var(--wine) 100%);
+    radial-gradient(120% 100% at 50% 8%, #3a0d24 0%, #220616 45%, #15040e 85%, #0a0208 100%) !important;
   color:#fff;
 }
 .blob{
@@ -11211,11 +11222,11 @@ body {
   will-change:transform, opacity;
 }
 .blob--1{ width:58vmax; height:58vmax; left:-18vmax; top:-16vmax;
-  background:radial-gradient(circle, rgba(255,130,160,.9), transparent 62%); }
+  background:radial-gradient(circle, rgba(251,113,133,.7), transparent 62%) !important; }
 .blob--2{ width:46vmax; height:46vmax; right:-14vmax; top:22vmax;
-  background:radial-gradient(circle, rgba(255,90,120,.75), transparent 64%); }
+  background:radial-gradient(circle, rgba(244,63,94,.65), transparent 64%) !important; }
 .blob--3{ width:52vmax; height:52vmax; left:24vmax; bottom:-22vmax;
-  background:radial-gradient(circle, rgba(180,20,70,.8), transparent 66%); }
+  background:radial-gradient(circle, rgba(190,18,60,.7), transparent 66%) !important; }
 
 /* faint grid — a hair of parallax gives the flood depth, not flatness */
 .fgrid{
@@ -11228,7 +11239,7 @@ body {
 }
 .fvignette{
   position:absolute; inset:0;
-  background:radial-gradient(128% 96% at 50% 44%, transparent 50%, rgba(70,6,28,.5) 100%);
+  background:radial-gradient(128% 96% at 50% 44%, transparent 50%, rgba(20,4,14,.75) 100%) !important;
 }
 
 /* the camera — everything on the flood rides a slow continuous push */
@@ -11240,16 +11251,17 @@ body {
   will-change:transform;
 }
 .kEyebrow{
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-style:italic; font-weight:500;
-  font-size:clamp(15px, 3.6vw, 27px);
-  letter-spacing:.08em;
-  color:#ffd7c8;
+  font-family:"Playfair Display", "Cormorant Garamond", Georgia, serif !important;
+  font-style:italic !important; font-weight:500 !important;
+  font-size:clamp(17px, 4vw, 30px) !important;
+  letter-spacing:.1em !important;
+  color:#fda4af !important;
+  text-shadow:0 0 16px rgba(244,63,94,.5) !important;
   opacity:0; transform:translateY(10px);
   margin-bottom:clamp(2px,1vh,10px);
 }
 
-.headline{ font-family:"Fraunces", Georgia, serif; line-height:.92; }
+.headline{ font-family:"Playfair Display", Georgia, serif !important; line-height:.92; }
 .hl__line{ display:block; }
 /* the mask each headline word hinges out of. Padded to clear ascenders +
    descenders so glyphs never peek past the clip edge when parked. */
@@ -11260,11 +11272,12 @@ body {
 }
 .hl__word{
   display:inline-block;
-  font-weight:900;
-  font-size:clamp(52px, 15vw, 168px);
-  letter-spacing:-.02em;
-  color:#fff6f1;
-  text-shadow:0 6px 34px rgba(60,4,24,.34), 0 2px 3px rgba(90,8,36,.42);
+  font-family:"Playfair Display", Georgia, serif !important;
+  font-weight:800 !important;
+  font-size:clamp(54px, 15vw, 168px) !important;
+  letter-spacing:-.02em !important;
+  color:#fff1f2 !important;
+  text-shadow:0 8px 36px rgba(244,63,94,.6), 0 2px 6px rgba(159,18,57,.8) !important;
 }
 /* each glyph hinges up on its own bottom edge, under its own perspective */
 .hl__ch{ display:inline-block; will-change:transform; }
@@ -11273,16 +11286,17 @@ body {
 .uline{
   width:clamp(150px, 40vw, 380px); height:auto;
   margin-top:clamp(4px,1.4vh,14px);
-  color:var(--gold-1);
-  filter:drop-shadow(0 2px 8px rgba(255,180,90,.5));
+  color:#fbbf24 !important;
+  filter:drop-shadow(0 2px 10px rgba(251,191,36,.6)) !important;
 }
 .kSub{
   margin-top:clamp(12px,2.4vh,26px);
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-weight:500; font-style:italic;
-  font-size:clamp(14px, 3.4vw, 24px);
-  letter-spacing:.05em;
-  color:#ffdfd2;
+  font-family:"Playfair Display", Georgia, serif !important;
+  font-weight:500 !important; font-style:italic !important;
+  font-size:clamp(16px, 3.8vw, 26px) !important;
+  letter-spacing:.06em !important;
+  color:#fce7f3 !important;
+  text-shadow:0 0 14px rgba(244,63,94,.4) !important;
   opacity:0; transform:translateY(10px);
 }
 
@@ -11323,58 +11337,56 @@ body {
 .wish.is-in{ visibility:visible; }
 .wish::before{
   content:""; position:absolute; inset:-18% -24% -24% -16%;
-  background:radial-gradient(84% 98% at 34% 52%, rgba(255,250,243,.94), rgba(255,250,243,.6) 48%, rgba(255,250,243,0) 80%);
+  background:radial-gradient(84% 98% at 34% 52%, rgba(42,12,30,.88), rgba(24,6,18,.5) 55%, transparent 80%) !important;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index:-1; opacity:0; transition:opacity 1s ease;
 }
 .wish.is-in::before{ opacity:1; }
 .wish__eyebrow{
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-style:italic; font-weight:600;
-  font-size:clamp(13px, 3.2vw, 24px);
-  letter-spacing:.05em; color:#9c4f63;
-  text-shadow:0 1px 2px #fff8f1, 0 0 8px rgba(255,248,241,.95);
+  font-family:"Playfair Display", Georgia, serif !important;
+  font-style:italic !important; font-weight:600 !important;
+  font-size:clamp(14px, 3.4vw, 24px) !important;
+  letter-spacing:.06em !important; color:#fda4af !important;
+  text-shadow:0 0 14px rgba(244,63,94,.6), 0 1px 3px rgba(0,0,0,.8) !important;
 }
 .wish__heroWrap{ position:relative; display:inline-block; }
 .wish__heroWrap::before{
   content:""; position:absolute; left:-12%; right:-12%; top:-26%; bottom:-22%;
-  background:radial-gradient(60% 70% at 46% 52%, rgba(255,214,168,.5), rgba(255,150,150,.2) 52%, transparent 74%);
+  background:radial-gradient(60% 70% at 46% 52%, rgba(244,63,94,.4), rgba(225,29,72,.15) 52%, transparent 74%) !important;
   filter:blur(14px); z-index:-1; opacity:0; pointer-events:none;
 }
 .wish__heroWrap::after{
   content:"\2726";
   position:absolute; right:-1%; top:-14%;
   font-size:clamp(15px, 3.6vw, 32px);
-  color:#ffe1a0; text-shadow:0 0 12px rgba(255,205,120,.95);
+  color:#fef08a !important; text-shadow:0 0 14px rgba(254,240,138,.9) !important;
   opacity:0; pointer-events:none;
 }
 .wish__hero{
-  font-family:"Great Vibes", cursive; font-weight:400;
-  font-size:clamp(40px, 9.6vw, 86px);
+  font-family:"Playfair Display", "Great Vibes", cursive, serif !important;
+  font-weight:700 !important;
+  font-size:clamp(42px, 10vw, 88px) !important;
   line-height:.98; margin:-.02em 0 .06em;
-  /* one consistent rose, top-lit — every letter reads the same (no per-glyph
-     colour shift, which is what made the old rose→gold version look messy).
-     Deep enough to hold up against the tree's bright bloom behind it. */
-  background:linear-gradient(180deg, #e85a83 0%, #c41f52 50%, #9c0f42 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  /* a crisp cream edge for legibility over the tree + one soft drop */
-  filter:
-    drop-shadow(0 1px 1px rgba(255,252,248,.98))
-    drop-shadow(0 2px 6px rgba(130,18,55,.45));
+  background:linear-gradient(180deg, #fff5f7 0%, #fda4af 40%, #f43f5e 100%) !important;
+  -webkit-background-clip:text !important; background-clip:text !important; color:transparent !important;
+  filter:drop-shadow(0 0 20px rgba(244,63,94,.7)) drop-shadow(0 2px 4px rgba(0,0,0,.9)) !important;
   clip-path:inset(0 100% -28% -10%);
   transform-origin:8% 60%;             /* breathe from the start of the line */
 }
 .wish__rule{
   display:block; width:clamp(46px, 13vw, 110px); height:2px;
   margin:.12em 0 .48em;
-  background:linear-gradient(90deg, var(--gold-2), rgba(232,162,61,0));
-  box-shadow:0 0 8px rgba(255,247,240,.9);
+  background:linear-gradient(90deg, #fbbf24, rgba(251,191,36,0)) !important;
+  box-shadow:0 0 10px rgba(251,191,36,.8) !important;
   transform-origin:left center;
 }
 .wish__sub{
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-weight:600; font-size:clamp(12px, 2.9vw, 20px);
-  letter-spacing:.03em; color:#6e3f4a;
-  text-shadow:0 1px 2px #fff8f1, 0 0 8px rgba(255,248,241,.98);
+  font-family:"Playfair Display", Georgia, serif !important;
+  font-weight:600 !important; font-size:clamp(13px, 3.1vw, 21px) !important;
+  letter-spacing:.03em !important; color:#fce7f3 !important;
+  text-shadow:0 0 14px rgba(244,63,94,.5), 0 1px 3px rgba(0,0,0,.8) !important;
 }
 .wish__eyebrow, .wish__rule, .wish__sub{
   opacity:0; transform:translateY(12px); filter:blur(5px);
@@ -11426,28 +11438,29 @@ body {
   position:absolute; inset:0; z-index:20;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:16px; cursor:pointer;
-  background:radial-gradient(120% 90% at 50% 40%, #fff8f1 0%, var(--paper-0) 40%, var(--paper-2) 100%);
+  background:radial-gradient(120% 90% at 50% 40%, #2a0c20 0%, #150610 60%, #0a0208 100%) !important;
   transition:opacity .55s ease, transform .55s var(--ease-out), visibility 0s .55s;
 }
 .gate__box{ position:relative; width:min(58vw,220px); aspect-ratio:1; }
 .gate__box::before{
   content:""; position:absolute; inset:0; border-radius:18px;
-  background:linear-gradient(155deg,#fff9f2,var(--paper-1) 60%,var(--paper-2));
-  box-shadow:0 18px 40px -18px rgba(120,20,50,.4), inset 0 0 0 1px rgba(255,255,255,.6);
+  background:linear-gradient(155deg,#3e122b,#220818 60%,#15040e);
+  box-shadow:0 18px 40px -18px rgba(120,20,50,.7), inset 0 0 0 1px rgba(251,207,232,.3);
 }
-.gate__ribbonV, .gate__ribbonH{ position:absolute; background:linear-gradient(180deg,var(--rose-lift),var(--rose)); }
+.gate__ribbonV, .gate__ribbonH{ position:absolute; background:linear-gradient(180deg,#fb7185,#e11d48); }
 .gate__ribbonV{ left:50%; top:0; bottom:0; width:16%; transform:translateX(-50%); box-shadow:inset 0 0 0 1px rgba(255,255,255,.25); }
 .gate__ribbonH{ top:50%; left:0; right:0; height:16%; transform:translateY(-50%); box-shadow:inset 0 0 0 1px rgba(255,255,255,.25); }
 .gate__bow{
   position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:56%; filter:drop-shadow(0 6px 14px rgba(120,10,40,.35));
+  width:56%; filter:drop-shadow(0 6px 14px rgba(225,29,72,.5));
   animation:gateBreath 2.6s ease-in-out infinite;
 }
 @keyframes gateBreath{ 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-50%,-50%) scale(1.06); } }
 .gate__label{
-  font-family:"Cormorant Garamond", Georgia, serif; font-weight:600;
-  letter-spacing:.14em; text-transform:uppercase; font-size:12.5px;
-  color:var(--ink-soft);
+  font-family:'Playfair Display', 'Cormorant Garamond', Georgia, serif !important; font-weight:600 !important;
+  letter-spacing:.16em !important; text-transform:uppercase !important; font-size:clamp(13px, 3.4vw, 16px) !important;
+  color:#fce7f3 !important;
+  text-shadow:0 0 16px rgba(244,63,94,.6), 0 2px 4px rgba(0,0,0,.8) !important;
 }
 .gate.is-open{ opacity:0; transform:scale(1.06); visibility:hidden; pointer-events:none; }
 html.no-gate .gate{ display:none !important; }
@@ -11586,18 +11599,23 @@ html.no-gate .gate{ display:none !important; }
    LOVE NOTES ON THE TREE + MAKE-A-WISH STAR
    ============================================================ */
 .loveHint{
-  font-family:"Cormorant Garamond", Georgia, serif; font-weight:600; font-size:12px;
-  letter-spacing:.12em; text-transform:uppercase; color:rgba(138,74,90,.65);
+  font-family:"Playfair Display", Georgia, serif !important; font-weight:600 !important; font-size:13px !important;
+  letter-spacing:.16em !important; text-transform:uppercase !important; color:#fda4af !important;
+  text-shadow:0 0 10px rgba(244,63,94,.6) !important;
   margin-top:.6em; opacity:0; transition:opacity 1s ease 2.4s;
   animation:loveHintPulse 3s ease-in-out 2.4s infinite;
 }
 .wish.is-in .loveHint{ opacity:1; }
 @keyframes loveHintPulse{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
 .loveNote{
-  position:absolute; z-index:8; max-width:190px; padding:9px 13px; border-radius:12px;
-  background:rgba(255,250,244,.95); color:#7a3a4a; text-align:center;
-  font-family:"Cormorant Garamond", Georgia, serif; font-weight:600; font-size:13.5px;
-  box-shadow:0 8px 20px -8px rgba(120,20,50,.4); border:1px solid rgba(150,60,80,.15);
+  position:absolute; z-index:18; max-width:220px; padding:10px 16px; border-radius:16px;
+  background:linear-gradient(135deg, rgba(50, 15, 35, 0.96), rgba(30, 8, 22, 0.98)) !important;
+  color:#fff1f2 !important;
+  text-align:center;
+  font-family:'Playfair Display', 'Cormorant Garamond', Georgia, serif !important;
+  font-weight:600 !important; font-size:14.5px !important; line-height:1.5 !important;
+  box-shadow:0 10px 25px rgba(0, 0, 0, 0.7), 0 0 18px rgba(244, 63, 94, 0.45) !important;
+  border:1.5px solid rgba(251, 207, 232, 0.4) !important;
   opacity:0; transform:translate(-50%,-100%) scale(.9); pointer-events:none;
   transition:opacity .35s ease, transform .35s var(--ease-out);
 }
@@ -11706,11 +11724,15 @@ html.no-gate .gate{ display:none !important; }
 /* html, body responsive */
 
 .tree-film-stage.scene {
-  width: 100%;
-  height: 100%;
-  max-width: 100vw;
-  max-height: 100vh;
-  overflow: hidden;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background: #150610 !important;
 }
 
 /* Fix the bow inside the opening gift */
@@ -15968,11 +15990,11 @@ textarea,
 .wax-envelope-card {
   position: relative;
   width: 100%;
-  background: linear-gradient(135deg, #fffdfa 0%, #fff6ee 100%);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: 20px;
+  background: linear-gradient(145deg, #441026 0%, #240615 100%) !important;
+  border: 2px solid rgba(251, 207, 232, 0.35) !important;
+  border-radius: 24px;
   padding: 28px 24px;
-  box-shadow: 0 16px 45px rgba(180, 140, 120, 0.2);
+  box-shadow: 0 20px 50px rgba(15, 3, 12, 0.88), 0 0 35px rgba(244, 63, 94, 0.25) !important;
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
@@ -17158,16 +17180,16 @@ textarea,
   text-align: center;
   font-size: 14px;
   font-weight: 700;
-  color: #3b2230;
+  color: #fce7f3;
   margin: 0 0 16px 0;
 }
 
 .reason-hero-card {
-  background: linear-gradient(145deg, #fff8f5, #fff0ea);
-  border: 1px solid rgba(212, 35, 92, 0.25);
-  box-shadow: 0 12px 32px rgba(180, 40, 80, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  border-radius: 18px;
-  padding: 22px 20px;
+  background: linear-gradient(145deg, rgba(46, 15, 34, 0.95), rgba(26, 8, 20, 0.98)) !important;
+  border: 1.5px solid rgba(251, 207, 232, 0.35) !important;
+  box-shadow: 0 16px 40px rgba(15, 3, 12, 0.85), 0 0 25px rgba(244, 63, 94, 0.25) !important;
+  border-radius: 20px;
+  padding: 24px 22px;
   text-align: center;
   margin-bottom: 14px;
   transform-style: preserve-3d;
@@ -17178,53 +17200,58 @@ textarea,
   display: inline-block;
   font-size: 10.5px;
   font-weight: 800;
-  letter-spacing: 1.2px;
-  color: #d4235c;
-  background: rgba(212, 35, 92, 0.08);
-  padding: 3px 10px;
+  letter-spacing: 1.5px;
+  color: #fda4af !important;
+  background: rgba(244, 63, 94, 0.22) !important;
+  border: 1px solid rgba(244, 63, 94, 0.4) !important;
+  padding: 4px 12px;
   border-radius: 9999px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .reason-card-body {
-  font-size: 16px;
-  font-weight: 700;
-  color: #2b1722;
-  line-height: 1.5;
+  font-size: clamp(17px, 4vw, 22px) !important;
+  font-weight: 600;
+  color: #fff1f2 !important;
+  line-height: 1.65 !important;
   font-style: italic;
-  font-family: "Cormorant Garamond", Georgia, serif;
-  margin-bottom: 12px;
+  font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif !important;
+  margin-bottom: 14px;
+  text-shadow: 0 2px 10px rgba(244, 63, 94, 0.35) !important;
 }
 
 .reason-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: #8c6070;
-  border-top: 1px dashed rgba(212, 35, 92, 0.15);
-  padding-top: 10px;
+  color: #fce7f3 !important;
+  border-top: 1px dashed rgba(251, 207, 232, 0.25) !important;
+  padding-top: 12px;
 }
 
 .btn-shuffle-reasons {
   width: 100%;
-  padding: 11px 18px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(212, 35, 92, 0.25);
-  color: #b91c1c;
-  font-size: 12.5px;
+  padding: 12px 20px;
+  border-radius: 14px;
+  background: rgba(244, 63, 94, 0.22) !important;
+  border: 1.5px solid rgba(251, 207, 232, 0.35) !important;
+  color: #fff1f2 !important;
+  font-size: 13.5px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease;
+  box-shadow: 0 6px 20px rgba(244, 63, 94, 0.25) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.22s ease;
 }
 
 .btn-shuffle-reasons:hover {
-  background: #ffffff;
-  border-color: #d4235c;
-  transform: translateY(-1px);
+  background: rgba(244, 63, 94, 0.38) !important;
+  border-color: #fbcfe8 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.4) !important;
 }
 
 .reasons-mini-grid {
@@ -17240,17 +17267,19 @@ textarea,
   gap: 10px;
   padding: 10px 14px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(212, 35, 92, 0.12);
+  background: rgba(40, 12, 28, 0.85) !important;
+  border: 1px solid rgba(251, 207, 232, 0.25) !important;
+  color: #fce7f3 !important;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .reason-pill-item.active, .reason-pill-item:hover {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: #d4235c;
+  background: linear-gradient(135deg, #f43f5e, #be123c) !important;
+  border-color: #fbcfe8 !important;
+  color: #ffffff !important;
   transform: translateX(3px);
-  box-shadow: 0 4px 12px rgba(212, 35, 92, 0.1);
+  box-shadow: 0 4px 16px rgba(244, 63, 94, 0.4) !important;
 }
 
 .reason-num {
@@ -17853,12 +17882,13 @@ textarea,
    ========================================================================= */
 
 .romance-fullscreen-scene {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
   display: none;
   opacity: 0;
@@ -17877,33 +17907,33 @@ textarea,
   pointer-events: auto;
 }
 
-/* Individual Scene Atmospheric Backdrops: Ethereal Blossom Romance Palette */
+/* Individual Scene Atmospheric Backdrops: Unified Velvet Sakura Midnight Palette */
 #sceneConstellation {
-  background: radial-gradient(circle at 50% 25%, #2a0e20 0%, #170613 60%, #0b0209 100%) !important;
+  background: radial-gradient(circle at 50% 25%, #2a0e20 0%, #150610 65%, #0a0208 100%) !important;
 }
 
 #sceneFlipbook {
-  background: radial-gradient(circle at 50% 20%, #301024 0%, #1c0816 60%, #0d020a 100%) !important;
+  background: radial-gradient(circle at 50% 20%, #301024 0%, #1a0615 65%, #0a0208 100%) !important;
 }
 
 #sceneCassette {
-  background: radial-gradient(circle at 50% 25%, #351228 0%, #1e0717 60%, #0f030c 100%) !important;
+  background: radial-gradient(circle at 50% 25%, #341228 0%, #1a0615 65%, #0e020c 100%) !important;
 }
 
 #sceneTimeline {
-  background: radial-gradient(circle at 50% 25%, #2f1022 0%, #1a0815 60%, #0c020a 100%) !important;
+  background: radial-gradient(circle at 50% 25%, #2e0f22 0%, #170613 65%, #0b0209 100%) !important;
 }
 
 #sceneLetter {
-  background: radial-gradient(circle at 50% 25%, #331224 0%, #1c0815 60%, #0e030b 100%) !important;
+  background: radial-gradient(circle at 50% 25%, #321024 0%, #190615 65%, #0c020b 100%) !important;
 }
 
 #sceneLanterns {
-  background: radial-gradient(circle at 50% 35%, #2c1223 0%, #170815 60%, #0c030a 100%) !important;
+  background: radial-gradient(circle at 50% 35%, #2e1024 0%, #170615 65%, #0b020a 100%) !important;
 }
 
 #sceneFinale {
-  background: radial-gradient(circle at 50% 30%, #3a142b 0%, #1f0717 60%, #10020c 100%) !important;
+  background: radial-gradient(circle at 50% 30%, #38122a 0%, #1d0617 65%, #0f020d 100%) !important;
 }
 
 .scene-inner-wrap {
@@ -18336,11 +18366,11 @@ textarea,
 
 .story-milestone-card {
   width: 100%;
-  background: linear-gradient(150deg, rgba(34, 16, 28, 0.94), rgba(18, 8, 16, 0.97));
-  border: 1.5px solid rgba(251, 191, 36, 0.35);
+  background: linear-gradient(150deg, rgba(46, 15, 34, 0.95), rgba(26, 8, 20, 0.98)) !important;
+  border: 1.5px solid rgba(251, 207, 232, 0.35) !important;
   border-radius: 24px;
   padding: 22px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(244, 63, 94, 0.18);
+  box-shadow: 0 20px 50px rgba(15, 3, 12, 0.88), 0 0 30px rgba(244, 63, 94, 0.25) !important;
   box-sizing: border-box;
   text-align: left;
   transform-origin: center bottom;
@@ -18359,9 +18389,9 @@ textarea,
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 1.5px;
-  color: #fbbf24;
-  background: rgba(251, 191, 36, 0.15);
-  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fda4af !important;
+  background: rgba(244, 63, 94, 0.22) !important;
+  border: 1px solid rgba(244, 63, 94, 0.35) !important;
   padding: 4px 10px;
   border-radius: 12px;
 }
@@ -18369,7 +18399,8 @@ textarea,
 .story-card-date {
   font-size: 12.5px;
   font-style: italic;
-  color: rgba(255, 255, 255, 0.75);
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
 .story-card-media-wrapper {
@@ -18398,18 +18429,19 @@ textarea,
 }
 
 .story-card-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif !important;
   font-size: clamp(20px, 4.5vw, 25px);
   font-weight: 700;
-  color: #ffffff;
+  color: #fff1f2 !important;
   margin: 0 0 10px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 12px rgba(244, 63, 94, 0.4) !important;
 }
 
 .story-card-desc {
   font-size: 14.5px;
   line-height: 1.65;
-  color: rgba(255, 240, 245, 0.92);
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   margin: 0;
 }
 
@@ -18998,10 +19030,10 @@ textarea,
   width: 100%;
   max-width: 540px;
   margin: 0 auto 24px;
-  background: linear-gradient(160deg, #2a1420 0%, #170912 100%);
+  background: linear-gradient(160deg, #381226 0%, #1e0717 100%) !important;
   border-radius: 24px;
-  border: 2px solid #d4af37;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 35px rgba(212, 175, 55, 0.25);
+  border: 2px solid rgba(251, 191, 36, 0.65) !important;
+  box-shadow: 0 20px 50px rgba(15, 3, 12, 0.9), 0 0 35px rgba(244, 63, 94, 0.3) !important;
   padding: 26px 22px;
   box-sizing: border-box;
   text-align: center;
@@ -19009,7 +19041,7 @@ textarea,
 }
 
 .treaty-ornate-border {
-  border: 1px dashed rgba(212, 175, 55, 0.5);
+  border: 1px dashed rgba(251, 191, 36, 0.5) !important;
   border-radius: 18px;
   padding: 22px 18px;
   position: relative;
@@ -19032,19 +19064,20 @@ textarea,
 }
 
 .treaty-couple-names {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif !important;
   font-size: clamp(22px, 5vw, 29px);
-  color: #ffffff;
+  color: #fff1f2 !important;
   margin: 0 0 14px;
   font-weight: 700;
-  text-shadow: 0 0 14px rgba(251, 191, 36, 0.4);
+  text-shadow: 0 0 18px rgba(244, 63, 94, 0.5), 0 0 30px rgba(251, 191, 36, 0.35) !important;
 }
 
 .treaty-vow-text {
   font-size: 14.5px;
   line-height: 1.7;
   font-style: italic;
-  color: #ffe4e6;
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   margin: 0 0 20px;
   padding: 0 6px;
 }
@@ -19227,11 +19260,11 @@ textarea,
   width: 100%;
   max-width: 520px;
   margin: 30px auto 10px;
-  background: linear-gradient(150deg, rgba(32, 14, 24, 0.94), rgba(18, 7, 14, 0.98));
-  border: 1.5px solid rgba(244, 63, 94, 0.35);
+  background: linear-gradient(150deg, rgba(46, 15, 34, 0.95), rgba(26, 8, 20, 0.98)) !important;
+  border: 1.5px solid rgba(251, 207, 232, 0.35) !important;
   border-radius: 24px;
   padding: 28px 24px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 20px 50px rgba(15, 3, 12, 0.9), 0 0 30px rgba(244, 63, 94, 0.3) !important;
   box-sizing: border-box;
   text-align: center;
 }
@@ -19242,24 +19275,27 @@ textarea,
 }
 
 .thank-you-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif !important;
   font-size: clamp(22px, 5vw, 28px);
-  color: #ffffff;
+  color: #fff1f2 !important;
   margin: 0 0 14px;
   font-weight: 700;
+  text-shadow: 0 2px 14px rgba(244, 63, 94, 0.45) !important;
 }
 
 .thank-you-message {
-  font-size: 14.5px;
-  line-height: 1.7;
-  color: rgba(255, 235, 240, 0.92);
+  font-size: 15px !important;
+  line-height: 1.75 !important;
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   margin: 0 0 18px;
 }
 
 .thank-you-signature {
-  font-size: 15px;
+  font-family: 'Playfair Display', Georgia, italic, serif !important;
+  font-size: 17px !important;
   font-style: italic;
-  color: #fbbf24;
+  color: #fbbf24 !important;
   font-weight: 700;
   margin-bottom: 24px;
 }
@@ -19317,7 +19353,7 @@ textarea,
   display: none;
   opacity: 0;
   z-index: 10 !important;
-  background: #06020c !important;
+  background: radial-gradient(circle at 50% 25%, #2a0e20 0%, #150610 65%, #0a0208 100%) !important;
 }
 
 .constellation-fullscreen-canvas {
@@ -19346,26 +19382,27 @@ textarea,
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 2px;
-  color: #fbbf24;
+  color: #fda4af !important;
   text-transform: uppercase;
   display: block;
   margin-bottom: 4px;
-  text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+  text-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
 }
 
 .stars-main-title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(24px, 5.5vw, 36px);
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-size: clamp(26px, 6vw, 38px);
   font-weight: 700;
-  color: #ffffff;
+  color: #fff1f2 !important;
   margin: 0 0 6px;
-  text-shadow: 0 0 24px rgba(251, 191, 36, 0.45);
+  text-shadow: 0 0 24px rgba(244, 63, 94, 0.5), 0 0 35px rgba(251, 191, 36, 0.3) !important;
 }
 
 .stars-sub-hint {
-  font-size: 12.5px;
-  color: rgba(255, 235, 245, 0.85);
+  font-size: 13px;
+  color: #fce7f3 !important;
   margin: 0;
+  font-family: 'Playfair Display', Georgia, italic, serif !important;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
@@ -19376,14 +19413,14 @@ textarea,
   transform: translateX(-50%);
   width: calc(100% - 28px);
   max-width: 460px;
-  background: rgba(14, 6, 24, 0.90);
+  background: linear-gradient(145deg, rgba(46, 15, 34, 0.95), rgba(26, 8, 20, 0.98)) !important;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1.5px solid rgba(251, 191, 36, 0.5);
+  border: 1.5px solid rgba(251, 207, 232, 0.35) !important;
   border-radius: 20px;
-  padding: 15px 18px;
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.8), 0 0 30px rgba(251, 191, 36, 0.22);
-  z-index: 20;
+  padding: 16px 20px;
+  box-shadow: 0 16px 44px rgba(15, 3, 12, 0.88), 0 0 30px rgba(244, 63, 94, 0.25) !important;
+  z-index: 35 !important;
   box-sizing: border-box;
   text-align: left;
 }
@@ -19417,25 +19454,28 @@ textarea,
 }
 
 .thanor-node-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif !important;
   font-size: clamp(18px, 4.2vw, 22px);
   font-weight: 700;
-  color: #ffffff;
+  color: #fff1f2 !important;
   margin: 0 0 4px;
+  text-shadow: 0 2px 14px rgba(244, 63, 94, 0.4) !important;
 }
 
 .thanor-node-date {
   font-size: 11.5px;
   font-style: italic;
-  color: rgba(255, 255, 255, 0.7);
+  color: #fda4af !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   display: block;
   margin-bottom: 8px;
 }
 
 .thanor-node-note {
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: rgba(255, 240, 245, 0.92);
+  font-size: 14px;
+  line-height: 1.65;
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   margin: 0;
 }
 
@@ -19446,13 +19486,33 @@ textarea,
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
-  z-index: 20;
+  z-index: 35 !important;
   max-width: 94vw;
   overflow-x: auto;
   padding: 4px;
   scrollbar-width: none;
 }
 
+.const-star-chip {
+  background: rgba(38, 12, 28, 0.8) !important;
+  border: 1px solid rgba(251, 207, 232, 0.25) !important;
+  color: #fce7f3 !important;
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.const-star-chip.active {
+  background: linear-gradient(135deg, #f43f5e, #be123c) !important;
+  border-color: #fbcfe8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.6) !important;
+}
 
 /* =========================================================================
    BULLETPROOF TREE STORY CTA & FULL-SCREEN CINEMATIC RULES
@@ -19485,7 +19545,7 @@ button#treeMemoriesBtn.is-shown {
   width: 100vw !important;
   height: 100vh !important;
   overflow: hidden !important;
-  background: #06020c !important;
+  background: radial-gradient(circle at 50% 25%, #2a0e20 0%, #150610 65%, #0a0208 100%) !important;
 }
 
 .constellation-fullscreen-canvas {
@@ -19899,4 +19959,215 @@ button#treeMemoriesBtn.is-shown {
   border: 1px solid rgba(244, 114, 182, 0.28) !important;
   color: #881337 !important;
   box-shadow: 0 4px 14px rgba(212, 35, 92, 0.06) !important;
+}
+
+/* =========================================================================
+   BLOSSOM ROMANCE THEME: DEFINITIVE UNIFIED TEMPLATE STYLING & FULLSCREEN
+   ========================================================================= */
+
+/* 1. Global Viewport & Auto Edge-to-Edge Fullscreen */
+html, body {
+  width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background-color: #150610 !important;
+}
+
+#app, #templateRoot {
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  position: fixed !important;
+  inset: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.tree-film-stage.scene {
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  position: fixed !important;
+  inset: 0 !important;
+  overflow: hidden !important;
+  background: #150610 !important;
+  box-sizing: border-box !important;
+}
+
+/* Floating Fullscreen Control (Upper-Left) */
+.corner-fullscreen-btn {
+  position: fixed !important;
+  top: 16px !important;
+  left: 16px !important;
+  z-index: 9999 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  background: rgba(42, 12, 30, 0.85) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1.5px solid rgba(251, 207, 232, 0.35) !important;
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55), 0 0 14px rgba(244, 63, 94, 0.3) !important;
+  transition: all 0.22s ease !important;
+  user-select: none !important;
+}
+
+.corner-fullscreen-btn:hover {
+  background: rgba(244, 63, 94, 0.38) !important;
+  border-color: #fbcfe8 !important;
+  color: #ffffff !important;
+  transform: scale(1.05) translateY(-1px) !important;
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.45) !important;
+}
+
+.corner-fullscreen-btn:active {
+  transform: scale(0.96) !important;
+}
+
+.corner-fullscreen-btn .fs-icon {
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
+
+/* 2. Unified Background Colors for Every Act / Scene */
+#sceneConstellation,
+.scene-stars-fullscreen {
+  background: radial-gradient(circle at 50% 25%, #2a0e20 0%, #150610 65%, #0a0208 100%) !important;
+}
+
+#sceneCassette {
+  background: radial-gradient(circle at 50% 25%, #341228 0%, #1a0615 65%, #0e020c 100%) !important;
+}
+
+#sceneTimeline {
+  background: radial-gradient(circle at 50% 25%, #2e0f22 0%, #170613 65%, #0b0209 100%) !important;
+}
+
+#sceneLetter {
+  background: radial-gradient(circle at 50% 25%, #321024 0%, #190615 65%, #0c020b 100%) !important;
+}
+
+#sceneLanterns {
+  background: radial-gradient(circle at 50% 35%, #2e1024 0%, #170615 65%, #0b020a 100%) !important;
+}
+
+#sceneFinale {
+  background: radial-gradient(circle at 50% 30%, #38122a 0%, #1d0617 65%, #0f020d 100%) !important;
+}
+
+/* 3. Unified Typography & Editorial Serif Styles */
+.chapter-title,
+.stars-main-title,
+.story-card-title,
+.tracklist-title,
+.reasons-deck-title,
+.thanor-node-title,
+.treaty-couple-names,
+.thank-you-title,
+.headline,
+.hl__word,
+.wish__hero {
+  font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif !important;
+  color: #fff1f2 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Glowing text shadows on headers */
+.chapter-title,
+.stars-main-title,
+.story-card-title,
+.treaty-couple-names,
+.thank-you-title {
+  text-shadow: 0 0 24px rgba(244, 63, 94, 0.45), 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* 4. Unified Font Colors (Body Copy & Subtitles in Soft Petal Blush) */
+.chapter-desc,
+.stars-sub-hint,
+.story-card-desc,
+.thanor-node-note,
+.thanor-guidance-text,
+.treaty-vow-text,
+.thank-you-message,
+.kSub,
+.wish__sub,
+.song-artist,
+.reasons-deck-subtitle {
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  line-height: 1.65 !important;
+}
+
+/* 5. Glowing Accents, Eyebrows & Overlines in Cherry Blossom Gold */
+.chapter-num-pill,
+.stars-eyebrow,
+.story-card-badge,
+.reasons-deck-badge,
+.reason-card-badge,
+.tracklist-badge,
+.song-tag-pill,
+.hero__eyebrow,
+.kEyebrow,
+.wish__eyebrow,
+.loveHint,
+.story-milestone-counter,
+.thanor-node-date,
+.treaty-sub-title,
+.thank-you-signature {
+  color: #fda4af !important;
+}
+
+.chapter-num-pill,
+.story-card-badge,
+.reasons-deck-badge,
+.reason-card-badge,
+.song-tag-pill {
+  background: rgba(244, 63, 94, 0.22) !important;
+  border: 1px solid rgba(244, 63, 94, 0.38) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 800 !important;
+}
+
+/* 6. Fix Mini CD Music Player Title */
+.cd-pill-title {
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 10px rgba(244, 63, 94, 0.5) !important;
+}
+
+.cd-track-pill {
+  background: rgba(36, 10, 26, 0.92) !important;
+  border: 1px solid rgba(251, 207, 232, 0.3) !important;
+  color: #fce7f3 !important;
+}
+
+/* 7. Bottom Navigation Chips Unified Palette */
+.romance-chip-btn {
+  background: rgba(38, 12, 28, 0.85) !important;
+  border: 1px solid rgba(251, 207, 232, 0.25) !important;
+  color: #fce7f3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  transition: all 0.2s ease !important;
+}
+
+.romance-chip-btn.active,
+.romance-chip-btn:hover {
+  background: linear-gradient(135deg, #f43f5e, #be123c) !important;
+  border-color: #fbcfe8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.6) !important;
 }
