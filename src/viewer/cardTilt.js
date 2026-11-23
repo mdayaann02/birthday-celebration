@@ -16,7 +16,8 @@ export function initCardTilt(root = document) {
     '.bday-page-card',
     '.gate-card',
     '.tree-card',
-    '.blossom-card'
+    '.blossom-card',
+    '.romance-page-card'
   ];
 
   const selectorStr = SELECTORS.join(', ');
