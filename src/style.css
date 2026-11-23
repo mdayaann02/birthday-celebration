@@ -21168,3 +21168,361 @@ html, body {
     font-size: 12px;
   }
 }
+
+/* =========================================================================
+   AVI VASHISHTA STYLE 3D FLOATING WORLD REEL GALLERY (WARM BLOSSOM ROMANCE)
+   ========================================================================= */
+.memory-mode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.mode-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(244, 114, 182, 0.35);
+  color: #881337;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.08);
+}
+.mode-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(244, 63, 94, 0.5);
+  transform: translateY(-2px);
+}
+.mode-toggle-btn.active {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  color: #ffffff;
+  border-color: #fbcfe8;
+  box-shadow: 0 6px 18px rgba(244, 63, 94, 0.38);
+}
+
+.avi-reel-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avi-reel-hint {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #be123c;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  padding: 4px 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* 3D Cylindrical Stage */
+.avi-3d-stage {
+  position: relative;
+  width: 100%;
+  max-width: 820px;
+  height: 480px;
+  perspective: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  overflow: visible;
+}
+.avi-3d-stage:active {
+  cursor: grabbing;
+}
+
+.avi-3d-camera {
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+}
+
+.avi-3d-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: translateY(20px) rotateX(10deg);
+}
+
+/* Each 3D Card */
+.avi-3d-card {
+  position: absolute;
+  top: -210px;
+  left: -125px;
+  width: 250px;
+  height: 420px;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  cursor: pointer;
+  transition: z-index 0.2s ease;
+}
+
+.avi-card-tilt {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.avi-card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #2a0b16;
+  box-shadow: 0 20px 50px rgba(136, 19, 55, 0.35), 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(251, 191, 36, 0.4);
+}
+
+.avi-3d-card.active .avi-card-face {
+  border-color: #fbbf24;
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.6), 0 24px 60px rgba(244, 63, 94, 0.45);
+}
+
+.avi-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  transition: transform 0.4s ease;
+}
+.avi-3d-card:hover .avi-card-img {
+  transform: scale(1.06);
+}
+
+.avi-card-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 5;
+}
+
+.avi-card-top-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  background: rgba(190, 18, 60, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 6;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Hover reveal label with clip-path wipe (Avi Vashishta signature) */
+.avi-card-label {
+  position: absolute;
+  bottom: 14px;
+  left: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 114, 182, 0.4);
+  color: #6e0a31;
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  clip-path: inset(0 100% 0 0 round 14px);
+  transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1) 50ms;
+  z-index: 8;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.avi-3d-card:hover .avi-card-label,
+.avi-3d-card.active .avi-card-label {
+  clip-path: inset(0 0 0 0 round 14px);
+}
+
+.avi-card-num {
+  font-size: 11px;
+  font-weight: 800;
+  color: #be123c;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 1px;
+}
+
+.avi-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #6e0a31;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.avi-card-arrow {
+  font-style: normal;
+  font-size: 15px;
+  color: #be123c;
+  font-weight: 800;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
+  transform: translate(-6px, 6px);
+}
+.avi-3d-card:hover .avi-card-arrow,
+.avi-3d-card.active .avi-card-arrow {
+  transform: translate(0, 0);
+}
+
+/* Focused Active Milestone Story Drawer / Glass Card */
+.avi-focused-story-card {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(244, 114, 182, 0.4);
+  border-radius: 24px;
+  padding: 22px 26px;
+  box-shadow: 0 16px 45px rgba(225, 29, 72, 0.12);
+  margin-top: 18px;
+  text-align: left;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.focused-story-glow-edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #fbbf24, #f43f5e, #fbbf24);
+}
+
+.focused-story-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.focused-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.focused-chapter-pill {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #be123c;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.focused-date-stamp {
+  font-size: 12px;
+  font-weight: 700;
+  color: #881337;
+  letter-spacing: 1px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border-bottom: 1.5px dashed rgba(225, 29, 72, 0.3);
+  padding-bottom: 2px;
+}
+.focused-star-glyph {
+  color: #fbbf24;
+  font-size: 18px;
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
+}
+
+.focused-story-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(20px, 4.5vw, 24px);
+  font-weight: 700;
+  color: #6e0a31;
+  margin: 0 0 10px;
+}
+
+.focused-story-desc {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #7a4a55;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin: 0 0 16px;
+}
+
+.avi-chapter-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid rgba(244, 114, 182, 0.2);
+}
+.avi-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  color: #881337;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.avi-chip-btn:hover {
+  background: rgba(244, 63, 94, 0.16);
+  border-color: rgba(244, 63, 94, 0.4);
+}
+.avi-chip-btn.active {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  color: #ffffff;
+  border-color: #fbcfe8;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+}
+
+@media (max-width: 680px) {
+  .avi-3d-stage {
+    height: 380px;
+  }
+  .avi-3d-card {
+    top: -160px;
+    left: -100px;
+    width: 200px;
+    height: 320px;
+  }
+}

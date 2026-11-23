@@ -709,17 +709,66 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         </div>
       </section>
 
-      <!-- ================= SCENE 6: REALISTIC LUXURY KEEPSAKE MEMORY BOOK / MAGAZINE ================= -->
+      <!-- ================= SCENE 6: 3D FLOATING WORLD REEL GALLERY (AVI VASHISHTA STYLE) ================= -->
       <section class="romance-fullscreen-scene scene-memory-book-fullscreen" data-scene="6" id="sceneTimeline" style="display:none; opacity:0;">
         <div class="scene-inner-wrap book-editorial-scene-wrap">
           <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER VI • THE MEMORY ARCHIVES</span>
-            <h3 class="chapter-title">Our Keepsake Storybook</h3>
-            <p class="chapter-desc">A physical keepsake album of our greatest moments together 📖🌸</p>
+            <span class="chapter-num-pill">CHAPTER VI • FLOATING MEMORIES</span>
+            <h3 class="chapter-title">Our Timeless Memory Reel</h3>
+            <p class="chapter-desc">⇄ Drag, swipe or scroll to spin our memories across 3D space 🌸✨</p>
           </div>
 
-          <!-- Realistic 3D Keepsake Memory Book Stage -->
-          <div class="realistic-memory-book-container" id="realisticBookContainer">
+          <!-- View Mode Toggle: 3D Reel vs Keepsake Book -->
+          <div class="memory-mode-toggle" id="memoryModeToggle">
+            <button type="button" class="mode-toggle-btn active" data-mode="reel" id="btnModeReel">
+              <span>🌌</span> 3D Floating Reel
+            </button>
+            <button type="button" class="mode-toggle-btn" data-mode="book" id="btnModeBook">
+              <span>📖</span> Keepsake Book
+            </button>
+          </div>
+
+          <!-- MODE 1: 3D CYLINDRICAL FLOATING REEL STAGE (AVI VASHISHTA STYLE) -->
+          <div class="avi-reel-container" id="aviReelContainer">
+            <div class="avi-reel-hint">
+              <span>⇄ GRAB &amp; DRAG TO SPIN • HOVER TO TILT • TAP TO REVEAL STORY ⇄</span>
+            </div>
+
+            <!-- 3D Camera & Cylindrical World -->
+            <div class="avi-3d-stage" id="avi3dStage">
+              <div class="avi-3d-camera">
+                <div class="avi-3d-scene" id="avi3dScene">
+                  <!-- Populated dynamically with 3D cards -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Focused Active Milestone Story Drawer / Glass Card -->
+            <div class="avi-focused-story-card" id="aviFocusedStoryCard">
+              <div class="focused-story-glow-edge"></div>
+              <div class="focused-story-header">
+                <div class="focused-badge-group">
+                  <span class="focused-chapter-pill" id="aviFocusedBadge">CHAPTER 01</span>
+                  <span class="focused-date-stamp" id="aviFocusedDate">${(milestonesList[0]?.date || 'June 14, 2022').toUpperCase()}</span>
+                </div>
+                <span class="focused-star-glyph">✨</span>
+              </div>
+              <h4 class="focused-story-title" id="aviFocusedTitle">${milestonesList[0]?.title || 'Where Our Story Began'}</h4>
+              <p class="focused-story-desc" id="aviFocusedDesc">${milestonesList[0]?.desc || 'One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my entire life.'}</p>
+              
+              <!-- Quick Chapter Selector Chips -->
+              <div class="avi-chapter-chips" id="aviChapterChips">
+                ${milestonesList.map((m, i) => `
+                  <button type="button" class="avi-chip-btn ${i === 0 ? 'active' : ''}" data-idx="${i}">
+                    <span>✦</span> ${m.tag || `Ch. ${i + 1}`}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- MODE 2: REALISTIC 3D KEEPSAKE BOOK (ACCESSIBLE VIA TOGGLE) -->
+          <div class="realistic-memory-book-container" id="realisticBookContainer" style="display:none;">
             <!-- 3D Book Hardcover Chassis -->
             <div class="realistic-book-hardcover" id="realisticBookHardcover">
               <!-- Golden Brass Corner Trims -->
@@ -3684,9 +3733,282 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   // =========================================================================
-  // ACT VI: REALISTIC LUXURY KEEPSAKE MEMORY BOOK / MAGAZINE CONTROLLER
+  // ACT VI: 3D CYLINDRICAL FLOATING WORLD REEL (AVI VASHISHTA STYLE) + BOOK
   // =========================================================================
+  const aviReelContainer = container.querySelector('#aviReelContainer');
+  const avi3dStage = container.querySelector('#avi3dStage');
+  const avi3dScene = container.querySelector('#avi3dScene');
+  const aviFocusedBadge = container.querySelector('#aviFocusedBadge');
+  const aviFocusedDate = container.querySelector('#aviFocusedDate');
+  const aviFocusedTitle = container.querySelector('#aviFocusedTitle');
+  const aviFocusedDesc = container.querySelector('#aviFocusedDesc');
+  const aviChapterChips = container.querySelectorAll('.avi-chip-btn');
+  const btnModeReel = container.querySelector('#btnModeReel');
+  const btnModeBook = container.querySelector('#btnModeBook');
   const realisticBookContainer = container.querySelector('#realisticBookContainer');
+
+  let currentViewMode = 'reel'; // 'reel' (Avi style) or 'book'
+  let aviRafId = 0;
+  let targetAngle = 0;
+  let smoothedAngle = 0;
+  let dragVelocity = 0;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartAngle = 0;
+  let dragLastX = 0;
+  let dragLastTime = 0;
+  let isPointerOver = false;
+  let activeReelIdx = 0;
+
+  // Build cylinder card array: duplicate milestones if length < 8 to ensure seamless 360-degree cylinder
+  const cylinderSource = milestonesList.length < 8
+    ? [...milestonesList, ...milestonesList]
+    : milestonesList;
+  const totalCylinderCards = cylinderSource.length;
+  const cylinderAngleStep = 360 / totalCylinderCards;
+
+  function initAvi3dScene() {
+    if (!avi3dScene) return;
+    avi3dScene.innerHTML = '';
+
+    cylinderSource.forEach((item, i) => {
+      const realIdx = i % milestonesList.length;
+      const cardEl = document.createElement('div');
+      cardEl.className = `avi-3d-card ${i === 0 ? 'active' : ''}`;
+      cardEl.setAttribute('data-card-index', i);
+      cardEl.setAttribute('data-real-index', realIdx);
+
+      cardEl.innerHTML = `
+        <div class="avi-card-tilt">
+          <div class="avi-card-frame"></div>
+          <div class="avi-card-face">
+            <img src="${item.image || '/images/sunset.jpg'}" class="avi-card-img" draggable="false" alt="${item.title}" />
+            <div class="avi-card-glare"></div>
+            <div class="avi-card-top-tag">${item.tag || `CH. 0${realIdx + 1}`}</div>
+            <div class="avi-card-label">
+              <b class="avi-card-num">0${realIdx + 1}</b>
+              <span class="avi-card-title">${item.title}</span>
+              <i class="avi-card-arrow">↗</i>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // 3D Card Gyroscope Mouse Tilt (Exact math from Avi Vashishta's portfolio)
+      const tiltEl = cardEl.querySelector('.avi-card-tilt');
+      const glareEl = cardEl.querySelector('.avi-card-glare');
+
+      cardEl.addEventListener('pointermove', (e) => {
+        if (isDragging) return;
+        const rect = cardEl.getBoundingClientRect();
+        const nx = Math.max(-0.5, Math.min(0.5, (e.clientX - rect.left) / rect.width - 0.5));
+        const ny = Math.max(-0.5, Math.min(0.5, (e.clientY - rect.top) / rect.height - 0.5));
+        if (tiltEl) {
+          tiltEl.style.transform = `rotateX(${-(20 * ny)}deg) rotateY(${24 * nx}deg) translateZ(35px)`;
+        }
+        if (glareEl) {
+          const gx = (nx + 0.5) * 100;
+          const gy = (ny + 0.5) * 100;
+          glareEl.style.background = `radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.45) 0%, transparent 65%)`;
+          glareEl.style.opacity = '1';
+        }
+      });
+
+      cardEl.addEventListener('pointerleave', () => {
+        if (tiltEl) {
+          tiltEl.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        }
+        if (glareEl) {
+          glareEl.style.opacity = '0';
+        }
+      });
+
+      // Tap / Click to center card and show story
+      cardEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        focusCylinderCard(i, true);
+      });
+
+      avi3dScene.appendChild(cardEl);
+    });
+  }
+
+  function focusCylinderCard(index, userInitiated = true) {
+    activeReelIdx = index;
+    const realIdx = index % milestonesList.length;
+    const item = milestonesList[realIdx];
+
+    // Smoothly align cylinder to face this card
+    targetAngle = index * cylinderAngleStep;
+
+    // Update story drawer
+    if (aviFocusedBadge) aviFocusedBadge.textContent = item.tag || `CHAPTER 0${realIdx + 1}`;
+    if (aviFocusedDate) aviFocusedDate.textContent = (item.date || '').toUpperCase();
+    if (aviFocusedTitle) aviFocusedTitle.textContent = item.title;
+    if (aviFocusedDesc) aviFocusedDesc.textContent = item.desc;
+
+    // Update chips
+    aviChapterChips.forEach((chip, i) => {
+      chip.classList.toggle('active', i === realIdx);
+    });
+
+    // Update card active classes
+    const allCards = avi3dScene?.querySelectorAll('.avi-3d-card');
+    allCards?.forEach((c, i) => {
+      c.classList.toggle('active', i === index);
+    });
+
+    if (userInitiated) {
+      soundFx.sparkle();
+      if (navigator.vibrate) navigator.vibrate(16);
+    }
+  }
+
+  let lastFrameTime = performance.now();
+
+  function renderAviCylinderLoop() {
+    if (currentScene !== 6 || currentViewMode !== 'reel') return;
+
+    const now = performance.now();
+    const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+    lastFrameTime = now;
+
+    // 1. Idle auto-drift when not dragging or hovering
+    if (!isDragging && !isPointerOver) {
+      targetAngle += 6.5 * dt;
+    }
+
+    // 2. Drag momentum inertia decay
+    if (!isDragging && Math.abs(dragVelocity) > 0.2) {
+      targetAngle += dragVelocity * dt;
+      dragVelocity *= Math.exp(-3.2 * dt);
+      if (Math.abs(dragVelocity) < 0.2) dragVelocity = 0;
+    }
+
+    // 3. Smooth angle with exponential inertia smoothing
+    smoothedAngle += (targetAngle - smoothedAngle) * (1 - Math.exp(-9 * dt));
+
+    // 4. Update each card's 3D transform on cylinder
+    const isMobile = window.innerWidth < 680;
+    const radius = isMobile ? 320 : 480;
+    const allCards = avi3dScene?.querySelectorAll('.avi-3d-card');
+
+    if (allCards) {
+      allCards.forEach((card, i) => {
+        const theta = i * cylinderAngleStep;
+        const diff = ((theta - smoothedAngle + 180) % 360 + 360) % 360 - 180;
+        const rad = (diff * Math.PI) / 180;
+        const absDiff = Math.abs(diff);
+
+        // Visibility culling for rear cards
+        const isVisible = absDiff < 105;
+        card.style.visibility = isVisible ? 'visible' : 'hidden';
+        if (!isVisible) return;
+
+        const x = Math.sin(rad) * radius;
+        const z = (Math.cos(rad) - 1) * radius;
+        const rotY = diff;
+        const rotZ = diff * 0.05;
+        const scale = 0.72 + 0.28 * Math.max(0, Math.cos(rad));
+        const opacity = Math.min(1, Math.max(0.2, Math.cos(rad) * 1.1));
+
+        card.style.transform = `translate3d(${x.toFixed(1)}px, 0px, ${z.toFixed(1)}px) rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
+        card.style.opacity = opacity.toFixed(2);
+        card.style.zIndex = Math.round((z + radius) * 10);
+      });
+    }
+
+    aviRafId = requestAnimationFrame(renderAviCylinderLoop);
+  }
+
+  // Pointer Drag & Inertia on 3D Stage
+  avi3dStage?.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartAngle = targetAngle;
+    dragLastX = e.clientX;
+    dragLastTime = performance.now();
+    dragVelocity = 0;
+    if (avi3dStage) avi3dStage.style.cursor = 'grabbing';
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - dragStartX;
+    targetAngle = dragStartAngle - deltaX * 0.32;
+
+    const now = performance.now();
+    const dt = Math.max(1, now - dragLastTime) / 1000;
+    dragVelocity = 0.6 * dragVelocity + ((-0.32 * (e.clientX - dragLastX)) / dt) * 0.4;
+    dragLastX = e.clientX;
+    dragLastTime = now;
+  });
+
+  const onPointerEnd = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    if (avi3dStage) avi3dStage.style.cursor = 'grab';
+  };
+  window.addEventListener('pointerup', onPointerEnd);
+  window.addEventListener('pointercancel', onPointerEnd);
+
+  // Hover detection to pause auto-drift
+  avi3dStage?.addEventListener('pointerenter', () => { isPointerOver = true; });
+  avi3dStage?.addEventListener('pointerleave', () => { isPointerOver = false; });
+
+  // Mouse Wheel rotation
+  avi3dStage?.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX);
+    targetAngle += delta * 0.16;
+  }, { passive: false });
+
+  // Touch Swipe for Mobile
+  let touchStartX = 0;
+  avi3dStage?.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches[0]) {
+      touchStartX = e.touches[0].clientX;
+      dragStartAngle = targetAngle;
+    }
+  }, { passive: true });
+
+  avi3dStage?.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches[0]) {
+      const deltaX = e.touches[0].clientX - touchStartX;
+      targetAngle = dragStartAngle - deltaX * 0.35;
+    }
+  }, { passive: true });
+
+  // Chip clicks
+  aviChapterChips.forEach((chip) => {
+    chip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = parseInt(chip.getAttribute('data-idx') || '0', 10);
+      focusCylinderCard(idx, true);
+    });
+  });
+
+  // Mode Switcher Listeners
+  btnModeReel?.addEventListener('click', () => {
+    currentViewMode = 'reel';
+    btnModeReel.classList.add('active');
+    btnModeBook.classList.remove('active');
+    if (aviReelContainer) aviReelContainer.style.display = 'flex';
+    if (realisticBookContainer) realisticBookContainer.style.display = 'none';
+    lastFrameTime = performance.now();
+    renderAviCylinderLoop();
+  });
+
+  btnModeBook?.addEventListener('click', () => {
+    currentViewMode = 'book';
+    btnModeBook.classList.add('active');
+    btnModeReel.classList.remove('active');
+    if (aviReelContainer) aviReelContainer.style.display = 'none';
+    if (realisticBookContainer) realisticBookContainer.style.display = 'flex';
+    soundFx.paperTurn();
+  });
+
+  // Keepsake Book Elements
   const realisticBookHardcover = container.querySelector('#realisticBookHardcover');
   const bookSpreadSurface = container.querySelector('#bookSpreadSurface');
   const bookPageLeft = container.querySelector('#bookPageLeft');
@@ -3709,7 +4031,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const rightPageNum = container.querySelector('#rightPageNum');
   const bookPageCurlTab = container.querySelector('#bookPageCurlTab');
 
-  // Navigation elements
+  // Book Navigation elements
   const btnBookPrevPage = container.querySelector('#btnBookPrevPage');
   const btnBookNextPage = container.querySelector('#btnBookNextPage');
   const btnBookActionTurn = container.querySelector('#btnBookActionTurn');
@@ -3727,14 +4049,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     const pageLeftIdx = idx * 2 + 1;
     const pageRightIdx = idx * 2 + 2;
 
-    // Left Page
     if (leftPageStamp) leftPageStamp.textContent = `${item.tag || `CH. 0${idx + 1}`} • PHOTO KEEPSAKE`;
     if (leftPageDate) leftPageDate.textContent = (item.date || '').toUpperCase();
     if (bookPhotoImg) bookPhotoImg.src = item.image || '/images/sunset.jpg';
     if (bookPhotoCaption) bookPhotoCaption.textContent = `“${item.title || 'Where our worlds first touched'}”`;
     if (leftPageNum) leftPageNum.textContent = `PAGE 0${pageLeftIdx}`;
 
-    // Right Page
     if (rightPageOverline) rightPageOverline.textContent = `CHAPTER VI • MILESTONE 0${idx + 1}`;
     if (bookStoryTitle) bookStoryTitle.textContent = item.title || '';
 
@@ -3748,7 +4068,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
     if (rightPageNum) rightPageNum.textContent = `PAGE 0${pageRightIdx}`;
 
-    // Update Counter & Pills
     if (bookChapterCounter) {
       bookChapterCounter.innerHTML = `<span>Milestone ${idx + 1} of ${milestonesList.length}</span>`;
     }
@@ -3756,7 +4075,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       pill.classList.toggle('active', i === idx);
     });
 
-    // Update Action Button
     if (btnBookActionText) {
       if (idx === milestonesList.length - 1) {
         btnBookActionText.textContent = 'Proceed to The Sacred Letter 🔥';
@@ -3770,11 +4088,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (isTurningPage) return;
 
     const nextIdx = currentMilestoneIdx + dir;
-
-    if (nextIdx < 0) return; // at beginning
+    if (nextIdx < 0) return;
 
     if (nextIdx >= milestonesList.length) {
-      // Reached the end of the memory book! Proceed to next scene
       soundFx.paperTurn();
       chime(660, 880);
       goToScene(7);
@@ -3787,7 +4103,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
     const isForward = dir > 0;
 
-    // 3D realistic page flip with GSAP
     if (bookSpreadSurface) {
       gsap.to(bookSpreadSurface, {
         rotationY: isForward ? -18 : 18,
@@ -3821,8 +4136,13 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   function startStoryMilestones() {
     currentMilestoneIdx = 0;
+    initAvi3dScene();
+    focusCylinderCard(0, false);
     updateBookContent(0);
-    soundFx.paperTurn();
+    lastFrameTime = performance.now();
+    if (currentViewMode === 'reel') {
+      renderAviCylinderLoop();
+    }
   }
 
   // Event Listeners for Memory Book
@@ -3852,32 +4172,30 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       const targetPage = parseInt(pill.getAttribute('data-page') || '0', 10);
       if (targetPage !== currentMilestoneIdx) {
         const dir = targetPage > currentMilestoneIdx ? 1 : -1;
-        currentMilestoneIdx = targetPage - dir; // turnBookPage will add dir
+        currentMilestoneIdx = targetPage - dir;
         turnBookPage(dir, true);
       }
     });
   });
 
-  // Touch Swipe Gesture Support for Realistic Book Turning
-  let touchStartX = 0;
-  let touchStartY = 0;
+  // Touch gestures on book
+  let bookTouchStartX = 0;
+  let bookTouchStartY = 0;
   realisticBookContainer?.addEventListener('touchstart', (e) => {
     if (e.touches && e.touches[0]) {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
+      bookTouchStartX = e.touches[0].clientX;
+      bookTouchStartY = e.touches[0].clientY;
     }
   }, { passive: true });
 
   realisticBookContainer?.addEventListener('touchend', (e) => {
     if (e.changedTouches && e.changedTouches[0]) {
-      const diffX = e.changedTouches[0].clientX - touchStartX;
-      const diffY = e.changedTouches[0].clientY - touchStartY;
+      const diffX = e.changedTouches[0].clientX - bookTouchStartX;
+      const diffY = e.changedTouches[0].clientY - bookTouchStartY;
       if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
         if (diffX < 0) {
-          // Swiped Left -> Next page
           turnBookPage(1, true);
         } else {
-          // Swiped Right -> Prev page
           turnBookPage(-1, true);
         }
       }
