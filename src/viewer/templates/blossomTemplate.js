@@ -196,7 +196,7 @@ Thank you for choosing me, for believing in us, and for making every sunrise bri
 I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   container.innerHTML = `
-    <div class="tree-film-stage scene" id="treeFilmStage">
+    <div class="tree-film-stage scene" id="treeFilmStage" data-prevent-swipe="true">
       <!-- GLOBAL 60FPS THREE.JS GPU MASTER ENGINE -->
       <canvas class="romance-master-three-canvas" id="romanceMaster3D" aria-hidden="true"></canvas>
 
@@ -4182,6 +4182,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   let bookTouchStartX = 0;
   let bookTouchStartY = 0;
   realisticBookContainer?.addEventListener('touchstart', (e) => {
+    e.stopPropagation();
     if (e.touches && e.touches[0]) {
       bookTouchStartX = e.touches[0].clientX;
       bookTouchStartY = e.touches[0].clientY;
@@ -4189,6 +4190,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }, { passive: true });
 
   realisticBookContainer?.addEventListener('touchend', (e) => {
+    e.stopPropagation();
     if (e.changedTouches && e.changedTouches[0]) {
       const diffX = e.changedTouches[0].clientX - bookTouchStartX;
       const diffY = e.changedTouches[0].clientY - bookTouchStartY;

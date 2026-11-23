@@ -1,6 +1,7 @@
 // src/main.js - Application Router & Main Entry (Editor Website by Default, Viewer on Share Links or Explicit View)
 
 import './style.css';
+import './utils/gsapPlugins.js';
 import { TEMPLATES } from './models/templateRegistry.js';
 import { 
   decodeSiteFromUrl, 
