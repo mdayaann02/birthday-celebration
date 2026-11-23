@@ -21,8 +21,15 @@ export const TEMPLATES = {
       audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: "ROMANTIC MASTERPIECE",
       audioSrc: "/audio/alfaaz.mp3",
-      spotifyUrl: "",
-      youtubeUrl: "",
+      spotifyUrl: "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M",
+      youtubeUrl: "https://www.youtube.com/watch?v=0yW7w8F2TVA",
+      playlist: [
+        { id: 1, title: "Alfaaz", artist: "Hamza Malik & Zain Zohaib", src: "/audio/alfaaz.mp3", tag: "OUR THEME 🌸", duration: "3:42" },
+        { id: 2, title: "Blossom Romance Symphony", artist: "Romantic Instrumental", src: "/audio/blossom_song.mp3", tag: "FIRST DATE 🫶", duration: "3:58" },
+        { id: 3, title: "Happy Birthday Acoustic Wish", artist: "Acoustic Guitar & Piano", src: "/audio/song.mp3", tag: "SPECIAL CELEBRATION ✨", duration: "2:45" },
+        { id: 4, title: "Always In My Heart", artist: "Soft Piano Reverie", src: "/audio/alfaaz.mp3", tag: "SWEET MOMENTS 💖", duration: "3:42" },
+        { id: 5, title: "Golden Hour Sakura", artist: "Orchestral Blossom", src: "/audio/blossom_song.mp3", tag: "FOREVER YOURS 👑", duration: "3:58" }
+      ],
       heroTitle: "To My One & Only Love 🌸",
       heroSubtitle: "A continuous story of us, blooming through every season.",
       polaroids: [

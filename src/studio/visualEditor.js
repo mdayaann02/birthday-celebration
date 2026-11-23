@@ -422,6 +422,43 @@ export function renderVisualEditor(container, templateId, data, onChange) {
             </div>
           </div>
         </div>
+
+        <!-- Mixtape Playlist Tracklist Editor -->
+        <div style="margin-top:16px; padding-top:14px; border-top:1px dashed rgba(212,35,92,0.25);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label class="form-label" style="font-weight:800; color:var(--primary); font-size:13px; margin:0;">
+              🌸 Mixtape Songs Tracklist (Interactive in Chapter V)
+            </label>
+            <button type="button" class="btn-add-track" id="btnAddRomanceTrack" style="padding:4px 10px; font-size:11px; font-weight:700; background:#d4235c; color:#fff; border:none; border-radius:999px; cursor:pointer;">+ Add Song</button>
+          </div>
+          <div class="editor-help-text" style="margin-bottom:10px;">
+            These songs appear in the interactive playlist inside Chapter V. Viewers can tap any song to see and play it!
+          </div>
+          <div id="romanceTracksList">
+            ${(data.playlist && data.playlist.length > 0 ? data.playlist : [
+              { id: 1, title: data.audioTitle || "Alfaaz", artist: data.audioSubtitle || "Hamza Malik & Zain Zohaib", src: data.audioSrc || "/audio/alfaaz.mp3", tag: "OUR THEME 🌸" },
+              { id: 2, title: "Blossom Romance Symphony", artist: "Romantic Instrumental", src: "/audio/blossom_song.mp3", tag: "FIRST DATE 🫶" },
+              { id: 3, title: "Happy Birthday Acoustic Wish", artist: "Acoustic Guitar & Piano", src: "/audio/song.mp3", tag: "SPECIAL CELEBRATION ✨" },
+              { id: 4, title: "Always In My Heart", artist: "Soft Piano Reverie", src: "/audio/alfaaz.mp3", tag: "SWEET MOMENTS 💖" },
+              { id: 5, title: "Golden Hour Sakura", artist: "Orchestral Blossom", src: "/audio/blossom_song.mp3", tag: "FOREVER YOURS 👑" }
+            ]).map((t, idx) => `
+              <div class="sub-card-editor romance-track-row" data-t-idx="${idx}" style="margin-bottom:8px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:10px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span style="font-weight:800; font-size:11px; color:#d4235c;">#0${idx + 1} • TRACK</span>
+                  <button type="button" class="btn-del-track" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px;">✕</button>
+                </div>
+                <div class="editor-grid-2" style="margin-bottom:6px;">
+                  <input type="text" class="form-input rtrack-title" value="${t.title || ''}" placeholder="Song Title" />
+                  <input type="text" class="form-input rtrack-artist" value="${t.artist || ''}" placeholder="Artist" />
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <input type="text" class="form-input rtrack-src" value="${t.src || ''}" placeholder="Audio URL (.mp3)" style="flex:1;" />
+                  <input type="text" class="form-input rtrack-tag" value="${t.tag || ''}" placeholder="Tag (e.g. OUR THEME)" style="width:115px;" />
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
       </div>
 
       <!-- Storytelling Milestones Editor -->
@@ -507,6 +544,40 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         const row = e.target.closest('.romance-milestone-row');
         if (row) row.remove();
         emitChange();
+      });
+    });
+
+    const btnAddT = specificBox.querySelector('#btnAddRomanceTrack');
+    const tList = specificBox.querySelector('#romanceTracksList');
+    btnAddT?.addEventListener('click', () => {
+      const idx = tList.querySelectorAll('.romance-track-row').length;
+      const row = document.createElement('div');
+      row.className = 'sub-card-editor romance-track-row';
+      row.setAttribute('data-t-idx', idx);
+      row.style.cssText = 'margin-bottom:8px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:10px; padding:10px;';
+      row.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-weight:800; font-size:11px; color:#d4235c;">#0${idx + 1} • TRACK</span>
+          <button type="button" class="btn-del-track" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px;">✕</button>
+        </div>
+        <div class="editor-grid-2" style="margin-bottom:6px;">
+          <input type="text" class="form-input rtrack-title" value="" placeholder="Song Title" />
+          <input type="text" class="form-input rtrack-artist" value="" placeholder="Artist" />
+        </div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input type="text" class="form-input rtrack-src" value="/audio/alfaaz.mp3" placeholder="Audio URL" style="flex:1;" />
+          <input type="text" class="form-input rtrack-tag" value="SPECIAL 🌸" placeholder="Tag" style="width:115px;" />
+        </div>
+      `;
+      row.querySelector('.btn-del-track').addEventListener('click', () => { row.remove(); emitChange(); });
+      tList.appendChild(row);
+      emitChange();
+    });
+
+    specificBox.querySelectorAll('.btn-del-track').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const row = e.target.closest('.romance-track-row');
+        if (row) { row.remove(); emitChange(); }
       });
     });
 
@@ -1274,6 +1345,26 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (elAudSrc && elAudSrc.value.trim()) updated.audioSrc = elAudSrc.value.trim();
       if (elLetter) updated.letterText = elLetter.value;
       if (elTreaty) updated.treatyVow = elTreaty.value;
+
+      const trackRows = container.querySelectorAll('.romance-track-row');
+      if (trackRows.length > 0) {
+        const tArr = [];
+        trackRows.forEach((row, i) => {
+          const title = row.querySelector('.rtrack-title')?.value || `Track ${i + 1}`;
+          const artist = row.querySelector('.rtrack-artist')?.value || '';
+          const src = row.querySelector('.rtrack-src')?.value || '/audio/alfaaz.mp3';
+          const tag = row.querySelector('.rtrack-tag')?.value || `TRACK 0${i + 1}`;
+          tArr.push({
+            id: i + 1,
+            title,
+            artist,
+            src,
+            tag,
+            duration: "3:40"
+          });
+        });
+        updated.playlist = tArr;
+      }
 
       const milestoneRows = container.querySelectorAll('.romance-milestone-row');
       if (milestoneRows.length > 0) {

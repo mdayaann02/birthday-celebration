@@ -95,6 +95,18 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
   const recipient = data.recipientName || 'My Love';
   const sender = data.senderName || 'Yours Truly';
 
+  const defaultPlaylist = [
+    { id: 1, title: data.audioTitle || "Alfaaz", artist: data.audioSubtitle || "Hamza Malik & Zain Zohaib", src: data.audioSrc || "/audio/alfaaz.mp3", tag: "OUR THEME 🌸", duration: "3:42" },
+    { id: 2, title: "Blossom Romance Symphony", artist: "Romantic Instrumental", src: "/audio/blossom_song.mp3", tag: "FIRST DATE 🫶", duration: "3:58" },
+    { id: 3, title: "Happy Birthday Acoustic Wish", artist: "Acoustic Guitar & Piano", src: "/audio/song.mp3", tag: "SPECIAL CELEBRATION ✨", duration: "2:45" },
+    { id: 4, title: "Always In My Heart", artist: "Soft Piano Reverie", src: "/audio/alfaaz.mp3", tag: "SWEET MOMENTS 💖", duration: "3:42" },
+    { id: 5, title: "Golden Hour Sakura", artist: "Orchestral Blossom", src: "/audio/blossom_song.mp3", tag: "FOREVER YOURS 👑", duration: "3:58" }
+  ];
+
+  const playlist = (Array.isArray(data.playlist) && data.playlist.length > 0)
+    ? data.playlist
+    : defaultPlaylist;
+
   const polaroids = data.polaroids && data.polaroids.length > 0 ? data.polaroids : [
     { image: '/images/sunset.jpg', caption: 'Our favourite sunset walk 🌅', note: 'I knew right then and there that you were the one I want by my side forever.' },
     { image: '/images/always_you.jpg', caption: 'Always laughing with you 🫶', note: 'Your laugh is my absolute favourite melody in this entire universe.' },
@@ -187,6 +199,24 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     <div class="tree-film-stage scene" id="treeFilmStage">
       <!-- GLOBAL 60FPS THREE.JS GPU MASTER ENGINE -->
       <canvas class="romance-master-three-canvas" id="romanceMaster3D" aria-hidden="true"></canvas>
+
+      <!-- CONTINUOUS AMBIENT SAKURA BLOSSOM PETALS RAIN -->
+      <div class="ambient-sakura-rain-layer" id="ambientSakuraRain" aria-hidden="true">
+        <span class="sakura-petal-rain sp-1"></span>
+        <span class="sakura-petal-rain sp-2"></span>
+        <span class="sakura-petal-rain sp-3"></span>
+        <span class="sakura-petal-rain sp-4"></span>
+        <span class="sakura-petal-rain sp-5"></span>
+        <span class="sakura-petal-rain sp-6"></span>
+        <span class="sakura-petal-rain sp-7"></span>
+        <span class="sakura-petal-rain sp-8"></span>
+        <span class="sakura-petal-rain sp-9"></span>
+        <span class="sakura-petal-rain sp-10"></span>
+        <span class="sakura-petal-rain sp-11"></span>
+        <span class="sakura-petal-rain sp-12"></span>
+        <span class="sakura-petal-rain sp-13"></span>
+        <span class="sakura-petal-rain sp-14"></span>
+      </div>
 
       <!-- CINEMATIC PORTAL FLASH TRANSITION OVERLAY -->
       <div class="portal-flash-overlay" id="portalFlashOverlay" aria-hidden="true"></div>
@@ -476,40 +506,25 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       </section>
 
       <!-- ================= SCENE 5: INTERACTIVE MIXTAPE & REASONS ================= -->
-      <section class="romance-fullscreen-scene" data-scene="5" id="sceneCassette" style="display:none; opacity:0;">
+      <section class="romance-fullscreen-scene scene-cassette-fullscreen" data-scene="5" id="sceneCassette" style="display:none; opacity:0;">
         <div class="scene-inner-wrap">
           <div class="romance-chapter-header">
             <span class="chapter-num-pill">CHAPTER V • THE SOUNDTRACK</span>
             <h3 class="chapter-title">The Soundtrack of Us</h3>
-            <p class="chapter-desc">Our dedicated mixtape &amp; the reasons why my soul loves you forever 📻</p>
+            <p class="chapter-desc">Our dedicated mixtape &amp; the reasons why my soul loves you forever 📻🌸</p>
           </div>
 
-          ${spotifyEmbed ? `
-            <div class="spotify-embed-container" style="width:100%; max-width:540px; margin-bottom:20px;">
-              <div class="embed-header-badge"><span>🟢</span> SPOTIFY DEDICATED PLAYLIST</div>
-              <iframe style="border-radius:18px; box-shadow:0 12px 36px rgba(0,0,0,0.5);" src="${spotifyEmbed}" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-            </div>
-          ` : ''}
-
-          ${youtubeEmbed ? `
-            <div class="youtube-embed-container" style="width:100%; max-width:540px; margin-bottom:20px;">
-              <div class="embed-header-badge"><span>🔴</span> YOUTUBE SPECIAL PLAYLIST</div>
-              <div class="youtube-responsive-box" style="position:relative; width:100%; padding-bottom:56.25%; border-radius:18px; overflow:hidden; box-shadow:0 12px 36px rgba(0,0,0,0.5);">
-                <iframe style="position:absolute; top:0; left:0; width:100%; height:100%;" src="${youtubeEmbed}" title="YouTube player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-              </div>
-            </div>
-          ` : ''}
-
-          <div class="vintage-cassette-wrap" style="margin-bottom:20px;">
+          <!-- Sakura Stereo Mixtape Cassette Player -->
+          <div class="vintage-cassette-wrap" style="margin-bottom:24px; width:100%; max-width:540px;">
             <div class="cassette-body" id="vintageCassettePlayer">
               <div class="cassette-top-ridge"></div>
               <div class="cassette-label-area">
                 <div class="cassette-label-header">
-                  <span class="cassette-brand">STEREO MIXTAPE 90</span>
+                  <span class="cassette-brand">🌸 SAKURA STEREO 90</span>
                   <span class="cassette-side">SIDE A • FOR ${recipient.toUpperCase()}</span>
                 </div>
                 <div class="cassette-title-line">
-                  <span class="cassette-title-text">${audioTitle}</span>
+                  <span class="cassette-title-text" id="cassetteTitleText">${playlist[0].title} - ${playlist[0].artist || ''}</span>
                 </div>
                 <div class="cassette-window">
                   <div class="cassette-spool left-spool" id="spoolLeft">
@@ -528,15 +543,100 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
                   <span class="cassette-magnetic-head"></span>
                 </div>
               </div>
+
+              <!-- Cassette Scrub Progress Bar -->
+              <div class="cassette-progress-container" id="cassetteProgressContainer">
+                <span class="cassette-time-text" id="cassetteCurrentTime">0:00</span>
+                <div class="cassette-progress-track" id="cassetteProgressTrack">
+                  <div class="cassette-progress-fill" id="cassetteProgressBar"></div>
+                </div>
+                <span class="cassette-time-text" id="cassetteDuration">${playlist[0].duration || '3:45'}</span>
+              </div>
             </div>
 
+            <!-- Cassette Playback Controls -->
             <div class="cassette-deck-controls">
+              <button type="button" class="btn-cassette-prev" id="btnCassettePrev" title="Previous Song">
+                <span>⏮</span>
+              </button>
               <button type="button" class="btn-cassette-play" id="btnCassettePlay">
                 <span class="cassette-play-icon" id="cassettePlayIcon">▶</span>
                 <span class="cassette-play-label" id="cassettePlayLabel">Play Melody</span>
               </button>
+              <button type="button" class="btn-cassette-next" id="btnCassetteNext" title="Next Song">
+                <span>⏭</span>
+              </button>
               <div class="cassette-eq-bars" id="cassetteEqBars">
                 <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FULL VISIBLE INTERACTIVE PLAYLIST & STREAMING TABS -->
+          <div class="mixtape-tracklist-card" id="mixtapeTracklist">
+            <div class="tracklist-header">
+              <div class="tracklist-header-left">
+                <span class="tracklist-badge">🌸 CHERRY BLOSSOM TRACKLIST</span>
+                <h4 class="tracklist-title">Our Romantic Playlist</h4>
+              </div>
+              <span class="tracklist-count" id="tracklistCount">${playlist.length} Songs</span>
+            </div>
+
+            <!-- Tab Switcher (Mixtape Tracks / Spotify / YouTube) -->
+            <div class="mixtape-source-tabs" id="mixtapeSourceTabs">
+              <button type="button" class="source-tab-btn active" data-source="native">
+                <span>📻</span> Mixtape Songs
+              </button>
+              <button type="button" class="source-tab-btn" data-source="spotify">
+                <span>🟢</span> Spotify Dedicated
+              </button>
+              <button type="button" class="source-tab-btn" data-source="youtube">
+                <span>🔴</span> YouTube Playlist
+              </button>
+            </div>
+
+            <!-- Tab 1: Native Playable Songs List (Always visible and clickable!) -->
+            <div class="mixtape-tab-panel active" id="tabPanelNative">
+              <div class="mixtape-songs-list" id="mixtapeSongsList">
+                ${playlist.map((track, idx) => `
+                  <div class="mixtape-song-row ${idx === 0 ? 'is-playing' : ''}" data-track-idx="${idx}" role="button" tabindex="0">
+                    <div class="song-num-col">
+                      <span class="song-num">${(idx + 1 < 10 ? '0' : '') + (idx + 1)}</span>
+                      <div class="song-playing-bars"><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="song-info-col">
+                      <div class="song-name-row">
+                        <span class="song-name">${track.title}</span>
+                        ${track.tag ? `<span class="song-tag-pill">${track.tag}</span>` : ''}
+                      </div>
+                      <span class="song-artist">${track.artist || 'Romantic Dedication'}</span>
+                    </div>
+                    <div class="song-action-col">
+                      <span class="song-duration">${track.duration || '3:45'}</span>
+                      <button type="button" class="btn-play-song" aria-label="Play ${track.title}">
+                        <span class="btn-song-icon">▶</span>
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Tab 2: Spotify Embed Container -->
+            <div class="mixtape-tab-panel" id="tabPanelSpotify" style="display:none;">
+              <div class="spotify-embed-container" style="width:100%; margin: 10px 0;">
+                <div class="embed-header-badge"><span>🟢</span> SPOTIFY DEDICATED PLAYLIST</div>
+                <iframe style="border-radius:18px; box-shadow:0 12px 36px rgba(0,0,0,0.5);" src="${spotifyEmbed || 'https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0'}" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <!-- Tab 3: YouTube Embed Container -->
+            <div class="mixtape-tab-panel" id="tabPanelYoutube" style="display:none;">
+              <div class="youtube-embed-container" style="width:100%; margin: 10px 0;">
+                <div class="embed-header-badge"><span>🔴</span> YOUTUBE SPECIAL PLAYLIST</div>
+                <div class="youtube-responsive-box">
+                  <iframe src="${youtubeEmbed || 'https://www.youtube.com/embed/videoseries?list=PL4fGSI1pDJn6O1E2_gWwO06j_qK9T7c04'}" title="YouTube player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
               </div>
             </div>
           </div>
@@ -572,10 +672,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             </div>
           </div>
 
-          <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="6">
+          <!-- Forward Navigation Action to Chapter VI -->
+          <div class="scene-forward-action" style="margin-top:14px;">
+            <button type="button" class="btn-scene-next-hero" id="btnMixtapeNextMilestones" data-target="6">
               <span class="btn-next-spark">🍃</span>
-              <span class="btn-next-text">Turn the Page to Our Story Milestones</span>
+              <span class="btn-next-text">Step into Chapter VI: Story Milestones</span>
               <span class="btn-next-arrow">❯</span>
             </button>
           </div>
@@ -2555,18 +2656,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     return {
       setMode(mode) {
         currentMode = mode;
+        // Keep 3D cherry blossom petals drifting across all scenes for authentic blossom aesthetic!
+        petalsGroup.visible = true;
         if (mode === 'cosmos') {
-          petalsGroup.visible = false;
           starField.visible = true;
           lanternsGroup.visible = false;
           starMat.size = 2.2;
-          starMat.color.setHex(0xfef08a);
+          starMat.color.setHex(0xfbcfe8);
         } else if (mode === 'lanterns') {
-          petalsGroup.visible = false;
           starField.visible = true;
           lanternsGroup.visible = true;
         } else {
-          petalsGroup.visible = true;
           starField.visible = true;
           lanternsGroup.visible = (mode === 'finale');
         }
@@ -3332,11 +3432,18 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   // =========================================================================
-  // ACT V: VINTAGE CASSETTE DECK & REASONS
+  // ACT V: VINTAGE SAKURA CASSETTE DECK & INTERACTIVE PLAYLIST
   // =========================================================================
   const btnCassettePlay = container.querySelector('#btnCassettePlay');
+  const btnCassettePrev = container.querySelector('#btnCassettePrev');
+  const btnCassetteNext = container.querySelector('#btnCassetteNext');
   const cassettePlayIcon = container.querySelector('#cassettePlayIcon');
   const cassettePlayLabel = container.querySelector('#cassettePlayLabel');
+  const cassetteTitleText = container.querySelector('#cassetteTitleText');
+  const cassetteProgressBar = container.querySelector('#cassetteProgressBar');
+  const cassetteProgressTrack = container.querySelector('#cassetteProgressTrack');
+  const cassetteCurrentTime = container.querySelector('#cassetteCurrentTime');
+  const cassetteDuration = container.querySelector('#cassetteDuration');
   const spoolLeft = container.querySelector('#spoolLeft');
   const spoolRight = container.querySelector('#spoolRight');
   const cassetteEqBars = container.querySelector('#cassetteEqBars');
@@ -3345,8 +3452,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const reasonCardBadge = container.querySelector('#reasonCardBadge');
   const reasonCardBody = container.querySelector('#reasonCardBody');
   const reasonPillItems = container.querySelectorAll('.reason-pill-item');
+  const btnMixtapeNextMilestones = container.querySelector('#btnMixtapeNextMilestones');
 
   let currentReasonIdx = 0;
+  let currentTrackIdx = 0;
+
+  function formatAudioTime(secs) {
+    if (isNaN(secs) || secs < 0) return '0:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  }
 
   function updateCassetteState(playing) {
     if (spoolLeft) spoolLeft.classList.toggle('spinning', playing);
@@ -3354,7 +3470,111 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (cassetteEqBars) cassetteEqBars.classList.toggle('active', playing);
     if (cassettePlayIcon) cassettePlayIcon.textContent = playing ? '❚❚' : '▶';
     if (cassettePlayLabel) cassettePlayLabel.textContent = playing ? 'Pause Melody' : 'Play Melody';
+
+    // Update song row icons in tracklist
+    const songRows = container.querySelectorAll('.mixtape-song-row');
+    songRows.forEach((r, i) => {
+      r.classList.toggle('is-playing', i === currentTrackIdx);
+      const icon = r.querySelector('.btn-song-icon');
+      if (icon) {
+        icon.textContent = (i === currentTrackIdx && playing) ? '❚❚' : '▶';
+      }
+    });
   }
+
+  function loadAndPlayTrack(idx, shouldAutoplay = true) {
+    if (idx < 0) idx = playlist.length - 1;
+    if (idx >= playlist.length) idx = 0;
+    currentTrackIdx = idx;
+
+    const track = playlist[currentTrackIdx];
+    if (!track) return;
+
+    if (cassetteTitleText) {
+      cassetteTitleText.textContent = `${track.title} - ${track.artist || ''}`;
+    }
+    const cdTrackTitle = container.querySelector('#treeTrackPill .cd-pill-title');
+    if (cdTrackTitle) {
+      cdTrackTitle.textContent = track.title;
+    }
+    if (cassetteDuration && track.duration) {
+      cassetteDuration.textContent = track.duration;
+    }
+
+    updateCassetteState(isPlaying);
+
+    if (audioEl) {
+      const currentSrc = audioEl.currentSrc || audioEl.src || '';
+      if (!currentSrc.includes(track.src)) {
+        audioEl.src = track.src;
+      }
+      if (shouldAutoplay) {
+        audioEl.play().then(() => {
+          setPlaying(true);
+          updateCassetteState(true);
+        }).catch(() => {});
+      }
+    }
+  }
+
+  // Bind track clicking in tracklist
+  container.querySelectorAll('.mixtape-song-row').forEach(row => {
+    row.addEventListener('click', () => {
+      soundFx.pop(720);
+      if (navigator.vibrate) navigator.vibrate(12);
+      const idx = parseInt(row.getAttribute('data-track-idx') || '0', 10);
+      if (idx === currentTrackIdx && isPlaying) {
+        audioEl.pause();
+        setPlaying(false);
+        updateCassetteState(false);
+      } else {
+        loadAndPlayTrack(idx, true);
+      }
+    });
+  });
+
+  // Bind tab switching between Mixtape Tracks / Spotify / YouTube
+  container.querySelectorAll('.source-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      soundFx.pop(650);
+      const src = btn.getAttribute('data-source');
+      container.querySelectorAll('.source-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const pNative = container.querySelector('#tabPanelNative');
+      const pSpotify = container.querySelector('#tabPanelSpotify');
+      const pYoutube = container.querySelector('#tabPanelYoutube');
+
+      if (pNative) pNative.style.display = src === 'native' ? 'block' : 'none';
+      if (pSpotify) pSpotify.style.display = src === 'spotify' ? 'block' : 'none';
+      if (pYoutube) pYoutube.style.display = src === 'youtube' ? 'block' : 'none';
+    });
+  });
+
+  // Track progress and time
+  if (audioEl) {
+    audioEl.addEventListener('timeupdate', () => {
+      if (!audioEl.duration) return;
+      const pct = (audioEl.currentTime / audioEl.duration) * 100;
+      if (cassetteProgressBar) cassetteProgressBar.style.width = `${pct}%`;
+      if (cassetteCurrentTime) cassetteCurrentTime.textContent = formatAudioTime(audioEl.currentTime);
+      if (cassetteDuration && !isNaN(audioEl.duration)) {
+        cassetteDuration.textContent = formatAudioTime(audioEl.duration);
+      }
+    });
+
+    audioEl.addEventListener('ended', () => {
+      loadAndPlayTrack(currentTrackIdx + 1, true);
+    });
+  }
+
+  // Scrub bar clicking
+  cassetteProgressTrack?.addEventListener('click', (e) => {
+    if (!audioEl || !audioEl.duration) return;
+    const rect = cassetteProgressTrack.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    audioEl.currentTime = pos * audioEl.duration;
+  });
 
   btnCassettePlay?.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -3369,6 +3589,18 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         updateCassetteState(true);
       }).catch(() => {});
     }
+  });
+
+  btnCassettePrev?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    soundFx.pop(600);
+    loadAndPlayTrack(currentTrackIdx - 1, true);
+  });
+
+  btnCassetteNext?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    soundFx.pop(600);
+    loadAndPlayTrack(currentTrackIdx + 1, true);
   });
 
   function showReason(idx) {
@@ -3402,20 +3634,23 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     });
   });
 
+  btnMixtapeNextMilestones?.addEventListener('click', () => {
+    goToScene(6);
+  });
+
   function startMixtapeStage() {
     updateCassetteState(isPlaying);
     showReason(0);
-    // Auto-rotate reasons every 3.5 seconds
     if (reasonsAutoTimer) clearInterval(reasonsAutoTimer);
     reasonsAutoTimer = setInterval(() => {
       if (currentScene === 5) showReason(currentReasonIdx + 1);
-    }, 3500);
+    }, 4500);
 
-    // Auto-advance to Chapter VI after 14s if user just enjoys the music
+    // Ample comfortable listening time (60s)
     if (mixtapeTimer) clearTimeout(mixtapeTimer);
     mixtapeTimer = setTimeout(() => {
       if (currentScene === 5) goToScene(6);
-    }, 14000);
+    }, 60000);
   }
 
   // =========================================================================
@@ -3462,9 +3697,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
   }
 
-  function spawnFlyingLeaves(count = 18) {
+  function spawnFlyingLeaves(count = 22) {
     if (!flyingLeavesSky) return;
-    const leafIcons = ['🍃', '🌸', '🍂', '🍁'];
+    const leafIcons = ['🌸', '💮', '🌸', '🌺', '🌸', '✨'];
     for (let i = 0; i < count; i++) {
       const leaf = document.createElement('div');
       leaf.className = 'flying-leaf';
