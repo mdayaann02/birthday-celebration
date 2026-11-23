@@ -1661,6 +1661,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   function treeStart() {
+    currentScene = 3;
     treeStartT = 0;
     treeLastT = 0;
     lastPetal = 0;
@@ -1874,6 +1875,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       paused: true,
       onComplete: () => {
         gsap.set(field, { autoAlpha: 0 });
+        currentScene = 3;
+        setActiveDockChip('tree');
         treeStart();
         gsap.to(bloom, { autoAlpha: 0, duration: 1.15, ease: 'power2.out' });
       },
@@ -2017,6 +2020,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   btnTreeQuickShoot?.addEventListener('click', autoFire);
 
   function enterHero() {
+    currentScene = 2;
     if (memoriesBtn) {
       memoriesBtn.classList.remove('is-shown');
       memoriesBtn.hidden = true;
@@ -2042,8 +2046,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   let treeAutoAdvanceTimer = null;
   function armReplay() {
-    // ONLY display after 3rd page blooms and if current scene is 3
-    if (currentScene !== 3) return;
+    currentScene = 3;
     if (replay) {
       replay.hidden = false;
       replay.style.display = '';
@@ -2051,10 +2054,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
     if (memoriesBtn) {
       memoriesBtn.hidden = false;
-      memoriesBtn.style.display = '';
+      memoriesBtn.style.display = 'inline-flex';
       requestAnimationFrame(() => memoriesBtn.classList.add('is-shown'));
     }
-    // Automatically glide to Chapter IV after 7 seconds if user is admiring the tree
+    // Automatically glide to Chapter IV after 6 seconds if user is watching
     if (treeAutoAdvanceTimer) clearTimeout(treeAutoAdvanceTimer);
     treeAutoAdvanceTimer = setTimeout(() => {
       if (currentScene === 3) {
@@ -2065,7 +2068,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         }
         goToScene(4);
       }
-    }, 7000);
+    }, 6000);
   }
 
   function resetAll() {
@@ -2246,6 +2249,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
     setTimeout(() => {
       if (gate) gate.classList.add('is-open');
+      currentScene = 2;
       enterHero();
     }, 550);
   }
