@@ -439,52 +439,90 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         </audio>
       </div>
 
-      <!-- ================= SCENE 4: CELESTIAL STARS (FULL-SCREEN 60FPS EXPERIENCE) ================= -->
+      <!-- ================= SCENE 4: CELESTIAL STAR TIMELINE (FULL-SCREEN 60FPS EXPERIENCE) ================= -->
       <section class="romance-fullscreen-scene scene-stars-fullscreen" data-scene="4" id="sceneConstellation" style="display:none; opacity:0;">
         <!-- Fullscreen Cosmic Canvas Engine -->
         <canvas id="constellationCanvas" class="constellation-fullscreen-canvas"></canvas>
 
-        <!-- Top Floating Cinematic Header -->
-        <div class="stars-floating-header">
-          <span class="stars-eyebrow">CHAPTER IV • CELESTIAL ODYSSEY</span>
-          <h2 class="stars-main-title">Written in the Stars</h2>
-          <p class="stars-sub-hint">✦ Touch any star or watch our constellation connect across the cosmos 💫 ✦</p>
-        </div>
+        <div class="scene-inner-wrap celestial-timeline-scene-wrap">
+          <!-- Top Floating Cinematic Header -->
+          <div class="stars-floating-header">
+            <span class="stars-eyebrow">CHAPTER IV • CELESTIAL TIMELINE</span>
+            <h2 class="stars-main-title">Written in the Stars</h2>
+            <p class="stars-sub-hint">✦ Every star marks a sacred moment in time that led me to you 💫 ✦</p>
+          </div>
 
-        <!-- Floating Cosmic Glass Memory Card -->
-        <div class="thanor-star-card" id="constellationMemoryCard" style="display:none;">
-          <div class="thanor-card-header">
-            <div class="thanor-star-icon-wrap">
-              <span class="thanor-star-emoji">⭐</span>
-              <span class="thanor-star-num" id="constNodeNum">STAR 01 / 05</span>
+          <!-- Quick Selector Chips at top -->
+          <div class="constellation-star-chips" id="constStarChips">
+            ${constellationsList.map((c, i) => `
+              <button type="button" class="const-star-chip ${i === 0 ? 'active' : ''}" data-idx="${i}">
+                <span class="chip-star-icon">✦</span>
+                <span class="chip-star-text">${c.title}</span>
+              </button>
+            `).join('')}
+          </div>
+
+          <!-- Vertical Celestial Stardust Timeline Track -->
+          <div class="celestial-timeline-track" id="celestialTimelineTrack">
+            <!-- Radiant Vertical Stardust Line -->
+            <div class="celestial-timeline-spine">
+              <div class="spine-glow-line" id="spineGlowLine"></div>
             </div>
-            <div class="thanor-timer-badge">
-              <span class="thanor-timer-text" id="thanorTimerText">Next in 3s</span>
-              <div class="thanor-timer-bar-wrap">
-                <div class="thanor-timer-bar-fill" id="thanorTimerBar"></div>
-              </div>
+
+            <div class="celestial-timeline-items">
+              ${constellationsList.map((c, i) => `
+                <div class="celestial-timeline-item ${i === 0 ? 'active' : ''}" data-star-idx="${i}" id="starTimelineItem-${i}">
+                  <!-- Glowing Node Anchor -->
+                  <div class="celestial-timeline-node-wrap">
+                    <div class="celestial-star-halo"></div>
+                    <div class="celestial-star-node-glyph">
+                      <span class="star-burst-symbol">✦</span>
+                    </div>
+                    <div class="celestial-star-num-badge">0${i + 1}</div>
+                  </div>
+
+                  <!-- Milestone Card -->
+                  <div class="celestial-star-card">
+                    <div class="star-card-glow-edge"></div>
+                    <div class="star-card-header">
+                      <div class="star-meta-group">
+                        <span class="star-chapter-pill">STAR 0${i + 1} / 0${constellationsList.length}</span>
+                        <span class="star-date-tag">${c.date || `Moment ${i + 1}`}</span>
+                      </div>
+                      <span class="star-astrology-glyph">★</span>
+                    </div>
+
+                    <h3 class="star-card-title">${c.title}</h3>
+                    <p class="star-card-note">${c.note}</p>
+
+                    <div class="star-card-footer">
+                      <span class="star-orbit-quote">✦ Written into our cosmic destiny ✦</span>
+                      ${i < constellationsList.length - 1 ? `
+                        <button type="button" class="btn-star-step-next" data-next-star="${i + 1}">
+                          <span>Next Star</span>
+                          <span class="step-arrow">❯</span>
+                        </button>
+                      ` : `
+                        <button type="button" class="btn-star-warp-trigger" id="btnTimelineWarp">
+                          <span>Align All Stars &amp; Warp</span>
+                          <span class="step-arrow">🚀</span>
+                        </button>
+                      `}
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
             </div>
           </div>
 
-          <div class="thanor-card-content">
-            <h3 class="thanor-node-title" id="constNodeTitle">The First Spark</h3>
-            <span class="thanor-node-date" id="constNodeDate">Where It Began</span>
-            <p class="thanor-node-note" id="constNodeNote">The exact moment the universe guided my eyes to yours, and my world changed forever.</p>
-          </div>
-
-          <div class="thanor-card-footer">
-            <span class="thanor-guidance-text">✦ Tracing our memories across eternity ✦</span>
-            <button type="button" class="btn-thanor-next-star" id="btnThanorNextStar">Next Star ❯</button>
-          </div>
-        </div>
-
-        <!-- Quick Selector Chips at bottom -->
-        <div class="constellation-star-chips" id="constStarChips">
-          ${constellationsList.map((c, i) => `
-            <button type="button" class="const-star-chip ${i === 0 ? 'active' : ''}" data-idx="${i}">
-              <span>✦</span> ${c.title}
+          <!-- Bottom Action: Warp forward -->
+          <div class="scene-forward-action" style="margin-top:20px;">
+            <button type="button" class="btn-scene-next-hero" id="btnWarpToMixtapeDirect">
+              <span class="btn-next-spark">📻</span>
+              <span class="btn-next-text">Proceed to Chapter V: The Soundtrack</span>
+              <span class="btn-next-arrow">❯</span>
             </button>
-          `).join('')}
+          </div>
         </div>
 
         <!-- Hyperdrive Warp Overlay -->
@@ -671,46 +709,159 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         </div>
       </section>
 
-      <!-- ================= SCENE 6: STORYTELLING MILESTONES (3D FLYING LEAF) ================= -->
-      <section class="romance-fullscreen-scene" data-scene="6" id="sceneTimeline" style="display:none; opacity:0;">
-        <div class="scene-inner-wrap">
+      <!-- ================= SCENE 6: REALISTIC LUXURY KEEPSAKE MEMORY BOOK / MAGAZINE ================= -->
+      <section class="romance-fullscreen-scene scene-memory-book-fullscreen" data-scene="6" id="sceneTimeline" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap book-editorial-scene-wrap">
           <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER VI • TIMELESS MEMORIES</span>
-            <h3 class="chapter-title">Our Storybook Milestones</h3>
-            <p class="chapter-desc">Each chapter of us, carried on the gentle breeze of time 🍃</p>
+            <span class="chapter-num-pill">CHAPTER VI • THE MEMORY ARCHIVES</span>
+            <h3 class="chapter-title">Our Keepsake Storybook</h3>
+            <p class="chapter-desc">A physical keepsake album of our greatest moments together 📖🌸</p>
           </div>
 
-          <div class="story-milestones-stage" id="storyMilestonesStage">
-            <div class="flying-leaves-sky" id="flyingLeavesSky" aria-hidden="true"></div>
+          <!-- Realistic 3D Keepsake Memory Book Stage -->
+          <div class="realistic-memory-book-container" id="realisticBookContainer">
+            <!-- 3D Book Hardcover Chassis -->
+            <div class="realistic-book-hardcover" id="realisticBookHardcover">
+              <!-- Golden Brass Corner Trims -->
+              <div class="book-corner-trim corner-tl"></div>
+              <div class="book-corner-trim corner-tr"></div>
+              <div class="book-corner-trim corner-bl"></div>
+              <div class="book-corner-trim corner-br"></div>
 
-            <div class="story-milestone-card" id="storyMilestoneCard">
-              <div class="story-card-top-bar">
-                <span class="story-card-badge" id="storyCardTag">${milestonesList[0]?.tag || 'THE SPARK'}</span>
-                <span class="story-card-date" id="storyCardDate">${milestonesList[0]?.date || 'June 14, 2022'}</span>
+              <!-- Draped Silk Satin Ribbon Bookmark -->
+              <div class="book-satin-ribbon">
+                <div class="ribbon-tail"></div>
               </div>
 
-              <div class="story-card-media-wrapper">
-                <img src="${milestonesList[0]?.image || '/images/sunset.jpg'}" class="story-card-photo" id="storyCardPhoto" alt="Milestone Photo" />
-                <div class="story-card-photo-gloss"></div>
+              <!-- Central Spine Gutter & Shadow -->
+              <div class="book-spine-gutter"></div>
+
+              <!-- Layered Paper Edge Thickness Effect (Bottom & Right) -->
+              <div class="book-page-stack-edges"></div>
+
+              <!-- Open Two-Page Editorial Spread -->
+              <div class="book-spread-surface" id="bookSpreadSurface">
+                
+                <!-- LEFT PAGE: Keepsake Gallery & Photo Mount -->
+                <div class="book-page-leaf book-page-left" id="bookPageLeft">
+                  <div class="paper-vintage-texture"></div>
+                  <div class="page-inner-content">
+                    <div class="page-top-header">
+                      <span class="page-chapter-stamp" id="leftPageStamp">CH. 01 • PHOTO KEEPSAKE</span>
+                      <span class="page-date-stamp" id="leftPageDate">${(milestonesList[0]?.date || 'June 14, 2022').toUpperCase()}</span>
+                    </div>
+
+                    <!-- Scrapbook Photo Mount with Golden Photo Corners -->
+                    <div class="scrapbook-photo-mount">
+                      <div class="photo-mount-corner pmc-tl"></div>
+                      <div class="photo-mount-corner pmc-tr"></div>
+                      <div class="photo-mount-corner pmc-bl"></div>
+                      <div class="photo-mount-corner pmc-br"></div>
+                      
+                      <div class="photo-frame-inner">
+                        <img src="${milestonesList[0]?.image || '/images/sunset.jpg'}" class="storybook-photo" id="bookPhotoImg" alt="Keepsake Memory Photo" />
+                        <div class="photo-satin-glare"></div>
+                      </div>
+
+                      <!-- Hand-pressed dried sakura petal pinned to photo -->
+                      <div class="pressed-sakura-keepsake" title="Real pressed sakura petal">
+                        <span class="petal-emoji">🌸</span>
+                        <span class="petal-tape"></span>
+                      </div>
+                    </div>
+
+                    <!-- Polaroid handwritten caption -->
+                    <div class="photo-handwritten-note" id="bookPhotoCaption">
+                      “${milestonesList[0]?.title || 'Where our worlds first touched'}”
+                    </div>
+
+                    <!-- Page Footer -->
+                    <div class="page-bottom-footer">
+                      <span class="page-num-gold" id="leftPageNum">PAGE 01</span>
+                      <span class="page-brand-watermark">SACRED MEMORIES</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- RIGHT PAGE: Magazine Editorial Prose & Typographic Spread -->
+                <div class="book-page-leaf book-page-right" id="bookPageRight">
+                  <div class="paper-vintage-texture"></div>
+                  <div class="page-inner-content">
+                    <div class="magazine-editorial-header">
+                      <span class="editorial-overline" id="rightPageOverline">CHAPTER VI • MILESTONE 01</span>
+                      <h4 class="editorial-headline" id="bookStoryTitle">${milestonesList[0]?.title || 'Where Our Story Began'}</h4>
+                      <div class="editorial-divider-line">
+                        <span class="divider-diamond">✦</span>
+                      </div>
+                    </div>
+
+                    <div class="magazine-prose-container">
+                      <p class="editorial-narrative" id="bookStoryProse">
+                        <span class="narrative-drop-cap" id="bookDropCap">${(milestonesList[0]?.desc || 'One single glance that stopped time.')[0]}</span><span id="bookStoryRemaining">${(milestonesList[0]?.desc || 'One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my entire life.').slice(1)}</span>
+                      </p>
+
+                      <!-- Editorial Pull Quote -->
+                      <div class="editorial-pull-quote">
+                        <span class="quote-mark-icon">“</span>
+                        <p class="pull-quote-text" id="bookPullQuote">“${(milestonesList[0]?.desc || 'One single glance that stopped time.').slice(0, 52).trim()}…”</p>
+                      </div>
+                    </div>
+
+                    <!-- Golden Wax Seal & Page Signature -->
+                    <div class="magazine-hallmark-wrap">
+                      <div class="magazine-wax-hallmark">
+                        <span>🌸</span>
+                      </div>
+                      <div class="magazine-hallmark-text">
+                        <span class="hallmark-title">ARCHIVED IN LOVE</span>
+                        <span class="hallmark-sub">Eternal Keepsake Edition</span>
+                      </div>
+                    </div>
+
+                    <!-- Interactive Page Flip Curl Tab on bottom-right corner -->
+                    <div class="page-flip-curl-tab" id="bookPageCurlTab" title="Turn to next page">
+                      <span class="curl-arrow">❯</span>
+                      <span class="curl-hint">Turn</span>
+                    </div>
+
+                    <!-- Page Footer -->
+                    <div class="page-bottom-footer">
+                      <span class="page-brand-watermark">BLOSSOM EDITORIAL</span>
+                      <span class="page-num-gold" id="rightPageNum">PAGE 02</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
-              <div class="story-card-body">
-                <h4 class="story-card-title" id="storyCardTitle">${milestonesList[0]?.title || 'Where Our Story Began'}</h4>
-                <p class="story-card-desc" id="storyCardDesc">${milestonesList[0]?.desc || 'One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my life.'}</p>
-              </div>
+              <!-- Tactile Flip Navigation Arrows -->
+              <button type="button" class="book-nav-arrow book-arrow-prev" id="btnBookPrevPage" aria-label="Previous Page">
+                <span>❮</span>
+              </button>
+              <button type="button" class="book-nav-arrow book-arrow-next" id="btnBookNextPage" aria-label="Next Page">
+                <span>❯</span>
+              </button>
             </div>
 
-            <div class="story-milestone-nav">
-              <div class="story-milestone-dots" id="storyMilestoneDots">
-                ${milestonesList.map((_, i) => `
-                  <span class="story-dot ${i === 0 ? 'active' : ''}" data-m-idx="${i}"></span>
+            <!-- Bottom Chapter Controller & Thumbnails -->
+            <div class="book-magazine-controller">
+              <div class="book-chapter-counter" id="bookChapterCounter">
+                <span>Milestone 1 of ${milestonesList.length}</span>
+              </div>
+
+              <div class="book-chapter-pills" id="bookChapterPills">
+                ${milestonesList.map((m, i) => `
+                  <button type="button" class="book-chapter-pill ${i === 0 ? 'active' : ''}" data-page="${i}" title="${m.title}">
+                    <span class="pill-dot"></span>
+                    <span class="pill-label">${m.tag || `Ch. ${i + 1}`}</span>
+                  </button>
                 `).join('')}
               </div>
-              <div class="story-milestone-counter" id="storyMilestoneCounter">Chapter 1 of ${milestonesList.length}</div>
-              <button type="button" class="btn-fly-next-chapter" id="btnFlyNextMilestone">
-                <span class="leaf-anim-icon">🍃</span>
-                <span class="btn-fly-text" id="btnFlyText">Fly to Next Chapter</span>
-                <span class="btn-fly-arrow">❯</span>
+
+              <button type="button" class="btn-flip-turn-book" id="btnBookActionTurn">
+                <span class="btn-turn-icon">📖</span>
+                <span class="btn-turn-text" id="btnBookActionText">Turn to Next Chapter</span>
+                <span class="btn-turn-arrow">❯</span>
               </button>
             </div>
           </div>
@@ -2945,19 +3096,16 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   });
 
   // =========================================================================
-  // ACT IV: FULL-SCREEN 60FPS CELESTIAL STARS ENGINE (LIKE TREE CANVAS)
+  // ACT IV: FULL-SCREEN 60FPS CELESTIAL STARS TIMELINE ENGINE
   // =========================================================================
   const constellationCanvas = container.querySelector('#constellationCanvas');
-  const constellationCard = container.querySelector('#constellationMemoryCard');
-  const constNodeNum = container.querySelector('#constNodeNum');
-  const constNodeTitle = container.querySelector('#constNodeTitle');
-  const constNodeDate = container.querySelector('#constNodeDate');
-  const constNodeNote = container.querySelector('#constNodeNote');
-  const thanorTimerBar = container.querySelector('#thanorTimerBar');
-  const thanorTimerText = container.querySelector('#thanorTimerText');
-  const btnThanorNextStar = container.querySelector('#btnThanorNextStar');
   const constStarChips = container.querySelectorAll('.const-star-chip');
+  const celestialTimelineTrack = container.querySelector('#celestialTimelineTrack');
+  const spineGlowLine = container.querySelector('#spineGlowLine');
+  const timelineItems = container.querySelectorAll('.celestial-timeline-item');
   const hyperdriveWarpOverlay = container.querySelector('#hyperdriveWarpOverlay');
+  const btnTimelineWarp = container.querySelector('#btnTimelineWarp');
+  const btnWarpToMixtapeDirect = container.querySelector('#btnWarpToMixtapeDirect');
 
   let activeConstIdx = 0;
   let constEngineReady = false;
@@ -2965,9 +3113,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   let cW = 0, cH = 0;
   let bgStars = [];
   let shootingStars = [];
-  let beamProgress = 1;
-  let beamFromIdx = 0;
-  let beamToIdx = 0;
   let isWarping = false;
   let warpParticles = [];
   let touchSparks = [];
@@ -2986,41 +3131,13 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     cCtx.scale(dpr, dpr);
   }
 
-  function getNodePositions() {
-    const isMobile = cW < 640;
-    // Guaranteed 100% unobstructed celestial constellation layout:
-    // Every star is positioned in the open celestial sky between y: 19% and y: 52%
-    // Well below the top header and completely above the bottom memory card
-    const coords = isMobile ? [
-      { x: 0.18, y: 0.32 }, // Star 1: The First Spark (Left sky)
-      { x: 0.38, y: 0.21 }, // Star 2: Midnight Drives (Upper-center sky)
-      { x: 0.78, y: 0.23 }, // Star 3: Quiet Safe Harbor (Upper-right sky)
-      { x: 0.82, y: 0.44 }, // Star 4: The Turning Point (Mid-right sky)
-      { x: 0.48, y: 0.50 }  // Star 5: Our North Star (Lower-center apex)
-    ] : [
-      { x: 0.20, y: 0.34 }, // Star 1
-      { x: 0.40, y: 0.22 }, // Star 2
-      { x: 0.75, y: 0.25 }, // Star 3
-      { x: 0.80, y: 0.46 }, // Star 4
-      { x: 0.50, y: 0.52 }  // Star 5
-    ];
-
-    return coords.map((c, i) => ({
-      x: c.x * cW,
-      y: c.y * cH,
-      title: constellationsList[i]?.title || `Star 0${i + 1}`,
-      date: constellationsList[i]?.date || '',
-      num: `0${i + 1}`
-    }));
-  }
-
   function maybeSpawnShootingStar() {
-    if (shootingStars.length < 2 && Math.random() < 0.03) {
+    if (shootingStars.length < 3 && Math.random() < 0.04) {
       shootingStars.push({
         x: Math.random() * cW * 0.8,
         y: Math.random() * cH * 0.4,
-        len: Math.random() * 80 + 50,
-        speed: Math.random() * 12 + 10,
+        len: Math.random() * 90 + 50,
+        speed: Math.random() * 14 + 10,
         angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
         alpha: 1,
         decay: Math.random() * 0.02 + 0.015
@@ -3044,14 +3161,47 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
   }
 
+  function selectTimelineStar(idx, smoothScroll = true) {
+    if (idx < 0 || idx >= constellationsList.length) return;
+    activeConstIdx = idx;
+
+    // Update chips
+    constStarChips.forEach((chip, i) => {
+      chip.classList.toggle('active', i === idx);
+    });
+
+    // Update timeline items
+    timelineItems.forEach((item, i) => {
+      item.classList.toggle('active', i === idx);
+      item.classList.toggle('passed', i < idx);
+    });
+
+    // Update spine glow line height
+    if (spineGlowLine && timelineItems.length > 0) {
+      const percent = ((idx) / Math.max(1, constellationsList.length - 1)) * 100;
+      spineGlowLine.style.height = `${Math.max(12, percent)}%`;
+    }
+
+    // Scroll active item into view
+    const targetItem = container.querySelector(`#starTimelineItem-${idx}`);
+    if (targetItem && smoothScroll) {
+      targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    chime(800 + idx * 80, 1100 + idx * 90);
+    soundFx.sparkle();
+    if (navigator.vibrate) navigator.vibrate([16, 28]);
+  }
+
   function startConstellationStage() {
     if (!constellationCanvas) return;
     resizeConstCanvas();
+
     if (!constEngineReady) {
       constEngineReady = true;
       window.addEventListener('resize', resizeConstCanvas);
 
-      // Initialize 120 background drifting & twinkling stars
+      // Initialize background drifting stars
       bgStars = [];
       for (let i = 0; i < 120; i++) {
         bgStars.push({
@@ -3065,41 +3215,46 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         });
       }
 
-      // Tap / Touch anywhere on canvas advances star with spark ripple
+      // Chip clicks
+      constStarChips.forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idx = parseInt(chip.getAttribute('data-idx') || '0', 10);
+          selectTimelineStar(idx, true);
+        });
+      });
+
+      // Item node / card clicks
+      timelineItems.forEach((item, i) => {
+        item.addEventListener('click', () => {
+          selectTimelineStar(i, false);
+        });
+      });
+
+      // Next star buttons inside cards
+      container.querySelectorAll('.btn-star-step-next').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const nextIdx = parseInt(btn.getAttribute('data-next-star') || '0', 10);
+          selectTimelineStar(nextIdx, true);
+        });
+      });
+
+      // Warp triggers
+      btnTimelineWarp?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerHyperdriveWarp();
+      });
+
+      btnWarpToMixtapeDirect?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerHyperdriveWarp();
+      });
+
+      // Click on canvas creates touch sparks
       constellationCanvas.addEventListener('pointerdown', (e) => {
         const rect = constellationCanvas.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const clickY = e.clientY - rect.top;
-        spawnTouchSparks(clickX, clickY);
-
-        const points = getNodePositions();
-        for (let i = 0; i < points.length; i++) {
-          const dist = Math.hypot(clickX - points[i].x, clickY - points[i].y);
-          if (dist < 50) {
-            selectConstellationNode(i, true);
-            return;
-          }
-        }
-        if (activeConstIdx < constellationsList.length - 1) {
-          selectConstellationNode(activeConstIdx + 1, true);
-        } else {
-          triggerHyperdriveWarp();
-        }
-      });
-
-      btnThanorNextStar?.addEventListener('click', () => {
-        if (activeConstIdx < constellationsList.length - 1) {
-          selectConstellationNode(activeConstIdx + 1, true);
-        } else {
-          triggerHyperdriveWarp();
-        }
-      });
-
-      constStarChips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          const idx = parseInt(chip.getAttribute('data-idx') || '0', 10);
-          selectConstellationNode(idx, true);
-        });
+        spawnTouchSparks(e.clientX - rect.left, e.clientY - rect.top);
       });
     }
 
@@ -3227,225 +3382,14 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         cCtx.restore();
       }
 
-      // 5. Calculate node positions (Guaranteed 100% visible in open sky)
-      const points = getNodePositions();
-
-      // 6. Faint Astrological Constellation Guide Lines (Shows full constellation map immediately)
-      cCtx.save();
-      cCtx.beginPath();
-      cCtx.setLineDash([4, 6]);
-      cCtx.lineWidth = 1.2;
-      cCtx.strokeStyle = 'rgba(251, 191, 36, 0.22)';
-      points.forEach((pt, i) => {
-        if (i === 0) cCtx.moveTo(pt.x, pt.y);
-        else cCtx.lineTo(pt.x, pt.y);
-      });
-      cCtx.closePath();
-      cCtx.stroke();
-      cCtx.restore();
-
-      // 7. Active Illuminated Stardust Constellation Beams
-      if (activeConstIdx > 0) {
-        cCtx.save();
-        cCtx.beginPath();
-        cCtx.lineWidth = 2.8;
-        cCtx.strokeStyle = '#fbbf24';
-        cCtx.shadowColor = '#fbbf24';
-        cCtx.shadowBlur = 12;
-        for (let i = 0; i <= Math.min(beamFromIdx, activeConstIdx); i++) {
-          if (i === 0) cCtx.moveTo(points[i].x, points[i].y);
-          else cCtx.lineTo(points[i].x, points[i].y);
-        }
-        cCtx.stroke();
-        cCtx.restore();
-      }
-
-      // Draw animated stardust laser beam from beamFromIdx to beamToIdx
-      if (beamProgress < 1 && beamToIdx > beamFromIdx) {
-        const p1 = points[beamFromIdx];
-        const p2 = points[beamToIdx];
-        const curX = p1.x + (p2.x - p1.x) * beamProgress;
-        const curY = p1.y + (p2.y - p1.y) * beamProgress;
-
-        cCtx.save();
-        cCtx.beginPath();
-        cCtx.lineWidth = 3.6;
-        cCtx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
-        cCtx.shadowColor = '#f43f5e';
-        cCtx.shadowBlur = 16;
-        cCtx.moveTo(p1.x, p1.y);
-        cCtx.lineTo(curX, curY);
-        cCtx.stroke();
-        cCtx.restore();
-
-        // Glowing sparkle at beam tip
-        cCtx.beginPath();
-        cCtx.arc(curX, curY, 4.5, 0, Math.PI * 2);
-        cCtx.fillStyle = '#ffffff';
-        cCtx.shadowColor = '#fbbf24';
-        cCtx.shadowBlur = 10;
-        cCtx.fill();
-        cCtx.shadowBlur = 0;
-
-        beamProgress += 0.045;
-      }
-
-      // 8. Draw the 5 Great Celestial Stars (Accurate, Assigned, and Radiant)
-      points.forEach((pt, idx) => {
-        const isActive = (idx === activeConstIdx);
-        const isVisited = (idx <= activeConstIdx);
-        const pulse = Math.sin(elapsed * 3.5 + idx) * 3;
-        const outerR = isActive ? 24 + pulse : (isVisited ? 15 + pulse * 0.4 : 11);
-
-        // A. Pulsating Starlight Corona Halo
-        cCtx.beginPath();
-        cCtx.arc(pt.x, pt.y, Math.max(4, outerR), 0, Math.PI * 2);
-        cCtx.strokeStyle = isActive ? 'rgba(251, 191, 36, 0.95)' : (isVisited ? 'rgba(244, 63, 94, 0.7)' : 'rgba(255, 255, 255, 0.3)');
-        cCtx.lineWidth = isActive ? 2.5 : 1.2;
-        cCtx.stroke();
-
-        // B. 6 Microscopic Orbiting Celestial Photons for Active Star
-        if (isActive) {
-          for (let k = 0; k < 6; k++) {
-            const photonAngle = elapsed * 2.2 + (k * Math.PI / 3);
-            const px = pt.x + Math.cos(photonAngle) * (outerR + 6);
-            const py = pt.y + Math.sin(photonAngle) * ((outerR + 6) * 0.65);
-            cCtx.beginPath();
-            cCtx.arc(px, py, 1.4, 0, Math.PI * 2);
-            cCtx.fillStyle = '#ffffff';
-            cCtx.shadowColor = '#fbbf24';
-            cCtx.shadowBlur = 6;
-            cCtx.fill();
-            cCtx.shadowBlur = 0;
-          }
-        }
-
-        // C. Rotating Diamond Diffraction Spikes
-        const spikeLen = isActive ? 22 + pulse * 0.6 : 12;
-        const spikeRot = elapsed * 0.35 + idx;
-        cCtx.save();
-        cCtx.translate(pt.x, pt.y);
-        cCtx.rotate(spikeRot);
-        cCtx.strokeStyle = isActive ? '#fbbf24' : (isVisited ? 'rgba(251, 191, 36, 0.65)' : 'rgba(255, 255, 255, 0.3)');
-        cCtx.lineWidth = isActive ? 2 : 1.2;
-        cCtx.shadowColor = '#fbbf24';
-        cCtx.shadowBlur = isActive ? 12 : 4;
-        cCtx.beginPath();
-        cCtx.moveTo(-spikeLen, 0); cCtx.lineTo(spikeLen, 0);
-        cCtx.moveTo(0, -spikeLen); cCtx.lineTo(0, spikeLen);
-        cCtx.stroke();
-        // Secondary 45-degree subtle starburst cross
-        cCtx.rotate(Math.PI / 4);
-        cCtx.strokeStyle = isActive ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.15)';
-        cCtx.lineWidth = 1;
-        cCtx.beginPath();
-        cCtx.moveTo(-spikeLen * 0.55, 0); cCtx.lineTo(spikeLen * 0.55, 0);
-        cCtx.moveTo(0, -spikeLen * 0.55); cCtx.lineTo(0, spikeLen * 0.55);
-        cCtx.stroke();
-        cCtx.restore();
-
-        // D. Diamond Core Star
-        cCtx.beginPath();
-        cCtx.arc(pt.x, pt.y, isActive ? 7 : (isVisited ? 5 : 3.8), 0, Math.PI * 2);
-        cCtx.fillStyle = isActive ? '#ffffff' : (isVisited ? '#fef08a' : '#d1d5db');
-        cCtx.shadowColor = isActive ? '#fbbf24' : '#f43f5e';
-        cCtx.shadowBlur = isActive ? 20 : 6;
-        cCtx.fill();
-        cCtx.shadowBlur = 0;
-
-        // E. Assigned Astrological Label on Canvas
-        cCtx.save();
-        cCtx.font = isActive ? 'bold 11px system-ui, sans-serif' : '500 10px system-ui, sans-serif';
-        cCtx.textAlign = (pt.x > cW * 0.6) ? 'right' : 'left';
-        const textX = (pt.x > cW * 0.6) ? pt.x - (outerR + 8) : pt.x + (outerR + 8);
-        const textY = pt.y + 4;
-        if (isActive) {
-          cCtx.fillStyle = '#fbbf24';
-          cCtx.shadowColor = '#fbbf24';
-          cCtx.shadowBlur = 10;
-        } else if (isVisited) {
-          cCtx.fillStyle = 'rgba(255, 235, 245, 0.85)';
-        } else {
-          cCtx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-        }
-        cCtx.fillText(`✦ ${pt.num} ${pt.title}`, textX, textY);
-        cCtx.restore();
-      });
-
       constRafId = requestAnimationFrame(renderConstellationLoop);
     }
 
     renderConstellationLoop();
-    selectConstellationNode(0);
-  }
-
-  function selectConstellationNode(idx, userInitiated = false) {
-    if (idx < 0 || idx >= constellationsList.length) return;
-    if (idx > activeConstIdx) {
-      beamFromIdx = activeConstIdx;
-      beamToIdx = idx;
-      beamProgress = 0;
-    }
-    activeConstIdx = idx;
-    const dataItem = constellationsList[idx];
-
-    constStarChips.forEach((chip, i) => {
-      chip.classList.toggle('active', i === idx);
-    });
-
-    if (constNodeNum) constNodeNum.textContent = `STAR 0${idx + 1} / 0${constellationsList.length}`;
-    if (constNodeTitle) constNodeTitle.textContent = dataItem.title;
-    if (constNodeDate) constNodeDate.textContent = dataItem.date;
-    if (constNodeNote) constNodeNote.textContent = dataItem.note;
-
-    if (constellationCard) {
-      constellationCard.style.display = 'block';
-      gsap.fromTo(constellationCard, 
-        { opacity: 0, y: 15, scale: 0.95 }, 
-        { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(1.4)' }
-      );
-    }
-
-    chime(800 + idx * 80, 1100 + idx * 90);
-    soundFx.sparkle();
-    if (navigator.vibrate) navigator.vibrate([16, 28]);
-
-    // Timer ring / bar
-    if (starTimer) clearTimeout(starTimer);
-    if (starTimerInterval) clearInterval(starTimerInterval);
-
-    if (thanorTimerBar) {
-      thanorTimerBar.style.transition = 'none';
-      thanorTimerBar.style.width = '0%';
-      requestAnimationFrame(() => {
-        thanorTimerBar.style.transition = 'width 3.5s linear';
-        thanorTimerBar.style.width = '100%';
-      });
-    }
-
-    let timeLeft = 3;
-    if (thanorTimerText) thanorTimerText.textContent = `Next in ${timeLeft}s`;
-    starTimerInterval = setInterval(() => {
-      timeLeft--;
-      if (thanorTimerText && timeLeft >= 0) {
-        thanorTimerText.textContent = (idx === constellationsList.length - 1) ? 'Warping...' : `Next in ${timeLeft}s`;
-      }
-    }, 1000);
-
-    starTimer = setTimeout(() => {
-      if (starTimerInterval) clearInterval(starTimerInterval);
-      if (activeConstIdx < constellationsList.length - 1) {
-        selectConstellationNode(activeConstIdx + 1);
-      } else {
-        triggerHyperdriveWarp();
-      }
-    }, 3500);
+    selectTimelineStar(0, false);
   }
 
   function triggerHyperdriveWarp() {
-    if (starTimer) clearTimeout(starTimer);
-    if (starTimerInterval) clearInterval(starTimerInterval);
-
     chime(528, 1056);
     soundFx.celebrate();
     if (hyperdriveWarpOverlay) {
@@ -3740,134 +3684,205 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   // =========================================================================
-  // ACT VI: STORYTELLING MILESTONES WITH 3D FLYING LEAF ANIMATION
+  // ACT VI: REALISTIC LUXURY KEEPSAKE MEMORY BOOK / MAGAZINE CONTROLLER
   // =========================================================================
-  const storyMilestoneCard = container.querySelector('#storyMilestoneCard');
-  const storyCardTag = container.querySelector('#storyCardTag');
-  const storyCardDate = container.querySelector('#storyCardDate');
-  const storyCardPhoto = container.querySelector('#storyCardPhoto');
-  const storyCardTitle = container.querySelector('#storyCardTitle');
-  const storyCardDesc = container.querySelector('#storyCardDesc');
-  const storyMilestoneDots = container.querySelectorAll('.story-dot');
-  const storyMilestoneCounter = container.querySelector('#storyMilestoneCounter');
-  const btnFlyNextMilestone = container.querySelector('#btnFlyNextMilestone');
-  const btnFlyText = container.querySelector('#btnFlyText');
-  const flyingLeavesSky = container.querySelector('#flyingLeavesSky');
+  const realisticBookContainer = container.querySelector('#realisticBookContainer');
+  const realisticBookHardcover = container.querySelector('#realisticBookHardcover');
+  const bookSpreadSurface = container.querySelector('#bookSpreadSurface');
+  const bookPageLeft = container.querySelector('#bookPageLeft');
+  const bookPageRight = container.querySelector('#bookPageRight');
+
+  // Left page elements
+  const leftPageStamp = container.querySelector('#leftPageStamp');
+  const leftPageDate = container.querySelector('#leftPageDate');
+  const bookPhotoImg = container.querySelector('#bookPhotoImg');
+  const bookPhotoCaption = container.querySelector('#bookPhotoCaption');
+  const leftPageNum = container.querySelector('#leftPageNum');
+
+  // Right page elements
+  const rightPageOverline = container.querySelector('#rightPageOverline');
+  const bookStoryTitle = container.querySelector('#bookStoryTitle');
+  const bookStoryProse = container.querySelector('#bookStoryProse');
+  const bookDropCap = container.querySelector('#bookDropCap');
+  const bookStoryRemaining = container.querySelector('#bookStoryRemaining');
+  const bookPullQuote = container.querySelector('#bookPullQuote');
+  const rightPageNum = container.querySelector('#rightPageNum');
+  const bookPageCurlTab = container.querySelector('#bookPageCurlTab');
+
+  // Navigation elements
+  const btnBookPrevPage = container.querySelector('#btnBookPrevPage');
+  const btnBookNextPage = container.querySelector('#btnBookNextPage');
+  const btnBookActionTurn = container.querySelector('#btnBookActionTurn');
+  const btnBookActionText = container.querySelector('#btnBookActionText');
+  const bookChapterCounter = container.querySelector('#bookChapterCounter');
+  const bookChapterPills = container.querySelectorAll('.book-chapter-pill');
 
   let currentMilestoneIdx = 0;
+  let isTurningPage = false;
 
-  function updateMilestoneCard() {
-    const item = milestonesList[currentMilestoneIdx];
+  function updateBookContent(idx) {
+    const item = milestonesList[idx];
     if (!item) return;
 
-    if (storyCardTag) storyCardTag.textContent = item.tag || `CHAPTER 0${currentMilestoneIdx + 1}`;
-    if (storyCardDate) storyCardDate.textContent = item.date || '';
-    if (storyCardPhoto) storyCardPhoto.src = item.image || '/images/sunset.jpg';
-    if (storyCardTitle) storyCardTitle.textContent = item.title || '';
-    if (storyCardDesc) storyCardDesc.textContent = item.desc || '';
+    const pageLeftIdx = idx * 2 + 1;
+    const pageRightIdx = idx * 2 + 2;
 
-    if (storyMilestoneCounter) {
-      storyMilestoneCounter.textContent = `Chapter ${currentMilestoneIdx + 1} of ${milestonesList.length}`;
+    // Left Page
+    if (leftPageStamp) leftPageStamp.textContent = `${item.tag || `CH. 0${idx + 1}`} • PHOTO KEEPSAKE`;
+    if (leftPageDate) leftPageDate.textContent = (item.date || '').toUpperCase();
+    if (bookPhotoImg) bookPhotoImg.src = item.image || '/images/sunset.jpg';
+    if (bookPhotoCaption) bookPhotoCaption.textContent = `“${item.title || 'Where our worlds first touched'}”`;
+    if (leftPageNum) leftPageNum.textContent = `PAGE 0${pageLeftIdx}`;
+
+    // Right Page
+    if (rightPageOverline) rightPageOverline.textContent = `CHAPTER VI • MILESTONE 0${idx + 1}`;
+    if (bookStoryTitle) bookStoryTitle.textContent = item.title || '';
+
+    const desc = item.desc || 'One single glance that stopped time.';
+    if (bookDropCap) bookDropCap.textContent = desc.charAt(0);
+    if (bookStoryRemaining) bookStoryRemaining.textContent = desc.slice(1);
+
+    if (bookPullQuote) {
+      const shortQuote = desc.length > 55 ? desc.slice(0, 52).trim() + '…' : desc;
+      bookPullQuote.textContent = `“${shortQuote}”`;
     }
+    if (rightPageNum) rightPageNum.textContent = `PAGE 0${pageRightIdx}`;
 
-    storyMilestoneDots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === currentMilestoneIdx);
+    // Update Counter & Pills
+    if (bookChapterCounter) {
+      bookChapterCounter.innerHTML = `<span>Milestone ${idx + 1} of ${milestonesList.length}</span>`;
+    }
+    bookChapterPills.forEach((pill, i) => {
+      pill.classList.toggle('active', i === idx);
     });
 
-    if (btnFlyText) {
-      if (currentMilestoneIdx === milestonesList.length - 1) {
-        btnFlyText.textContent = 'Whirlwind to The Sacred Letter 🔥';
+    // Update Action Button
+    if (btnBookActionText) {
+      if (idx === milestonesList.length - 1) {
+        btnBookActionText.textContent = 'Proceed to The Sacred Letter 🔥';
       } else {
-        btnFlyText.textContent = 'Fly to Next Chapter';
+        btnBookActionText.textContent = 'Turn to Next Chapter';
       }
     }
   }
 
-  function spawnFlyingLeaves(count = 22) {
-    if (!flyingLeavesSky) return;
-    const leafIcons = ['🌸', '💮', '🌸', '🌺', '🌸', '✨'];
-    for (let i = 0; i < count; i++) {
-      const leaf = document.createElement('div');
-      leaf.className = 'flying-leaf';
-      leaf.textContent = leafIcons[Math.floor(Math.random() * leafIcons.length)];
-      
-      const startX = Math.random() * 90;
-      const startY = Math.random() * 40 + 60;
-      const targetX = startX + (Math.random() * 120 - 40);
-      const targetY = -20 - Math.random() * 30;
-      const rotZ = Math.random() * 720 - 360;
-      const rotX = Math.random() * 360;
-      const duration = 0.9 + Math.random() * 0.7;
-      const delay = Math.random() * 0.22;
-      const scale = 0.8 + Math.random() * 0.8;
+  function turnBookPage(dir, userInitiated = true) {
+    if (isTurningPage) return;
 
-      leaf.style.left = `${startX}%`;
-      leaf.style.top = `${startY}%`;
-      leaf.style.fontSize = `${20 * scale}px`;
-      flyingLeavesSky.appendChild(leaf);
+    const nextIdx = currentMilestoneIdx + dir;
 
-      gsap.to(leaf, {
-        x: `${targetX - startX}vw`,
-        y: `${targetY - startY}vh`,
-        rotation: rotZ,
-        rotationX: rotX,
-        opacity: 0,
-        duration: duration,
-        delay: delay,
-        ease: 'power1.out',
-        onComplete: () => leaf.remove()
-      });
+    if (nextIdx < 0) return; // at beginning
+
+    if (nextIdx >= milestonesList.length) {
+      // Reached the end of the memory book! Proceed to next scene
+      soundFx.paperTurn();
+      chime(660, 880);
+      goToScene(7);
+      return;
     }
-  }
 
-  function flyToNextMilestone(userInitiated = false) {
-    soundFx.whoosh();
-    if (navigator.vibrate) navigator.vibrate(18);
+    isTurningPage = true;
+    soundFx.paperTurn();
+    if (navigator.vibrate) navigator.vibrate(22);
 
-    if (currentMilestoneIdx < milestonesList.length - 1) {
-      spawnFlyingLeaves(18);
-      gsap.to(storyMilestoneCard, {
-        x: -300,
-        rotation: -14,
-        scale: 0.88,
-        opacity: 0,
-        duration: 0.35,
+    const isForward = dir > 0;
+
+    // 3D realistic page flip with GSAP
+    if (bookSpreadSurface) {
+      gsap.to(bookSpreadSurface, {
+        rotationY: isForward ? -18 : 18,
+        scale: 0.96,
+        duration: 0.22,
         ease: 'power2.in',
         onComplete: () => {
-          currentMilestoneIdx++;
-          updateMilestoneCard();
-          gsap.fromTo(storyMilestoneCard,
-            { x: 300, rotation: 14, scale: 0.88, opacity: 0 },
-            { x: 0, rotation: 0, scale: 1, opacity: 1, duration: 0.48, ease: 'back.out(1.2)' }
+          currentMilestoneIdx = nextIdx;
+          updateBookContent(currentMilestoneIdx);
+
+          gsap.fromTo(bookSpreadSurface,
+            { rotationY: isForward ? 18 : -18, scale: 0.96 },
+            {
+              rotationY: 0,
+              scale: 1,
+              duration: 0.34,
+              ease: 'back.out(1.15)',
+              onComplete: () => {
+                isTurningPage = false;
+              }
+            }
           );
-          scheduleMilestoneAutoAdvance();
         }
       });
     } else {
-      spawnFlyingLeaves(35);
-      soundFx.whoosh();
-      if (milestoneTimer) clearTimeout(milestoneTimer);
-      setTimeout(() => {
-        goToScene(7);
-      }, 700);
+      currentMilestoneIdx = nextIdx;
+      updateBookContent(currentMilestoneIdx);
+      isTurningPage = false;
     }
-  }
-
-  function scheduleMilestoneAutoAdvance() {
-    if (milestoneTimer) clearTimeout(milestoneTimer);
-    milestoneTimer = setTimeout(() => {
-      if (currentScene === 6) flyToNextMilestone(false);
-    }, 4500);
   }
 
   function startStoryMilestones() {
     currentMilestoneIdx = 0;
-    updateMilestoneCard();
-    scheduleMilestoneAutoAdvance();
+    updateBookContent(0);
+    soundFx.paperTurn();
   }
 
-  btnFlyNextMilestone?.addEventListener('click', () => flyToNextMilestone(true));
-  storyMilestoneCard?.addEventListener('click', () => flyToNextMilestone(true));
+  // Event Listeners for Memory Book
+  btnBookNextPage?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    turnBookPage(1, true);
+  });
+
+  btnBookPrevPage?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    turnBookPage(-1, true);
+  });
+
+  btnBookActionTurn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    turnBookPage(1, true);
+  });
+
+  bookPageCurlTab?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    turnBookPage(1, true);
+  });
+
+  bookChapterPills.forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const targetPage = parseInt(pill.getAttribute('data-page') || '0', 10);
+      if (targetPage !== currentMilestoneIdx) {
+        const dir = targetPage > currentMilestoneIdx ? 1 : -1;
+        currentMilestoneIdx = targetPage - dir; // turnBookPage will add dir
+        turnBookPage(dir, true);
+      }
+    });
+  });
+
+  // Touch Swipe Gesture Support for Realistic Book Turning
+  let touchStartX = 0;
+  let touchStartY = 0;
+  realisticBookContainer?.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches[0]) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  realisticBookContainer?.addEventListener('touchend', (e) => {
+    if (e.changedTouches && e.changedTouches[0]) {
+      const diffX = e.changedTouches[0].clientX - touchStartX;
+      const diffY = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) {
+          // Swiped Left -> Next page
+          turnBookPage(1, true);
+        } else {
+          // Swiped Right -> Prev page
+          turnBookPage(-1, true);
+        }
+      }
+    }
+  }, { passive: true });
 
   // =========================================================================
   // ACT VII: SACRED LETTER WITH PHYSICAL MATCHSTICK RUBBING & BURNING
