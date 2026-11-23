@@ -21,6 +21,8 @@ export const TEMPLATES = {
       audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
       audioSubtitle: "ROMANTIC MASTERPIECE",
       audioSrc: "/audio/alfaaz.mp3",
+      spotifyUrl: "",
+      youtubeUrl: "",
       heroTitle: "To My One & Only Love 🌸",
       heroSubtitle: "A continuous story of us, blooming through every season.",
       polaroids: [
@@ -45,6 +47,7 @@ export const TEMPLATES = {
         "Your happiness is my highest priority forever and always ✨"
       ],
       letterText: "Dearest you,\n\nFrom the moment you walked into my life, you brought colors, laughter, and a warmth I never knew existed.\n\nWatching you grow, smile, and achieve your dreams is my greatest joy. Thank you for being my partner, my best friend, and my whole heart.\n\nHere is to celebrating you today, tomorrow, and across a lifetime of blooming love.\n\nI love you endlessly. ♡",
+      treatyVow: "I promise to love you on peaceful mornings and in wild storms, to cherish your laugh, to support your dreams, and to walk hand-in-hand with you through every tomorrow.",
       constellations: [
         { title: "The First Spark", date: "Where It Began", note: "The exact moment the universe guided my eyes to yours, and my world changed forever.", x: 20, y: 32 },
         { title: "Midnight Drives", date: "2 AM Talks", note: "Late-night drives with windows down, singing along, sharing every quiet dream.", x: 45, y: 22 },
@@ -58,6 +61,8 @@ export const TEMPLATES = {
           icon: "✨",
           tag: "THE SPARK",
           title: "Where Our Story Began",
+          date: "June 14, 2022",
+          image: "/images/sunset.jpg",
           desc: "One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my entire life."
         },
         {
@@ -65,6 +70,8 @@ export const TEMPLATES = {
           icon: "🌙",
           tag: "THE CONFESSION",
           title: "Falling in Love with Your Soul",
+          date: "August 28, 2022",
+          image: "/images/always_you.jpg",
           desc: "Laughing so hard our ribs hurt, talking until 4 AM about childhood dreams and life philosophies. I realized I was falling completely."
         },
         {
@@ -72,6 +79,8 @@ export const TEMPLATES = {
           icon: "🛡️",
           tag: "THE ANCHOR",
           title: "Weathering Every Storm Together",
+          date: "February 12, 2023",
+          image: "/images/pretty.jpg",
           desc: "Life isn't always sunny, but standing shoulder-to-shoulder with you proved that we can conquer any challenge as a team."
         },
         {
@@ -79,6 +88,8 @@ export const TEMPLATES = {
           icon: "📸",
           tag: "THE ADVENTURES",
           title: "A Thousand Unfiltered Memories",
+          date: "October 05, 2023",
+          image: "/images/dream_girl.jpg",
           desc: "Spontaneous road trips, messy cooking experiments, late-night grocery runs. The ordinary world becomes pure magic with you."
         },
         {
@@ -86,6 +97,8 @@ export const TEMPLATES = {
           icon: "💍",
           tag: "ETERNITY",
           title: "Today, Tomorrow & Across Lifetimes",
+          date: "Forever & Always",
+          image: "/images/queen.jpg",
           desc: "In a world of fleeting moments, choosing you is the easiest decision I'll ever make. My heart is, and will forever be, your home."
         }
       ]

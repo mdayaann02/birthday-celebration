@@ -36,8 +36,44 @@ try {
   // Ignore re-registration errors
 }
 
+
+function formatSpotifyEmbedUrl(url) {
+  if (!url) return '';
+  try {
+    const clean = url.trim();
+    if (clean.includes('/embed/')) return clean;
+    const match = clean.match(/open\.spotify\.com(?:\/intl-[a-z]{2})?\/(track|playlist|album|artist)\/([a-zA-Z0-9]+)/);
+    if (match) {
+      return `https://open.spotify.com/embed/${match[1]}/${match[2]}?utm_source=generator&theme=0`;
+    }
+    return clean;
+  } catch (_) {
+    return url;
+  }
+}
+
+function formatYouTubeEmbedUrl(url) {
+  if (!url) return '';
+  try {
+    const clean = url.trim();
+    if (clean.includes('youtube.com/embed/')) return clean;
+    const vMatch = clean.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+    if (vMatch) return `https://www.youtube.com/embed/${vMatch[1]}?autoplay=0&rel=0`;
+    const shortMatch = clean.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+    if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}?autoplay=0&rel=0`;
+    const listMatch = clean.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+    if (listMatch) return `https://www.youtube.com/embed/videoseries?list=${listMatch[1]}`;
+    return clean;
+  } catch (_) {
+    return url;
+  }
+}
+
 export function renderBlossomTemplate(container, initialData = {}, isMakerReview = false) {
   const data = initialData || {};
+  
+  const spotifyEmbed = formatSpotifyEmbedUrl(data.spotifyUrl);
+  const youtubeEmbed = formatYouTubeEmbedUrl(data.youtubeUrl);
   const recipient = data.recipientName || 'My Love';
   const sender = data.senderName || 'Yours Truly';
 
@@ -79,6 +115,8 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
       icon: "✨",
       tag: "THE SPARK",
       title: "Where Our Story Began",
+      date: "June 14, 2022",
+      image: "/images/sunset.jpg",
       desc: "One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my entire life."
     },
     {
@@ -86,6 +124,8 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
       icon: "🌙",
       tag: "THE CONFESSION",
       title: "Falling in Love with Your Soul",
+      date: "August 28, 2022",
+      image: "/images/always_you.jpg",
       desc: "Laughing so hard our ribs hurt, talking until 4 AM about childhood dreams and life philosophies. I realized I was falling completely."
     },
     {
@@ -93,6 +133,8 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
       icon: "🛡️",
       tag: "THE ANCHOR",
       title: "Weathering Every Storm Together",
+      date: "February 12, 2023",
+      image: "/images/pretty.jpg",
       desc: "Life isn't always sunny, but standing shoulder-to-shoulder with you proved that we can conquer any challenge as a team."
     },
     {
@@ -100,6 +142,8 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
       icon: "📸",
       tag: "THE ADVENTURES",
       title: "A Thousand Unfiltered Memories",
+      date: "July 04, 2023",
+      image: "/images/dream_girl.jpg",
       desc: "Spontaneous road trips, messy cooking experiments, late-night grocery runs. The ordinary world becomes pure magic with you."
     },
     {
@@ -107,6 +151,8 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
       icon: "💍",
       tag: "ETERNITY",
       title: "Today, Tomorrow & Across Lifetimes",
+      date: "November 25, 2024",
+      image: "/images/queen.jpg",
       desc: "In a world of fleeting moments, choosing you is the easiest decision I'll ever make. My heart is, and will forever be, your home."
     }
   ];
@@ -357,29 +403,38 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         </audio>
       </div>
 
-      <!-- ================= SCENE 4: CELESTIAL CONSTELLATION MAP ================= -->
+      <!-- ================= SCENE 4: CELESTIAL STARS (THANOR.AI STYLE) ================= -->
       <section class="romance-fullscreen-scene" data-scene="4" id="sceneConstellation" style="display:none; opacity:0;">
         <div class="scene-inner-wrap">
           <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER IV</span>
+            <span class="chapter-num-pill">CHAPTER IV • CELESTIAL ODYSSEY</span>
             <h3 class="chapter-title">Written in the Stars</h3>
-            <p class="chapter-desc">Tap the glowing celestial stars to trace our memory constellation across the cosmos 💫</p>
+            <p class="chapter-desc">Touch the glowing celestial stars. Stardust lines trace our memory constellation across the cosmos 💫</p>
           </div>
 
           <div class="constellation-canvas-container" id="constellationStage">
             <canvas id="constellationCanvas" class="constellation-canvas"></canvas>
             
-            <!-- Floating Active Constellation Card -->
-            <div class="constellation-memory-card" id="constellationMemoryCard" style="display:none;">
+            <!-- Thanor.ai Floating Active Constellation Card with Auto-Advance Progress Ring -->
+            <div class="constellation-memory-card thanor-star-card" id="constellationMemoryCard" style="display:none;">
               <div class="constellation-card-header">
                 <span class="constellation-star-icon">⭐</span>
                 <div class="constellation-title-wrap">
                   <h4 class="constellation-node-title" id="constNodeTitle">The First Spark</h4>
                   <span class="constellation-node-date" id="constNodeDate">Where It Began</span>
                 </div>
-                <button type="button" class="btn-constellation-close" id="btnConstClose" aria-label="Close Note">✕</button>
+                <div class="thanor-timer-badge">
+                  <span class="thanor-timer-text" id="thanorTimerText">Next in 3s</span>
+                  <div class="thanor-timer-bar-wrap">
+                    <div class="thanor-timer-bar-fill" id="thanorTimerBar"></div>
+                  </div>
+                </div>
               </div>
               <p class="constellation-node-note" id="constNodeNote">The exact moment the universe guided my eyes to yours.</p>
+              <div class="thanor-card-footer">
+                <span class="thanor-guidance-text">✦ Touching stars connects the galaxy ✦</span>
+                <button type="button" class="btn-thanor-next-star" id="btnThanorNextStar">Next Star ❯</button>
+              </div>
             </div>
 
             <!-- Quick Star Selector Chips -->
@@ -390,77 +445,47 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
                 </button>
               `).join('')}
             </div>
+
+            <!-- Hyperdrive Warp Flash Overlay -->
+            <div class="hyperdrive-warp-overlay" id="hyperdriveWarpOverlay">
+              <div class="warp-speed-text">✦ ALL STARS CONNECTED • ENTERING HYPERDRIVE ✦</div>
+            </div>
           </div>
 
           <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="5">
+            <button type="button" class="btn-scene-next-hero" data-target="5" id="btnSkipToMixtape">
               <span class="btn-next-spark">✦</span>
-              <span class="btn-next-text">Step into Chapter V: Treasured Keepsakes</span>
+              <span class="btn-next-text">Step into Chapter V: The Soundtrack of Us</span>
               <span class="btn-next-arrow">❯</span>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- ================= SCENE 5: REALISTIC 3D HARDCOVER MEMORY FLIPBOOK ================= -->
-      <section class="romance-fullscreen-scene" data-scene="5" id="sceneFlipbook" style="display:none; opacity:0;">
+      <!-- ================= SCENE 5: INTERACTIVE MIXTAPE & REASONS ================= -->
+      <section class="romance-fullscreen-scene" data-scene="5" id="sceneCassette" style="display:none; opacity:0;">
         <div class="scene-inner-wrap">
           <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER V</span>
-            <h3 class="chapter-title">Treasured Keepsakes</h3>
-            <p class="chapter-desc">A tactile hardcover book of our most radiant moments. Flip pages or swipe to turn 📸</p>
-          </div>
-
-          <div class="realistic-flipbook-wrap" style="margin-bottom:20px;">
-            <div class="realistic-book" id="realisticBook">
-              ${polaroids.map((p, idx) => `
-                <div class="book-leaf leaf-${idx + 1}" data-leaf="${idx}">
-                  <div class="leaf-page page-front">
-                    <div class="book-polaroid-frame">
-                      <div class="polaroid-pin">📍</div>
-                      <img src="${p.image}" class="book-polaroid-img" alt="${p.caption}" loading="lazy" />
-                      <div class="polaroid-caption">${p.caption}</div>
-                      <div class="polaroid-date-stamp">MEMORIES • VOL. 1</div>
-                    </div>
-                  </div>
-                  <div class="leaf-page page-back">
-                    <div class="back-parchment-content">
-                      <span class="back-quote-mark">“</span>
-                      <p class="back-page-note">${p.note || 'Every beat of my heart whispers your name.'}</p>
-                      <button type="button" class="btn-download-polaroid" data-leaf-idx="${idx}">
-                        💾 Save Keepsake Photo
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-
-            <div class="flipbook-controls">
-              <button type="button" class="btn-flip-ctrl" id="btnFlipPrev" disabled>❮ Previous Page</button>
-              <span class="flip-page-indicator" id="flipIndicator">Memory 1 of ${polaroids.length}</span>
-              <button type="button" class="btn-flip-ctrl" id="btnFlipNext">Next Page ❯</button>
-            </div>
-          </div>
-
-          <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="6">
-              <span class="btn-next-spark">✦</span>
-              <span class="btn-next-text">Step into Chapter VI: The Soundtrack of Us</span>
-              <span class="btn-next-arrow">❯</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= SCENE 6: VINTAGE CASSETTE & REASONS ================= -->
-      <section class="romance-fullscreen-scene" data-scene="6" id="sceneCassette" style="display:none; opacity:0;">
-        <div class="scene-inner-wrap">
-          <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER VI</span>
+            <span class="chapter-num-pill">CHAPTER V • THE SOUNDTRACK</span>
             <h3 class="chapter-title">The Soundtrack of Us</h3>
-            <p class="chapter-desc">Press play on our mixtape &amp; uncover why my soul loves you forever 📻</p>
+            <p class="chapter-desc">Our dedicated mixtape &amp; the reasons why my soul loves you forever 📻</p>
           </div>
+
+          ${spotifyEmbed ? `
+            <div class="spotify-embed-container" style="width:100%; max-width:540px; margin-bottom:20px;">
+              <div class="embed-header-badge"><span>🟢</span> SPOTIFY DEDICATED PLAYLIST</div>
+              <iframe style="border-radius:18px; box-shadow:0 12px 36px rgba(0,0,0,0.5);" src="${spotifyEmbed}" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+          ` : ''}
+
+          ${youtubeEmbed ? `
+            <div class="youtube-embed-container" style="width:100%; max-width:540px; margin-bottom:20px;">
+              <div class="embed-header-badge"><span>🔴</span> YOUTUBE SPECIAL PLAYLIST</div>
+              <div class="youtube-responsive-box" style="position:relative; width:100%; padding-bottom:56.25%; border-radius:18px; overflow:hidden; box-shadow:0 12px 36px rgba(0,0,0,0.5);">
+                <iframe style="position:absolute; top:0; left:0; width:100%; height:100%;" src="${youtubeEmbed}" title="YouTube player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              </div>
+            </div>
+          ` : ''}
 
           <div class="vintage-cassette-wrap" style="margin-bottom:20px;">
             <div class="cassette-body" id="vintageCassettePlayer">
@@ -494,10 +519,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
             <div class="cassette-deck-controls">
               <button type="button" class="btn-cassette-play" id="btnCassettePlay">
-                <span class="cassette-play-icon">▶</span>
-                <span class="cassette-play-label">Play Mixtape</span>
+                <span class="cassette-play-icon" id="cassettePlayIcon">▶</span>
+                <span class="cassette-play-label" id="cassettePlayLabel">Play Melody</span>
               </button>
-              <div class="cassette-eq-bars" id="cassetteEq">
+              <div class="cassette-eq-bars" id="cassetteEqBars">
                 <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
               </div>
             </div>
@@ -535,98 +560,139 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
           </div>
 
           <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="7">
-              <span class="btn-next-spark">✦</span>
-              <span class="btn-next-text">Step into Chapter VII: Our Timeless Milestones</span>
+            <button type="button" class="btn-scene-next-hero" data-target="6">
+              <span class="btn-next-spark">🍃</span>
+              <span class="btn-next-text">Turn the Page to Our Story Milestones</span>
               <span class="btn-next-arrow">❯</span>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- ================= SCENE 7: TIMELESS MILESTONES ================= -->
-      <section class="romance-fullscreen-scene" data-scene="7" id="sceneTimeline" style="display:none; opacity:0;">
+      <!-- ================= SCENE 6: STORYTELLING MILESTONES (3D FLYING LEAF) ================= -->
+      <section class="romance-fullscreen-scene" data-scene="6" id="sceneTimeline" style="display:none; opacity:0;">
         <div class="scene-inner-wrap">
           <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER VII</span>
-            <h3 class="chapter-title">Our Timeless Milestones</h3>
-            <p class="chapter-desc">Every defining landmark of our story, carved into golden memory ⏳</p>
+            <span class="chapter-num-pill">CHAPTER VI • TIMELESS MEMORIES</span>
+            <h3 class="chapter-title">Our Storybook Milestones</h3>
+            <p class="chapter-desc">Each chapter of us, carried on the gentle breeze of time 🍃</p>
           </div>
 
-          <div class="romance-timeline-container" id="romanceTimeline">
-            <div class="timeline-gold-track"></div>
-            ${milestonesList.map((m, i) => `
-              <div class="timeline-milestone-node node-${i + 1}" data-node-idx="${i}">
-                <div class="milestone-badge-column">
-                  <span class="milestone-num">${m.num}</span>
-                  <div class="milestone-icon-bubble">${m.icon}</div>
-                </div>
-                <div class="milestone-card-glass">
-                  <span class="milestone-tag">${m.tag}</span>
-                  <h4 class="milestone-title">${m.title}</h4>
-                  <p class="milestone-desc">${m.desc}</p>
+          <div class="story-milestones-stage" id="storyMilestonesStage">
+            <div class="flying-leaves-sky" id="flyingLeavesSky" aria-hidden="true"></div>
+
+            <div class="story-milestone-card" id="storyMilestoneCard">
+              <div class="story-card-top-bar">
+                <span class="story-card-badge" id="storyCardTag">${milestonesList[0]?.tag || 'THE SPARK'}</span>
+                <span class="story-card-date" id="storyCardDate">${milestonesList[0]?.date || 'June 14, 2022'}</span>
+              </div>
+
+              <div class="story-card-media-wrapper">
+                <img src="${milestonesList[0]?.image || '/images/sunset.jpg'}" class="story-card-photo" id="storyCardPhoto" alt="Milestone Photo" />
+                <div class="story-card-photo-gloss"></div>
+              </div>
+
+              <div class="story-card-body">
+                <h4 class="story-card-title" id="storyCardTitle">${milestonesList[0]?.title || 'Where Our Story Began'}</h4>
+                <p class="story-card-desc" id="storyCardDesc">${milestonesList[0]?.desc || 'One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my life.'}</p>
+              </div>
+            </div>
+
+            <div class="story-milestone-nav">
+              <div class="story-milestone-dots" id="storyMilestoneDots">
+                ${milestonesList.map((_, i) => `
+                  <span class="story-dot ${i === 0 ? 'active' : ''}" data-m-idx="${i}"></span>
+                `).join('')}
+              </div>
+              <div class="story-milestone-counter" id="storyMilestoneCounter">Chapter 1 of ${milestonesList.length}</div>
+              <button type="button" class="btn-fly-next-chapter" id="btnFlyNextMilestone">
+                <span class="leaf-anim-icon">🍃</span>
+                <span class="btn-fly-text" id="btnFlyText">Fly to Next Chapter</span>
+                <span class="btn-fly-arrow">❯</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="scene-forward-action" style="margin-top:20px;">
+            <button type="button" class="btn-scene-next-hero" data-target="7">
+              <span class="btn-next-spark">🔥</span>
+              <span class="btn-next-text">Proceed to Chapter VII: The Sacred Letter</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCENE 7: SACRED MATCH BURNING LETTER ================= -->
+      <section class="romance-fullscreen-scene" data-scene="7" id="sceneLetter" style="display:none; opacity:0;">
+        <div class="scene-inner-wrap">
+          <div class="romance-chapter-header">
+            <span class="chapter-num-pill">CHAPTER VII • THE CONFESSION</span>
+            <h3 class="chapter-title">The Sacred Letter</h3>
+            <p class="chapter-desc">Strike the wooden match to ignite the flame &amp; melt the royal wax seal 🔥</p>
+          </div>
+
+          <div class="match-strike-assembly" id="matchStrikeAssembly">
+            <div class="match-striker-strip" id="matchStrikerStrip">
+              <span class="striker-texture"></span>
+              <span class="striker-label">STRIKE HERE</span>
+            </div>
+
+            <div class="match-stick" id="matchStick">
+              <div class="match-head" id="matchHead">
+                <div class="match-flame" id="matchFlame" style="display:none;">
+                  <div class="flame-core"></div>
+                  <div class="flame-outer"></div>
+                  <div class="flame-sparks"><span></span><span></span><span></span></div>
                 </div>
               </div>
-            `).join('')}
-          </div>
+              <div class="match-wood"></div>
+            </div>
 
-          <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="8">
-              <span class="btn-next-spark">✦</span>
-              <span class="btn-next-text">Step into Chapter VIII: The Sacred Letter</span>
-              <span class="btn-next-arrow">❯</span>
+            <button type="button" class="btn-strike-match-action" id="btnStrikeMatch">
+              <span class="match-icon">🔥</span> Strike Match &amp; Melt Wax Seal
             </button>
           </div>
-        </div>
-      </section>
 
-      <!-- ================= SCENE 8: WAX-SEALED LETTER ================= -->
-      <section class="romance-fullscreen-scene" data-scene="8" id="sceneLetter" style="display:none; opacity:0;">
-        <div class="scene-inner-wrap">
-          <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER VIII</span>
-            <h3 class="chapter-title">The Sacred Letter</h3>
-            <p class="chapter-desc">A sealed parchment written directly from the depth of my heart 💌</p>
-          </div>
-
-          <div class="wax-envelope-container">
+          <div class="wax-letter-container" style="width:100%; max-width:540px; margin-bottom:20px;">
             <div class="wax-envelope-card" id="waxEnvelope">
               <div class="wax-seal-wrapper" id="waxSealWrapper">
                 <div class="wax-seal-stamp" id="waxSealStamp">
-                  <span class="wax-monogram">M&amp;D</span>
+                  <span class="wax-monogram">👑</span>
+                  <span class="wax-monogram-sub">ETERNAL</span>
                 </div>
-                <button type="button" class="btn-strike-match" id="btnStrikeMatch">
-                  <span class="match-icon">🔥</span> Strike Match to Melt Seal
-                </button>
+                <div class="wax-ember-cloud" id="waxEmberCloud"></div>
               </div>
+              
               <div class="parchment-letter-body" id="parchmentLetter">
                 <div class="parchment-header-crest">✦ AMOR VINCIT OMNIA ✦</div>
                 <div class="letter-text-flow">${letterBody.split('\n\n').join('<br/><br/>').split('\n').join('<br/>')}</div>
                 <div class="letter-signoff">
                   <div class="signoff-quote">"Always &amp; Forever"</div>
                   <div class="signoff-heart">♡</div>
+                  <div class="signoff-author">${sender}</div>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="9">
-              <span class="btn-next-spark">✦</span>
-              <span class="btn-next-text">Step into Chapter IX: Twilight Sky Lanterns</span>
+            <button type="button" class="btn-scene-next-hero" data-target="8">
+              <span class="btn-next-spark">🏮</span>
+              <span class="btn-next-text">Step into Chapter VIII: Twilight Sky Lanterns</span>
               <span class="btn-next-arrow">❯</span>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- ================= SCENE 9: TWILIGHT SKY LANTERNS ================= -->
-      <section class="romance-fullscreen-scene" data-scene="9" id="sceneLanterns" style="display:none; opacity:0;">
+      <!-- ================= SCENE 8: TWILIGHT SKY LANTERNS ================= -->
+      <section class="romance-fullscreen-scene" data-scene="8" id="sceneLanterns" style="display:none; opacity:0;">
         <div class="scene-inner-wrap">
           <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER IX</span>
+            <span class="chapter-num-pill">CHAPTER VIII • INFINITE WISHES</span>
             <h3 class="chapter-title">Twilight Sky Lanterns</h3>
-            <p class="chapter-desc">Watch our glowing lanterns drift into the cosmos. Tap to release personal wishes 🏮</p>
+            <p class="chapter-desc">Watch our wishes float gently into the night sky. Tap anywhere to release personal lanterns 🏮</p>
           </div>
 
           <div class="sky-lanterns-wrapper">
@@ -640,61 +706,90 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
           </div>
 
           <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="10">
-              <span class="btn-next-spark">✦</span>
-              <span class="btn-next-text">Seal Our Forever Promise: Chapter X</span>
+            <button type="button" class="btn-scene-next-hero" data-target="9">
+              <span class="btn-next-spark">💍</span>
+              <span class="btn-next-text">Proceed to Chapter IX: Treaty of Eternal Devotion</span>
               <span class="btn-next-arrow">❯</span>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- ================= SCENE 10: LIFETIME PROMISE & GRAND FINALE ================= -->
-      <section class="romance-fullscreen-scene romance-grand-finale-scene" data-scene="10" id="sceneFinale" style="display:none; opacity:0;">
+      <!-- ================= SCENE 9 & 10: TREATY OF DEVOTION & CLEAN REWATCH ================= -->
+      <section class="romance-fullscreen-scene romance-grand-finale-scene" data-scene="9" id="sceneFinale" style="display:none; opacity:0;">
         <div class="scene-inner-wrap">
           <div class="romance-chapter-header">
-            <span class="chapter-num-pill" style="background:rgba(244,63,94,0.18); border-color:#f43f5e; color:#f43f5e;">CHAPTER X • GRAND FINALE</span>
-            <h3 class="chapter-title" style="font-size:clamp(28px, 6vw, 42px); color:#ffffff; text-shadow:0 0 20px rgba(244,63,94,0.6);">Our Lifetime Promise</h3>
-            <p class="chapter-desc" style="color:rgba(255,255,255,0.85);">A sacred vow sealed under the stars. Today, tomorrow, and eternity 💍</p>
+            <span class="chapter-num-pill" style="background:rgba(244,63,94,0.18); border-color:#f43f5e; color:#f43f5e;">CHAPTER IX • SACRED TREATY</span>
+            <h3 class="chapter-title" style="font-size:clamp(26px, 5.5vw, 40px); color:#ffffff; text-shadow:0 0 20px rgba(244,63,94,0.6);">Treaty of Eternal Devotion</h3>
+            <p class="chapter-desc" style="color:rgba(255,255,255,0.85);">A sacred eternal covenant. Sign with your real hand &amp; affix our golden royal seal 💍</p>
           </div>
 
-          <div class="certificate-glass-frame">
-            <div class="cert-gold-border">
-              <div class="cert-seal-top">👑</div>
-              <span class="cert-sub">CERTIFICATE OF ETERNAL LOVE</span>
-              <h4 class="cert-headline">To My Dearest ${recipient}</h4>
-              <p class="cert-text">
-                "I promise to love you on peaceful mornings and in wild storms, to cherish your laugh, to support your dreams, and to walk hand-in-hand with you through every tomorrow."
+          <div class="treaty-scroll-frame">
+            <div class="treaty-ornate-border">
+              <div class="treaty-header-emblem">👑</div>
+              <span class="treaty-sub-title">SOLEMN COVENANT OF LOVE</span>
+              <h4 class="treaty-couple-names">${recipient} &amp; ${sender}</h4>
+              
+              <p class="treaty-vow-text" id="treatyVowDisplay">
+                "${data.treatyVow || "I promise to love you on peaceful mornings and in wild storms, to cherish your laugh, to support your dreams, and to walk hand-in-hand with you through every tomorrow across lifetimes."}"
               </p>
-              <div class="cert-footer-row">
-                <div class="cert-sign-col">
-                  <span class="cert-sign-title">GIVEN WITH LOVE</span>
-                  <span class="cert-sign-hand">Forever &amp; Always</span>
+
+              <!-- REAL INTERACTIVE DIGITAL SIGNATURE CANVAS -->
+              <div class="treaty-signature-station">
+                <div class="signature-canvas-label">
+                  <span>DRAW YOUR SIGNATURE IN GOLDEN INK:</span>
+                  <button type="button" class="btn-clear-sig" id="btnClearTreatySig">↺ Clear</button>
                 </div>
-                <div class="cert-wax-seal-badge">
-                  <span class="cert-wax-text">SEALED</span>
+                <div class="signature-canvas-wrapper" id="signatureCanvasWrapper">
+                  <canvas id="treatySignatureCanvas" class="treaty-signature-canvas"></canvas>
+                  <div class="signature-watermark-text" id="sigWatermark">Sign with finger or stylus here ✍️</div>
                 </div>
-                <div class="cert-sign-col">
-                  <span class="cert-sign-title">DATE</span>
-                  <span class="cert-sign-date">${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                
+                <div class="treaty-signature-footer">
+                  <div class="treaty-date-col">
+                    <span class="treaty-footer-label">DATE OF SIGNING</span>
+                    <span class="treaty-footer-val">${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  </div>
+                  <div class="treaty-seal-col">
+                    <div class="golden-wax-stamp-stamp" id="goldenWaxStamp">
+                      <span class="stamp-crest">💍</span>
+                      <span class="stamp-text">ETERNAL</span>
+                    </div>
+                  </div>
+                  <div class="treaty-witness-col">
+                    <span class="treaty-footer-label">WITNESSED BY</span>
+                    <span class="treaty-footer-val">The Stars &amp; Universe</span>
+                  </div>
                 </div>
+
+                <div class="signature-status-badge" id="signatureStatusBadge" style="display:none;">
+                  ✦ OFFICIALLY SIGNED &amp; AFFIXED FOR ETERNITY ✦
+                </div>
+
+                <button type="button" class="btn-affix-treaty" id="btnAffixTreaty">
+                  💍 Affix Royal Seal &amp; Sign Treaty
+                </button>
               </div>
-              <button type="button" class="btn-seal-forever-vow" id="btnSealForeverVow">
-                💍 Seal Our Forever Promise
-              </button>
             </div>
           </div>
 
-          <!-- GRAND FINALE: RELIVE OUR STORY CENTERPIECE -->
-          <div class="masterpiece-watch-again-block">
-            <button type="button" class="btn-watch-again-masterpiece" id="btnWatchAgainMasterpiece" title="Watch our story again from the very beginning">
-              <span class="watch-again-icon">↺</span>
-              <span class="watch-again-text">Watch Again &amp; Relive Our Story 🌸</span>
-            </button>
-            <p class="watch-again-note">Relive our 10-chapter romantic journey from the beginning</p>
+          <!-- ACT X: HEARTFELT THANK YOU & CLEAN REWATCH OPTION -->
+          <div class="masterpiece-thank-you-card" id="masterpieceThankYouCard">
+            <div class="thank-you-crest">🌸</div>
+            <h3 class="thank-you-title">Thank You, My Dearest ${recipient}</h3>
+            <p class="thank-you-message">
+              Every second by your side is a gift I cherish with all my soul. Thank you for filling my universe with soft light, endless laughter, and boundless warmth. Here is to our forever.
+            </p>
+            <div class="thank-you-signature">— Yours Forever, ${sender} ♡</div>
+
+            <div class="masterpiece-watch-again-block">
+              <button type="button" class="btn-watch-again-masterpiece" id="btnWatchAgainMasterpiece" title="Relive our story from the very beginning">
+                <span class="watch-again-icon">↺</span>
+                <span class="watch-again-text">Relive Our Story from the Beginning 🌸</span>
+              </button>
+              <p class="watch-again-note">Rewinds the music &amp; restarts our continuous romantic odyssey from Act 1</p>
+            </div>
           </div>
-
-
         </div>
       </section>
 
@@ -2373,7 +2468,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const master3D = initRomanceMaster3D(master3DCanvas);
 
   // =========================================================================
-  // ACTS IV - X: FULL-SCREEN CINEMATIC SCENE TRANSITIONS (FORWARD-ONLY, ZERO-LAG)
+  // ACTS IV - X: FULL-SCREEN CINEMATIC SCENE TRANSITIONS (CONTINUOUS & DYNAMIC)
   // =========================================================================
   let currentScene = 1;
   let isTransitioning = false;
@@ -2381,17 +2476,23 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   function onSceneEnter(sceneNum) {
     if (sceneNum === 4) {
       initConstellationStage();
-    } else if (sceneNum === 6) {
+    } else if (sceneNum === 5) {
       updateCassetteState(isPlaying);
+    } else if (sceneNum === 6) {
+      initStoryMilestones();
+    } else if (sceneNum === 7) {
+      initMatchLetter();
+    } else if (sceneNum === 8) {
+      if (master3D) master3D.releaseLanterns(6);
+      spawnLanternBatch(3);
     } else if (sceneNum === 9) {
-      if (master3D) master3D.releaseLanterns(4);
-      spawnLanternBatch(2);
+      setupSignatureCanvas();
     }
   }
 
   function goToScene(targetScene) {
     if (isTransitioning || targetScene === currentScene) return;
-    if (targetScene < 1 || targetScene > 10) return;
+    if (targetScene < 1 || targetScene > 9) return;
 
     isTransitioning = true;
     soundFx.whoosh();
@@ -2409,8 +2510,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     // 3D Dolly Forward camera motion in Three.js
     if (master3D) {
       if (targetScene === 4) master3D.setMode('cosmos');
-      else if (targetScene === 9) master3D.setMode('lanterns');
-      else if (targetScene === 10) master3D.setMode('finale');
+      else if (targetScene === 8) master3D.setMode('lanterns');
+      else if (targetScene === 9) master3D.setMode('finale');
       else master3D.setMode('petals');
 
       master3D.dollyForward();
@@ -2511,7 +2612,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     goToScene(4);
   });
 
-  // Wire up all forward hero action buttons across all full-screen scenes
+  // Wire up all forward action buttons across all full-screen scenes
   container.querySelectorAll('.btn-scene-next-hero, .btn-scene-next').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -2520,268 +2621,25 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     });
   });
 
-
-  // 3D Flipbook Logic with Dynamic Z-Index, Tactile Audio, and Touch Swipes
-  const leaves = container.querySelectorAll('.book-leaf');
-  const btnFlipPrev = container.querySelector('#btnFlipPrev');
-  const btnFlipNext = container.querySelector('#btnFlipNext');
-  const flipIndicator = container.querySelector('#flipIndicator');
-  const realisticBook = container.querySelector('#realisticBook');
-  let currentLeafIdx = 0;
-
-  function updateFlipbook() {
-    leaves.forEach((leaf, idx) => {
-      if (idx < currentLeafIdx) {
-        leaf.classList.add('flipped');
-        leaf.style.zIndex = idx + 1; // Flipped leaves stack on left
-      } else {
-        leaf.classList.remove('flipped');
-        leaf.style.zIndex = polaroids.length - idx; // Unflipped leaves stack on right
-      }
-    });
-
-    if (btnFlipPrev) btnFlipPrev.disabled = (currentLeafIdx === 0);
-    if (btnFlipNext) btnFlipNext.disabled = (currentLeafIdx === polaroids.length);
-    if (flipIndicator) {
-      const dIdx = Math.min(currentLeafIdx + 1, polaroids.length);
-      flipIndicator.textContent = `Memory ${dIdx} of ${polaroids.length}`;
-    }
-
-    playPageTurnSound();
-    if (navigator.vibrate) navigator.vibrate(14);
-  }
-
-  btnFlipNext?.addEventListener('click', () => {
-    if (currentLeafIdx < polaroids.length) {
-      currentLeafIdx++;
-      updateFlipbook();
-    }
-  });
-
-  btnFlipPrev?.addEventListener('click', () => {
-    if (currentLeafIdx > 0) {
-      currentLeafIdx--;
-      updateFlipbook();
-    }
-  });
-
-  leaves.forEach((leaf, idx) => {
-    leaf.addEventListener('click', () => {
-      if (idx === currentLeafIdx) {
-        currentLeafIdx++;
-        updateFlipbook();
-      } else if (idx === currentLeafIdx - 1) {
-        currentLeafIdx--;
-        updateFlipbook();
-      }
-    });
-  });
-
-  // Medium-Zoom on Polaroid Images for Pro Fullscreen Lightbox
-  let zoomInstance = null;
-  try {
-    zoomInstance = mediumZoom(container.querySelectorAll('.book-polaroid-img'), {
-      background: 'rgba(18, 6, 12, 0.94)',
-      margin: 24
-    });
-  } catch (_) {}
-
-  // HTML2Canvas Download Keepsake Polaroid Card
-  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const leaf = btn.closest('.book-leaf');
-      const frame = leaf ? leaf.querySelector('.book-polaroid-frame') : null;
-      if (!frame) return;
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '⏳ Rendering...';
-      btn.disabled = true;
-      html2canvas(frame, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(cvs => {
-        const a = document.createElement('a');
-        a.download = `polaroid-memory-${Date.now()}.png`;
-        a.href = cvs.toDataURL('image/png');
-        a.click();
-        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
-        btn.innerHTML = '✓ Saved to Photos!';
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.disabled = false;
-        }, 2200);
-      }).catch(() => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      });
-    });
-  });
-
-  // Touch Swipe on Flipbook for Mobile Devices
-  let touchStartX = 0, touchStartY = 0;
-  realisticBook?.addEventListener('touchstart', (e) => {
-    if (e.touches && e.touches.length > 0) {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }
-  }, { passive: true });
-
-  realisticBook?.addEventListener('touchend', (e) => {
-    if (e.changedTouches && e.changedTouches.length > 0) {
-      const deltaX = e.changedTouches[0].clientX - touchStartX;
-      const deltaY = e.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
-        if (deltaX < 0 && currentLeafIdx < polaroids.length) {
-          currentLeafIdx++;
-          updateFlipbook();
-        } else if (deltaX > 0 && currentLeafIdx > 0) {
-          currentLeafIdx--;
-          updateFlipbook();
-        }
-      }
-    }
-  }, { passive: true });
-
-  // Wax Letter Match Strike
-  const btnStrikeMatch = container.querySelector('#btnStrikeMatch');
-  const waxStamp = container.querySelector('#waxSealStamp');
-  const waxWrapper = container.querySelector('#waxSealWrapper');
-  const parchmentLetter = container.querySelector('#parchmentLetter');
-
-  btnStrikeMatch?.addEventListener('click', () => {
-    chime(580, 800);
-    if (navigator.vibrate) navigator.vibrate([20, 30, 40]);
-    waxStamp?.classList.add('burned');
-    confetti({ particleCount: 50, spread: 60, origin: { y: 0.5 }, colors: ['#f59e0b', '#ef4444', '#ffd700'] });
-    setTimeout(() => {
-      if (waxWrapper) waxWrapper.style.display = 'none';
-      if (parchmentLetter) parchmentLetter.classList.add('visible');
-    }, 700);
-  });
-
-  // Sky Lanterns
-  const lanternField = container.querySelector('#floatingLanternField');
-  const btnReleaseMore = container.querySelector('#btnReleaseMoreLanterns');
-
-  function spawnOneLantern() {
-    if (!lanternField) return;
-    const l = document.createElement('div');
-    l.className = 'twilight-lantern';
-    const startX = Math.random() * 85 + 5;
-    const duration = Math.random() * 5 + 7;
-    const scale = Math.random() * 0.4 + 0.8;
-    l.style.left = `${startX}%`;
-    l.style.transform = `scale(${scale})`;
-    l.style.animationDuration = `${duration}s`;
-    l.innerHTML = `
-      <div class="lantern-paper"><span class="lantern-heart">♡</span></div>
-      <div class="lantern-flame"></div>
-    `;
-    lanternField.appendChild(l);
-    setTimeout(() => { if (typeof l?.remove === 'function') l.remove(); }, duration * 1000);
-  }
-
-  function spawnLanternBatch(count = 4) {
-    for (let i = 0; i < count; i++) setTimeout(spawnOneLantern, i * 400);
-  }
-
-  btnReleaseMore?.addEventListener('click', () => {
-    chime(780, 960);
-    if (navigator.vibrate) navigator.vibrate(25);
-    if (threeLanternsSky) {
-      threeLanternsSky.releaseBatch(6);
-    }
-    spawnLanternBatch(6);
-    confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 }, colors: ['#ffd700', '#ff69b4', '#fbcfe8'] });
-  });
-
-  // Make a wish star
-  wishBtn?.addEventListener('click', () => {
-    if (wishBtn.classList.contains('is-sent')) return;
-    chime(880, 1180);
-    starEl.style.left = '92%';
-    starEl.style.top = '18%';
-    starEl.classList.remove('is-flying');
-    requestAnimationFrame(() => starEl.classList.add('is-flying'));
-    wishBtn.textContent = '✨ wish sent';
-    wishBtn.classList.add('is-sent');
-    setTimeout(() => {
-      wishBtn.textContent = '🌠 make a wish';
-      wishBtn.classList.remove('is-sent');
-    }, 2200);
-  });
-
-  // Shuffle card
-  let lastCompliment = -1;
-  shuffleBtn?.addEventListener('click', () => {
-    chime(700, 940);
-    let i;
-    do {
-      i = (Math.random() * loveNotesList.length) | 0;
-    } while (i === lastCompliment && loveNotesList.length > 1);
-    lastCompliment = i;
-    gsap.fromTo(shuffleText, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.4 });
-    shuffleText.textContent = loveNotesList[i];
-  });
-
-// Dock chips removed in full-screen sequential mode
-
-  // Corner Mini Spinning CD Music Player
-  let isPlaying = false;
-  let pillTimer = null;
-
-  function showPill() {
-    if (!trackPill) return;
-    trackPill.classList.add('visible');
-    clearTimeout(pillTimer);
-    pillTimer = setTimeout(() => trackPill.classList.remove('visible'), 2600);
-  }
-
-  function setPlaying(playing) {
-    isPlaying = playing;
-    if (playing) {
-      musicToggle?.classList.add('playing');
-      miniCd?.classList.add('spinning');
-      showPill();
-    } else {
-      musicToggle?.classList.remove('playing');
-      miniCd?.classList.remove('spinning');
-    }
-    updateCassetteState(playing);
-  }
-
-  function startMusicAutoplay() {
-    const isEditorMode = Boolean(window.isCelebrationEditorMode) ||
-                         Boolean(document.querySelector('.studio-layout')) ||
-                         Boolean(container.closest('.studio-layout')) ||
-                         Boolean(container.closest('#previewContainer'));
-    if (isEditorMode) return;
-    if (!audioEl || isPlaying) return;
-    audioEl.play().then(() => setPlaying(true)).catch(() => {});
-  }
-
-  musicToggle?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!audioEl) return;
-    if (isPlaying) {
-      audioEl.pause();
-      setPlaying(false);
-    } else {
-      audioEl.play().then(() => setPlaying(true)).catch(() => {});
-    }
-  });
-
   // =========================================================================
-  // ACT IV: 60FPS CELESTIAL CONSTELLATION CANVAS
+  // ACT IV: THANOR.AI CELESTIAL STARS WITH AUTO-ADVANCE & HYPERDRIVE WARP
   // =========================================================================
   const constellationCanvas = container.querySelector('#constellationCanvas');
   const constellationCard = container.querySelector('#constellationMemoryCard');
   const constNodeTitle = container.querySelector('#constNodeTitle');
   const constNodeDate = container.querySelector('#constNodeDate');
   const constNodeNote = container.querySelector('#constNodeNote');
+  const thanorTimerBar = container.querySelector('#thanorTimerBar');
+  const thanorTimerText = container.querySelector('#thanorTimerText');
+  const btnThanorNextStar = container.querySelector('#btnThanorNextStar');
   const constStarChips = container.querySelectorAll('.const-star-chip');
-  const btnConstClose = container.querySelector('#btnConstClose');
+  const hyperdriveWarpOverlay = container.querySelector('#hyperdriveWarpOverlay');
 
-  let constRafId = null;
-  let activeConstIdx = 0;
   let constInitialized = false;
+  let activeConstIdx = 0;
+  let constRafId = 0;
+  let starTimer = null;
+  let starTimerInterval = null;
 
   function initConstellationStage() {
     if (!constellationCanvas || constInitialized) return;
@@ -2822,8 +2680,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
       // Background ambient space gradient
       const grad = cCtx.createRadialGradient(cW * 0.5, cH * 0.45, 10, cW * 0.5, cH * 0.45, cW * 0.7);
-      grad.addColorStop(0, 'rgba(28, 16, 44, 0.7)');
-      grad.addColorStop(1, 'rgba(12, 8, 20, 0.96)');
+      grad.addColorStop(0, 'rgba(28, 16, 44, 0.75)');
+      grad.addColorStop(1, 'rgba(12, 8, 20, 0.98)');
       cCtx.fillStyle = grad;
       cCtx.fillRect(0, 0, cW, cH);
 
@@ -2842,12 +2700,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         y: (c.y / 100) * cH
       }));
 
-      // Draw connecting golden constellation lines
+      // Draw connecting glowing stardust constellation lines up to active star
       cCtx.beginPath();
-      cCtx.lineWidth = 1.8;
-      cCtx.strokeStyle = 'rgba(251, 191, 36, 0.55)';
+      cCtx.lineWidth = 2.2;
+      cCtx.strokeStyle = 'rgba(251, 191, 36, 0.75)';
       cCtx.shadowColor = '#fbbf24';
-      cCtx.shadowBlur = 8;
+      cCtx.shadowBlur = 10;
       for (let i = 0; i < points.length; i++) {
         if (i === 0) cCtx.moveTo(points[i].x, points[i].y);
         else cCtx.lineTo(points[i].x, points[i].y);
@@ -2855,25 +2713,41 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       cCtx.stroke();
       cCtx.shadowBlur = 0;
 
+      // Draw active connecting line shimmer
+      if (activeConstIdx > 0) {
+        cCtx.beginPath();
+        cCtx.lineWidth = 3.5;
+        cCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+        cCtx.shadowColor = '#f43f5e';
+        cCtx.shadowBlur = 14;
+        for (let i = 0; i <= activeConstIdx; i++) {
+          if (i === 0) cCtx.moveTo(points[i].x, points[i].y);
+          else cCtx.lineTo(points[i].x, points[i].y);
+        }
+        cCtx.stroke();
+        cCtx.shadowBlur = 0;
+      }
+
       // Draw star nodes
       points.forEach((pt, idx) => {
         const isActive = (idx === activeConstIdx);
-        const pulse = Math.sin(elapsed * 3 + idx) * 2;
-        const outerR = isActive ? 15 + pulse : 9 + pulse * 0.5;
+        const isVisited = (idx <= activeConstIdx);
+        const pulse = Math.sin(elapsed * 3 + idx) * 2.5;
+        const outerR = isActive ? 16 + pulse : 9 + pulse * 0.5;
 
         // Outer pulsing ring
         cCtx.beginPath();
         cCtx.arc(pt.x, pt.y, Math.max(2, outerR), 0, Math.PI * 2);
-        cCtx.strokeStyle = isActive ? 'rgba(251, 191, 36, 0.95)' : 'rgba(244, 63, 94, 0.6)';
-        cCtx.lineWidth = isActive ? 2 : 1;
+        cCtx.strokeStyle = isActive ? 'rgba(251, 191, 36, 0.95)' : (isVisited ? 'rgba(244, 63, 94, 0.8)' : 'rgba(255, 255, 255, 0.3)');
+        cCtx.lineWidth = isActive ? 2.5 : 1;
         cCtx.stroke();
 
         // Core star
         cCtx.beginPath();
-        cCtx.arc(pt.x, pt.y, isActive ? 5 : 3.5, 0, Math.PI * 2);
-        cCtx.fillStyle = isActive ? '#ffffff' : '#fef08a';
+        cCtx.arc(pt.x, pt.y, isActive ? 5.5 : 3.5, 0, Math.PI * 2);
+        cCtx.fillStyle = isActive ? '#ffffff' : (isVisited ? '#fef08a' : '#d1d5db');
         cCtx.shadowColor = isActive ? '#fbbf24' : '#f43f5e';
-        cCtx.shadowBlur = isActive ? 12 : 5;
+        cCtx.shadowBlur = isActive ? 14 : 5;
         cCtx.fill();
         cCtx.shadowBlur = 0;
       });
@@ -2882,7 +2756,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
     renderConstellation();
 
-    function selectConstellationNode(idx) {
+    function selectConstellationNode(idx, userInitiated = false) {
       if (idx < 0 || idx >= constellationsList.length) return;
       activeConstIdx = idx;
       const dataItem = constellationsList[idx];
@@ -2903,12 +2777,77 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         );
       }
 
-      chime(800, 1050);
+      chime(800 + idx * 75, 1050 + idx * 80);
       soundFx.sparkle();
       if (navigator.vibrate) navigator.vibrate([15, 25]);
+
+      // Thanor.ai Auto-Advance Timer Progress
+      if (starTimer) clearTimeout(starTimer);
+      if (starTimerInterval) clearInterval(starTimerInterval);
+
+      if (thanorTimerBar) {
+        thanorTimerBar.style.transition = 'none';
+        thanorTimerBar.style.width = '0%';
+        requestAnimationFrame(() => {
+          thanorTimerBar.style.transition = 'width 3.5s linear';
+          thanorTimerBar.style.width = '100%';
+        });
+      }
+
+      let timeLeft = 3;
+      if (thanorTimerText) thanorTimerText.textContent = `Next in ${timeLeft}s`;
+      starTimerInterval = setInterval(() => {
+        timeLeft--;
+        if (thanorTimerText && timeLeft >= 0) {
+          thanorTimerText.textContent = (idx === constellationsList.length - 1) ? 'Warping...' : `Next in ${timeLeft}s`;
+        }
+      }, 1000);
+
+      starTimer = setTimeout(() => {
+        if (starTimerInterval) clearInterval(starTimerInterval);
+        if (activeConstIdx < constellationsList.length - 1) {
+          selectConstellationNode(activeConstIdx + 1);
+        } else {
+          // All stars completed! Hyperdrive warp into Mixtape
+          triggerHyperdriveWarp();
+        }
+      }, 3500);
     }
 
-    // Canvas click detection
+    function triggerHyperdriveWarp() {
+      if (starTimer) clearTimeout(starTimer);
+      if (starTimerInterval) clearInterval(starTimerInterval);
+
+      chime(528, 1056);
+      soundFx.celebrate();
+      if (hyperdriveWarpOverlay) {
+        hyperdriveWarpOverlay.classList.add('active');
+      }
+
+      confetti({
+        particleCount: 80,
+        spread: 85,
+        origin: { y: 0.5 },
+        colors: ['#fbbf24', '#f43f5e', '#ffffff']
+      });
+
+      if (master3D) master3D.dollyForward();
+
+      setTimeout(() => {
+        if (hyperdriveWarpOverlay) hyperdriveWarpOverlay.classList.remove('active');
+        goToScene(5);
+      }, 1300);
+    }
+
+    btnThanorNextStar?.addEventListener('click', () => {
+      if (activeConstIdx < constellationsList.length - 1) {
+        selectConstellationNode(activeConstIdx + 1, true);
+      } else {
+        triggerHyperdriveWarp();
+      }
+    });
+
+    // Canvas click detection for direct touching
     constellationCanvas.addEventListener('pointerdown', (e) => {
       const rect = constellationCanvas.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
@@ -2921,8 +2860,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
       for (let i = 0; i < points.length; i++) {
         const dist = Math.hypot(clickX - points[i].x, clickY - points[i].y);
-        if (dist < 28) {
-          selectConstellationNode(i);
+        if (dist < 32) {
+          selectConstellationNode(i, true);
           return;
         }
       }
@@ -2931,19 +2870,15 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     constStarChips.forEach(chip => {
       chip.addEventListener('click', () => {
         const idx = parseInt(chip.getAttribute('data-idx') || '0', 10);
-        selectConstellationNode(idx);
+        selectConstellationNode(idx, true);
       });
-    });
-
-    btnConstClose?.addEventListener('click', () => {
-      if (constellationCard) constellationCard.style.display = 'none';
     });
 
     selectConstellationNode(0);
   }
 
   // =========================================================================
-  // ACT VI: VINTAGE CASSETTE DECK & REASONS ACCORDION
+  // ACT V: VINTAGE CASSETTE DECK & REASONS
   // =========================================================================
   const btnCassettePlay = container.querySelector('#btnCassettePlay');
   const cassettePlayIcon = container.querySelector('#cassettePlayIcon');
@@ -3014,42 +2949,383 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   });
 
   // =========================================================================
-  // ACT X: LIFETIME PROMISE & WATCH AGAIN GRAND FINALE
+  // ACT VI: STORYTELLING MILESTONES WITH 3D FLYING LEAF ANIMATION
   // =========================================================================
-  const btnSealForeverVow = container.querySelector('#btnSealForeverVow');
-  const btnWatchAgainMasterpiece = container.querySelector('#btnWatchAgainMasterpiece');
+  const storyMilestoneCard = container.querySelector('#storyMilestoneCard');
+  const storyCardTag = container.querySelector('#storyCardTag');
+  const storyCardDate = container.querySelector('#storyCardDate');
+  const storyCardPhoto = container.querySelector('#storyCardPhoto');
+  const storyCardTitle = container.querySelector('#storyCardTitle');
+  const storyCardDesc = container.querySelector('#storyCardDesc');
+  const storyMilestoneDots = container.querySelectorAll('.story-dot');
+  const storyMilestoneCounter = container.querySelector('#storyMilestoneCounter');
+  const btnFlyNextMilestone = container.querySelector('#btnFlyNextMilestone');
+  const btnFlyText = container.querySelector('#btnFlyText');
+  const flyingLeavesSky = container.querySelector('#flyingLeavesSky');
 
-  btnSealForeverVow?.addEventListener('click', () => {
-    soundFx.celebrate();
-    if (navigator.vibrate) navigator.vibrate([40, 60, 40, 80]);
+  let currentMilestoneIdx = 0;
 
-    confetti({
-      particleCount: 110,
-      spread: 95,
-      origin: { y: 0.7 },
-      colors: ['#fbbf24', '#f43f5e', '#a855f7', '#ffffff']
+  function initStoryMilestones() {
+    updateMilestoneCard();
+  }
+
+  function updateMilestoneCard() {
+    const item = milestonesList[currentMilestoneIdx];
+    if (!item) return;
+
+    if (storyCardTag) storyCardTag.textContent = item.tag || `CHAPTER 0${currentMilestoneIdx + 1}`;
+    if (storyCardDate) storyCardDate.textContent = item.date || '';
+    if (storyCardPhoto) storyCardPhoto.src = item.image || '/images/sunset.jpg';
+    if (storyCardTitle) storyCardTitle.textContent = item.title || '';
+    if (storyCardDesc) storyCardDesc.textContent = item.desc || '';
+
+    if (storyMilestoneCounter) {
+      storyMilestoneCounter.textContent = `Chapter ${currentMilestoneIdx + 1} of ${milestonesList.length}`;
+    }
+
+    storyMilestoneDots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentMilestoneIdx);
     });
 
-    btnSealForeverVow.innerHTML = '✨ Forever Sealed in My Heart! 💖';
-    btnSealForeverVow.classList.add('sealed');
+    if (btnFlyText) {
+      if (currentMilestoneIdx === milestonesList.length - 1) {
+        btnFlyText.textContent = 'Whirlwind to The Sacred Letter 🔥';
+      } else {
+        btnFlyText.textContent = 'Fly to Next Chapter';
+      }
+    }
+  }
+
+  function spawnFlyingLeaves(count = 18) {
+    if (!flyingLeavesSky) return;
+    const leafIcons = ['🍃', '🌸', '🍂', '🍁'];
+    for (let i = 0; i < count; i++) {
+      const leaf = document.createElement('div');
+      leaf.className = 'flying-leaf';
+      leaf.textContent = leafIcons[Math.floor(Math.random() * leafIcons.length)];
+      
+      const startX = Math.random() * 90;
+      const startY = Math.random() * 40 + 60;
+      const targetX = startX + (Math.random() * 120 - 40);
+      const targetY = -20 - Math.random() * 30;
+      const rotZ = Math.random() * 720 - 360;
+      const rotX = Math.random() * 360;
+      const duration = 0.9 + Math.random() * 0.7;
+      const delay = Math.random() * 0.22;
+      const scale = 0.8 + Math.random() * 0.8;
+
+      leaf.style.left = `${startX}%`;
+      leaf.style.top = `${startY}%`;
+      leaf.style.fontSize = `${20 * scale}px`;
+      flyingLeavesSky.appendChild(leaf);
+
+      gsap.to(leaf, {
+        x: `${targetX - startX}vw`,
+        y: `${targetY - startY}vh`,
+        rotation: rotZ,
+        rotationX: rotX,
+        opacity: 0,
+        duration: duration,
+        delay: delay,
+        ease: 'power1.out',
+        onComplete: () => leaf.remove()
+      });
+    }
+  }
+
+  btnFlyNextMilestone?.addEventListener('click', () => {
+    soundFx.whoosh();
+    if (navigator.vibrate) navigator.vibrate(18);
+
+    if (currentMilestoneIdx < milestonesList.length - 1) {
+      spawnFlyingLeaves(18);
+      gsap.to(storyMilestoneCard, {
+        x: -300,
+        rotation: -14,
+        scale: 0.88,
+        opacity: 0,
+        duration: 0.35,
+        ease: 'power2.in',
+        onComplete: () => {
+          currentMilestoneIdx++;
+          updateMilestoneCard();
+          gsap.fromTo(storyMilestoneCard,
+            { x: 300, rotation: 14, scale: 0.88, opacity: 0 },
+            { x: 0, rotation: 0, scale: 1, opacity: 1, duration: 0.48, ease: 'back.out(1.2)' }
+          );
+        }
+      });
+    } else {
+      // Last milestone reached - whirlwind carries into The Sacred Letter!
+      spawnFlyingLeaves(35);
+      soundFx.whoosh();
+      setTimeout(() => {
+        goToScene(7);
+      }, 650);
+    }
   });
 
+  // =========================================================================
+  // ACT VII: SACRED LETTER WITH REAL MATCH STRIKE & MELTING WAX SEAL
+  // =========================================================================
+  const btnStrikeMatch = container.querySelector('#btnStrikeMatch');
+  const matchStick = container.querySelector('#matchStick');
+  const matchFlame = container.querySelector('#matchFlame');
+  const waxSealStamp = container.querySelector('#waxSealStamp');
+  const waxSealWrapper = container.querySelector('#waxSealWrapper');
+  const parchmentLetter = container.querySelector('#parchmentLetter');
+  let matchStriken = false;
+
+  function initMatchLetter() {
+    // Ready
+  }
+
+  btnStrikeMatch?.addEventListener('click', () => {
+    if (matchStriken) return;
+    matchStriken = true;
+
+    chime(580, 850);
+    soundFx.sparkle();
+    if (navigator.vibrate) navigator.vibrate([25, 40, 60]);
+
+    // Match strikes across striker strip
+    gsap.to(matchStick, {
+      x: 35,
+      duration: 0.18,
+      ease: 'power1.in',
+      onComplete: () => {
+        // Ignition sparks
+        confetti({
+          particleCount: 45,
+          spread: 50,
+          origin: { y: 0.45 },
+          colors: ['#f59e0b', '#ef4444', '#ffd700']
+        });
+
+        // Flame appears
+        if (matchFlame) matchFlame.style.display = 'block';
+
+        // Match descends towards wax seal
+        gsap.to(matchStick, {
+          y: 65,
+          x: 10,
+          duration: 0.55,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            // Sizzle wax seal
+            if (waxSealStamp) waxSealStamp.classList.add('burned');
+            soundFx.pop(300);
+
+            // Dissolve flame and melt seal
+            setTimeout(() => {
+              if (matchFlame) matchFlame.style.display = 'none';
+              if (waxSealWrapper) waxSealWrapper.style.display = 'none';
+              if (parchmentLetter) {
+                parchmentLetter.classList.add('visible');
+                gsap.fromTo(parchmentLetter,
+                  { opacity: 0, y: 20 },
+                  { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }
+                );
+              }
+            }, 600);
+          }
+        });
+      }
+    });
+  });
+
+  // =========================================================================
+  // ACT VIII: TWILIGHT SKY LANTERNS (THREE.JS WEBGL + RELEASE)
+  // =========================================================================
+  const btnReleaseMoreLanterns = container.querySelector('#btnReleaseMoreLanterns');
+  const lanternField = container.querySelector('#floatingLanternField');
+  // threeLanternsSky already declared
+  function spawnOneLantern() {
+    if (!lanternField) return;
+    const l = document.createElement('div');
+    l.className = 'twilight-lantern';
+    const startX = Math.random() * 85 + 5;
+    const duration = Math.random() * 5 + 7;
+    const scale = Math.random() * 0.4 + 0.8;
+    l.style.left = `${startX}%`;
+    l.style.transform = `scale(${scale})`;
+    l.style.animationDuration = `${duration}s`;
+    l.innerHTML = `
+      <div class="lantern-paper"><span class="lantern-heart">♡</span></div>
+      <div class="lantern-flame"></div>
+    `;
+    lanternField.appendChild(l);
+    setTimeout(() => { if (typeof l?.remove === 'function') l.remove(); }, duration * 1000);
+  }
+
+  function spawnLanternBatch(count = 4) {
+    for (let i = 0; i < count; i++) setTimeout(spawnOneLantern, i * 350);
+  }
+
+  btnReleaseMoreLanterns?.addEventListener('click', () => {
+    chime(780, 960);
+    if (navigator.vibrate) navigator.vibrate(25);
+    if (master3D) master3D.releaseLanterns(6);
+    spawnLanternBatch(6);
+    confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 }, colors: ['#ffd700', '#ff69b4', '#fbcfe8'] });
+  });
+
+  // =========================================================================
+  // ACT IX & X: TREATY OF ETERNAL DEVOTION WITH REAL DIGITAL SIGNING CANVAS
+  // =========================================================================
+  const sigCanvas = container.querySelector('#treatySignatureCanvas');
+  const btnClearTreatySig = container.querySelector('#btnClearTreatySig');
+  const btnAffixTreaty = container.querySelector('#btnAffixTreaty');
+  const goldenWaxStamp = container.querySelector('#goldenWaxStamp');
+  const signatureStatusBadge = container.querySelector('#signatureStatusBadge');
+  const sigWatermark = container.querySelector('#sigWatermark');
+  const masterpieceThankYouCard = container.querySelector('#masterpieceThankYouCard');
+  const btnWatchAgainMasterpiece = container.querySelector('#btnWatchAgainMasterpiece');
+
+  let isDrawingSig = false;
+  let hasSignedTreaty = false;
+  let isTreatyAffixed = false;
+  let sigCtx = null;
+
+  function setupSignatureCanvas() {
+    if (!sigCanvas) return;
+    sigCtx = sigCanvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = sigCanvas.getBoundingClientRect();
+    const w = rect.width || 440;
+    const h = rect.height || 140;
+
+    sigCanvas.width = w * dpr;
+    sigCanvas.height = h * dpr;
+    sigCtx.scale(dpr, dpr);
+
+    sigCtx.strokeStyle = '#f59e0b';
+    sigCtx.lineWidth = 3.2;
+    sigCtx.lineCap = 'round';
+    sigCtx.lineJoin = 'round';
+    sigCtx.shadowColor = 'rgba(245, 158, 11, 0.75)';
+    sigCtx.shadowBlur = 6;
+  }
+
+  function getSigPos(e) {
+    const rect = sigCanvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function startSigDraw(e) {
+    if (isTreatyAffixed || !sigCtx) return;
+    if (e.type === 'touchstart') e.preventDefault();
+    isDrawingSig = true;
+    hasSignedTreaty = true;
+    if (sigWatermark) sigWatermark.style.opacity = '0';
+    const pos = getSigPos(e);
+    sigCtx.beginPath();
+    sigCtx.moveTo(pos.x, pos.y);
+  }
+
+  function doSigDraw(e) {
+    if (!isDrawingSig || isTreatyAffixed || !sigCtx) return;
+    if (e.type === 'touchmove') e.preventDefault();
+    const pos = getSigPos(e);
+    sigCtx.lineTo(pos.x, pos.y);
+    sigCtx.stroke();
+  }
+
+  function endSigDraw() {
+    isDrawingSig = false;
+  }
+
+  if (sigCanvas) {
+    sigCanvas.addEventListener('mousedown', startSigDraw);
+    sigCanvas.addEventListener('mousemove', doSigDraw);
+    window.addEventListener('mouseup', endSigDraw);
+    sigCanvas.addEventListener('touchstart', startSigDraw, { passive: false });
+    sigCanvas.addEventListener('touchmove', doSigDraw, { passive: false });
+    sigCanvas.addEventListener('touchend', endSigDraw);
+  }
+
+  btnClearTreatySig?.addEventListener('click', () => {
+    if (isTreatyAffixed || !sigCtx) return;
+    sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    hasSignedTreaty = false;
+    if (sigWatermark) sigWatermark.style.opacity = '0.6';
+    soundFx.pop(450);
+  });
+
+  btnAffixTreaty?.addEventListener('click', () => {
+    if (isTreatyAffixed) return;
+    isTreatyAffixed = true;
+
+    soundFx.celebrate();
+    if (navigator.vibrate) navigator.vibrate([40, 80, 50, 100]);
+
+    // Golden Wax Stamp slams down with 3D impact
+    if (goldenWaxStamp) goldenWaxStamp.classList.add('stamped');
+    if (signatureStatusBadge) signatureStatusBadge.style.display = 'block';
+    btnAffixTreaty.innerHTML = '✨ Royal Treaty Officially Affixed &amp; Sealed! 💍';
+    btnAffixTreaty.disabled = true;
+
+    // Confetti Cannon
+    confetti({
+      particleCount: 140,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors: ['#ffd700', '#f43f5e', '#ffffff', '#fbbf24']
+    });
+
+    // Reveal Thank You & Rewatch card with gentle scroll
+    if (masterpieceThankYouCard) {
+      masterpieceThankYouCard.style.display = 'block';
+      gsap.fromTo(masterpieceThankYouCard,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, delay: 0.4, ease: 'power2.out' }
+      );
+    }
+  });
+
+  // =========================================================================
+  // ACT X: HEARTFELT THANK YOU & CLEAN REWATCH OPTION
+  // =========================================================================
   btnWatchAgainMasterpiece?.addEventListener('click', () => {
     chime(650, 850);
     soundFx.whoosh();
     if (navigator.vibrate) navigator.vibrate([25, 45, 25]);
 
-    // 1. Hide all fullscreen scenes
+    // 1. Reset all state flags
+    isTreatyAffixed = false;
+    hasSignedTreaty = false;
+    matchStriken = false;
+    currentMilestoneIdx = 0;
+    activeConstIdx = 0;
+
+    if (sigCtx && sigCanvas) {
+      sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    }
+    if (sigWatermark) sigWatermark.style.opacity = '0.6';
+    if (goldenWaxStamp) goldenWaxStamp.classList.remove('stamped');
+    if (signatureStatusBadge) signatureStatusBadge.style.display = 'none';
+    if (btnAffixTreaty) {
+      btnAffixTreaty.innerHTML = '💍 Affix Royal Seal &amp; Sign Treaty';
+      btnAffixTreaty.disabled = false;
+    }
+    if (waxSealStamp) waxSealStamp.classList.remove('burned');
+    if (matchFlame) matchFlame.style.display = 'none';
+    if (waxSealWrapper) waxSealWrapper.style.display = 'flex';
+    if (parchmentLetter) parchmentLetter.classList.remove('visible');
+
+    // 2. Hide all fullscreen scenes
     container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
       sc.classList.remove('active');
       sc.style.display = 'none';
       gsap.set(sc, { opacity: 0 });
     });
 
-    // 2. Fullscreen transition back to Scene 1 (Gate)
+    // 3. Fullscreen transition back to Scene 1 (Gate)
     goToScene(1);
 
-    // 3. Rewind audio to 0:00 and autoplay
+    // 4. Rewind audio to 0:00 and autoplay
     if (audioEl) {
       audioEl.currentTime = 0;
       audioEl.play().then(() => {
@@ -3058,7 +3334,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       }).catch(() => {});
     }
 
-    // 4. Celebratory Confetti
+    // 5. Celebratory Confetti
     confetti({
       particleCount: 85,
       spread: 90,

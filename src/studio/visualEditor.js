@@ -378,7 +378,132 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         `).join('')}
       </div>
     `;
-  } else if (templateId === 'long_romance' || templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
+  } else if (templateId === 'long_romance') {
+    const milestones = (data.milestones && data.milestones.length > 0) ? data.milestones : [
+      { num: "01", icon: "✨", tag: "THE SPARK", title: "Where Our Story Began", date: "June 14, 2022", image: "/images/sunset.jpg", desc: "One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my entire life." },
+      { num: "02", icon: "🌙", tag: "THE CONFESSION", title: "Falling in Love with Your Soul", date: "August 28, 2022", image: "/images/always_you.jpg", desc: "Laughing so hard our ribs hurt, talking until 4 AM about childhood dreams and life philosophies. I realized I was falling completely." },
+      { num: "03", icon: "🛡️", tag: "THE ANCHOR", title: "Weathering Every Storm Together", date: "February 12, 2023", image: "/images/pretty.jpg", desc: "Life isn't always sunny, but standing shoulder-to-shoulder with you proved that we can conquer any challenge as a team." },
+      { num: "04", icon: "📸", tag: "THE ADVENTURES", title: "A Thousand Unfiltered Memories", date: "October 05, 2023", image: "/images/dream_girl.jpg", desc: "Spontaneous road trips, messy cooking experiments, late-night grocery runs. The ordinary world becomes pure magic with you." },
+      { num: "05", icon: "💍", tag: "ETERNITY", title: "Today, Tomorrow & Across Lifetimes", date: "Forever & Always", image: "/images/queen.jpg", desc: "In a world of fleeting moments, choosing you is the easiest decision I'll ever make. My heart is, and will forever be, your home." }
+    ];
+
+    specificBox.innerHTML = `
+      <div class="section-title">🌸 Long Romance Masterpiece Continuous Customization</div>
+      
+      <!-- Mixtape & Audio Integration -->
+      <div style="background:rgba(212,35,92,0.04); border:1px solid rgba(212,35,92,0.18); border-radius:14px; padding:16px; margin-bottom:20px;">
+        <label class="form-label" style="font-weight:800; color:var(--primary); font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <span>📻</span> Mixtape, Spotify &amp; YouTube Player
+        </label>
+        <div class="editor-help-text" style="margin-bottom:12px;">
+          Customize the music that plays during the continuous romance journey. Paste a Spotify track/playlist embed link or a YouTube video link!
+        </div>
+        <div class="form-group">
+          <label class="form-label">Spotify Embed Link or Playlist URL</label>
+          <input type="text" class="form-input" id="edRomanceSpotify" value="${data.spotifyUrl || ''}" placeholder="e.g. https://open.spotify.com/playlist/... or track/..." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">YouTube Video / Playlist URL</label>
+          <input type="text" class="form-input" id="edRomanceYoutube" value="${data.youtubeUrl || ''}" placeholder="e.g. https://www.youtube.com/watch?v=..." />
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Song Title (on Cassette Label)</label>
+            <input type="text" class="form-input" id="edRomanceAudioTitle" value="${data.audioTitle || 'Our Romantic Theme'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Native Audio MP3 Source</label>
+            <input type="text" class="form-input" id="edRomanceAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Storytelling Milestones Editor -->
+      <div style="background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.25); border-radius:14px; padding:16px; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <label class="form-label" style="font-weight:800; color:#b45309; font-size:15px; margin:0; display:flex; align-items:center; gap:8px;">
+            <span>🍃</span> Storytelling Milestones (Flying Leaf Transitions)
+          </label>
+          <button type="button" class="btn-add-milestone" id="btnAddRomanceMilestone" style="padding:4px 10px; font-size:12px; font-weight:700; background:#d4235c; color:#fff; border:none; border-radius:9999px; cursor:pointer;">+ Add Milestone</button>
+        </div>
+        <div class="editor-help-text" style="margin-bottom:12px;">
+          Each milestone is presented as a full-screen story chapter with image and text, dynamically swept by flying leaves.
+        </div>
+        <div id="romanceMilestonesList">
+          ${milestones.map((m, i) => `
+            <div class="sub-card-editor romance-milestone-row" data-m-idx="${i}" style="margin-bottom:14px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:12px; padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:800; font-size:12px; color:#d4235c;">#${m.num || ('0' + (i+1))} • ${m.tag || 'MILESTONE'}</span>
+                <button type="button" class="btn-del-milestone" data-i="${i}" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px;">✕</button>
+              </div>
+              <div class="editor-grid-2" style="margin-bottom:8px;">
+                <input type="text" class="form-input rmilestone-title" value="${m.title || ''}" placeholder="Milestone Title" />
+                <input type="text" class="form-input rmilestone-date" value="${m.date || ''}" placeholder="Date (e.g. June 14, 2022)" />
+              </div>
+              <div style="margin-bottom:8px;">
+                <input type="text" class="form-input rmilestone-img" value="${m.image || ''}" placeholder="Image URL (e.g. /images/sunset.jpg)" />
+              </div>
+              <div>
+                <textarea rows="3" class="form-textarea rmilestone-desc" placeholder="Story text for this milestone...">${m.desc || ''}</textarea>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Sacred Letter & Vow Treaty -->
+      <div style="background:rgba(212,35,92,0.04); border:1px solid rgba(212,35,92,0.18); border-radius:14px; padding:16px; margin-bottom:20px;">
+        <label class="form-label" style="font-weight:800; color:var(--primary); font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <span>💌</span> Sacred Match Burning Letter
+        </label>
+        <div class="form-group">
+          <label class="form-label">Love Letter Body (Revealed after burning wax seal)</label>
+          <textarea rows="6" class="form-textarea" id="edRomanceLetter">${data.letterText || ''}</textarea>
+        </div>
+        <div class="form-group" style="margin-top:14px;">
+          <label class="form-label" style="font-weight:800; color:#b45309;">💍 Treaty of Eternal Devotion Vow Text</label>
+          <textarea rows="3" class="form-textarea" id="edRomanceTreatyVow">${data.treatyVow || 'I promise to love you on peaceful mornings and in wild storms, to cherish your laugh, to support your dreams, and to walk hand-in-hand with you through every tomorrow.'}</textarea>
+        </div>
+      </div>
+    `;
+
+    // Hook add/delete buttons for milestones
+    const btnAddM = specificBox.querySelector('#btnAddRomanceMilestone');
+    const mList = specificBox.querySelector('#romanceMilestonesList');
+    btnAddM?.addEventListener('click', () => {
+      const idx = mList.querySelectorAll('.romance-milestone-row').length;
+      const row = document.createElement('div');
+      row.className = 'sub-card-editor romance-milestone-row';
+      row.setAttribute('data-m-idx', idx);
+      row.style.cssText = 'margin-bottom:14px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:12px; padding:12px;';
+      row.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-weight:800; font-size:12px; color:#d4235c;">#0${idx + 1} • NEW MILESTONE</span>
+          <button type="button" class="btn-del-milestone" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px;">✕</button>
+        </div>
+        <div class="editor-grid-2" style="margin-bottom:8px;">
+          <input type="text" class="form-input rmilestone-title" value="" placeholder="Milestone Title" />
+          <input type="text" class="form-input rmilestone-date" value="" placeholder="Date (e.g. Today)" />
+        </div>
+        <div style="margin-bottom:8px;">
+          <input type="text" class="form-input rmilestone-img" value="/images/sunset.jpg" placeholder="Image URL" />
+        </div>
+        <div>
+          <textarea rows="3" class="form-textarea rmilestone-desc" placeholder="Story text for this milestone..."></textarea>
+        </div>
+      `;
+      row.querySelector('.btn-del-milestone').addEventListener('click', () => row.remove());
+      mList.appendChild(row);
+    });
+
+    specificBox.querySelectorAll('.btn-del-milestone').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const row = e.target.closest('.romance-milestone-row');
+        if (row) row.remove();
+      });
+    });
+
+  } else if (templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
     const isGirl = templateId === 'bestie_girl';
     const isBoy = templateId === 'bestie_boy';
     const sectionTitle = isGirl ? "💅 Girl Bestie (Soul Sister) Details" : isBoy ? "👊 Bro Bestie (Ride or Die) Details" : "🌸 Blossom Romance Details (Viral Pastel Story)";
@@ -1108,7 +1233,132 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         });
         if (polsArr.length > 0) updated.polaroids = polsArr;
       }
-    } else if (templateId === 'long_romance' || templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
+    } else if (templateId === 'long_romance') {
+    const milestones = (data.milestones && data.milestones.length > 0) ? data.milestones : [
+      { num: "01", icon: "✨", tag: "THE SPARK", title: "Where Our Story Began", date: "June 14, 2022", image: "/images/sunset.jpg", desc: "One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my entire life." },
+      { num: "02", icon: "🌙", tag: "THE CONFESSION", title: "Falling in Love with Your Soul", date: "August 28, 2022", image: "/images/always_you.jpg", desc: "Laughing so hard our ribs hurt, talking until 4 AM about childhood dreams and life philosophies. I realized I was falling completely." },
+      { num: "03", icon: "🛡️", tag: "THE ANCHOR", title: "Weathering Every Storm Together", date: "February 12, 2023", image: "/images/pretty.jpg", desc: "Life isn't always sunny, but standing shoulder-to-shoulder with you proved that we can conquer any challenge as a team." },
+      { num: "04", icon: "📸", tag: "THE ADVENTURES", title: "A Thousand Unfiltered Memories", date: "October 05, 2023", image: "/images/dream_girl.jpg", desc: "Spontaneous road trips, messy cooking experiments, late-night grocery runs. The ordinary world becomes pure magic with you." },
+      { num: "05", icon: "💍", tag: "ETERNITY", title: "Today, Tomorrow & Across Lifetimes", date: "Forever & Always", image: "/images/queen.jpg", desc: "In a world of fleeting moments, choosing you is the easiest decision I'll ever make. My heart is, and will forever be, your home." }
+    ];
+
+    specificBox.innerHTML = `
+      <div class="section-title">🌸 Long Romance Masterpiece Continuous Customization</div>
+      
+      <!-- Mixtape & Audio Integration -->
+      <div style="background:rgba(212,35,92,0.04); border:1px solid rgba(212,35,92,0.18); border-radius:14px; padding:16px; margin-bottom:20px;">
+        <label class="form-label" style="font-weight:800; color:var(--primary); font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <span>📻</span> Mixtape, Spotify &amp; YouTube Player
+        </label>
+        <div class="editor-help-text" style="margin-bottom:12px;">
+          Customize the music that plays during the continuous romance journey. Paste a Spotify track/playlist embed link or a YouTube video link!
+        </div>
+        <div class="form-group">
+          <label class="form-label">Spotify Embed Link or Playlist URL</label>
+          <input type="text" class="form-input" id="edRomanceSpotify" value="${data.spotifyUrl || ''}" placeholder="e.g. https://open.spotify.com/playlist/... or track/..." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">YouTube Video / Playlist URL</label>
+          <input type="text" class="form-input" id="edRomanceYoutube" value="${data.youtubeUrl || ''}" placeholder="e.g. https://www.youtube.com/watch?v=..." />
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Song Title (on Cassette Label)</label>
+            <input type="text" class="form-input" id="edRomanceAudioTitle" value="${data.audioTitle || 'Our Romantic Theme'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Native Audio MP3 Source</label>
+            <input type="text" class="form-input" id="edRomanceAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Storytelling Milestones Editor -->
+      <div style="background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.25); border-radius:14px; padding:16px; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <label class="form-label" style="font-weight:800; color:#b45309; font-size:15px; margin:0; display:flex; align-items:center; gap:8px;">
+            <span>🍃</span> Storytelling Milestones (Flying Leaf Transitions)
+          </label>
+          <button type="button" class="btn-add-milestone" id="btnAddRomanceMilestone" style="padding:4px 10px; font-size:12px; font-weight:700; background:#d4235c; color:#fff; border:none; border-radius:9999px; cursor:pointer;">+ Add Milestone</button>
+        </div>
+        <div class="editor-help-text" style="margin-bottom:12px;">
+          Each milestone is presented as a full-screen story chapter with image and text, dynamically swept by flying leaves.
+        </div>
+        <div id="romanceMilestonesList">
+          ${milestones.map((m, i) => `
+            <div class="sub-card-editor romance-milestone-row" data-m-idx="${i}" style="margin-bottom:14px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:12px; padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:800; font-size:12px; color:#d4235c;">#${m.num || ('0' + (i+1))} • ${m.tag || 'MILESTONE'}</span>
+                <button type="button" class="btn-del-milestone" data-i="${i}" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px;">✕</button>
+              </div>
+              <div class="editor-grid-2" style="margin-bottom:8px;">
+                <input type="text" class="form-input rmilestone-title" value="${m.title || ''}" placeholder="Milestone Title" />
+                <input type="text" class="form-input rmilestone-date" value="${m.date || ''}" placeholder="Date (e.g. June 14, 2022)" />
+              </div>
+              <div style="margin-bottom:8px;">
+                <input type="text" class="form-input rmilestone-img" value="${m.image || ''}" placeholder="Image URL (e.g. /images/sunset.jpg)" />
+              </div>
+              <div>
+                <textarea rows="3" class="form-textarea rmilestone-desc" placeholder="Story text for this milestone...">${m.desc || ''}</textarea>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Sacred Letter & Vow Treaty -->
+      <div style="background:rgba(212,35,92,0.04); border:1px solid rgba(212,35,92,0.18); border-radius:14px; padding:16px; margin-bottom:20px;">
+        <label class="form-label" style="font-weight:800; color:var(--primary); font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <span>💌</span> Sacred Match Burning Letter
+        </label>
+        <div class="form-group">
+          <label class="form-label">Love Letter Body (Revealed after burning wax seal)</label>
+          <textarea rows="6" class="form-textarea" id="edRomanceLetter">${data.letterText || ''}</textarea>
+        </div>
+        <div class="form-group" style="margin-top:14px;">
+          <label class="form-label" style="font-weight:800; color:#b45309;">💍 Treaty of Eternal Devotion Vow Text</label>
+          <textarea rows="3" class="form-textarea" id="edRomanceTreatyVow">${data.treatyVow || 'I promise to love you on peaceful mornings and in wild storms, to cherish your laugh, to support your dreams, and to walk hand-in-hand with you through every tomorrow.'}</textarea>
+        </div>
+      </div>
+    `;
+
+    // Hook add/delete buttons for milestones
+    const btnAddM = specificBox.querySelector('#btnAddRomanceMilestone');
+    const mList = specificBox.querySelector('#romanceMilestonesList');
+    btnAddM?.addEventListener('click', () => {
+      const idx = mList.querySelectorAll('.romance-milestone-row').length;
+      const row = document.createElement('div');
+      row.className = 'sub-card-editor romance-milestone-row';
+      row.setAttribute('data-m-idx', idx);
+      row.style.cssText = 'margin-bottom:14px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:12px; padding:12px;';
+      row.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-weight:800; font-size:12px; color:#d4235c;">#0${idx + 1} • NEW MILESTONE</span>
+          <button type="button" class="btn-del-milestone" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px;">✕</button>
+        </div>
+        <div class="editor-grid-2" style="margin-bottom:8px;">
+          <input type="text" class="form-input rmilestone-title" value="" placeholder="Milestone Title" />
+          <input type="text" class="form-input rmilestone-date" value="" placeholder="Date (e.g. Today)" />
+        </div>
+        <div style="margin-bottom:8px;">
+          <input type="text" class="form-input rmilestone-img" value="/images/sunset.jpg" placeholder="Image URL" />
+        </div>
+        <div>
+          <textarea rows="3" class="form-textarea rmilestone-desc" placeholder="Story text for this milestone..."></textarea>
+        </div>
+      `;
+      row.querySelector('.btn-del-milestone').addEventListener('click', () => row.remove());
+      mList.appendChild(row);
+    });
+
+    specificBox.querySelectorAll('.btn-del-milestone').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const row = e.target.closest('.romance-milestone-row');
+        if (row) row.remove();
+      });
+    });
+
+  } else if (templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {
       const elPin = container.querySelector('#edBlossomPin');
       const elKeyTitle = container.querySelector('#edBlossomKeypadTitle');
       const elPrompt = container.querySelector('#edBlossomPrompt');

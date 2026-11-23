@@ -18142,3 +18142,765 @@ textarea,
     width: calc(100% - 32px);
   }
 }
+
+/* =========================================================================
+   PRO-GRADE LONG ROMANCE MASTERPIECE ENHANCEMENTS (THANOR.AI STYLE, MIXTAPE,
+   STORYTELLING MILESTONES WITH 3D FLYING LEAVES, SACRED MATCH LETTER,
+   DIGITAL SIGNATURE TREATY, AND GRAND FINALE REWATCH)
+   ========================================================================= */
+
+/* Act IV: Thanor.ai Style Stars & Memory Card */
+.thanor-star-card.constellation-memory-card {
+  background: rgba(20, 10, 32, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(251, 191, 36, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), 0 0 30px rgba(251, 191, 36, 0.2);
+  padding: 18px 20px;
+  box-sizing: border-box;
+  text-align: left;
+  max-width: 440px;
+  width: calc(100% - 24px);
+  margin: 0 auto;
+}
+
+.thanor-timer-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.thanor-timer-text {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fbbf24;
+  letter-spacing: 0.5px;
+}
+
+.thanor-timer-bar-wrap {
+  width: 70px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.thanor-timer-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #fbbf24, #f43f5e);
+  border-radius: 4px;
+  will-change: width;
+}
+
+.thanor-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.thanor-guidance-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.btn-thanor-next-star {
+  background: rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.5);
+  color: #fef08a;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-thanor-next-star:hover {
+  background: rgba(251, 191, 36, 0.35);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+/* Hyperdrive Warp Tunnel Overlay */
+.hyperdrive-warp-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(244, 63, 94, 0.45) 45%, rgba(10, 4, 18, 0.95) 100%);
+}
+
+.hyperdrive-warp-overlay.active {
+  opacity: 1;
+}
+
+.warp-speed-text {
+  font-size: clamp(16px, 3.8vw, 22px);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px #fbbf24, 0 0 40px #f43f5e;
+  text-align: center;
+  padding: 0 16px;
+}
+
+/* Act V: Spotify & YouTube Embed Frames */
+.spotify-embed-container,
+.youtube-embed-container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto 20px;
+  box-sizing: border-box;
+}
+
+.embed-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #fbcfe8;
+  background: rgba(244, 63, 94, 0.18);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  padding: 4px 12px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+}
+
+/* Act VI: Storytelling Milestones with 3D Flying Leaves */
+.story-milestones-stage {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.flying-leaves-sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.flying-leaf {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  z-index: 30;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+
+.story-milestone-card {
+  width: 100%;
+  background: linear-gradient(150deg, rgba(34, 16, 28, 0.94), rgba(18, 8, 16, 0.97));
+  border: 1.5px solid rgba(251, 191, 36, 0.35);
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(244, 63, 94, 0.18);
+  box-sizing: border-box;
+  text-align: left;
+  transform-origin: center bottom;
+  position: relative;
+  z-index: 10;
+}
+
+.story-card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.story-card-badge {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.story-card-date {
+  font-size: 12.5px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.story-card-media-wrapper {
+  position: relative;
+  width: 100%;
+  height: 230px;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.story-card-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.story-card-photo-gloss {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 65%, rgba(18, 8, 16, 0.85) 100%);
+  pointer-events: none;
+}
+
+.story-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(20px, 4.5vw, 25px);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 10px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.story-card-desc {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: rgba(255, 240, 245, 0.92);
+  margin: 0;
+}
+
+.story-milestone-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 18px;
+  gap: 12px;
+}
+
+.story-milestone-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.story-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.story-dot.active {
+  width: 24px;
+  border-radius: 12px;
+  background: #fbbf24;
+  box-shadow: 0 0 10px #fbbf24;
+}
+
+.story-milestone-counter {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-fly-next-chapter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 26px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14.5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 25px rgba(244, 63, 94, 0.45);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-fly-next-chapter:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 32px rgba(244, 63, 94, 0.6);
+}
+
+.btn-fly-next-chapter:active {
+  transform: scale(0.97);
+}
+
+/* Act VII: Sacred Letter with Match Strike & Melting Wax Seal */
+.match-strike-assembly {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.match-striker-strip {
+  width: 220px;
+  height: 26px;
+  background: linear-gradient(90deg, #3d2314, #2b170c, #3d2314);
+  border: 1px solid #5a351f;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.striker-texture {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 2px, transparent 2px, transparent 4px);
+}
+
+.striker-label {
+  font-size: 9.5px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #a87955;
+  position: relative;
+  z-index: 2;
+}
+
+.match-stick {
+  position: relative;
+  width: 140px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.match-wood {
+  flex: 1;
+  height: 7px;
+  background: linear-gradient(90deg, #d4a373, #faedcd);
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.match-head {
+  width: 18px;
+  height: 12px;
+  background: #be123c;
+  border-radius: 6px 3px 3px 6px;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.3);
+}
+
+.match-flame {
+  position: absolute;
+  bottom: 8px;
+  left: -2px;
+  width: 22px;
+  height: 34px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 12px #ff4500) drop-shadow(0 0 24px #ffd700);
+  animation: matchFlameFlicker 0.15s infinite alternate;
+}
+
+.flame-outer {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 85%, #ff4500 0%, #ff8c00 45%, #ffd700 75%, transparent 100%);
+  border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+}
+
+.flame-core {
+  position: absolute;
+  bottom: 3px;
+  left: 5px;
+  width: 12px;
+  height: 18px;
+  background: radial-gradient(ellipse at 50% 90%, #3b82f6 0%, #ffffff 50%, #fef08a 100%);
+  border-radius: 50% 50% 35% 35%;
+}
+
+@keyframes matchFlameFlicker {
+  0% { transform: scale(1) rotate(-1deg); }
+  100% { transform: scale(1.08, 1.15) rotate(1deg); }
+}
+
+.btn-strike-match-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #ea580c, #c2410c);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13.5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-strike-match-action:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.6);
+}
+
+.wax-seal-stamp.burned {
+  animation: waxMeltBurn 0.75s forwards;
+}
+
+@keyframes waxMeltBurn {
+  0% {
+    filter: drop-shadow(0 0 10px #ff4500) brightness(1.2);
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 25px #ff4500) brightness(1.8) blur(3px);
+    transform: scale(1.25);
+  }
+  100% {
+    filter: drop-shadow(0 0 35px #ff4500) brightness(2.2) blur(12px);
+    transform: scale(1.4) translateY(10px);
+    opacity: 0;
+  }
+}
+
+/* Act IX: Treaty of Eternal Devotion & Digital Signature */
+.treaty-scroll-frame {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto 24px;
+  background: linear-gradient(160deg, #2a1420 0%, #170912 100%);
+  border-radius: 24px;
+  border: 2px solid #d4af37;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 35px rgba(212, 175, 55, 0.25);
+  padding: 26px 22px;
+  box-sizing: border-box;
+  text-align: center;
+  position: relative;
+}
+
+.treaty-ornate-border {
+  border: 1px dashed rgba(212, 175, 55, 0.5);
+  border-radius: 18px;
+  padding: 22px 18px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.treaty-header-emblem {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.treaty-sub-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #fbbf24;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.treaty-couple-names {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(22px, 5vw, 29px);
+  color: #ffffff;
+  margin: 0 0 14px;
+  font-weight: 700;
+  text-shadow: 0 0 14px rgba(251, 191, 36, 0.4);
+}
+
+.treaty-vow-text {
+  font-size: 14.5px;
+  line-height: 1.7;
+  font-style: italic;
+  color: #ffe4e6;
+  margin: 0 0 20px;
+  padding: 0 6px;
+}
+
+.treaty-signature-station {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+
+.signature-canvas-label {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #fbbf24;
+}
+
+.btn-clear-sig {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-clear-sig:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.signature-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  background: rgba(14, 6, 12, 0.88);
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+  touch-action: none;
+}
+
+.treaty-signature-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.signature-watermark-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(251, 191, 36, 0.45);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  user-select: none;
+}
+
+.treaty-signature-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.treaty-date-col,
+.treaty-witness-col {
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: left;
+}
+
+.treaty-witness-col {
+  text-align: right;
+}
+
+.treaty-footer-label {
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fbbf24;
+  margin-bottom: 2px;
+}
+
+.treaty-footer-val {
+  font-size: 11px;
+  color: #ffffff;
+}
+
+.golden-wax-stamp-stamp {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffd700 0%, #b8860b 70%, #8b6508 100%);
+  border: 2px solid #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #5c4308;
+  font-weight: 900;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.golden-wax-stamp-stamp.stamped {
+  transform: scale(1.15) rotate(-5deg);
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.8), 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.stamp-crest {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.stamp-text {
+  font-size: 8px;
+  letter-spacing: 1px;
+  font-weight: 900;
+}
+
+.signature-status-badge {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #ffd700;
+  background: rgba(251, 191, 36, 0.18);
+  border: 1px solid #ffd700;
+  padding: 8px 18px;
+  border-radius: 20px;
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
+  text-align: center;
+  margin: 10px 0;
+  animation: treatyBadgePulse 1.5s infinite alternate;
+}
+
+@keyframes treatyBadgePulse {
+  0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+  100% { box-shadow: 0 0 22px rgba(255, 215, 0, 0.7); }
+}
+
+.btn-affix-treaty {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  border: 1.5px solid #fde68a;
+  box-shadow: 0 10px 25px rgba(217, 119, 6, 0.5);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-affix-treaty:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(217, 119, 6, 0.7);
+}
+
+/* Act X: Heartfelt Thank You Card & Clean Rewatch Option */
+.masterpiece-thank-you-card {
+  display: none;
+  width: 100%;
+  max-width: 520px;
+  margin: 30px auto 10px;
+  background: linear-gradient(150deg, rgba(32, 14, 24, 0.94), rgba(18, 7, 14, 0.98));
+  border: 1.5px solid rgba(244, 63, 94, 0.35);
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.thank-you-crest {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.thank-you-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(22px, 5vw, 28px);
+  color: #ffffff;
+  margin: 0 0 14px;
+  font-weight: 700;
+}
+
+.thank-you-message {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: rgba(255, 235, 240, 0.92);
+  margin: 0 0 18px;
+}
+
+.thank-you-signature {
+  font-size: 15px;
+  font-style: italic;
+  color: #fbbf24;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.masterpiece-watch-again-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-watch-again-masterpiece {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 28px rgba(244, 63, 94, 0.5);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-watch-again-masterpiece:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 36px rgba(244, 63, 94, 0.7);
+}
+
+.watch-again-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.watch-again-note {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
