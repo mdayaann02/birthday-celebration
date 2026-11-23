@@ -258,7 +258,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           <div class="form-group">
             <label class="form-label">Audio URL / Upload MP3</label>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <input type="text" class="form-input" id="edAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" placeholder="/audio/alfaaz.mp3 or https://..." style="flex:1; min-width:180px;" />
+              <input type="text" class="form-input" id="edAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" placeholder="/audio/alfaaz.mp3 or https://..." style="flex:1; min-width:0;" />
               <label class="btn-file-upload" style="flex-shrink:0;">
                 <i data-lucide="upload-cloud"></i>
                 <span>Upload MP3</span>

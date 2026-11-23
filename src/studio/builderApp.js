@@ -88,6 +88,23 @@ export function renderStudioApp(root) {
         </div>
       </header>
 
+      <!-- Mobile Segmented Navigation Tabs (Sticky Under Navbar on Mobile Viewports) -->
+      <nav class="studio-mobile-tabs" id="studioMobileTabs" aria-label="Editor View Tabs">
+        <button type="button" class="mobile-tab-btn" data-tab="templates" id="tabBtnTemplates">
+          <span class="tab-btn-icon"><i data-lucide="palette"></i></span>
+          <span class="tab-btn-text">Occasions</span>
+        </button>
+        <button type="button" class="mobile-tab-btn active" data-tab="editor" id="tabBtnEditor">
+          <span class="tab-btn-icon"><i data-lucide="wand-2"></i></span>
+          <span class="tab-btn-text">Customize</span>
+        </button>
+        <button type="button" class="mobile-tab-btn" data-tab="preview" id="tabBtnPreview">
+          <span class="tab-btn-icon"><i data-lucide="eye"></i></span>
+          <span class="tab-btn-text">Live Preview</span>
+          <span class="tab-live-pulse"></span>
+        </button>
+      </nav>
+
       <!-- 2. FOCUSED HERO SECTION -->
       <section class="studio-hero-section" id="heroSection">
         <div class="hero-inner-container">
@@ -209,23 +226,6 @@ export function renderStudioApp(root) {
           <div id="templateSelectorMount"></div>
         </div>
       </section>
-
-      <!-- Mobile Segmented Navigation Tabs (Pinned on Mobile Viewports) -->
-      <nav class="studio-mobile-tabs" id="studioMobileTabs" aria-label="Editor View Tabs">
-        <button type="button" class="mobile-tab-btn" data-tab="templates" id="tabBtnTemplates">
-          <span class="tab-btn-icon"><i data-lucide="palette"></i></span>
-          <span class="tab-btn-text">Occasions</span>
-        </button>
-        <button type="button" class="mobile-tab-btn active" data-tab="editor" id="tabBtnEditor">
-          <span class="tab-btn-icon"><i data-lucide="wand-2"></i></span>
-          <span class="tab-btn-text">Customize</span>
-        </button>
-        <button type="button" class="mobile-tab-btn" data-tab="preview" id="tabBtnPreview">
-          <span class="tab-btn-icon"><i data-lucide="eye"></i></span>
-          <span class="tab-btn-text">Live Preview</span>
-          <span class="tab-live-pulse"></span>
-        </button>
-      </nav>
 
       <!-- 5. INTERACTIVE CUSTOMIZER & DUAL-VIEWPORT WORKSPACE -->
       <section class="studio-customizer-section" id="customizerSection">
@@ -499,12 +499,22 @@ export function renderStudioApp(root) {
         if (secCustomizer) secCustomizer.style.display = 'none';
         if (sidebar) sidebar.style.display = 'none';
         if (previewPane) previewPane.style.display = 'none';
+        if (btnDockPreviewToggle) {
+          btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon"><i data-lucide="eye"></i></span><span class="dock-btn-label">Live Preview</span>`;
+          btnDockPreviewToggle.classList.remove('dock-active-preview');
+          renderStudioIcons(btnDockPreviewToggle);
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (tab === 'editor') {
         if (secTemplates) secTemplates.style.display = 'none';
         if (secCustomizer) secCustomizer.style.display = 'block';
         if (sidebar) sidebar.style.display = 'block';
         if (previewPane) previewPane.style.display = 'none';
+        if (btnDockPreviewToggle) {
+          btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon"><i data-lucide="eye"></i></span><span class="dock-btn-label">Live Preview</span>`;
+          btnDockPreviewToggle.classList.remove('dock-active-preview');
+          renderStudioIcons(btnDockPreviewToggle);
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (tab === 'preview') {
         if (secTemplates) secTemplates.style.display = 'none';
