@@ -40,11 +40,17 @@ try {
 function formatSpotifyEmbedUrl(url) {
   if (!url) return '';
   try {
-    const clean = url.trim();
+    let clean = url.trim();
+    const iframeMatch = clean.match(/src=["']([^"']+)["']/i);
+    if (iframeMatch) clean = iframeMatch[1];
     if (clean.includes('/embed/')) return clean;
-    const match = clean.match(/open\.spotify\.com(?:\/intl-[a-z]{2})?\/(track|playlist|album|artist)\/([a-zA-Z0-9]+)/);
+    const match = clean.match(/open\.spotify\.com(?:\/intl-[a-z]{2})?\/(track|playlist|album|artist|show|episode)\/([a-zA-Z0-9]+)/);
     if (match) {
       return `https://open.spotify.com/embed/${match[1]}/${match[2]}?utm_source=generator&theme=0`;
+    }
+    const uriMatch = clean.match(/spotify:(playlist|track|album|artist):([a-zA-Z0-9]+)/);
+    if (uriMatch) {
+      return `https://open.spotify.com/embed/${uriMatch[1]}/${uriMatch[2]}?utm_source=generator&theme=0`;
     }
     return clean;
   } catch (_) {
@@ -55,14 +61,22 @@ function formatSpotifyEmbedUrl(url) {
 function formatYouTubeEmbedUrl(url) {
   if (!url) return '';
   try {
-    const clean = url.trim();
+    let clean = url.trim();
+    const iframeMatch = clean.match(/src=["']([^"']+)["']/i);
+    if (iframeMatch) clean = iframeMatch[1];
     if (clean.includes('youtube.com/embed/')) return clean;
+    const listMatch = clean.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+    if (listMatch) {
+      return `https://www.youtube.com/embed/videoseries?list=${listMatch[1]}`;
+    }
     const vMatch = clean.match(/[?&]v=([a-zA-Z0-9_-]+)/);
     if (vMatch) return `https://www.youtube.com/embed/${vMatch[1]}?autoplay=0&rel=0`;
     const shortMatch = clean.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
     if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}?autoplay=0&rel=0`;
-    const listMatch = clean.match(/[?&]list=([a-zA-Z0-9_-]+)/);
-    if (listMatch) return `https://www.youtube.com/embed/videoseries?list=${listMatch[1]}`;
+    const liveMatch = clean.match(/youtube\.com\/live\/([a-zA-Z0-9_-]+)/);
+    if (liveMatch) return `https://www.youtube.com/embed/${liveMatch[1]}?autoplay=0&rel=0`;
+    const shortsMatch = clean.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
+    if (shortsMatch) return `https://www.youtube.com/embed/${shortsMatch[1]}?autoplay=0&rel=0`;
     return clean;
   } catch (_) {
     return url;
@@ -72,8 +86,12 @@ function formatYouTubeEmbedUrl(url) {
 export function renderBlossomTemplate(container, initialData = {}, isMakerReview = false) {
   const data = initialData || {};
   
-  const spotifyEmbed = formatSpotifyEmbedUrl(data.spotifyUrl);
-  const youtubeEmbed = formatYouTubeEmbedUrl(data.youtubeUrl);
+  const rawSpotify = data.spotifyUrl || data.spotifyPlaylistUrl || data.spotifyEmbedUrl || data.spotifyEmbed || data.spotify || '';
+  const rawYoutube = data.youtubeUrl || data.youtubePlaylistUrl || data.youtubeEmbedUrl || data.youtubeEmbed || data.youtube || '';
+  const spotifyEmbed = formatSpotifyEmbedUrl(rawSpotify);
+  const youtubeEmbed = formatYouTubeEmbedUrl(rawYoutube);
+  const audioSrc = data.audioSrc || data.audioUrl || data.songUrl || data.musicUrl || '/audio/alfaaz.mp3';
+  const audioTitle = data.audioTitle || data.songTitle || 'Our Romantic Theme';
   const recipient = data.recipientName || 'My Love';
   const sender = data.senderName || 'Yours Truly';
 
@@ -396,10 +414,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         </div>
         <div class="cd-track-pill" id="treeTrackPill">
           <div class="cd-pill-equalizer"><span></span><span></span><span></span></div>
-          <span class="cd-pill-title">${data.audioTitle || "Romantic Theme"}</span>
+          <span class="cd-pill-title">${audioTitle}</span>
         </div>
         <audio id="treeAudio" loop preload="auto">
-          <source src="${data.audioSrc || '/audio/alfaaz.mp3'}" type="audio/mpeg" />
+          <source src="${audioSrc}" type="audio/mpeg" />
         </audio>
       </div>
 
@@ -491,7 +509,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
                   <span class="cassette-side">SIDE A • FOR ${recipient.toUpperCase()}</span>
                 </div>
                 <div class="cassette-title-line">
-                  <span class="cassette-title-text">${data.audioTitle || "Our Eternal Love Track"}</span>
+                  <span class="cassette-title-text">${audioTitle}</span>
                 </div>
                 <div class="cassette-window">
                   <div class="cassette-spool left-spool" id="spoolLeft">
@@ -619,60 +637,84 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       </section>
 
       <!-- ================= SCENE 7: SACRED MATCH BURNING LETTER ================= -->
-      <section class="romance-fullscreen-scene" data-scene="7" id="sceneLetter" style="display:none; opacity:0;">
+      <section class="romance-fullscreen-scene scene-letter-fullscreen" data-scene="7" id="sceneLetter" style="display:none; opacity:0;">
         <div class="scene-inner-wrap">
           <div class="romance-chapter-header">
             <span class="chapter-num-pill">CHAPTER VII • THE CONFESSION</span>
             <h3 class="chapter-title">The Sacred Letter</h3>
-            <p class="chapter-desc">Strike the wooden match to ignite the flame &amp; melt the royal wax seal 🔥</p>
+            <p class="chapter-desc" id="letterInstructionText">⇄ Rub or drag the matchstick across the striker to ignite the flame &amp; melt the wax seal 🔥</p>
           </div>
 
-          <div class="match-strike-assembly" id="matchStrikeAssembly">
-            <div class="match-striker-strip" id="matchStrikerStrip">
-              <span class="striker-texture"></span>
-              <span class="striker-label">STRIKE HERE</span>
-            </div>
-
-            <div class="match-stick" id="matchStick">
-              <div class="match-head" id="matchHead">
-                <div class="match-flame" id="matchFlame" style="display:none;">
-                  <div class="flame-core"></div>
-                  <div class="flame-outer"></div>
-                  <div class="flame-sparks"><span></span><span></span><span></span></div>
-                </div>
+          <div class="match-interactive-stage" id="matchInteractiveStage">
+            <div class="match-striker-box" id="matchStrikerBox">
+              <div class="match-striker-strip" id="matchStrikerStrip">
+                <span class="striker-grit-texture"></span>
+                <span class="striker-guidance-arrows">⇄ RUB MATCHSTICK HERE TO IGNITE ⇄</span>
               </div>
-              <div class="match-wood"></div>
+              <!-- 60FPS Sparks Canvas for physical friction rubbing -->
+              <canvas id="matchSparksCanvas" class="match-sparks-canvas"></canvas>
+
+              <div class="match-stick" id="matchStick" touch-action="none">
+                <div class="match-head" id="matchHead">
+                  <div class="match-flame" id="matchFlame" style="display:none;">
+                    <div class="flame-outer"></div>
+                    <div class="flame-mid"></div>
+                    <div class="flame-core"></div>
+                    <div class="flame-ember-sparks">
+                      <span></span><span></span><span></span><span></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="match-wood"></div>
+              </div>
             </div>
 
             <button type="button" class="btn-strike-match-action" id="btnStrikeMatch">
-              <span class="match-icon">🔥</span> Strike Match &amp; Melt Wax Seal
+              <span class="match-icon">🔥</span> <span class="btn-match-text">Rub or Tap to Strike Match</span>
             </button>
           </div>
 
-          <div class="wax-letter-container" style="width:100%; max-width:540px; margin-bottom:20px;">
+          <div class="wax-letter-container" id="waxLetterContainer" style="width:100%; max-width:580px; margin: 0 auto 24px;">
             <div class="wax-envelope-card" id="waxEnvelope">
               <div class="wax-seal-wrapper" id="waxSealWrapper">
+                <div class="wax-seal-drip-pool"></div>
                 <div class="wax-seal-stamp" id="waxSealStamp">
                   <span class="wax-monogram">👑</span>
                   <span class="wax-monogram-sub">ETERNAL</span>
                 </div>
                 <div class="wax-ember-cloud" id="waxEmberCloud"></div>
+                <div class="wax-hint-text">Royal wax seal melts to reveal confession</div>
               </div>
+
+              <!-- Animated Fiery Burn Overlay -->
+              <div class="envelope-burn-mask" id="envelopeBurnMask" style="display:none;"></div>
               
               <div class="parchment-letter-body" id="parchmentLetter">
-                <div class="parchment-header-crest">✦ AMOR VINCIT OMNIA ✦</div>
-                <div class="letter-text-flow">${letterBody.split('\n\n').join('<br/><br/>').split('\n').join('<br/>')}</div>
-                <div class="letter-signoff">
-                  <div class="signoff-quote">"Always &amp; Forever"</div>
-                  <div class="signoff-heart">♡</div>
-                  <div class="signoff-author">${sender}</div>
+                <div class="parchment-gold-border">
+                  <div class="parchment-header-crest">
+                    <span class="crest-wings">❦</span>
+                    <span class="crest-title">AMOR VINCIT OMNIA</span>
+                    <span class="crest-wings">❦</span>
+                  </div>
+                  <div class="parchment-subcrest">SACRED TESTAMENT OF ETERNAL LOVE</div>
+                  <div class="parchment-divider">✧ ✦ ✧</div>
+
+                  <div class="letter-text-flow" id="letterTextFlow">
+                    ${letterBody.split('\n\n').map(p => `<p class="letter-p">${p.split('\n').join('<br/>')}</p>`).join('')}
+                  </div>
+
+                  <div class="letter-signoff">
+                    <div class="signoff-quote">"In every lifetime, in every universe — always you."</div>
+                    <div class="signoff-heart">♡</div>
+                    <div class="signoff-author">Yours Eternally, <strong>${sender}</strong></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="8">
+          <div class="scene-forward-action" id="letterForwardAction" style="margin-top:10px;">
+            <button type="button" class="btn-scene-next-hero" id="btnLetterNextLanterns" data-target="8">
               <span class="btn-next-spark">🏮</span>
               <span class="btn-next-text">Step into Chapter VIII: Twilight Sky Lanterns</span>
               <span class="btn-next-arrow">❯</span>
@@ -3507,80 +3549,285 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   storyMilestoneCard?.addEventListener('click', () => flyToNextMilestone(true));
 
   // =========================================================================
-  // ACT VII: SACRED LETTER WITH REAL MATCH STRIKE & MELTING WAX SEAL
+  // ACT VII: SACRED LETTER WITH PHYSICAL MATCHSTICK RUBBING & BURNING
   // =========================================================================
   const btnStrikeMatch = container.querySelector('#btnStrikeMatch');
   const matchStick = container.querySelector('#matchStick');
+  const matchHead = container.querySelector('#matchHead');
   const matchFlame = container.querySelector('#matchFlame');
+  const matchStrikerStrip = container.querySelector('#matchStrikerStrip');
+  const matchSparksCanvas = container.querySelector('#matchSparksCanvas');
   const waxSealStamp = container.querySelector('#waxSealStamp');
   const waxSealWrapper = container.querySelector('#waxSealWrapper');
+  const envelopeBurnMask = container.querySelector('#envelopeBurnMask');
   const parchmentLetter = container.querySelector('#parchmentLetter');
-  let matchStriken = false;
+  const letterInstructionText = container.querySelector('#letterInstructionText');
+  const btnLetterNextLanterns = container.querySelector('#btnLetterNextLanterns');
 
-  function strikeMatchAction() {
+  let matchStriken = false;
+  let isRubbingMatch = false;
+  let frictionScore = 0;
+  let lastRubX = 0;
+  let lastRubTime = 0;
+  let matchSparksCtx = null;
+  let matchParticles = [];
+  let sparksAnimId = null;
+
+  function initSparksCanvas() {
+    if (!matchSparksCanvas) return;
+    const rect = matchSparksCanvas.parentElement?.getBoundingClientRect();
+    matchSparksCanvas.width = (rect && rect.width) ? rect.width : 280;
+    matchSparksCanvas.height = 60;
+    matchSparksCtx = matchSparksCanvas.getContext('2d');
+  }
+
+  function emitFrictionSparks(x, y, count = 12) {
+    if (!matchSparksCanvas) return;
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 1.05) + Math.random() * (Math.PI * 0.9);
+      const speed = 2 + Math.random() * 5.2;
+      matchParticles.push({
+        x: x || matchSparksCanvas.width * 0.45,
+        y: y || 22,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.035 + Math.random() * 0.04,
+        size: 1.5 + Math.random() * 2.5,
+        color: Math.random() > 0.35 ? '#ffaa00' : (Math.random() > 0.5 ? '#ff4500' : '#ffffff')
+      });
+    }
+    if (!sparksAnimId) renderSparksLoop();
+  }
+
+  function renderSparksLoop() {
+    if (!matchSparksCtx || !matchSparksCanvas) return;
+    matchSparksCtx.clearRect(0, 0, matchSparksCanvas.width, matchSparksCanvas.height);
+    for (let i = matchParticles.length - 1; i >= 0; i--) {
+      const p = matchParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.18; // gravity
+      p.life -= p.decay;
+
+      if (p.life <= 0) {
+        matchParticles.splice(i, 1);
+        continue;
+      }
+
+      matchSparksCtx.save();
+      matchSparksCtx.globalAlpha = p.life;
+      matchSparksCtx.fillStyle = p.color;
+      matchSparksCtx.shadowBlur = 8;
+      matchSparksCtx.shadowColor = '#ff8c00';
+      matchSparksCtx.beginPath();
+      matchSparksCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      matchSparksCtx.fill();
+      matchSparksCtx.restore();
+    }
+
+    if (matchParticles.length > 0) {
+      sparksAnimId = requestAnimationFrame(renderSparksLoop);
+    } else {
+      sparksAnimId = null;
+    }
+  }
+
+  function igniteMatchAction(userPhysicalStrike = false) {
     if (matchStriken) return;
     matchStriken = true;
 
-    chime(580, 850);
-    soundFx.sparkle();
-    if (navigator.vibrate) navigator.vibrate([25, 40, 60]);
+    // Sound FX: energetic match ignition
+    soundFx.matchIgnite();
+    if (navigator.vibrate) navigator.vibrate([30, 50, 90]);
 
-    // Match strikes across striker strip
+    if (letterInstructionText) {
+      letterInstructionText.innerHTML = '🔥 Match Ignited! Melting the Royal Wax Seal...';
+      letterInstructionText.style.color = '#f59e0b';
+    }
+
+    // Flash light & confetti spark burst
+    confetti({
+      particleCount: 55,
+      spread: 60,
+      origin: { y: 0.42 },
+      colors: ['#ff4500', '#f59e0b', '#ffd700', '#ffffff']
+    });
+
+    if (matchFlame) matchFlame.style.display = 'block';
+    if (matchHead) {
+      matchHead.style.boxShadow = '0 0 25px #ff5722, 0 0 50px #ff9800';
+    }
+
+    // Glides burning matchstick down to the wax seal stamp on the envelope
     gsap.to(matchStick, {
-      x: 35,
-      duration: 0.18,
-      ease: 'power1.in',
+      y: 78,
+      x: 20,
+      rotation: -12,
+      duration: 0.65,
+      ease: 'power2.inOut',
       onComplete: () => {
-        confetti({
-          particleCount: 45,
-          spread: 50,
-          origin: { y: 0.45 },
-          colors: ['#f59e0b', '#ef4444', '#ffd700']
-        });
+        // Wax sizzles and melts
+        soundFx.waxSizzle();
+        if (waxSealStamp) waxSealStamp.classList.add('burned');
 
-        if (matchFlame) matchFlame.style.display = 'block';
+        // Envelope fiery burn mask reveals burning hole
+        if (envelopeBurnMask) {
+          envelopeBurnMask.style.display = 'block';
+          gsap.fromTo(envelopeBurnMask,
+            { scale: 0.2, opacity: 0 },
+            { scale: 1.3, opacity: 1, duration: 0.8, ease: 'power2.out' }
+          );
+        }
 
-        gsap.to(matchStick, {
-          y: 65,
-          x: 10,
-          duration: 0.55,
-          ease: 'power2.inOut',
-          onComplete: () => {
-            if (waxSealStamp) waxSealStamp.classList.add('burned');
-            soundFx.pop(300);
+        setTimeout(() => {
+          // Flame disappears and wax seal dissolves
+          if (matchFlame) matchFlame.style.display = 'none';
+          if (waxSealWrapper) waxSealWrapper.style.display = 'none';
+          if (matchStick) gsap.to(matchStick, { opacity: 0, duration: 0.35 });
+          if (envelopeBurnMask) gsap.to(envelopeBurnMask, { opacity: 0, duration: 0.5 });
 
-            setTimeout(() => {
-              if (matchFlame) matchFlame.style.display = 'none';
-              if (waxSealWrapper) waxSealWrapper.style.display = 'none';
-              if (parchmentLetter) {
-                parchmentLetter.classList.add('visible');
-                gsap.fromTo(parchmentLetter,
-                  { opacity: 0, y: 20 },
-                  { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }
-                );
-              }
-              // Auto-advance to Chapter VIII (Sky Lanterns) after 10s of reading
-              if (letterTimer) clearTimeout(letterTimer);
-              letterTimer = setTimeout(() => {
-                if (currentScene === 7) goToScene(8);
-              }, 10000);
-            }, 600);
+          // Unfurl the Sacred Letter
+          if (parchmentLetter) {
+            parchmentLetter.classList.add('visible');
+            gsap.fromTo(parchmentLetter,
+              { opacity: 0, y: 35, scale: 0.94 },
+              { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power2.out' }
+            );
           }
-        });
+
+          if (letterInstructionText) {
+            letterInstructionText.innerHTML = '✨ Royal seal melted. Read our sacred confession below ♡';
+            letterInstructionText.style.color = '#34d399';
+          }
+
+          // Auto-advance safety timer after comfortable reading time (35s)
+          if (letterTimer) clearTimeout(letterTimer);
+          letterTimer = setTimeout(() => {
+            if (currentScene === 7) goToScene(8);
+          }, 35000);
+        }, 750);
       }
     });
   }
 
-  function startMatchLetter() {
-    if (!matchStriken) {
-      if (letterTimer) clearTimeout(letterTimer);
-      letterTimer = setTimeout(() => {
-        if (currentScene === 7 && !matchStriken) strikeMatchAction();
-      }, 1400);
+  // Bind physical pointer/touch rubbing on matchstick & striker
+  function handlePointerDown(e) {
+    if (matchStriken) return;
+    isRubbingMatch = true;
+    lastRubX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    lastRubTime = performance.now();
+    initSparksCanvas();
+  }
+
+  function handlePointerMove(e) {
+    if (!isRubbingMatch || matchStriken) return;
+    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const now = performance.now();
+    const dx = clientX - lastRubX;
+    const dt = Math.max(1, now - lastRubTime);
+    const velocity = Math.abs(dx) / dt;
+
+    if (Math.abs(dx) > 3) {
+      // Move matchstick relative to rubbing
+      const clampX = Math.max(-25, Math.min(65, dx * 0.8));
+      gsap.to(matchStick, { x: clampX, duration: 0.08, overwrite: 'auto' });
+
+      // If velocity is fast enough, emit sparks and scrape sound
+      if (velocity > 0.12) {
+        frictionScore += Math.abs(dx) * 1.25;
+        soundFx.matchFriction();
+        if (navigator.vibrate) navigator.vibrate(10);
+
+        const stripRect = matchStrikerStrip?.getBoundingClientRect();
+        const headRect = matchHead?.getBoundingClientRect();
+        if (stripRect && headRect && matchSparksCanvas) {
+          const sparkX = headRect.left - stripRect.left + 10;
+          emitFrictionSparks(sparkX, 22, 10);
+        }
+
+        // Match head glows hotter
+        if (matchHead) {
+          const glowIntensity = Math.min(20, frictionScore * 0.22);
+          matchHead.style.filter = `drop-shadow(0 0 ${glowIntensity}px #ff5722) brightness(${1 + frictionScore * 0.009})`;
+        }
+      }
+
+      lastRubX = clientX;
+      lastRubTime = now;
+
+      // Ignition threshold reached!
+      if (frictionScore >= 90) {
+        isRubbingMatch = false;
+        igniteMatchAction(true);
+      }
     }
   }
 
-  btnStrikeMatch?.addEventListener('click', strikeMatchAction);
+  function handlePointerUp() {
+    isRubbingMatch = false;
+    if (!matchStriken && matchStick) {
+      gsap.to(matchStick, { x: 0, duration: 0.25, ease: 'power2.out' });
+      if (matchHead) matchHead.style.filter = '';
+    }
+  }
+
+  if (matchStick) {
+    matchStick.addEventListener('pointerdown', handlePointerDown);
+    matchStick.addEventListener('touchstart', handlePointerDown, { passive: true });
+  }
+  if (matchStrikerStrip) {
+    matchStrikerStrip.addEventListener('pointerdown', handlePointerDown);
+    matchStrikerStrip.addEventListener('touchstart', handlePointerDown, { passive: true });
+  }
+  window.addEventListener('pointermove', handlePointerMove);
+  window.addEventListener('touchmove', handlePointerMove, { passive: true });
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('touchend', handlePointerUp);
+
+  // Quick button tap triggers full realistic stroke and ignition
+  btnStrikeMatch?.addEventListener('click', () => {
+    if (matchStriken) return;
+    initSparksCanvas();
+    // Friction stroke 1
+    soundFx.matchFriction();
+    emitFrictionSparks(50, 20, 12);
+    gsap.to(matchStick, {
+      x: 35,
+      duration: 0.14,
+      ease: 'power1.in',
+      onComplete: () => {
+        // Friction stroke 2
+        soundFx.matchFriction();
+        emitFrictionSparks(110, 20, 16);
+        gsap.to(matchStick, {
+          x: 10,
+          duration: 0.12,
+          ease: 'power1.out',
+          onComplete: () => {
+            igniteMatchAction(false);
+          }
+        });
+      }
+    });
+  });
+
+  btnLetterNextLanterns?.addEventListener('click', () => {
+    goToScene(8);
+  });
+
+  function startMatchLetter() {
+    initSparksCanvas();
+    // Hint pulse if unattended
+    if (!matchStriken) {
+      if (letterTimer) clearTimeout(letterTimer);
+      letterTimer = setTimeout(() => {
+        if (currentScene === 7 && !matchStriken && btnStrikeMatch) {
+          gsap.to(btnStrikeMatch, { scale: 1.08, repeat: 3, yoyo: true, duration: 0.3 });
+        }
+      }, 5000);
+    }
+  }
 
   // =========================================================================
   // ACT VIII: TWILIGHT SKY LANTERNS (THREE.JS WEBGL + RELEASE)
@@ -3769,6 +4016,21 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (matchFlame) matchFlame.style.display = 'none';
     if (waxSealWrapper) waxSealWrapper.style.display = 'flex';
     if (parchmentLetter) parchmentLetter.classList.remove('visible');
+    if (matchStick) {
+      matchStick.style.opacity = '1';
+      matchStick.style.transform = 'none';
+    }
+    if (matchHead) matchHead.style.filter = '';
+    if (envelopeBurnMask) {
+      envelopeBurnMask.style.display = 'none';
+      envelopeBurnMask.style.opacity = '0';
+    }
+    if (letterInstructionText) {
+      letterInstructionText.innerHTML = '⇄ Rub or drag the matchstick across the striker to ignite the flame &amp; melt the wax seal 🔥';
+      letterInstructionText.style.color = '';
+    }
+    frictionScore = 0;
+    isRubbingMatch = false;
 
     // 2. Hide all fullscreen scenes
     container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
@@ -3817,6 +4079,21 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (matchFlame) matchFlame.style.display = 'none';
     if (waxSealWrapper) waxSealWrapper.style.display = 'flex';
     if (parchmentLetter) parchmentLetter.classList.remove('visible');
+    if (matchStick) {
+      matchStick.style.opacity = '1';
+      matchStick.style.transform = 'none';
+    }
+    if (matchHead) matchHead.style.filter = '';
+    if (envelopeBurnMask) {
+      envelopeBurnMask.style.display = 'none';
+      envelopeBurnMask.style.opacity = '0';
+    }
+    if (letterInstructionText) {
+      letterInstructionText.innerHTML = '⇄ Rub or drag the matchstick across the striker to ignite the flame &amp; melt the wax seal 🔥';
+      letterInstructionText.style.color = '';
+    }
+    frictionScore = 0;
+    isRubbingMatch = false;
 
     // 2. Hide all fullscreen scenes
     container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
