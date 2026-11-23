@@ -351,13 +351,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
   sorry: {
     id: "sorry",
     name: "Heartfelt Apology ('I'm Sorry')",
-    badge: "Make Peace 🥺",
+    badge: "Kintsugi & Reconciliation 🥺🕊️",
     icon: "🥺",
-    description: "Deeply sincere apology letter, 'Reasons you mean the world', interactive mood slider, and runaway 'Will You Forgive Me?' button.",
+    description: "Ultra-aesthetic heartfelt reconciliation: Interactive Kintsugi heart mending, cathartic venting room with projectile arsenal, legally binding penance deed, flip memories polaroids with voice apology memo, The Sweetheart Accords peace treaty with royal signature canvas, scratch-off reconciliation coupons, and runaway verdict.",
     defaultTheme: {
-      primary: "#d4af37",
-      bgGradient: "linear-gradient(180deg, #181513 0%, #201a17 100%)",
-      accent: "#f59e0b"
+      primary: "#f43f5e",
+      bgGradient: "radial-gradient(120% 90% at 50% 12%, #150924 0%, #0c0515 50%, #05020a 100%)",
+      accent: "#fbbf24"
     },
     defaultData: {
       recipientName: "My Dearest",
@@ -672,12 +672,12 @@ Happy celebration, Papa! 🌟🛡️❤️`
   sister: {
     id: "sister",
     name: "Sister Special (Behna)",
-    badge: "Partner in Crime 💅💖",
-    icon: "💅",
-    description: "Pastel lavender aesthetic: Sister survival rules, runaway 'Who is Smarter?' banter button, Polaroid blackmail & candid album, and forever bestie letter.",
+    badge: "Barbie & Teddy Bear 🧸🎀",
+    icon: "🎀",
+    description: "Barbie Dreamhouse pink & plushie teddy bear sanctuary: 60FPS hanging plushie teddy bear swing arena with physics oscillations and tickle reactions, stolen wardrobe & teddy heist court, gossip safe dial, blackmail polaroids, and sisterhood crown.",
     defaultTheme: {
-      primary: "#c084fc",
-      bgGradient: "radial-gradient(circle at 50% 30%, #faf5ff 0%, #f3e8ff 50%, #ede9fe 100%)",
+      primary: "#ec4899",
+      bgGradient: "radial-gradient(circle at 50% 15%, #fff0f7 0%, #fce7f3 45%, #fbcfe8 100%)",
       accent: "#f472b6"
     },
     defaultData: {
@@ -711,13 +711,13 @@ Love you endlessly, my favourite sister! 💖💅✨`
   brother: {
     id: "brother",
     name: "Brother Special (Bhai)",
-    badge: "The Living Legend 🤜🤛",
-    icon: "🤜🤛",
-    description: "Electric cobalt & cyan theme: The Sacred Bhai Code, Brotherhood Hall of Fame cards, interactive Fist Bump rumble blast, and heartfelt bro letter.",
+    badge: "Superbike & Bro-Code 🏍️💨",
+    icon: "🏍️",
+    description: "Asphalt speedway & nitro carbon-weave theme: 60FPS Superbike Highway Sprint arena with revving throttle and nitro afterburners, slamming fist bump centerpiece, Sacred Bhai Bro-Code Constitution with rubber stamp ratification, and brothers hall of fame.",
     defaultTheme: {
       primary: "#06b6d4",
-      bgGradient: "linear-gradient(180deg, #050b14 0%, #0c1829 100%)",
-      accent: "#38bdf8"
+      bgGradient: "radial-gradient(circle at 50% 15%, #0e1726 0%, #070d18 50%, #020408 100%)",
+      accent: "#f59e0b"
     },
     defaultData: {
       recipientName: "Bhai",

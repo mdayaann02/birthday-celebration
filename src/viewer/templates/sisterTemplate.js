@@ -88,10 +88,10 @@ export function renderSisterTemplate(container, data) {
   ];
 
   const stolenItems = [
-    { id: 1, icon: "🧥", item: "Oversized Vintage Hoodie", victim: "Worn without permission for 6 months straight", fine: "1x Large Iced Boba" },
-    { id: 2, icon: "🎧", item: "Noise-Cancelling AirPods", victim: "Found mysteriously under her bedroom pillow", fine: "Late-night drive snack" },
-    { id: 3, icon: "🍫", item: "Emergency Stash of Dark Chocolate", victim: "Disappeared from the fridge within 20 minutes", fine: "Unlimited fries order" },
-    { id: 4, icon: "🧢", item: "Favorite Baseball Cap", victim: "Spotted in her Instagram story looking cute", fine: "Public apology statement" }
+    { id: 1, icon: "🧸", item: "Giant Fluffy Plushie Teddy", victim: "Kidnapped and made permanent centerpiece on her bed", fine: "Unlimited Cuddles & Boba 🧋" },
+    { id: 2, icon: "🧥", item: "Cozy Oversized Pink Hoodie", victim: "Claimed as 'Barbie loungewear' for 6 months straight", fine: "Sweet Treats & Ice Cream 🍨" },
+    { id: 3, icon: "💄", item: "Favorite Lip Oil & Blush Tint", victim: "Mysteriously vanished into her cute pink handbag", fine: "Matcha Latte Treat 🍵" },
+    { id: 4, icon: "🎧", item: "Pastel Pink Noise-Cancelling AirPods", victim: "Spotted in her car playlist dancing to pop hits", fine: "Late-Night Food Run 🍟" }
   ];
 
   container.innerHTML = `
@@ -121,7 +121,7 @@ export function renderSisterTemplate(container, data) {
         <!-- PAGE 1: HERO & RUNAWAY "WHO IS SMARTER?" BUTTON -->
         <section class="fam-page-card active" data-page="1">
           <header class="fam-hero-section">
-            <div class="fam-badge terracotta-badge">💅 TO MY PERPETUAL HEADACHE &amp; FOREVER BEST FRIEND 💖✨</div>
+            <div class="fam-badge sister-barbie-badge" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; border:1px solid #fbcfe8; box-shadow:0 4px 14px rgba(236,72,153,0.35);">🎀 BARBIE DREAMHOUSE &amp; PLUSHIE TEDDY BESTIES 🧸💖</div>
             <h1 class="fam-hero-title">${data.heroTitle || 'To My Crazy, Annoying, Irreplaceable Sister 💅✨'}</h1>
             <p class="fam-hero-subtitle">${data.heroSubtitle || 'We fight, we steal each other’s clothes, we drive each other insane... but no one has my back like you do!'}</p>
 
@@ -222,26 +222,26 @@ export function renderSisterTemplate(container, data) {
             </div>
 
             <!-- Interactive "Who is Smarter?" Debate Game -->
-            <div class="sister-debate-box" style="margin:20px auto 14px; background:#fff7ed; padding:16px; border-radius:14px; border:1px solid #fdba74; text-align:center;">
-              <div style="font-size:12px; font-weight:800; color:#ea580c; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
-                ⚡ THE ETERNAL SIBLING TRUTH TEST ⚡
+            <div class="sister-debate-box" style="margin:20px auto 14px; background:rgba(255,255,255,0.94); padding:18px 16px; border-radius:18px; border:1.5px solid rgba(244,114,182,0.55); text-align:center; box-shadow:0 10px 28px rgba(244,114,182,0.2);">
+              <div style="font-size:12px; font-weight:800; color:#db2777; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
+                🎀 THE ETERNAL SIBLING TRUTH TEST 🎀
               </div>
-              <div style="font-size:15px; font-weight:700; color:#431407; margin-bottom:14px;">
+              <div style="font-size:15px; font-weight:800; color:#4c0527; margin-bottom:14px;">
                 Who is objectively the smarter sibling?
               </div>
 
               <div style="display:flex; justify-content:center; gap:12px; position:relative; min-height:50px;">
-                <button type="button" class="btn-fam-action" id="btnVoteSister" style="background:#ea580c; color:#fff; border-radius:20px; font-weight:800; padding:8px 20px;">
+                <button type="button" class="btn-fam-action" id="btnVoteSister" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; border-radius:20px; font-weight:800; padding:9px 22px; box-shadow:0 4px 14px rgba(236,72,153,0.35);">
                   Obviously Sister 👑
                 </button>
-                <button type="button" class="btn-fam-action" id="btnVoteSibling" style="background:#e2e8f0; color:#475569; border-radius:20px; font-weight:800; padding:8px 20px; transition:transform 0.15s ease;">
+                <button type="button" class="btn-fam-action" id="btnVoteSibling" style="background:#fce7f3; color:#701a40; border-radius:20px; font-weight:800; padding:9px 22px; border:1px solid #f472b6; transition:transform 0.15s ease;">
                   Me (Never!) 😂
                 </button>
               </div>
             </div>
 
             <div class="sis-quick-actions">
-              <button class="btn-fam-action btn-tax-sis" id="btnSisterTax">
+              <button class="btn-fam-action btn-tax-sis" id="btnSisterTax" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; font-weight:800; box-shadow:0 6px 20px rgba(236,72,153,0.35);">
                 🧋 Enforce Sibling Snack Tax (Boba + Fries) 🍟
               </button>
             </div>
@@ -265,24 +265,24 @@ export function renderSisterTemplate(container, data) {
 
             <div class="theft-items-grid">
               ${stolenItems.map(s => `
-                <div class="theft-item-box" data-id="${s.id}" style="position:relative; background:#fff7ed; padding:14px; border-radius:12px; border:1px solid #fdba74; margin-bottom:10px; cursor:pointer; transition:transform 0.2s ease;">
-                  <div style="display:flex; align-items:center; gap:12px;">
-                    <div class="hanger-icon" style="font-size:32px; transform-origin:top center; transition:transform 0.3s ease;">${s.icon}</div>
+                <div class="theft-item-box" data-id="${s.id}" style="position:relative; background:rgba(255,255,255,0.94); padding:16px; border-radius:16px; border:1.5px solid rgba(244,114,182,0.45); margin-bottom:12px; cursor:pointer; box-shadow:0 6px 18px rgba(244,114,182,0.15); transition:transform 0.2s ease;">
+                  <div style="display:flex; align-items:center; gap:14px;">
+                    <div class="hanger-icon" style="font-size:34px; transform-origin:top center; transition:transform 0.3s ease;">${s.icon}</div>
                     <div style="flex:1;">
-                      <h4 style="margin:0 0 4px 0; font-size:14px; color:#9a3412;">${s.item}</h4>
-                      <p style="margin:0 0 6px 0; font-size:12px; color:#78350f;">${s.victim}</p>
-                      <span style="font-size:11px; font-weight:700; color:#ea580c; background:#ffedd5; padding:2px 8px; border-radius:10px;">Fine: ${s.fine}</span>
+                      <h4 style="margin:0 0 4px 0; font-size:14.5px; font-weight:800; color:#831843;">${s.item}</h4>
+                      <p style="margin:0 0 6px 0; font-size:12px; line-height:1.4; color:#4c0527;">${s.victim}</p>
+                      <span style="font-size:11px; font-weight:800; color:#9d174d; background:#fce7f3; padding:3px 10px; border-radius:12px; border:1px solid #f472b6;">Fine: ${s.fine}</span>
                     </div>
                   </div>
-                  <div style="margin-top:10px; text-align:right;">
-                    <button type="button" class="btn-claim-fine" data-id="${s.id}" style="font-size:11px; font-weight:700; padding:4px 12px; border-radius:12px; border:none; background:#ea580c; color:#fff; cursor:pointer;">
+                  <div style="margin-top:12px; text-align:right;">
+                    <button type="button" class="btn-claim-fine" data-id="${s.id}" style="font-size:11.5px; font-weight:800; padding:6px 14px; border-radius:14px; border:none; background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; cursor:pointer; box-shadow:0 3px 10px rgba(236,72,153,0.3);">
                       CLAIM REPARATIONS 🧋
                     </button>
                   </div>
                 </div>
               `).join('')}
             </div>
-            <div id="theftSummary" style="text-align:center; font-size:12px; font-weight:700; color:#c2410c; margin-top:10px;"></div>
+            <div id="theftSummary" style="text-align:center; font-size:12.5px; font-weight:800; color:#831843; margin-top:12px;"></div>
           </div>
 
           <div class="fam-nav-dock">
@@ -304,23 +304,23 @@ export function renderSisterTemplate(container, data) {
 
             <!-- Rotary Combination Safe Lock Interactive Centerpiece -->
             <div class="safe-dial-wrap" style="text-align:center; margin:16px auto;">
-              <div id="safeRotaryDial" style="width:170px; height:170px; margin:0 auto; border-radius:50%; background:radial-gradient(circle, #431407 0%, #1c0a03 100%); border:5px solid #ea580c; position:relative; cursor:pointer; box-shadow:0 8px 24px rgba(234,88,12,0.35);">
-                <div style="position:absolute; top:8px; left:50%; transform:translateX(-50%); color:#fbbf24; font-weight:900; font-size:14px;">00</div>
-                <div style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#fbbf24; font-weight:900; font-size:14px;">25</div>
-                <div style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); color:#fbbf24; font-weight:900; font-size:14px;">50</div>
-                <div style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#fbbf24; font-weight:900; font-size:14px;">75</div>
-                <div id="dialIndicatorNeedle" style="position:absolute; top:50%; left:50%; width:4px; height:70px; background:#ef4444; transform:translate(-50%, -50%) rotate(0deg); transform-origin:center center; border-radius:2px;"></div>
-                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:22px; height:22px; border-radius:50%; background:#ea580c; border:2px solid #fff;"></div>
+              <div id="safeRotaryDial" style="width:170px; height:170px; margin:0 auto; border-radius:50%; background:radial-gradient(circle, #831843 0%, #3b0724 100%); border:5px solid #ec4899; position:relative; cursor:pointer; box-shadow:0 8px 26px rgba(236,72,153,0.4);">
+                <div style="position:absolute; top:8px; left:50%; transform:translateX(-50%); color:#fce7f3; font-weight:900; font-size:14px;">00</div>
+                <div style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#fce7f3; font-weight:900; font-size:14px;">25</div>
+                <div style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); color:#fce7f3; font-weight:900; font-size:14px;">50</div>
+                <div style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#fce7f3; font-weight:900; font-size:14px;">75</div>
+                <div id="dialIndicatorNeedle" style="position:absolute; top:50%; left:50%; width:4px; height:70px; background:#fb7185; transform:translate(-50%, -50%) rotate(0deg); transform-origin:center center; border-radius:2px; box-shadow:0 0 8px #fb7185;"></div>
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:24px; height:24px; border-radius:50%; background:#ec4899; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-size:11px;">🧸</div>
               </div>
-              <div style="margin-top:10px; font-size:12px; font-weight:700; color:#ea580c;">
+              <div style="margin-top:10px; font-size:12px; font-weight:800; color:#831843;">
                 ✦ Spin Dial to Crack Secret Safe ✦
               </div>
 
               <!-- Unlocked Secret Memories Box -->
-              <div id="safeUnlockedContent" style="display:none; margin-top:16px; background:#fff7ed; border:2px dashed #ea580c; border-radius:12px; padding:16px;">
-                <div style="font-size:24px; margin-bottom:6px;">🔓✨</div>
-                <h4 style="margin:0 0 6px 0; color:#9a3412;">SAFE CRACKED: TOP SECRET SISTER CODES</h4>
-                <p style="margin:0; font-size:13px; line-height:1.5; color:#78350f;">
+              <div id="safeUnlockedContent" style="display:none; margin-top:16px; background:rgba(255,255,255,0.95); border:2px dashed #ec4899; border-radius:16px; padding:18px; box-shadow:0 8px 24px rgba(236,72,153,0.2);">
+                <div style="font-size:28px; margin-bottom:6px;">🔓🎀💖</div>
+                <h4 style="margin:0 0 6px 0; color:#831843; font-size:15px; font-weight:900;">SAFE CRACKED: TOP SECRET SISTER CODES</h4>
+                <p style="margin:0; font-size:13.5px; line-height:1.55; color:#4c0527;">
                   “No matter who comes and goes, you and I are locked in forever. The 2 AM gossip sessions never expire, and our secrets go into the grave with us.” 🔒💖
                 </p>
               </div>
@@ -346,7 +346,7 @@ export function renderSisterTemplate(container, data) {
 
             <!-- Camera Shutter Snap Centerpiece -->
             <div style="text-align:center; margin-bottom:18px;">
-              <button class="btn-fam-action" id="btnSnapPolaroidCamera" style="background:#ea580c; color:#fff; border-radius:20px; font-weight:800; padding:8px 22px;">
+              <button class="btn-fam-action" id="btnSnapPolaroidCamera" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; border-radius:20px; font-weight:800; padding:9px 24px; box-shadow:0 4px 16px rgba(236,72,153,0.35);">
                 📸 Snap New Sister Blackmail Polaroid
               </button>
             </div>
@@ -354,7 +354,7 @@ export function renderSisterTemplate(container, data) {
             <div class="fam-polaroid-gallery">
               ${polaroids.map((p, i) => `
                 <div class="fam-polaroid-item" style="transition:transform 0.3s ease;">
-                  <div class="fam-polaroid-tape" style="background:rgba(234,88,12,0.4);"></div>
+                  <div class="fam-polaroid-tape" style="background:linear-gradient(135deg, #f472b6, #ec4899);"></div>
                   <div class="fam-polaroid-img-frame">
                     <img src="${p.image}" alt="${p.title}" onerror="this.src='/images/pretty.jpg'" />
                   </div>
@@ -382,11 +382,11 @@ export function renderSisterTemplate(container, data) {
           <div class="fam-letter-preview-card">
             <div class="letter-wax-envelope">
               <div class="letter-stamp-crest">💅</div>
-              <h3 class="letter-teaser-title">💌 Blossom Wax-Seal Sisterhood Letter</h3>
-              <p class="letter-teaser-sub">Sealed with unconditional love, boba debt, and zero regrets.</p>
+              <h3 class="letter-teaser-title" style="color:#831843;">💌 Barbie Wax-Seal Sisterhood Letter</h3>
+              <p class="letter-teaser-sub" style="color:#4c0527;">Sealed with unconditional love, boba debt, and zero regrets.</p>
               
               <div class="envelope-seal-trigger" id="sisWaxSeal" style="cursor:pointer; display:inline-block; margin:16px auto;">
-                <div class="wax-seal-badge" style="background:#ea580c; color:#fff; border:1px solid #fed7aa; padding:12px 24px; border-radius:30px; font-weight:700; box-shadow:0 4px 14px rgba(234,88,12,0.4); display:flex; align-items:center; gap:8px;">
+                <div class="wax-seal-badge" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; border:1.5px solid #fbcfe8; padding:12px 24px; border-radius:30px; font-weight:800; box-shadow:0 6px 20px rgba(236,72,153,0.4); display:flex; align-items:center; gap:8px;">
                   <span>🕯️</span> <span>Break Sister Wax Seal &amp; Unfold</span>
                 </div>
               </div>
@@ -429,23 +429,23 @@ export function renderSisterTemplate(container, data) {
         <!-- PAGE 6: CERTIFICATE -->
         <section class="fam-page-card" data-page="6">
           <div class="fam-cert-container">
-            <div class="fam-cert-border gold-border" style="border-color:#ea580c; background:#fff7ed; color:#431407;">
+            <div class="fam-cert-border gold-border" style="border-color:#ec4899; background:rgba(255,255,255,0.96); color:#3b0724; box-shadow:0 12px 35px rgba(236,72,153,0.25);">
               <div class="fam-cert-seal">👑</div>
-              <div class="fam-cert-kicker" style="color:#ea580c;">OFFICIAL SIBLING AWARDS COMMISSION</div>
-              <h2 class="fam-cert-title" style="color:#9a3412;">BEST SISTER IN THE UNIVERSE</h2>
-              <div class="fam-cert-awarded-to" style="color:#78350f;">This award of supreme distinction is granted to:</div>
-              <div class="fam-cert-recipient" style="color:#ea580c;">${data.recipientName || 'Behna'}</div>
-              <p class="fam-cert-citation" style="color:#431407;">
+              <div class="fam-cert-kicker" style="color:#db2777; font-weight:900;">BARBIE DREAMHOUSE SIBLING COMMISSION</div>
+              <h2 class="fam-cert-title" style="color:#831843;">BEST SISTER IN THE UNIVERSE</h2>
+              <div class="fam-cert-awarded-to" style="color:#701a40; font-weight:700;">This award of supreme distinction is granted to:</div>
+              <div class="fam-cert-recipient" style="color:#db2777;">${data.recipientName || 'Behna'}</div>
+              <p class="fam-cert-citation" style="color:#4c0527;">
                 For master-level wardrobe infiltration, unmatched 2 AM tea-spilling, fierce loyalty when it matters most, and being completely irreplaceable.
               </p>
               <div class="fam-cert-signature-row">
                 <div class="cert-col">
-                  <span class="cert-label" style="color:#9a3412;">Sister Status</span>
-                  <strong style="color:#ea580c;">QUEEN OF CHAOS 💅</strong>
+                  <span class="cert-label" style="color:#701a40;">Sister Status</span>
+                  <strong style="color:#db2777;">BARBIE QUEEN &amp; TEDDY BESTIE 🎀</strong>
                 </div>
                 <div class="cert-col">
-                  <span class="cert-label" style="color:#9a3412;">Conferred By</span>
-                  <strong style="color:#ea580c;">${data.senderName || 'Your Loving Sibling'} ✍️</strong>
+                  <span class="cert-label" style="color:#701a40;">Conferred By</span>
+                  <strong style="color:#db2777;">${data.senderName || 'Your Loving Sibling'} ✍️</strong>
                 </div>
               </div>
             </div>

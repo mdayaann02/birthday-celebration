@@ -197,7 +197,7 @@ export function renderBrotherTemplate(container, data) {
 
               <div class="punchcard-list">
                 ${broCodeClauses.map(c => `
-                  <div class="punchcard-row" data-id="${c.id}" style="position:relative; cursor:pointer; background:#1e140d; padding:12px; border-radius:10px; margin-bottom:10px; border:1px solid rgba(245,158,11,0.3); transition:all 0.2s ease;">
+                  <div class="punchcard-row" data-id="${c.id}" style="position:relative; cursor:pointer; background:#0f172a; padding:14px; border-radius:14px; margin-bottom:12px; border:1.5px solid rgba(245,158,11,0.4); box-shadow:0 4px 14px rgba(0,0,0,0.4); transition:all 0.2s ease;">
                     <div class="punchcard-info">
                       <h4 style="margin:0 0 4px 0; color:#fbbf24; font-size:14px;">${c.title}</h4>
                       <p style="margin:0; font-size:12px; line-height:1.45; color:#cbd5e1;">${c.text}</p>
@@ -221,45 +221,45 @@ export function renderBrotherTemplate(container, data) {
           <div class="fam-nav-dock">
             <button type="button" class="btn-fam-prev" data-prev="1">⬅ Back</button>
             <button type="button" class="btn-fam-next" data-next="3">
-              <span>Arcade Turbo Overdrive 🎮</span>
+              <span>Superbike Turbo Overdrive 🏍️</span>
               <span>➔</span>
             </button>
           </div>
         </section>
 
-        <!-- PAGE 3: ARCADE CO-OP & TURBO OVERDRIVE -->
+        <!-- PAGE 3: SUPERBIKE HORSEPOWER & TURBO OVERDRIVE -->
         <section class="fam-page-card" data-page="3">
           <div class="bro-gaming-card">
-            <h2 class="fam-section-title" style="margin-bottom:6px; text-align:center;">🎮 Sibling Co-Op &amp; Battle Stats</h2>
+            <h2 class="fam-section-title" style="margin-bottom:6px; text-align:center;">🏍️ Sibling Superbike Horsepower &amp; Turbo Stats</h2>
             <p class="fam-section-desc" style="text-align:center; margin-bottom:16px;">
-              Countless all-nighters, broken controllers, and 1v1 rematches that ended in fist fights.
+              Countless late-night highway sprints, full throttle speed runs, and unbreakable brotherhood.
             </p>
 
-            <!-- Arcade Turbo Overdrive Interactive Centerpiece -->
-            <div class="arcade-gauge-wrap" style="background:#0f172a; border:2px solid #06b6d4; border-radius:14px; padding:18px; margin-bottom:18px; text-align:center;">
-              <div style="font-size:12px; font-weight:800; color:#38bdf8; letter-spacing:1.5px; margin-bottom:6px;">⚡ BHAI ENERGY COMBO OVERDRIVE ⚡</div>
+            <!-- Superbike Turbo Overdrive Interactive Centerpiece -->
+            <div class="arcade-gauge-wrap" style="background:#0f172a; border:2px solid #06b6d4; border-radius:14px; padding:18px; margin-bottom:18px; text-align:center; box-shadow:0 8px 24px rgba(6,182,212,0.25);">
+              <div style="font-size:12px; font-weight:800; color:#38bdf8; letter-spacing:1.5px; margin-bottom:6px;">⚡ BHAI NITRO HORSEPOWER OVERDRIVE ⚡</div>
               
               <div style="position:relative; width:100%; height:26px; background:#1e293b; border-radius:13px; overflow:hidden; border:2px solid #0891b2; margin-bottom:10px;">
                 <div id="arcadePowerFill" style="width:25%; height:100%; background:linear-gradient(90deg, #06b6d4, #f59e0b, #ef4444); border-radius:11px; transition:width 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);"></div>
               </div>
               
-              <div id="arcadeLevelText" style="font-size:16px; font-weight:900; color:#fbbf24; margin-bottom:12px;">LEVEL 100 BROTHER (TAP TO BOOST!)</div>
+              <div id="arcadeLevelText" style="font-size:16px; font-weight:900; color:#fbbf24; margin-bottom:12px;">240+ KM/H SUPERBIKE LEGEND (TAP TO BOOST!)</div>
               
-              <button class="btn-fam-action" id="btnBoostBroPower" style="background:#0891b2; color:#fff; font-weight:800; border-radius:24px; padding:8px 24px; border:1px solid #38bdf8;">
-                🚀 BOOST OVERDRIVE (+500 XP)
+              <button class="btn-fam-action" id="btnBoostBroPower" style="background:linear-gradient(135deg, #06b6d4, #2563eb); color:#fff; font-weight:900; border-radius:24px; padding:9px 24px; border:none; box-shadow:0 4px 14px rgba(6,182,212,0.4);">
+                🔥 NITRO BOOST (+500 HP)
               </button>
             </div>
 
             <div class="gaming-stats-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-              <div style="background:#1e140d; padding:12px; border-radius:10px; border:1px solid rgba(245,158,11,0.25); text-align:center;">
-                <div style="font-size:24px;">🕹️</div>
-                <div style="font-size:18px; font-weight:800; color:#fbbf24;">9,999+</div>
-                <div style="font-size:11px; color:#cbd5e1;">Hours Battling Together</div>
+              <div style="background:#0f172a; padding:14px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+                <div style="font-size:26px;">🏍️</div>
+                <div style="font-size:18px; font-weight:900; color:#fbbf24;">9,999+ KM</div>
+                <div style="font-size:11.5px; color:#cbd5e1;">Highway Sprints Conquered</div>
               </div>
-              <div style="background:#1e140d; padding:12px; border-radius:10px; border:1px solid rgba(245,158,11,0.25); text-align:center;">
-                <div style="font-size:24px;">🍕</div>
-                <div style="font-size:18px; font-weight:800; color:#fbbf24;">100%</div>
-                <div style="font-size:11px; color:#cbd5e1;">Last Slice Theft Success</div>
+              <div style="background:#0f172a; padding:14px; border-radius:12px; border:1px solid rgba(245,158,11,0.3); text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+                <div style="font-size:26px;">⚡</div>
+                <div style="font-size:18px; font-weight:900; color:#fbbf24;">240+ KM/H</div>
+                <div style="font-size:11.5px; color:#cbd5e1;">Top Brotherhood Velocity</div>
               </div>
             </div>
           </div>
@@ -316,7 +316,7 @@ export function renderBrotherTemplate(container, data) {
               <p class="letter-teaser-sub">Sealed with zero cheese and 100% unbreakable brotherhood.</p>
               
               <div class="envelope-seal-trigger" id="broWaxSeal" style="cursor:pointer; display:inline-block; margin:16px auto;">
-                <div class="wax-seal-badge" style="background:#ea580c; color:#fff; border:1px solid #f59e0b; padding:12px 24px; border-radius:30px; font-weight:700; box-shadow:0 4px 14px rgba(234,88,12,0.4); display:flex; align-items:center; gap:8px;">
+                <div class="wax-seal-badge" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000; border:2px solid #fbbf24; padding:12px 24px; border-radius:30px; font-weight:900; box-shadow:0 6px 20px rgba(245,158,11,0.5); display:flex; align-items:center; gap:8px;">
                   <span>🕯️</span> <span>Break Bro Wax Seal &amp; Unfold</span>
                 </div>
               </div>
@@ -359,7 +359,7 @@ export function renderBrotherTemplate(container, data) {
         <!-- PAGE 6: CERTIFIED LIVING LEGEND -->
         <section class="fam-page-card" data-page="6">
           <div class="fam-cert-container">
-            <div class="fam-cert-border gold-border" style="border-color:#f59e0b; background:#1e140d; color:#fef3c7;">
+            <div class="fam-cert-border gold-border" style="border-color:#f59e0b; background:#0b1120; color:#fef3c7; box-shadow:0 12px 35px rgba(245,158,11,0.25);">
               <div class="fam-cert-seal">🏆</div>
               <div class="fam-cert-kicker" style="color:#f59e0b;">OFFICIAL SIBLING ALLIANCE &amp; HALL OF FAME</div>
               <h2 class="fam-cert-title" style="color:#fbbf24;">CERTIFIED LIVING LEGEND</h2>
@@ -396,7 +396,7 @@ export function renderBrotherTemplate(container, data) {
   const broPageTitles = [
     { num: 1, title: "The Bhai Bro-Code Opening 🤜🤛" },
     { num: 2, title: "The Sacred Bro-Code 📜" },
-    { num: 3, title: "Arcade Co-Op & Turbo Overdrive 🎮" },
+    { num: 3, title: "Superbike Turbo Overdrive 🏍️" },
     { num: 4, title: "Chronicles of Absolute Chaos 📸" },
     { num: 5, title: "Bro-Fist Sealed Treaty 💌" },
     { num: 6, title: "Certified Living Legend 🏆" }
