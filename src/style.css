@@ -16309,3 +16309,389 @@ textarea,
   font-weight: 700 !important;
 }
 
+
+
+/* =========================================================================
+   PLAYFUL INTERACTIVE REACTION DOCK & TACTILE CELEBRATION SUITE
+   Inspired by Thanor.ai Physical Interactions & Micro-Delights
+   ========================================================================= */
+
+.playful-reaction-dock {
+  position: fixed;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  right: 18px;
+  z-index: 99990;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: auto;
+  font-family: inherit;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Floating Pill Button */
+.btn-reaction-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.88), rgba(168, 85, 247, 0.88));
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+}
+
+.btn-reaction-toggle:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 12px 28px rgba(244, 63, 94, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.btn-reaction-toggle:active {
+  transform: scale(0.95);
+}
+
+.reaction-toggle-icon {
+  font-size: 18px;
+  line-height: 1;
+  display: inline-block;
+  animation: reaction-wobble 2.6s infinite ease-in-out;
+}
+
+@keyframes reaction-wobble {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-10deg) scale(1.1); }
+  75% { transform: rotate(10deg) scale(1.1); }
+}
+
+.reaction-badge-num {
+  background: rgba(0, 0, 0, 0.35);
+  color: #fef08a;
+  border-radius: 9999px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(254, 240, 138, 0.3);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reaction-badge-num.pulse {
+  transform: scale(1.35);
+  color: #ffffff;
+  background: #f43f5e;
+}
+
+/* Expanded Action Cluster */
+.reaction-cluster-bar {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 9999px;
+  background: rgba(22, 14, 34, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 20px rgba(244, 63, 94, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  animation: cluster-pop-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reaction-cluster-bar.visible {
+  display: flex;
+}
+
+@keyframes cluster-pop-in {
+  0% { transform: scale(0.7) translateY(12px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.btn-react-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 6px 10px;
+  min-width: 48px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.btn-react-item:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px) scale(1.06);
+}
+
+.btn-react-item:active {
+  transform: scale(0.92);
+}
+
+.btn-react-surge {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(244, 63, 94, 0.35));
+  border-color: rgba(251, 191, 36, 0.5);
+}
+
+.btn-react-surge:hover {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.4), rgba(244, 63, 94, 0.5));
+  border-color: #fbbf24;
+}
+
+.react-emoji {
+  font-size: 18px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.react-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.btn-react-minimize {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 2px;
+  transition: all 0.2s ease;
+}
+
+.btn-react-minimize:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+/* Surge Energy Overlay */
+.surge-energy-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 18, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.surge-energy-card {
+  background: rgba(26, 18, 40, 0.95);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(244, 63, 94, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  border-radius: 24px;
+  padding: 32px 24px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  animation: cluster-pop-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.surge-orb-container {
+  width: 110px;
+  height: 110px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.surge-orb-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px dashed rgba(251, 191, 36, 0.4);
+  pointer-events: none;
+}
+
+.ring-1 {
+  width: 86px;
+  height: 86px;
+  animation: spin-slow 8s linear infinite;
+}
+
+.ring-2 {
+  width: 102px;
+  height: 102px;
+  border-color: rgba(244, 63, 94, 0.4);
+  border-style: dotted;
+  animation: spin-reverse 6s linear infinite;
+}
+
+.ring-3 {
+  width: 120px;
+  height: 120px;
+  border-color: rgba(168, 85, 247, 0.3);
+  animation: spin-slow 12s linear infinite;
+}
+
+.surge-orb-container.charging .ring-1 {
+  animation-duration: 1.5s;
+  border-color: #fbbf24;
+}
+
+.surge-orb-container.charging .ring-2 {
+  animation-duration: 1s;
+  border-color: #f43f5e;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.surge-orb-core {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f43f5e 0%, #a855f7 60%, #4f46e5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  box-shadow: 0 0 25px rgba(244, 63, 94, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.surge-orb-container.charging .surge-orb-core {
+  transform: scale(1.15);
+  box-shadow: 0 0 45px rgba(251, 191, 36, 0.9), inset 0 0 20px #ffffff;
+  background: radial-gradient(circle, #fbbf24 0%, #f43f5e 60%, #9333ea 100%);
+}
+
+.surge-orb-container.charged .surge-orb-core {
+  transform: scale(1.3);
+  box-shadow: 0 0 60px #fbbf24, 0 0 100px #f43f5e;
+}
+
+.surge-card-title {
+  font-size: 19px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, #ffffff, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.surge-card-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 22px 0;
+  line-height: 1.5;
+}
+
+.btn-surge-hold {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f43f5e, #e11d48, #d97706);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  box-shadow: 0 10px 28px rgba(244, 63, 94, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-surge-hold:active {
+  transform: scale(0.97);
+  box-shadow: 0 4px 15px rgba(244, 63, 94, 0.6), inset 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.btn-surge-close {
+  margin-top: 12px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+}
+
+.btn-surge-close:hover {
+  color: #ffffff;
+}
+
+/* Double Tap Heart & Flying Emojis */
+.blooming-doubletap-heart {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.playful-flying-emoji {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Mobile Responsiveness for Playful Dock (Vivo V70, Vivo T3, 375px) */
+@media (max-width: 640px) {
+  .playful-reaction-dock {
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    right: 12px;
+  }
+
+  .reaction-cluster-bar {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .btn-react-item {
+    min-width: 42px;
+    padding: 5px 7px;
+  }
+
+  .react-emoji {
+    font-size: 16px;
+  }
+
+  .react-label {
+    font-size: 9px;
+  }
+
+  .surge-energy-card {
+    padding: 24px 18px;
+    max-width: 320px;
+  }
+}

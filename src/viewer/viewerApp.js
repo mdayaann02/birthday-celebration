@@ -2,6 +2,11 @@
 
 import { checkCountdownLock, renderCountdownGate } from './countdownGate.js';
 import { initInteractiveSparkles } from './sparkleEffect.js';
+import { initCardTilt } from './cardTilt.js';
+import { initSwipeNavigation } from './swipeNavigation.js';
+import { initDoubleTapHearts } from './doubleTapHearts.js';
+import { initPlayfulDock } from './playfulDock.js';
+
 import { renderTreeTemplate } from './templates/treeTemplate.js';
 import { renderBlossomTemplate } from './templates/blossomTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
@@ -93,5 +98,15 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     default:
       renderBirthdayTemplate(root, data);
       break;
+  }
+
+  // Initialize Playful Micro-Interactions & Tactile Suite across all templates
+  try {
+    initPlayfulDock(container, data);
+    initCardTilt(root);
+    initSwipeNavigation(root);
+    initDoubleTapHearts(root);
+  } catch (err) {
+    console.error('Playful suite initialization error:', err);
   }
 }
