@@ -448,7 +448,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
               { id: 4, title: "Always In My Heart", artist: "Soft Piano Reverie", src: "/audio/alfaaz.mp3", tag: "SWEET MOMENTS 💖" },
               { id: 5, title: "Golden Hour Sakura", artist: "Orchestral Blossom", src: "/audio/blossom_song.mp3", tag: "FOREVER YOURS 👑" }
             ]).map((t, idx) => `
-              <div class="sub-card-editor romance-track-row" data-t-idx="${idx}" style="margin-bottom:8px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:10px; padding:10px;">
+              <div class="sub-card-editor romance-track-row" data-t-idx="${idx}" style="margin-bottom:8px; border-radius:10px; padding:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                   <span style="font-weight:800; font-size:11px; color:#d4235c;">#0${idx + 1} • TRACK</span>
                   <button type="button" class="btn-del-track" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px;">✕</button>
@@ -480,7 +480,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         </div>
         <div id="romanceMilestonesList">
           ${milestones.map((m, i) => `
-            <div class="sub-card-editor romance-milestone-row" data-m-idx="${i}" style="margin-bottom:14px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:12px; padding:12px;">
+            <div class="sub-card-editor romance-milestone-row" data-m-idx="${i}" style="margin-bottom:14px; border-radius:12px; padding:12px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <span style="font-weight:800; font-size:12px; color:#d4235c;">#${m.num || ('0' + (i+1))} • ${m.tag || 'MILESTONE'}</span>
                 <button type="button" class="btn-del-milestone" data-i="${i}" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px;">✕</button>
@@ -524,7 +524,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const row = document.createElement('div');
       row.className = 'sub-card-editor romance-milestone-row';
       row.setAttribute('data-m-idx', idx);
-      row.style.cssText = 'margin-bottom:14px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:12px; padding:12px;';
+      row.style.cssText = 'margin-bottom:14px; border-radius:12px; padding:12px;';
       row.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <span style="font-weight:800; font-size:12px; color:#d4235c;">#0${idx + 1} • NEW MILESTONE</span>
@@ -560,7 +560,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const row = document.createElement('div');
       row.className = 'sub-card-editor romance-track-row';
       row.setAttribute('data-t-idx', idx);
-      row.style.cssText = 'margin-bottom:8px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:10px; padding:10px;';
+      row.style.cssText = 'margin-bottom:8px; border-radius:10px; padding:10px;';
       row.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
           <span style="font-weight:800; font-size:11px; color:#d4235c;">#0${idx + 1} • TRACK</span>
@@ -675,7 +675,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           // Render into romanceTracksList
           if (tList) {
             tList.innerHTML = tracks.map((t, idx) => `
-              <div class="sub-card-editor romance-track-row" data-t-idx="${idx}" style="margin-bottom:8px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:10px; padding:10px;">
+              <div class="sub-card-editor romance-track-row" data-t-idx="${idx}" style="margin-bottom:8px; border-radius:10px; padding:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                   <span style="font-weight:800; font-size:11px; color:#d4235c;">#0${idx + 1} • TRACK</span>
                   <button type="button" class="btn-del-track" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px;">✕</button>

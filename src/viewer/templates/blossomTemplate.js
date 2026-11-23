@@ -2314,6 +2314,15 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       try { e.preventDefault(); } catch (_) {}
     }
 
+    // Auto-enter full screen immediately on opening the celebration
+    try {
+      const docEl = document.documentElement;
+      const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      if (fn && !document.fullscreenElement && !document.webkitFullscreenElement) {
+        fn.call(docEl).catch(() => {});
+      }
+    } catch (_) {}
+
     try {
       chime(660, 880);
     } catch (_) {}
@@ -2982,7 +2991,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         vy: Math.sin(angle) * speed,
         r: Math.random() * 2.5 + 1.2,
         alpha: 1,
-        color: ['#fbbf24', '#f43f5e', '#ffffff', '#a855f7'][Math.floor(Math.random() * 4)]
+        color: ['#fbbf24', '#f43f5e', '#ffffff', '#fb7185'][Math.floor(Math.random() * 4)]
       });
     }
   }

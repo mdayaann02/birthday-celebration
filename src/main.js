@@ -108,6 +108,22 @@ async function initApp() {
 // React to URL hash changes
 window.addEventListener('hashchange', initApp);
 
+// Automatic full screen trigger on user interaction (touch, tap, click)
+function requestAutoFullscreen() {
+  if (typeof document === 'undefined') return;
+  const docEl = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+    if (fn) {
+      fn.call(docEl).catch(() => {});
+    }
+  }
+}
+
+['click', 'touchstart', 'pointerdown'].forEach(ev => {
+  window.addEventListener(ev, requestAutoFullscreen, { passive: true });
+});
+
 // Mount when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);

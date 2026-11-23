@@ -2,16 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cinzel:wght@600;700;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,400;1,600&family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --primary: #ff4d6d;
-  --primary-light: #ff758f;
-  --gold: #d4af37;
-  --gold-light: #f3e5ab;
-  --cream: #fbf9f5;
-  --card-bg: #ffffff;
-  --text-main: #2b2b2b;
-  --text-muted: #6e6e73;
-  --dark: #0f1016;
-  --dark-surface: #1a1b24;
+  --primary: #f43f5e;
+  --primary-light: #fb7185;
+  --gold: #fbbf24;
+  --gold-light: #fde68a;
+  --cream: #fff5f7;
+  --card-bg: rgba(40, 12, 28, 0.9);
+  --text-main: #fff1f2;
+  --text-secondary: #fce7f3;
+  --text-muted: #fbcfe8;
+  --dark: #150610;
+  --dark-surface: #260a1d;
 }
 
 *, *::before, *::after {
@@ -24,16 +25,18 @@
 html, body {
   width: 100%;
   max-width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   position: relative;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--dark);
-  color: #f1f1f1;
+  color: var(--text-main);
   overflow-x: hidden;
-  line-height: 1.5;
+  line-height: 1.6;
   user-select: none;
 }
 
@@ -1988,8 +1991,8 @@ body {
 .form-label {
   display: block;
   font-size: 12px;
-  font-weight: 600;
-  color: #bbb;
+  font-weight: 700;
+  color: var(--text-secondary);
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1997,11 +2000,11 @@ body {
 
 .form-input, .form-textarea {
   width: 100%;
-  background: #20212d;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
   padding: 10px 14px;
-  color: #fff;
+  color: var(--input-text);
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
@@ -2009,15 +2012,16 @@ body {
 
 .form-input:focus, .form-textarea:focus {
   border-color: var(--primary);
+  box-shadow: var(--input-focus-ring);
 }
 
 .drawer-footer {
   padding: 18px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(251, 207, 232, 0.15);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: #13141c;
+  background: var(--glass-surface-opaque);
 }
 
 .btn-primary-action {
@@ -2205,36 +2209,40 @@ body {
 :root,
 .studio-layout,
 .studio-layout.studio-theme-dark {
-  --glass-canvas-bg: radial-gradient(circle at 12% 10%, rgba(225, 29, 72, 0.18) 0%, transparent 45%),
-                     radial-gradient(circle at 88% 12%, rgba(217, 119, 6, 0.15) 0%, transparent 40%),
-                     radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.16) 0%, transparent 50%),
-                     radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.16) 0%, transparent 45%),
-                     radial-gradient(circle at 10% 90%, rgba(244, 63, 94, 0.14) 0%, transparent 40%),
-                     #090710;
+  /* Blossom Theme: Velvet Blossom Midnight Canvas Background */
+  --glass-canvas-bg: radial-gradient(circle at 12% 10%, rgba(244, 63, 94, 0.24) 0%, transparent 45%),
+                     radial-gradient(circle at 88% 12%, rgba(251, 113, 133, 0.20) 0%, transparent 40%),
+                     radial-gradient(circle at 50% 45%, rgba(225, 29, 72, 0.16) 0%, transparent 50%),
+                     radial-gradient(circle at 85% 85%, rgba(244, 114, 182, 0.18) 0%, transparent 45%),
+                     radial-gradient(circle at 10% 90%, rgba(251, 191, 36, 0.12) 0%, transparent 40%),
+                     #150610;
 
-  --text-main: #ffffff;
-  --text-secondary: #f1f5f9;
-  --text-muted: #cbd5e1;
-  --text-dim: #94a3b8;
-  --text-placeholder: rgba(255, 255, 255, 0.48);
+  /* Blossom Theme: Romantic Font Colors */
+  --text-main: #fff1f2;
+  --text-secondary: #fce7f3;
+  --text-muted: #fbcfe8;
+  --text-dim: #fda4af;
+  --text-placeholder: rgba(251, 207, 232, 0.45);
 
-  --glass-surface-nav: rgba(18, 14, 28, 0.88);
-  --glass-surface: rgba(22, 17, 34, 0.85);
-  --glass-surface-elevated: rgba(28, 21, 42, 0.92);
-  --glass-surface-card: rgba(26, 19, 39, 0.88);
-  --glass-surface-inner: rgba(16, 12, 24, 0.92);
-  --glass-surface-opaque: #140f20;
+  /* Blossom Theme: Translucent Velvet Glass Surfaces */
+  --glass-surface-nav: rgba(28, 8, 20, 0.88);
+  --glass-surface: rgba(35, 10, 25, 0.85);
+  --glass-surface-elevated: rgba(45, 14, 32, 0.92);
+  --glass-surface-card: rgba(40, 12, 28, 0.88);
+  --glass-surface-inner: rgba(26, 7, 18, 0.94);
+  --glass-surface-opaque: #1b0714;
 
-  --glass-blur: 14px;
+  --glass-blur: 16px;
 
-  --glass-border: 1px solid rgba(255, 255, 255, 0.16);
-  --glass-border-subtle: 1px solid rgba(255, 255, 255, 0.09);
-  --glass-border-accent: 1px solid rgba(244, 63, 94, 0.5);
-  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  /* Rose Gold Glass Borders & Highlights */
+  --glass-border: 1px solid rgba(251, 207, 232, 0.2);
+  --glass-border-subtle: 1px solid rgba(251, 207, 232, 0.1);
+  --glass-border-accent: 1px solid rgba(244, 63, 94, 0.55);
+  --glass-highlight: inset 0 1px 0 rgba(255, 228, 230, 0.16);
 
-  --glass-shadow-sm: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.35);
-  --glass-shadow-md: 0 12px 36px -4px rgba(0, 0, 0, 0.7), 0 2px 8px rgba(0, 0, 0, 0.45);
-  --glass-shadow-lg: 0 24px 54px -6px rgba(0, 0, 0, 0.85), 0 4px 14px rgba(0, 0, 0, 0.6);
+  --glass-shadow-sm: 0 4px 16px -2px rgba(15, 3, 10, 0.5), 0 1px 3px rgba(15, 3, 10, 0.35);
+  --glass-shadow-md: 0 12px 36px -4px rgba(15, 3, 10, 0.7), 0 2px 8px rgba(15, 3, 10, 0.45);
+  --glass-shadow-lg: 0 24px 54px -6px rgba(15, 3, 10, 0.85), 0 4px 14px rgba(15, 3, 10, 0.6);
 
   --primary-accent: #f43f5e;
   --primary-hover: #fb7185;
@@ -2242,65 +2250,65 @@ body {
   --gold-accent: #fbbf24;
   --gold-soft: rgba(251, 191, 36, 0.18);
 
-  --input-bg: rgba(15, 11, 23, 0.95);
-  --input-border: rgba(255, 255, 255, 0.18);
-  --input-text: #ffffff;
+  --input-bg: rgba(28, 8, 20, 0.95);
+  --input-border: rgba(251, 207, 232, 0.22);
+  --input-text: #fff1f2;
   --input-focus-border: #f43f5e;
   --input-focus-ring: 0 0 0 3px rgba(244, 63, 94, 0.3);
 
-  --card-bg: rgba(25, 19, 38, 0.9);
-  --card-sub-bg: rgba(18, 14, 28, 0.82);
-  --card-border: 1px solid rgba(255, 255, 255, 0.14);
+  --card-bg: rgba(40, 12, 28, 0.9);
+  --card-sub-bg: rgba(28, 8, 20, 0.85);
+  --card-border: 1px solid rgba(251, 207, 232, 0.18);
 }
 
-/* Light Mode Overrides */
+/* Light Mode Overrides: Sakura Silk & Rosewater Cream */
 .studio-layout.studio-theme-light {
-  --glass-canvas-bg: radial-gradient(circle at 10% 12%, rgba(255, 230, 238, 0.9) 0%, transparent 45%),
-                     radial-gradient(circle at 90% 8%, rgba(254, 240, 199, 0.88) 0%, transparent 42%),
-                     radial-gradient(circle at 50% 48%, rgba(253, 242, 248, 0.75) 0%, transparent 50%),
-                     radial-gradient(circle at 85% 85%, rgba(238, 242, 255, 0.92) 0%, transparent 44%),
-                     radial-gradient(circle at 12% 90%, rgba(254, 240, 138, 0.65) 0%, transparent 38%),
-                     #faf6f0;
+  --glass-canvas-bg: radial-gradient(circle at 10% 12%, rgba(255, 228, 230, 0.95) 0%, transparent 45%),
+                     radial-gradient(circle at 90% 8%, rgba(253, 242, 248, 0.9) 0%, transparent 42%),
+                     radial-gradient(circle at 50% 48%, rgba(255, 241, 242, 0.85) 0%, transparent 50%),
+                     radial-gradient(circle at 85% 85%, rgba(254, 205, 211, 0.7) 0%, transparent 44%),
+                     radial-gradient(circle at 12% 90%, rgba(254, 243, 199, 0.6) 0%, transparent 38%),
+                     #fff5f7;
 
-  --text-main: #1c1216;
-  --text-secondary: #2d1a24;
-  --text-muted: #524049;
-  --text-dim: #73616a;
-  --text-placeholder: rgba(82, 64, 73, 0.5);
+  --text-main: #881337;
+  --text-secondary: #4c0519;
+  --text-muted: #9d174d;
+  --text-dim: #be185d;
+  --text-placeholder: rgba(157, 23, 77, 0.5);
 
-  --glass-surface-nav: rgba(255, 255, 255, 0.88);
-  --glass-surface: rgba(255, 255, 255, 0.82);
-  --glass-surface-elevated: rgba(255, 255, 255, 0.94);
-  --glass-surface-card: rgba(255, 255, 255, 0.88);
+  --glass-surface-nav: rgba(255, 245, 247, 0.92);
+  --glass-surface: rgba(255, 250, 252, 0.88);
+  --glass-surface-elevated: rgba(255, 255, 255, 0.96);
+  --glass-surface-card: rgba(255, 248, 250, 0.92);
   --glass-surface-inner: #ffffff;
   --glass-surface-opaque: #ffffff;
 
-  --glass-blur: 14px;
+  --glass-blur: 16px;
 
-  --glass-border: 1px solid rgba(255, 255, 255, 0.9);
-  --glass-border-subtle: 1px solid rgba(0, 0, 0, 0.08);
-  --glass-border-accent: 1px solid rgba(212, 35, 92, 0.35);
+  --glass-border: 1px solid rgba(244, 114, 182, 0.28);
+  --glass-border-subtle: 1px solid rgba(244, 114, 182, 0.14);
+  --glass-border-accent: 1px solid rgba(225, 29, 72, 0.45);
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.95);
 
-  --glass-shadow-sm: 0 4px 16px -2px rgba(28, 18, 22, 0.05), 0 1px 3px rgba(28, 18, 22, 0.03);
-  --glass-shadow-md: 0 12px 36px -4px rgba(28, 18, 22, 0.07), 0 2px 8px rgba(28, 18, 22, 0.03);
-  --glass-shadow-lg: 0 24px 54px -6px rgba(28, 18, 22, 0.1), 0 4px 14px rgba(28, 18, 22, 0.04);
+  --glass-shadow-sm: 0 4px 16px -2px rgba(136, 19, 55, 0.05), 0 1px 3px rgba(136, 19, 55, 0.03);
+  --glass-shadow-md: 0 12px 36px -4px rgba(136, 19, 55, 0.08), 0 2px 8px rgba(136, 19, 55, 0.04);
+  --glass-shadow-lg: 0 24px 54px -6px rgba(136, 19, 55, 0.12), 0 4px 14px rgba(136, 19, 55, 0.05);
 
   --primary-accent: #d4235c;
   --primary-hover: #b81b4e;
   --primary-soft: rgba(212, 35, 92, 0.08);
-  --gold-accent: #9a6500;
-  --gold-soft: rgba(212, 175, 55, 0.14);
+  --gold-accent: #b45309;
+  --gold-soft: rgba(245, 158, 11, 0.14);
 
   --input-bg: rgba(255, 255, 255, 0.95);
-  --input-border: rgba(212, 175, 55, 0.28);
-  --input-text: #1c1216;
+  --input-border: rgba(244, 114, 182, 0.35);
+  --input-text: #881337;
   --input-focus-border: #d4235c;
   --input-focus-ring: 0 0 0 3px rgba(212, 35, 92, 0.14);
 
-  --card-bg: rgba(255, 255, 255, 0.88);
-  --card-sub-bg: #faf4ed;
-  --card-border: 1px solid rgba(255, 255, 255, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --card-sub-bg: #fff1f2;
+  --card-border: 1px solid rgba(244, 114, 182, 0.25);
 }
 
 /* Strict Step-by-Step Navigation & Progress Bar Suppression */
@@ -2327,13 +2335,13 @@ body {
   display: none !important;
 }
 
-.studio-ambient-mesh .mesh-orb-1 { background: #9d174d; opacity: 0.35; }
-.studio-ambient-mesh .mesh-orb-2 { background: #b45309; opacity: 0.3; }
-.studio-ambient-mesh .mesh-orb-3 { background: #581c87; opacity: 0.4; }
+.studio-ambient-mesh .mesh-orb-1 { background: #e11d48; opacity: 0.35; }
+.studio-ambient-mesh .mesh-orb-2 { background: #fb7185; opacity: 0.28; }
+.studio-ambient-mesh .mesh-orb-3 { background: #f59e0b; opacity: 0.22; }
 
 .studio-theme-light .studio-ambient-mesh .mesh-orb-1 { background: #ffe4e6; opacity: 0.45; }
-.studio-theme-light .studio-ambient-mesh .mesh-orb-2 { background: #fef3c7; opacity: 0.45; }
-.studio-theme-light .studio-ambient-mesh .mesh-orb-3 { background: #ede9fe; opacity: 0.45; }
+.studio-theme-light .studio-ambient-mesh .mesh-orb-2 { background: #fce7f3; opacity: 0.45; }
+.studio-theme-light .studio-ambient-mesh .mesh-orb-3 { background: #fef3c7; opacity: 0.4; }
 
 .btn-theme-toggle {
   display: inline-flex;
@@ -19801,4 +19809,94 @@ button#treeMemoriesBtn.is-shown {
 .btn-song-icon {
   font-size: 11px;
   line-height: 1;
+}
+
+/* =========================================================================
+   BLOSSOM THEME UNIFIED TYPOGRAPHY, FONT COLORS & BACKGROUNDS
+   ========================================================================= */
+
+/* Headings in Editorial Romance Serif */
+.hero-headline,
+.section-title,
+.studio-heading,
+.brand-name,
+.tracklist-title,
+.reasons-deck-title,
+.chapter-title,
+.stars-main-title,
+.story-card-title,
+.parchment-letter-title,
+.treaty-title,
+.thank-you-title,
+.step-title,
+.template-bento-title,
+.preview-frame-title {
+  font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif !important;
+  color: var(--text-main) !important;
+  letter-spacing: -0.01em;
+}
+
+/* Secondary & Muted Text in Warm Sakura Blush */
+.hero-subheadline,
+.section-subtitle,
+.brand-subtext,
+.step-desc,
+.template-bento-desc,
+.editor-help-text,
+.thanor-card-desc,
+.story-card-desc,
+.reasons-deck-subtitle,
+.chapter-desc,
+.stars-sub-hint {
+  color: var(--text-muted) !important;
+  line-height: 1.6;
+}
+
+/* Badges & Pills in Cherry Blossom Accent */
+.hero-pill-badge,
+.badge-free-pill,
+.section-step-badge,
+.tracklist-badge,
+.reasons-deck-badge,
+.star-tag-pill,
+.song-tag-pill,
+.chapter-num-pill,
+.story-card-badge {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important;
+  letter-spacing: 1.5px !important;
+  font-weight: 800 !important;
+}
+
+/* Form Labels & Inputs in Blossom Theme Palette */
+.form-label {
+  color: var(--text-secondary) !important;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-weight: 700;
+}
+
+.form-input, .form-textarea, select.form-input {
+  background: var(--input-bg) !important;
+  border: 1.5px solid var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+  color: var(--text-placeholder) !important;
+}
+
+/* Sub-card rows in Blossom Theme */
+.sub-card-editor.romance-track-row,
+.sub-card-editor.romance-milestone-row {
+  background: var(--card-bg) !important;
+  border: 1px solid rgba(251, 207, 232, 0.22) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 4px 14px rgba(15, 3, 10, 0.35) !important;
+}
+
+.studio-theme-light .sub-card-editor.romance-track-row,
+.studio-theme-light .sub-card-editor.romance-milestone-row {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(244, 114, 182, 0.28) !important;
+  color: #881337 !important;
+  box-shadow: 0 4px 14px rgba(212, 35, 92, 0.06) !important;
 }
