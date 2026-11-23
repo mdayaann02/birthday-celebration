@@ -2052,6 +2052,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   function resetAll() {
+    gateOpened = false;
     treeStop();
     showWish(false);
     replayArmed = false;
@@ -2107,66 +2108,140 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   resize();
   buildMotes();
 
-  // --- ACT 0: VIRAL REEL BLOSSOM OPENER ---
-  function openGate() {
-    chime(660, 880);
-    startMusicAutoplay();
-    viralFlowerBtn?.classList.add('bloomed');
 
-    // Burst particles
-    if (burstCanvas) {
-      const bCtx = burstCanvas.getContext('2d');
-      const bW = (burstCanvas.width = 340);
-      const bH = (burstCanvas.height = 340);
-      burstCanvas.style.opacity = '1';
-      const burstPetals = [];
-      for (let i = 0; i < 50; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 8 + 3;
-        burstPetals.push({
-          x: bW / 2, y: bH / 2,
-          vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-          size: Math.random() * 8 + 5, rot: Math.random() * Math.PI * 2,
-          alpha: 1, color: ['#f43f5e', '#ec4899', '#fda4af', '#fbcfe8'][Math.floor(Math.random() * 4)]
-        });
-      }
-      function renderBurst() {
-        bCtx.clearRect(0, 0, bW, bH);
-        let alive = false;
-        for (let p of burstPetals) {
-          p.x += p.vx; p.y += p.vy; p.alpha -= 0.025;
-          if (p.alpha > 0) {
-            alive = true;
-            bCtx.save();
-            bCtx.globalAlpha = p.alpha;
-            bCtx.translate(p.x, p.y);
-            bCtx.rotate(p.rot);
-            bCtx.fillStyle = p.color;
-            bCtx.beginPath();
-            bCtx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
-            bCtx.fill();
-            bCtx.restore();
-          }
-        }
-        if (alive) requestAnimationFrame(renderBurst);
-      }
-      requestAnimationFrame(renderBurst);
+  // Corner Mini Spinning CD Music Player & Safe Globals
+  let zoomInstance = null;
+  let isPlaying = false;
+  let pillTimer = null;
+
+  function showPill() {
+    if (!trackPill) return;
+    trackPill.classList.add('visible');
+    clearTimeout(pillTimer);
+    pillTimer = setTimeout(() => trackPill.classList.remove('visible'), 2600);
+  }
+
+  function setPlaying(playing) {
+    isPlaying = playing;
+    if (playing) {
+      musicToggle?.classList.add('playing');
+      miniCd?.classList.add('spinning');
+      showPill();
+    } else {
+      musicToggle?.classList.remove('playing');
+      miniCd?.classList.remove('spinning');
+    }
+    try {
+      updateCassetteState(playing);
+    } catch (_) {}
+  }
+
+  function startMusicAutoplay() {
+    try {
+      const isEditorMode = Boolean(window.isCelebrationEditorMode) ||
+                           Boolean(document.querySelector('.studio-layout')) ||
+                           Boolean(container.closest('.studio-layout')) ||
+                           Boolean(container.closest('#previewContainer'));
+      if (isEditorMode) return;
+      if (!audioEl || isPlaying) return;
+      audioEl.play().then(() => setPlaying(true)).catch(() => {});
+    } catch (_) {}
+  }
+
+  musicToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!audioEl) return;
+    if (isPlaying) {
+      audioEl.pause();
+      setPlaying(false);
+    } else {
+      audioEl.play().then(() => setPlaying(true)).catch(() => {});
+    }
+  });
+
+  // --- ACT 0: VIRAL REEL BLOSSOM OPENER ---
+  let gateOpened = false;
+  function openGate(e) {
+    if (gateOpened) return;
+    gateOpened = true;
+    if (e && e.cancelable && e.type === 'touchstart') {
+      try { e.preventDefault(); } catch (_) {}
     }
 
-    confetti({ particleCount: 75, spread: 80, origin: { y: 0.45 } });
+    try {
+      chime(660, 880);
+    } catch (_) {}
+
+    try {
+      startMusicAutoplay();
+    } catch (_) {}
+
+    if (viralFlowerBtn) {
+      viralFlowerBtn.classList.add('bloomed');
+    }
+
+    // Burst particles
+    try {
+      if (burstCanvas) {
+        const bCtx = burstCanvas.getContext('2d');
+        const bW = (burstCanvas.width = 340);
+        const bH = (burstCanvas.height = 340);
+        burstCanvas.style.opacity = '1';
+        const burstPetals = [];
+        for (let i = 0; i < 50; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 8 + 3;
+          burstPetals.push({
+            x: bW / 2, y: bH / 2,
+            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+            size: Math.random() * 8 + 5, rot: Math.random() * Math.PI * 2,
+            alpha: 1, color: ['#f43f5e', '#ec4899', '#fda4af', '#fbcfe8'][Math.floor(Math.random() * 4)]
+          });
+        }
+        function renderBurst() {
+          bCtx.clearRect(0, 0, bW, bH);
+          let alive = false;
+          for (let p of burstPetals) {
+            p.x += p.vx; p.y += p.vy; p.alpha -= 0.025;
+            if (p.alpha > 0) {
+              alive = true;
+              bCtx.save();
+              bCtx.globalAlpha = p.alpha;
+              bCtx.translate(p.x, p.y);
+              bCtx.rotate(p.rot);
+              bCtx.fillStyle = p.color;
+              bCtx.beginPath();
+              bCtx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+              bCtx.fill();
+              bCtx.restore();
+            }
+          }
+          if (alive) requestAnimationFrame(renderBurst);
+        }
+        requestAnimationFrame(renderBurst);
+      }
+    } catch (_) {}
+
+    try {
+      confetti({ particleCount: 75, spread: 80, origin: { y: 0.45 } });
+    } catch (_) {}
 
     setTimeout(() => {
-      gate.classList.add('is-open');
+      if (gate) gate.classList.add('is-open');
       enterHero();
     }, 550);
   }
 
   viralFlowerBtn?.addEventListener('click', openGate);
+  viralFlowerBtn?.addEventListener('pointerdown', openGate);
+  viralFlowerBtn?.addEventListener('touchstart', openGate, { passive: true });
   gate?.addEventListener('click', openGate);
+  gate?.addEventListener('pointerdown', openGate);
+  gate?.addEventListener('touchstart', openGate, { passive: true });
   gate?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      openGate();
+      openGate(e);
     }
   });
 
@@ -2208,11 +2283,18 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   // =========================================================================
   // HIGH-PERFORMANCE 60FPS THREE.JS GPU MASTER ENGINE
   // =========================================================================
-  function initRomanceMaster3D(canvas) {
-    if (!canvas || typeof window === 'undefined') return null;
+  const fallbackMaster3D = {
+    setMode: () => {},
+    dollyForward: (cb) => { if (cb) cb(); },
+    releaseLanterns: () => {},
+    destroy: () => {}
+  };
 
-    let w = window.innerWidth;
-    let h = window.innerHeight;
+  function initRomanceMaster3D(canvas) {
+    if (!canvas || typeof window === 'undefined') return fallbackMaster3D;
+    try {
+      let w = window.innerWidth || 400;
+      let h = window.innerHeight || 700;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000);
@@ -2463,9 +2545,13 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         lanternMat.dispose();
       }
     };
+    } catch (err) {
+      console.warn("Three.js Master 3D fallback mode active:", err);
+      return fallbackMaster3D;
+    }
   }
 
-  const master3D = initRomanceMaster3D(master3DCanvas);
+  const master3D = initRomanceMaster3D(master3DCanvas) || fallbackMaster3D;
 
   // =========================================================================
   // ACTS IV - X: FULL-SCREEN CINEMATIC SCENE TRANSITIONS (CONTINUOUS & DYNAMIC)
@@ -3345,11 +3431,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   return function cleanup() {
     window.removeEventListener('resize', onResize);
-    treeStop();
-    stopBeat();
-    if (filmTL) filmTL.kill();
-    if (audioEl) audioEl.pause();
-    destroyLenisScroll();
+    try { treeStop(); } catch (_) {}
+    try { stopBeat(); } catch (_) {}
+    if (filmTL) try { filmTL.kill(); } catch (_) {}
+    if (audioEl) try { audioEl.pause(); } catch (_) {}
+    try { destroyLenisScroll(); } catch (_) {}
     if (constRafId) cancelAnimationFrame(constRafId);
     if (zoomInstance) {
       try { zoomInstance.detach(); } catch (_) {}

@@ -15371,6 +15371,10 @@ textarea,
   width: 130px;
   height: 130px;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15382,6 +15386,7 @@ textarea,
 }
 
 .viral-flower-svg {
+  pointer-events: none;
   animation: gentleSakuraFloat 3.5s ease-in-out infinite;
   filter: drop-shadow(0 8px 24px rgba(244, 63, 94, 0.45));
 }
