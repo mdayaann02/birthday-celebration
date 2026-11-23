@@ -8200,16 +8200,16 @@ body {
 
 .btn-sorry-next {
   width: 100%;
-  background: linear-gradient(135deg, #ff4d6d 0%, #f59e0b 100%);
+  background: linear-gradient(135deg, #f43f5e 0%, #fb7185 45%, #f59e0b 100%);
   color: #fff;
-  border: none;
-  padding: 14px 20px;
-  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 14px 22px;
+  border-radius: 9999px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(255, 77, 109, 0.45);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 22px rgba(244, 63, 94, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -8217,8 +8217,8 @@ body {
 }
 
 .btn-sorry-next:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 26px rgba(255, 77, 109, 0.6);
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 10px 30px rgba(244, 63, 94, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .btn-sorry-next:active {
@@ -14371,7 +14371,7 @@ svg {
   box-sizing: border-box;
   padding: 12px 14px 90px 14px;
   min-height: 100dvh;
-  background: radial-gradient(ellipse at 50% 12%, #2d143c 0%, #150a20 48%, #09040e 100%);
+  background: radial-gradient(120% 90% at 50% 12%, #2d1633 0%, #1a0d24 48%, #0d0614 100%);
   color: #f8fafc;
   overflow-x: hidden;
 }
@@ -14388,6 +14388,9 @@ svg {
   box-sizing: border-box;
   padding: 12px 14px 90px 14px;
   min-height: 100dvh;
+  background: radial-gradient(120% 90% at 50% 12%, #2e1735 0%, #1c0e28 50%, #0d0614 100%);
+  color: #f8fafc;
+  overflow-x: hidden;
 }
 
 /* Floating Stage Navigation & Progress Tracker */
@@ -14407,12 +14410,12 @@ svg {
 .anni-step-progress-track,
 .val-step-progress-track,
 .bff-step-progress-track {
-  height: 4px;
+  height: 5px;
   background: rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
+  border-radius: 6px;
   margin-bottom: 8px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
 }
 
 .bday-step-progress-fill,
@@ -14421,10 +14424,10 @@ svg {
 .val-step-progress-fill,
 .bff-step-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #d4af37, #f59e0b, #ec4899);
-  border-radius: 4px;
+  background: linear-gradient(90deg, #f43f5e 0%, #fb7185 45%, #fbbf24 100%);
+  border-radius: 6px;
   transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.55);
 }
 
 .bday-stage-indicator-bar,
@@ -14435,13 +14438,13 @@ svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: rgba(24, 16, 32, 0.82);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  padding: 9px 18px;
+  background: rgba(30, 18, 42, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 9999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   pointer-events: none;
   user-select: none;
 }
@@ -14641,16 +14644,16 @@ svg {
 .btn-val-next,
 .btn-bff-next {
   flex: 1;
-  background: linear-gradient(135deg, #d4af37 0%, #f59e0b 100%);
-  color: #1a0b00;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 14px 20px;
-  border-radius: 14px;
+  background: linear-gradient(135deg, #f43f5e 0%, #fb7185 45%, #f59e0b 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 14px 22px;
+  border-radius: 9999px;
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transition: all 0.2s ease;
+  box-shadow: 0 6px 22px rgba(244, 63, 94, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -14662,8 +14665,8 @@ svg {
 .btn-anni-next:hover,
 .btn-val-next:hover,
 .btn-bff-next:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 10px 30px rgba(244, 63, 94, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .btn-bday-next:active,

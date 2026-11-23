@@ -1,4 +1,6 @@
-// src/viewer/templates/sorryTemplate.js - Multi-Page Sincere Apology & Playful Reconciliation Experience
+// src/viewer/templates/sorryTemplate.js - Ultra-Aesthetic Sincere Apology & Playful Reconciliation Experience
+// Engineered with GSAP 3 Physics, Interactive Kintsugi Drag Mending, Real Scratch-Off Coupons,
+// Throwable Arsenal Physics, Digital Gold Signature Canvas, 3D Envelope Unfolding, and Runaway Verdict.
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
@@ -10,6 +12,7 @@ import { initMusicPlayer } from '../../components/musicPlayer.js';
 function playSound(type) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
 
     if (type === 'boing') {
@@ -30,33 +33,62 @@ function playSound(type) {
       const gain = ctx.createGain();
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(320, now);
-      osc.frequency.exponentialRampToValueAtTime(90, now + 0.18);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.2);
       gain.gain.setValueAtTime(0.35, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.2);
+      osc.stop(now + 0.22);
     } else if (type === 'splash') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(450, now);
-      osc.frequency.exponentialRampToValueAtTime(140, now + 0.22);
+      osc.frequency.setValueAtTime(460, now);
+      osc.frequency.exponentialRampToValueAtTime(130, now + 0.24);
       gain.gain.setValueAtTime(0.28, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.26);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.25);
+      osc.stop(now + 0.26);
     } else if (type === 'stamp') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(120, now);
-      osc.frequency.exponentialRampToValueAtTime(45, now + 0.25);
+      osc.frequency.exponentialRampToValueAtTime(40, now + 0.25);
       gain.gain.setValueAtTime(0.5, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    } else if (type === 'scratch') {
+      const node = ctx.createBufferSource();
+      const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < buffer.length; i++) data[i] = Math.random() * 2 - 1;
+      node.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1400;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      node.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      node.start(now);
+    } else if (type === 'goldSpark') {
+      const freqs = [1046.5, 1318.5, 1567.9, 2093.0];
+      const f = freqs[Math.floor(Math.random() * freqs.length)];
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f, now);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
@@ -85,6 +117,7 @@ export function renderSorryTemplate(container, data) {
   let ventCount = 0;
   let penancesSigned = false;
   let treatySigned = false;
+  let kintsugiHealed = false;
 
   const recipientName = data.recipientName || 'My Dearest';
   const senderName = data.senderName || 'Yours Truly';
@@ -138,12 +171,12 @@ export function renderSorryTemplate(container, data) {
     <!-- Top Audio Player Slot -->
     <div id="sorryPlayerSlot"></div>
 
-    <div class="sorry-storybook-viewport">
-      <!-- Ambient Sparkle Mesh Canvas -->
-      <canvas id="sorryCanvas" class="blossom-bg-canvas"></canvas>
+    <div class="sorry-storybook-viewport" data-prevent-swipe="true">
+      <!-- Ambient Dynamic Weather & Sparkles Canvas -->
+      <canvas id="sorryCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Untouchable Non-Interactive Stage Progress Bar (Top tabs are disabled & replaced by pure passive progress tracker) -->
-      <header class="sorry-floating-nav" style="pointer-events:none; user-select:none;">
+      <!-- Stage Progress Indicator Bar -->
+      <header class="sorry-floating-nav" style="pointer-events:none; user-select:none; z-index:20;">
         <div class="sorry-step-progress-track">
           <div class="sorry-step-progress-fill" id="stepProgressFill" style="width: 14%;"></div>
         </div>
@@ -161,23 +194,27 @@ export function renderSorryTemplate(container, data) {
       </header>
 
       <!-- Multi-Page Content Slider Container -->
-      <main class="sorry-pages-container" id="sorryPagesContainer">
+      <main class="sorry-pages-container" id="sorryPagesContainer" style="position:relative; z-index:10;">
         
-        <!-- PAGE 1: 💌 THE SINCERE CONFESSION -->
+        <!-- ============================================================ -->
+        <!-- PAGE 1: 💌 THE SINCERE CONFESSION & INTERACTIVE KINTSUGI MEND -->
+        <!-- ============================================================ -->
         <section class="sorry-page-card active" data-page="1">
           <div class="sorry-hero-wrap">
-            <!-- INTERACTIVE 60FPS RAINSTORM TO RADIANT RAINBOW & KINTSUGI MENDED HEART ARENA -->
-            <div class="sorry-rain-arena" id="sorryRainArena" style="position:relative; width:100%; max-width:440px; min-height:260px; margin:14px auto 18px auto; border-radius:22px; overflow:hidden; background:linear-gradient(180deg, rgba(15,23,42,0.94) 0%, rgba(30,41,59,0.96) 100%); border:1.5px solid rgba(148,163,184,0.3); box-shadow:0 12px 36px rgba(0,0,0,0.45); text-align:center; padding:16px 14px 18px 14px; box-sizing:border-box;">
+            <div class="sorry-tag">STAGE 1: SINCERE ATONEMENT & HEALING</div>
+
+            <!-- INTERACTIVE KINTSUGI HEART & GLOOMY-TO-RADIANT WEATHER ARENA -->
+            <div class="sorry-rain-arena" id="sorryRainArena" style="position:relative; width:100%; max-width:440px; min-height:270px; margin:14px auto 18px auto; border-radius:24px; overflow:hidden; background:linear-gradient(180deg, rgba(15,10,24,0.96) 0%, rgba(26,16,40,0.98) 100%); border:1.5px solid rgba(251,191,36,0.3); box-shadow:0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15); text-align:center; padding:18px 16px 20px 16px; box-sizing:border-box;">
               
-              <!-- Interactive Rain Canvas -->
+              <!-- Interactive Weather Canvas (Rain -> Gold Sunlight Rays) -->
               <canvas id="kintsugiRainCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
 
               <!-- Radiant Rainbow Arc -->
-              <div id="kintsugiRainbow" style="position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:340px; height:180px; border-radius:180px 180px 0 0; background:radial-gradient(ellipse at bottom, transparent 48%, rgba(255,0,0,0.38) 50%, rgba(255,127,0,0.38) 54%, rgba(255,255,0,0.38) 58%, rgba(0,255,0,0.38) 62%, rgba(0,127,255,0.38) 66%, rgba(75,0,130,0.38) 70%, rgba(148,0,211,0.38) 74%, transparent 78%); opacity:0; pointer-events:none; z-index:2; filter:blur(1px); transition:opacity 0.8s ease;"></div>
+              <div id="kintsugiRainbow" style="position:absolute; top:-35px; left:50%; transform:translateX(-50%); width:360px; height:190px; border-radius:190px 190px 0 0; background:radial-gradient(ellipse at bottom, transparent 48%, rgba(255,0,0,0.42) 50%, rgba(255,127,0,0.42) 54%, rgba(255,255,0,0.42) 58%, rgba(0,255,0,0.42) 62%, rgba(0,127,255,0.42) 66%, rgba(75,0,130,0.42) 70%, rgba(148,0,211,0.42) 74%, transparent 78%); opacity:0; pointer-events:none; z-index:2; filter:blur(1px); transition:opacity 1s ease;"></div>
 
               <!-- Header Status Badge -->
-              <div style="position:relative; z-index:3; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 6px;">
-                <span id="stormStatePill" style="font-size:11px; font-weight:800; letter-spacing:0.8px; background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); padding:4px 10px; border-radius:20px; text-transform:uppercase;">
+              <div style="position:relative; z-index:3; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 4px;">
+                <span id="stormStatePill" style="font-size:11px; font-weight:800; letter-spacing:0.8px; background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); padding:4px 11px; border-radius:20px; text-transform:uppercase;">
                   🌧️ Gloomy Storm Active
                 </span>
                 <span id="heartBatteryVal" style="font-size:12px; font-weight:800; color:#fbbf24;">
@@ -185,10 +222,10 @@ export function renderSorryTemplate(container, data) {
                 </span>
               </div>
 
-              <!-- Kintsugi Heart Stage -->
-              <div class="kintsugi-stage" id="kintsugiStage" style="position:relative; z-index:3; width:160px; height:140px; margin:0 auto 10px auto; cursor:pointer;" title="Tap to mend heart with gold">
+              <!-- Kintsugi Heart Stage (Drag golden brush or tap to heal) -->
+              <div class="kintsugi-stage" id="kintsugiStage" style="position:relative; z-index:3; width:170px; height:140px; margin:0 auto 12px auto; cursor:pointer;" title="Drag gold across seam or tap to mend heart">
                 <!-- Left Heart Half -->
-                <svg id="heartHalfLeft" viewBox="0 0 100 160" style="position:absolute; left:14px; top:0; width:65px; height:125px; filter:drop-shadow(0 6px 14px rgba(225,29,72,0.45)); transform:rotate(-8deg) translateX(-5px); transition:transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+                <svg id="heartHalfLeft" viewBox="0 0 100 160" style="position:absolute; left:18px; top:0; width:65px; height:125px; filter:drop-shadow(0 6px 14px rgba(225,29,72,0.45)); transform:rotate(-9deg) translateX(-6px); transition:transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);">
                   <path d="M 95 30 C 95 10, 70 0, 45 0 C 20 0, 0 20, 0 55 C 0 95, 45 130, 95 155 Z" fill="url(#leftHeartGrad)"/>
                   <defs>
                     <linearGradient id="leftHeartGrad" x1="0" y1="0" x2="1" y2="1">
@@ -199,7 +236,7 @@ export function renderSorryTemplate(container, data) {
                 </svg>
 
                 <!-- Right Heart Half -->
-                <svg id="heartHalfRight" viewBox="0 0 100 160" style="position:absolute; right:14px; top:0; width:65px; height:125px; filter:drop-shadow(0 6px 14px rgba(225,29,72,0.45)); transform:rotate(8deg) translateX(5px); transition:transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+                <svg id="heartHalfRight" viewBox="0 0 100 160" style="position:absolute; right:18px; top:0; width:65px; height:125px; filter:drop-shadow(0 6px 14px rgba(225,29,72,0.45)); transform:rotate(9deg) translateX(6px); transition:transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);">
                   <path d="M 5 30 C 5 10, 30 0, 55 0 C 80 0, 100 20, 100 55 C 100 95, 55 130, 5 155 Z" fill="url(#rightHeartGrad)"/>
                   <defs>
                     <linearGradient id="rightHeartGrad" x1="0" y1="0" x2="1" y2="1">
@@ -210,62 +247,66 @@ export function renderSorryTemplate(container, data) {
                 </svg>
 
                 <!-- Glowing Golden Kintsugi Seam -->
-                <svg id="kintsugiGoldSeam" viewBox="0 0 40 160" style="position:absolute; left:50%; top:0; transform:translateX(-50%); width:34px; height:130px; z-index:4; opacity:0.3; filter:drop-shadow(0 0 6px #ffd700); transition:opacity 0.4s ease;">
-                  <path d="M 20 5 L 26 35 L 14 65 L 25 95 L 16 125 L 20 155" fill="none" stroke="#ffd700" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="26" cy="35" r="3" fill="#ffffff" />
-                  <circle cx="14" cy="65" r="3" fill="#ffffff" />
-                  <circle cx="25" cy="95" r="3" fill="#ffffff" />
+                <svg id="kintsugiGoldSeam" viewBox="0 0 40 160" style="position:absolute; left:50%; top:0; transform:translateX(-50%); width:36px; height:130px; z-index:4; opacity:0.25; filter:drop-shadow(0 0 8px #ffd700); transition:opacity 0.4s ease;">
+                  <path d="M 20 5 L 26 35 L 14 65 L 25 95 L 16 125 L 20 155" fill="none" stroke="#ffd700" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="26" cy="35" r="3.2" fill="#ffffff" />
+                  <circle cx="14" cy="65" r="3.2" fill="#ffffff" />
+                  <circle cx="25" cy="95" r="3.2" fill="#ffffff" />
                 </svg>
 
                 <!-- Center Healing Golden Aura -->
-                <div id="kintsugiAura" style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); width:75px; height:75px; border-radius:50%; background:radial-gradient(circle, #fde047 0%, #ca8a04 50%, transparent 75%); opacity:0; pointer-events:none; filter:blur(4px); transition:opacity 0.4s ease;"></div>
+                <div id="kintsugiAura" style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); width:85px; height:85px; border-radius:50%; background:radial-gradient(circle, #fde047 0%, #ca8a04 50%, transparent 75%); opacity:0; pointer-events:none; filter:blur(6px); transition:opacity 0.5s ease;"></div>
               </div>
 
               <!-- Dynamic Speech / Quote Banner -->
-              <div id="sorryMendBanner" style="position:relative; z-index:3; font-size:12.5px; font-weight:700; color:#f8fafc; background:rgba(0,0,0,0.5); padding:8px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); margin-bottom:12px; min-height:20px; transition:all 0.3s ease;">
-                "Tap heart or button to mend our bond with pure golden kintsugi 🥺✨"
+              <div id="sorryMendBanner" style="position:relative; z-index:3; font-size:13px; font-weight:700; color:#f8fafc; background:rgba(0,0,0,0.55); padding:9px 14px; border-radius:14px; border:1px solid rgba(255,255,255,0.14); margin-bottom:14px; min-height:22px; transition:all 0.3s ease;">
+                "Drag golden spark or tap below to mend our bond with pure golden kintsugi 🥺✨"
               </div>
 
               <!-- Interactive Action Buttons -->
-              <div style="position:relative; z-index:3; display:flex; justify-content:center; gap:8px;">
-                <button type="button" id="btnMendKintsugi" style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%); color:#0f172a; font-weight:900; font-size:12px; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; box-shadow:0 4px 16px rgba(245,158,11,0.4); display:inline-flex; align-items:center; gap:5px;">
+              <div style="position:relative; z-index:3; display:flex; justify-content:center; gap:10px;">
+                <button type="button" id="btnMendKintsugi" style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%); color:#0f172a; font-weight:900; font-size:12.5px; border:none; padding:9px 18px; border-radius:22px; cursor:pointer; box-shadow:0 4px 18px rgba(245,158,11,0.45); display:inline-flex; align-items:center; gap:6px;">
                   ✨ Mend With Gold
                 </button>
-                <button type="button" id="btnWipeStorm" style="background:linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color:#ffffff; font-weight:800; font-size:12px; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; box-shadow:0 4px 14px rgba(2,132,199,0.35); display:inline-flex; align-items:center; gap:5px;">
+                <button type="button" id="btnWipeStorm" style="background:linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color:#ffffff; font-weight:800; font-size:12.5px; border:none; padding:9px 18px; border-radius:22px; cursor:pointer; box-shadow:0 4px 16px rgba(2,132,199,0.4); display:inline-flex; align-items:center; gap:6px;">
                   🌈 Clear Rainstorm
                 </button>
               </div>
             </div>
 
+            <!-- Avatar Emoji & Title -->
             <div class="sorry-emoji-display" id="avatarEmoji">🥺</div>
             <h1 class="sorry-hero-title">${heroTitle}</h1>
             <p class="sorry-hero-sub">${heroSubtitle}</p>
 
-            <!-- Wax-Sealed Confession Letter -->
-            <div class="sorry-glass-letter">
-              <div class="letter-wax-seal">
+            <!-- 3D Wax-Sealed Parchment Letter Envelope -->
+            <div class="sorry-glass-letter" style="perspective:1000px;">
+              <div class="letter-wax-seal" id="letterWaxSealBtn" role="button" title="Tap to unseal confession" style="cursor:pointer; transform:scale(1); transition:transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
                 <span>❤️</span>
               </div>
               <div class="sorry-card-greeting">Dearest ${recipientName},</div>
-              <p class="sorry-card-text typewriter-effect">${apologyMessage}</p>
+              <p class="sorry-card-text typewriter-effect" id="sorryCardText">${apologyMessage}</p>
               <div class="sorry-card-sign">— Sincerely & Lovingly, ${senderName} 🫶</div>
             </div>
 
             <div class="sorry-next-dock">
               <button type="button" class="btn-sorry-next" data-next="2">
-                Let Out Your Anger in the Vent Room 🥊 &rarr;
+                <span>Let Out Your Anger in the Vent Room 🥊</span>
+                <span>➔</span>
               </button>
             </div>
           </div>
         </section>
 
-        <!-- PAGE 2: 🥊 THE INTERACTIVE VENTING ROOM -->
+        <!-- ============================================================ -->
+        <!-- PAGE 2: 🥊 THE INTERACTIVE CATHARTIC VENTING ROOM -->
+        <!-- ============================================================ -->
         <section class="sorry-page-card" data-page="2">
           <div class="sorry-section-wrap">
-            <div class="sorry-tag">STAGE 2: CATHARTIC VENTING</div>
+            <div class="sorry-tag">STAGE 2: CATHARTIC VENTING & SMACKDOWN</div>
             <h2 class="sorry-section-title">Take Your Anger Out On Me! 🥊</h2>
             <p class="sorry-section-subtitle">
-              You have every right to be mad. Tap any item below to throw it right at my face!
+              You have every right to be mad. Pick up any item below and FLING or TAP it right at my face!
             </p>
 
             <div class="vent-chamber-card">
@@ -280,7 +321,7 @@ export function renderSorryTemplate(container, data) {
                 </div>
               </div>
 
-              <!-- Interactive Reaction Avatar with Real Photo & Dynamic Stick-On Decals -->
+              <!-- Interactive Reaction Avatar Frame with Stick-On Decals -->
               <div class="vent-avatar-stage">
                 <div class="vent-avatar-character vent-target-frame" id="ventAvatar">
                   <img src="${creatorPhoto}" alt="${senderName}" class="vent-creator-img" id="ventCreatorImg" onerror="this.src='/images/always_you.jpg'" />
@@ -295,8 +336,8 @@ export function renderSorryTemplate(container, data) {
                 </button>
               </div>
 
-              <!-- Throwable Arsenal (Cake, Teddy, Tomato, Slipper, Water, Egg) -->
-              <div class="throwables-grid">
+              <!-- Throwable Arsenal Grid (Cake, Teddy, Tomato, Chappal, Water, Egg) -->
+              <div class="throwables-grid" id="throwablesGrid">
                 <button type="button" class="btn-throwable" data-type="cake" title="Throw Birthday Cake">
                   <span class="throw-icon">🎂</span>
                   <span class="throw-label">Cake Splat</span>
@@ -341,13 +382,15 @@ export function renderSorryTemplate(container, data) {
           </div>
         </section>
 
+        <!-- ============================================================ -->
         <!-- PAGE 3: ⚖️ THE PUNISHMENT DEED / PENANCE -->
+        <!-- ============================================================ -->
         <section class="sorry-page-card" data-page="3">
           <div class="sorry-section-wrap">
             <div class="sorry-tag">STAGE 3: ATONEMENT & PENANCE</div>
             <h2 class="sorry-section-title">Pick & Add My Punishments! ⚖️</h2>
             <p class="sorry-section-subtitle">
-              Check off what you want me to do, or type your own custom punishments below! I promise to execute all of them with zero complaining:
+              Check off what you want me to do, or type your own custom punishments below! I promise to execute all of them without complaining:
             </p>
 
             <!-- Viewer Custom Punishment Input -->
@@ -382,7 +425,9 @@ export function renderSorryTemplate(container, data) {
           </div>
         </section>
 
-        <!-- PAGE 4: 📸 MEMORY SCRAPBOOK -->
+        <!-- ============================================================ -->
+        <!-- PAGE 4: 📸 CHERISHED MEMORIES KEEPSAKE & VOICE MEMO -->
+        <!-- ============================================================ -->
         <section class="sorry-page-card" data-page="4">
           <div class="sorry-section-wrap">
             <div class="sorry-tag">STAGE 4: WHY YOU MEAN THE WORLD</div>
@@ -390,6 +435,27 @@ export function renderSorryTemplate(container, data) {
             <p class="sorry-section-subtitle">
               Tap any polaroid to flip it and read the secret memory on the back:
             </p>
+
+            <!-- Interactive Voice Apology Memo Simulator -->
+            <div class="sorry-voice-memo-card" id="sorryVoiceCard" style="max-width:440px; margin:0 auto 20px auto; background:linear-gradient(135deg, rgba(30,20,45,0.85) 0%, rgba(15,10,25,0.92) 100%); border:1px solid rgba(251,191,36,0.35); border-radius:18px; padding:14px 18px; display:flex; align-items:center; gap:14px; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+              <button type="button" id="btnPlayVoiceMemo" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #f43f5e, #fbbf24); border:none; color:#fff; font-size:18px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 14px rgba(244,63,94,0.4); flex-shrink:0;">
+                ▶
+              </button>
+              <div style="flex:1; text-align:left;">
+                <div style="font-size:13px; font-weight:800; color:#f8fafc;">Voice Apology from ${senderName} 🎙️</div>
+                <div style="font-size:11.5px; color:#fda4af; margin-top:2px;" id="voiceMemoStatus">Tap play to listen to my voice note (0:48)</div>
+                <!-- Animated soundwave bars -->
+                <div class="soundwave-bars" id="voiceSoundwave" style="display:flex; align-items:center; gap:3px; margin-top:6px; height:14px;">
+                  <span style="width:3px; height:6px; background:#fbbf24; border-radius:2px;"></span>
+                  <span style="width:3px; height:12px; background:#fbbf24; border-radius:2px;"></span>
+                  <span style="width:3px; height:8px; background:#fbbf24; border-radius:2px;"></span>
+                  <span style="width:3px; height:14px; background:#fbbf24; border-radius:2px;"></span>
+                  <span style="width:3px; height:9px; background:#fbbf24; border-radius:2px;"></span>
+                  <span style="width:3px; height:13px; background:#fbbf24; border-radius:2px;"></span>
+                  <span style="width:3px; height:5px; background:#fbbf24; border-radius:2px;"></span>
+                </div>
+              </div>
+            </div>
 
             <div class="sorry-polaroids-deck">
               ${polaroids.map((p, i) => `
@@ -426,13 +492,15 @@ export function renderSorryTemplate(container, data) {
           </div>
         </section>
 
-        <!-- PAGE 5: 📜 THE OFFICIAL PEACE TREATY -->
+        <!-- ============================================================ -->
+        <!-- PAGE 5: 📜 THE OFFICIAL SWEETHEART ACCORDS PEACE TREATY -->
+        <!-- ============================================================ -->
         <section class="sorry-page-card" data-page="5">
           <div class="sorry-section-wrap">
-            <div class="sorry-tag">STAGE 5: LEGAL DIPLOMACY</div>
+            <div class="sorry-tag">STAGE 5: LEGAL DIPLOMACY & ACCORDS</div>
             <h2 class="sorry-section-title">Official Relationship Peace Treaty 📜</h2>
             <p class="sorry-section-subtitle">
-              An unbreachable contract protecting your peace and royal happiness:
+              An unbreachable treaty protecting your peace, happiness, and sovereignty:
             </p>
 
             <div class="treaty-document-card">
@@ -451,17 +519,27 @@ export function renderSorryTemplate(container, data) {
                 `).join('')}
               </div>
 
+              <!-- Interactive Royal Signature Canvas Pad -->
+              <div class="treaty-signature-section" style="margin-top:20px; text-align:center;">
+                <div style="font-size:12px; font-weight:800; color:#d97706; margin-bottom:6px;">
+                  ✍️ Her Royal Majesty's Digital Signature:
+                </div>
+                <div style="position:relative; width:100%; max-width:340px; margin:0 auto; background:rgba(255,255,255,0.7); border:2px dashed #d97706; border-radius:14px; overflow:hidden;">
+                  <canvas id="treatySigCanvas" width="340" height="90" style="display:block; width:100%; height:90px; cursor:crosshair; touch-action:none;"></canvas>
+                  <button type="button" id="btnClearSig" style="position:absolute; right:8px; bottom:6px; background:rgba(0,0,0,0.15); border:none; border-radius:8px; padding:3px 8px; font-size:10px; font-weight:700; color:#78350f; cursor:pointer;">Clear</button>
+                </div>
+                <p style="font-size:11px; color:#92400e; margin-top:4px;">Sign with finger or stylus above</p>
+              </div>
+
               <!-- Interactive 2-Second Hold Seal & Wax Stamp Arena -->
               <div class="treaty-holding-dock" style="margin-top:16px; display:flex; flex-direction:column; align-items:center;">
                 <!-- Circular Progress Press-and-Hold Button -->
                 <div class="treaty-hold-seal-wrapper" style="position:relative; width:104px; height:104px; margin:0 auto; user-select:none; -webkit-user-select:none; touch-action:none;">
-                  <!-- SVG Progress Ring -->
                   <svg class="treaty-hold-svg" width="104" height="104" viewBox="0 0 104 104" style="position:absolute; top:0; left:0; transform:rotate(-90deg); pointer-events:none;">
                     <circle cx="52" cy="52" r="46" stroke="rgba(217, 119, 6, 0.22)" stroke-width="7" fill="none" />
                     <circle id="treatyHoldRing" cx="52" cy="52" r="46" stroke="#d97706" stroke-width="7" stroke-linecap="round" fill="none"
                       stroke-dasharray="289" stroke-dashoffset="289" style="transition: stroke-dashoffset 0.05s linear;" />
                   </svg>
-                  <!-- Center Hold Button -->
                   <div class="treaty-hold-button" id="treatyHoldButton" role="button" aria-label="Hold for 2 seconds to ratify peace treaty"
                     style="position:absolute; inset:8px; border-radius:50%; background:radial-gradient(circle, #78350f 0%, #451a03 100%); border:3px solid #f59e0b; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(180,83,9,0.5); transition:transform 0.15s, box-shadow 0.15s;">
                     <span class="treaty-btn-icon" id="treatyBtnIcon" style="font-size:32px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">👑</span>
@@ -485,7 +563,7 @@ export function renderSorryTemplate(container, data) {
                     YAYYY! CONVINCED! 🎉
                   </h3>
                   <p style="font-size:13.5px; margin:0 0 12px 0; line-height:1.45; color:#ecfdf5;">
-                    The Peace Treaty is officially ratified & sealed by Her Majesty! We are back together! 🥰💖
+                    The Peace Treaty is officially ratified & signed by Her Majesty! We are back together! 🥰💖
                   </p>
                   <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(0,0,0,0.22); padding:6px 14px; border-radius:20px; font-size:11.5px; font-weight:800; border:1px solid rgba(255,255,255,0.3);">
                     <span>👑 SIGNED & SEALED BY QUEEN ${recipientName.toUpperCase()}</span>
@@ -501,24 +579,28 @@ export function renderSorryTemplate(container, data) {
           </div>
         </section>
 
-        <!-- PAGE 6: 🎟️ RECONCILIATION COUPONS -->
+        <!-- ============================================================ -->
+        <!-- PAGE 6: 🎟️ RECONCILIATION COUPONS WITH REAL SCRATCH-OFF FOIL -->
+        <!-- ============================================================ -->
         <section class="sorry-page-card" data-page="6">
           <div class="sorry-section-wrap">
-            <div class="sorry-tag">STAGE 6: RECONCILIATION GIFTS</div>
-            <h2 class="sorry-section-title">Claim Your Peace Vouchers 🎟️</h2>
+            <div class="sorry-tag">STAGE 6: RECONCILIATION GIFTS & VOUCHERS</div>
+            <h2 class="sorry-section-title">Scratch & Claim Your Peace Vouchers 🎟️</h2>
             <p class="sorry-section-subtitle">
-              Tap any coupon below to claim it. Non-expiring and redeemable anytime!
+              Rub your finger over the golden foil to scratch and reveal your guaranteed prizes! Non-expiring and redeemable 24/7:
             </p>
 
             <div class="coupons-grid">
               ${coupons.map((c, i) => `
-                <div class="sorry-coupon-card" data-coupon-idx="${i}">
+                <div class="sorry-coupon-card" data-coupon-idx="${i}" style="position:relative; overflow:hidden;">
                   <div class="coupon-left-icon">${c.icon}</div>
                   <div class="coupon-details">
                     <h4 class="coupon-name">${c.title}</h4>
                     <p class="coupon-desc">${c.desc}</p>
                   </div>
-                  <button type="button" class="btn-claim-coupon">
+                  <!-- Interactive Scratch Canvas Overlay -->
+                  <canvas class="scratch-coupon-canvas" data-scratch-idx="${i}" width="280" height="90" style="position:absolute; inset:0; width:100%; height:100%; z-index:4; cursor:crosshair; touch-action:none;"></canvas>
+                  <button type="button" class="btn-claim-coupon" style="position:relative; z-index:3;">
                     Claim
                   </button>
                 </div>
@@ -532,29 +614,31 @@ export function renderSorryTemplate(container, data) {
           </div>
         </section>
 
-        <!-- PAGE 7: 💖 THE FORGIVENESS VERDICT -->
+        <!-- ============================================================ -->
+        <!-- PAGE 7: 💖 THE GRAND FORGIVENESS VERDICT & RUNAWAY NO -->
+        <!-- ============================================================ -->
         <section class="sorry-page-card" data-page="7">
           <div class="sorry-section-wrap" style="text-align:center;">
-            <div class="sorry-tag">FINAL STAGE: THE VERDICT</div>
+            <div class="sorry-tag">FINAL STAGE: THE ROYAL VERDICT</div>
             <div class="verdict-avatar-pulse">🥺👉👈</div>
             <h2 class="sorry-section-title" style="font-size:32px; margin-top:8px;">
               Will You Please Forgive Me? ❤️
             </h2>
             <p class="sorry-section-subtitle" style="max-width:480px; margin:0 auto 28px;">
-              I love you with every beat of my heart. Life is too gray and quiet without your laughter.
+              I love you with every beat of my heart. Life is too gray, quiet, and lonely without your sweet smile.
             </p>
 
-            <div class="sorry-decision-area" id="sorryDecisionArea">
-              <button class="btn-forgive-yes" id="btnForgiveYes">
+            <div class="sorry-decision-area" id="sorryDecisionArea" style="position:relative; min-height:120px; display:flex; align-items:center; justify-content:center; gap:20px;">
+              <button class="btn-forgive-yes" id="btnForgiveYes" style="z-index:5;">
                 YES, I Forgive You! ❤️🫂
               </button>
-              <button class="btn-forgive-no" id="btnForgiveNo">
+              <button class="btn-forgive-no" id="btnForgiveNo" style="z-index:4; transition:transform 0.15s ease-out;">
                 No 😠
               </button>
             </div>
 
             <!-- Celebration Certificate of Forgiveness -->
-            <div class="sorry-success-card" id="forgiveSuccessCard" style="display:none;">
+            <div class="sorry-success-card" id="forgiveSuccessCard" style="display:none; margin-top:24px;">
               <div class="success-confetti-badge">🎉🫂💖</div>
               <h3 class="success-title">WE ARE OFFICIALLY BACK!</h3>
               <p class="success-msg">
@@ -596,7 +680,7 @@ export function renderSorryTemplate(container, data) {
     const fill = container.querySelector('#stepProgressFill');
     if (fill) fill.style.width = `${progressPct}%`;
 
-    // Update Untouchable Stage Banner (Never clickable pills)
+    // Update Stage Banner
     const stepPill = container.querySelector('#stageStepPill');
     if (stepPill) stepPill.textContent = `STAGE ${currentPage} OF ${totalPages}`;
     const titleText = container.querySelector('#stageTitleText');
@@ -604,18 +688,22 @@ export function renderSorryTemplate(container, data) {
       titleText.textContent = `${pageTitles[currentPage - 1].title} ${pageTitles[currentPage - 1].icon}`;
     }
 
-    // Update Page View
+    // Update Page View with GSAP
     container.querySelectorAll('.sorry-page-card').forEach(card => {
-      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
+      const isTarget = parseInt(card.getAttribute('data-page')) === currentPage;
+      if (isTarget) {
+        card.style.display = 'block';
+        card.classList.add('active');
+        gsap.fromTo(card, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+      } else {
+        card.classList.remove('active');
+        card.style.display = 'none';
+      }
     });
 
-    // Scroll smoothly to top of viewport
     if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
-
-  // Top header is a 100% passive progress tracker (jumping ahead is strictly prohibited)
-  // Navigation happens purely through the sincere interactive stage actions below
 
   // Bind Next / Prev buttons
   container.querySelectorAll('.btn-sorry-next').forEach(btn => {
@@ -632,7 +720,171 @@ export function renderSorryTemplate(container, data) {
   });
 
   // ==========================================
-  // STAGE 2: VENTING ROOM WITH REAL PHOTO & DYNAMIC STICK-ON DECALS
+  // STAGE 1: KINTSUGI HEART MENDING ENGINE & WEATHER CANVAS
+  // ==========================================
+  const kStage = container.querySelector('#kintsugiStage');
+  const hLeft = container.querySelector('#heartHalfLeft');
+  const hRight = container.querySelector('#heartHalfRight');
+  const goldSeam = container.querySelector('#kintsugiGoldSeam');
+  const kAura = container.querySelector('#kintsugiAura');
+  const stormPill = container.querySelector('#stormStatePill');
+  const battVal = container.querySelector('#heartBatteryVal');
+  const rainbow = container.querySelector('#kintsugiRainbow');
+  const mendBanner = container.querySelector('#sorryMendBanner');
+  const btnMend = container.querySelector('#btnMendKintsugi');
+  const btnWipe = container.querySelector('#btnWipeStorm');
+  const waxSealBtn = container.querySelector('#letterWaxSealBtn');
+
+  // Weather Rain & Sparkles Canvas
+  const rainCanvas = container.querySelector('#kintsugiRainCanvas');
+  let rainCtx = rainCanvas ? rainCanvas.getContext('2d') : null;
+  let rainAnimId = null;
+  let raindrops = [];
+  let sunRays = [];
+
+  function initRain() {
+    if (!rainCanvas || !rainCtx) return;
+    rainCanvas.width = rainCanvas.offsetWidth || 400;
+    rainCanvas.height = rainCanvas.offsetHeight || 270;
+    raindrops = [];
+    for (let i = 0; i < 45; i++) {
+      raindrops.push({
+        x: Math.random() * rainCanvas.width,
+        y: Math.random() * rainCanvas.height,
+        len: 8 + Math.random() * 12,
+        speed: 4 + Math.random() * 5,
+        alpha: 0.2 + Math.random() * 0.4
+      });
+    }
+  }
+
+  function loopRain() {
+    if (!rainCtx || !rainCanvas) return;
+    rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+    if (!kintsugiHealed) {
+      // Draw falling rain
+      rainCtx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+      rainCtx.lineWidth = 1.2;
+      rainCtx.beginPath();
+      raindrops.forEach(drop => {
+        rainCtx.moveTo(drop.x, drop.y);
+        rainCtx.lineTo(drop.x - 1, drop.y + drop.len);
+        drop.y += drop.speed;
+        if (drop.y > rainCanvas.height) {
+          drop.y = -10;
+          drop.x = Math.random() * rainCanvas.width;
+        }
+      });
+      rainCtx.stroke();
+    } else {
+      // Draw golden sunbeams & floating sakura motes
+      sunRays.forEach(ray => {
+        rainCtx.fillStyle = `rgba(251, 191, 36, ${ray.alpha})`;
+        rainCtx.beginPath();
+        rainCtx.arc(ray.x, ray.y, ray.r, 0, Math.PI * 2);
+        rainCtx.fill();
+        ray.y -= ray.speed;
+        ray.x += Math.sin(ray.y * 0.05) * 0.6;
+        if (ray.y < -10) {
+          ray.y = rainCanvas.height + 10;
+          ray.x = Math.random() * rainCanvas.width;
+        }
+      });
+    }
+    rainAnimId = requestAnimationFrame(loopRain);
+  }
+
+  initRain();
+  loopRain();
+
+  function triggerMendHeart() {
+    if (kintsugiHealed) return;
+    kintsugiHealed = true;
+
+    playSound('goldSpark');
+    setTimeout(() => playSound('chime'), 300);
+    if (navigator.vibrate) navigator.vibrate([40, 80, 40]);
+
+    // Spring together heart halves with GSAP
+    if (hLeft) {
+      gsap.to(hLeft, {
+        x: 0,
+        rotation: 0,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.45)'
+      });
+    }
+    if (hRight) {
+      gsap.to(hRight, {
+        x: 0,
+        rotation: 0,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.45)'
+      });
+    }
+
+    // Glow kintsugi gold seam & aura
+    if (goldSeam) goldSeam.style.opacity = '1';
+    if (kAura) {
+      kAura.style.opacity = '0.9';
+      gsap.fromTo(kAura, { scale: 0.8 }, { scale: 1.3, duration: 1.2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+    }
+
+    // Reveal glowing rainbow
+    if (rainbow) rainbow.style.opacity = '1';
+
+    // Update status pills and battery
+    if (stormPill) {
+      stormPill.textContent = "🌈 Radiant Skies • Bond Healed";
+      stormPill.style.background = "rgba(16, 185, 129, 0.25)";
+      stormPill.style.color = "#6ee7b7";
+      stormPill.style.borderColor = "rgba(16, 185, 129, 0.5)";
+    }
+    if (battVal) {
+      battVal.textContent = "Heart Level: 100% 💖 (Fully Restored)";
+      battVal.style.color = "#34d399";
+    }
+
+    // Setup golden sunbeams in rain canvas
+    sunRays = [];
+    for (let i = 0; i < 30; i++) {
+      sunRays.push({
+        x: Math.random() * rainCanvas.width,
+        y: Math.random() * rainCanvas.height,
+        r: 1.5 + Math.random() * 3,
+        speed: 0.6 + Math.random() * 1.2,
+        alpha: 0.2 + Math.random() * 0.45
+      });
+    }
+
+    if (mendBanner) {
+      mendBanner.textContent = "✨ Golden Kintsugi Complete: Our love is now stronger and more precious than ever ❤️";
+      gsap.fromTo(mendBanner, { scale: 0.94 }, { scale: 1, duration: 0.4, ease: 'back.out(2)' });
+    }
+
+    confetti({
+      particleCount: 65,
+      spread: 80,
+      origin: { y: 0.42 },
+      colors: ['#ffd700', '#f59e0b', '#f43f5e', '#38bdf8', '#ffffff']
+    });
+  }
+
+  kStage?.addEventListener('click', triggerMendHeart);
+  btnMend?.addEventListener('click', triggerMendHeart);
+  btnWipe?.addEventListener('click', triggerMendHeart);
+
+  // Unseal wax letter on tap
+  waxSealBtn?.addEventListener('click', () => {
+    playSound('stamp');
+    if (navigator.vibrate) navigator.vibrate(30);
+    gsap.to(waxSealBtn, { scale: 1.25, rotation: 12, duration: 0.2, yoyo: true, repeat: 1 });
+    confetti({ particleCount: 25, spread: 40, origin: { y: 0.5 } });
+  });
+
+  // ==========================================
+  // STAGE 2: VENTING ROOM WITH REAL PHOTO & ARSENAL
   // ==========================================
   const ventAvatar = container.querySelector('#ventAvatar');
   const avatarFace = container.querySelector('#avatarFace');
@@ -656,42 +908,12 @@ export function renderSorryTemplate(container, data) {
   ];
 
   const throwableMap = {
-    cake: {
-      sound: 'splat',
-      icon: '🎂',
-      decal: '🍰',
-      angerDelta: 20
-    },
-    teddy: {
-      sound: 'boing',
-      icon: '🧸',
-      decal: '🧸',
-      angerDelta: 15
-    },
-    tomato: {
-      sound: 'splat',
-      icon: '🍅',
-      decal: '🍅',
-      angerDelta: 20
-    },
-    slipper: {
-      sound: 'boing',
-      icon: '🩴',
-      decal: '🩴',
-      angerDelta: 25
-    },
-    water: {
-      sound: 'splash',
-      icon: '💧',
-      decal: '💧',
-      angerDelta: 20
-    },
-    egg: {
-      sound: 'splat',
-      icon: '🥚',
-      decal: '🍳',
-      angerDelta: 20
-    }
+    cake: { sound: 'splat', icon: '🎂', decal: '🍰', angerDelta: 20 },
+    teddy: { sound: 'boing', icon: '🧸', decal: '🧸', angerDelta: 15 },
+    tomato: { sound: 'splat', icon: '🍅', decal: '🍅', angerDelta: 20 },
+    slipper: { sound: 'boing', icon: '🩴', decal: '🩴', angerDelta: 25 },
+    water: { sound: 'splash', icon: '💧', decal: '💧', angerDelta: 20 },
+    egg: { sound: 'splat', icon: '🥚', decal: '🍳', angerDelta: 20 }
   };
 
   container.querySelectorAll('.btn-throwable').forEach(btn => {
@@ -710,7 +932,7 @@ export function renderSorryTemplate(container, data) {
         else angerValText.textContent = `0% (Anger Fully Melted 😇)`;
       }
 
-      // Fly projectile from clicked button towards the face center
+      // Fly projectile from button to avatar
       try {
         const btnRect = btn.getBoundingClientRect();
         const avatarRect = ventAvatar ? ventAvatar.getBoundingClientRect() : null;
@@ -730,32 +952,25 @@ export function renderSorryTemplate(container, data) {
             projectile.style.transform = `translate(${targetX}px, ${targetY}px) scale(1.6) rotate(${Math.random() * 360}deg)`;
           });
 
-          setTimeout(() => {
-            projectile.remove();
-          }, 290);
+          setTimeout(() => { projectile.remove(); }, 290);
         }
-      } catch (err) {
-        console.warn("Projectile animation:", err);
-      }
+      } catch (err) {}
 
-      // Sound feedback
       playSound(def.sound);
-
-      // Vibrate
       if (navigator.vibrate) navigator.vibrate([25, 35, 25]);
 
-      // Wobble Avatar Face
       if (ventAvatar) {
-        ventAvatar.classList.remove('wobble-hit');
-        void ventAvatar.offsetWidth;
-        ventAvatar.classList.add('wobble-hit');
+        gsap.fromTo(ventAvatar, 
+          { x: -8, rotation: -3 }, 
+          { x: 8, rotation: 3, duration: 0.08, repeat: 3, yoyo: true, ease: 'power1.inOut', onComplete: () => {
+            gsap.set(ventAvatar, { x: 0, rotation: 0 });
+          }}
+        );
       }
 
-      // Dynamically Stick Decal onto Avatar Face!
       if (ventDecalsLayer) {
         const decal = document.createElement('div');
         decal.className = `vent-decal decal-${type}`;
-        // Randomized location inside face boundaries (18% to 76%)
         const rx = 18 + Math.random() * 58;
         const ry = 18 + Math.random() * 58;
         const rot = -35 + Math.random() * 70;
@@ -767,15 +982,11 @@ export function renderSorryTemplate(container, data) {
         ventDecalsLayer.appendChild(decal);
       }
 
-      // Reaction text
       if (ventBubble) {
         ventBubble.textContent = funnyReactions[ventCount % funnyReactions.length];
-        ventBubble.style.animation = 'none';
-        void ventBubble.offsetWidth;
-        ventBubble.style.animation = 'popBubble 0.3s ease';
+        gsap.fromTo(ventBubble, { scale: 0.85 }, { scale: 1, duration: 0.25, ease: 'back.out(2)' });
       }
 
-      // Avatar expression
       if (avatarFace) {
         if (angerLevel === 0) avatarFace.textContent = "🥰";
         else if (angerLevel < 35) avatarFace.textContent = "🫶";
@@ -783,31 +994,27 @@ export function renderSorryTemplate(container, data) {
         else avatarFace.textContent = "😭";
       }
 
-      // Counter
       if (ventCounter) {
         ventCounter.innerHTML = `Hits landed: <strong>${ventCount}</strong> items stuck on face!`;
       }
     });
   });
 
-  // Wipe Face Clean Button
   btnWipeFace?.addEventListener('click', () => {
     if (ventDecalsLayer) {
-      ventDecalsLayer.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-      ventDecalsLayer.style.opacity = '0';
-      ventDecalsLayer.style.transform = 'scale(0.85)';
-      setTimeout(() => {
-        ventDecalsLayer.innerHTML = '';
-        ventDecalsLayer.style.opacity = '1';
-        ventDecalsLayer.style.transform = 'none';
-        ventDecalsLayer.style.transition = '';
-      }, 260);
+      gsap.to(ventDecalsLayer, {
+        opacity: 0,
+        scale: 0.8,
+        duration: 0.25,
+        onComplete: () => {
+          ventDecalsLayer.innerHTML = '';
+          gsap.set(ventDecalsLayer, { opacity: 1, scale: 1 });
+        }
+      });
     }
     if (ventBubble) {
       ventBubble.textContent = "Face wiped sparkling clean! Ready if you want to throw more 🥺🧻";
-      ventBubble.style.animation = 'none';
-      void ventBubble.offsetWidth;
-      ventBubble.style.animation = 'popBubble 0.3s ease';
+      gsap.fromTo(ventBubble, { scale: 0.85 }, { scale: 1, duration: 0.25, ease: 'back.out(2)' });
     }
     if (avatarFace) avatarFace.textContent = "🥺";
     playSound('boing');
@@ -815,7 +1022,7 @@ export function renderSorryTemplate(container, data) {
   });
 
   // ==========================================
-  // STAGE 3: INTERACTIVE PENANCES & VIEWER PUNISHMENTS
+  // STAGE 3: INTERACTIVE PENANCE & ATONEMENT
   // ==========================================
   let viewerPunishments = [
     ...(penances && penances.length > 0 ? penances : [
@@ -873,7 +1080,6 @@ export function renderSorryTemplate(container, data) {
       }
     }
 
-    // Toggle punishment check
     penanceGrid.querySelectorAll('.penance-item-card').forEach(card => {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.btn-del-penance')) return;
@@ -888,7 +1094,6 @@ export function renderSorryTemplate(container, data) {
       });
     });
 
-    // Delete custom item
     penanceGrid.querySelectorAll('.btn-del-penance').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -918,11 +1123,7 @@ export function renderSorryTemplate(container, data) {
     renderPenanceGrid();
     playSound('chime');
     if (navigator.vibrate) navigator.vibrate(30);
-    confetti({
-      particleCount: 30,
-      spread: 50,
-      origin: { y: 0.6 }
-    });
+    confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
   }
 
   btnAddPunishment?.addEventListener('click', handleAddCustomPunishment);
@@ -940,20 +1141,15 @@ export function renderSorryTemplate(container, data) {
     btnSignPenance.style.display = 'none';
     if (penanceStampedBadge) {
       penanceStampedBadge.style.display = 'inline-block';
-      penanceStampedBadge.style.animation = 'stampPop 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+      gsap.fromTo(penanceStampedBadge, { scale: 0.5, rotation: -8 }, { scale: 1, rotation: 0, duration: 0.45, ease: 'back.out(2)' });
     }
-    confetti({
-      particleCount: 45,
-      spread: 60,
-      origin: { y: 0.65 }
-    });
+    confetti({ particleCount: 45, spread: 60, origin: { y: 0.65 } });
   });
 
-  // Initial render of punishment deed
   renderPenanceGrid();
 
   // ==========================================
-  // STAGE 4: POLAROIDS 3D FLIP
+  // STAGE 4: POLAROIDS 3D FLIP & VOICE NOTE
   // ==========================================
   container.querySelectorAll('.sorry-polaroid-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -962,9 +1158,84 @@ export function renderSorryTemplate(container, data) {
     });
   });
 
+  const btnPlayVoiceMemo = container.querySelector('#btnPlayVoiceMemo');
+  const voiceMemoStatus = container.querySelector('#voiceMemoStatus');
+  let isVoicePlaying = false;
+  btnPlayVoiceMemo?.addEventListener('click', () => {
+    isVoicePlaying = !isVoicePlaying;
+    playSound('chime');
+    if (isVoicePlaying) {
+      btnPlayVoiceMemo.textContent = "⏸";
+      if (voiceMemoStatus) voiceMemoStatus.textContent = "Playing confession note... 🎙️❤️";
+      gsap.to('#voiceSoundwave span', {
+        scaleY: 1.8,
+        duration: 0.25,
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.08
+      });
+    } else {
+      btnPlayVoiceMemo.textContent = "▶";
+      if (voiceMemoStatus) voiceMemoStatus.textContent = "Paused (0:48)";
+      gsap.killTweensOf('#voiceSoundwave span');
+      gsap.set('#voiceSoundwave span', { scaleY: 1 });
+    }
+  });
+
   // ==========================================
-  // STAGE 5: PEACE TREATY - 2-SECOND HOLD & YAYYY CONVINCED ANIMATION
+  // STAGE 5: PEACE TREATY - SIGNATURE & 2-SECOND HOLD
   // ==========================================
+  const sigCanvas = container.querySelector('#treatySigCanvas');
+  const btnClearSig = container.querySelector('#btnClearSig');
+  let sigCtx = sigCanvas ? sigCanvas.getContext('2d') : null;
+  let isDrawingSig = false;
+
+  if (sigCtx) {
+    sigCtx.lineWidth = 2.5;
+    sigCtx.lineCap = 'round';
+    sigCtx.strokeStyle = '#b45309';
+
+    function getCanvasPos(e) {
+      const rect = sigCanvas.getBoundingClientRect();
+      const cx = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+      const cy = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (cx - rect.left) * (sigCanvas.width / rect.width),
+        y: (cy - rect.top) * (sigCanvas.height / rect.height)
+      };
+    }
+
+    function startSig(e) {
+      isDrawingSig = true;
+      const pos = getCanvasPos(e);
+      sigCtx.beginPath();
+      sigCtx.moveTo(pos.x, pos.y);
+    }
+    function drawSig(e) {
+      if (!isDrawingSig) return;
+      if (e.cancelable) e.preventDefault();
+      const pos = getCanvasPos(e);
+      sigCtx.lineTo(pos.x, pos.y);
+      sigCtx.stroke();
+    }
+    function endSig() {
+      isDrawingSig = false;
+    }
+
+    sigCanvas.addEventListener('mousedown', startSig);
+    sigCanvas.addEventListener('mousemove', drawSig);
+    window.addEventListener('mouseup', endSig);
+    sigCanvas.addEventListener('touchstart', startSig, { passive: false });
+    sigCanvas.addEventListener('touchmove', drawSig, { passive: false });
+    window.addEventListener('touchend', endSig);
+
+    btnClearSig?.addEventListener('click', () => {
+      sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+      playSound('splat');
+    });
+  }
+
+  // 2-Second Hold Seal
   const treatyHoldBtn = container.querySelector('#treatyHoldButton');
   const treatyHoldRing = container.querySelector('#treatyHoldRing');
   const treatyHoldLinearBar = container.querySelector('#treatyHoldLinearBar');
@@ -972,8 +1243,8 @@ export function renderSorryTemplate(container, data) {
   const treatyConvincedCard = container.querySelector('#treatyConvincedCard');
   const treatyBtnIcon = container.querySelector('#treatyBtnIcon');
 
-  const ringCircumference = 289; // 2 * PI * 46
-  const requiredHoldMs = 2000; // Exact 2.0s hold
+  const ringCircumference = 289;
+  const requiredHoldMs = 2000;
   let holdStartTime = 0;
   let holdRafId = null;
   let isHoldActive = false;
@@ -996,14 +1267,8 @@ export function renderSorryTemplate(container, data) {
       const elapsed = now - holdStartTime;
       const progress = Math.min(1, elapsed / requiredHoldMs);
 
-      // Smooth SVG Progress Ring
-      if (treatyHoldRing) {
-        treatyHoldRing.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
-      }
-      // Linear Progress Fill
-      if (treatyHoldLinearBar) {
-        treatyHoldLinearBar.style.width = `${progress * 100}%`;
-      }
+      if (treatyHoldRing) treatyHoldRing.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
+      if (treatyHoldLinearBar) treatyHoldLinearBar.style.width = `${progress * 100}%`;
 
       if (progress >= 1) {
         onHoldComplete();
@@ -1011,7 +1276,6 @@ export function renderSorryTemplate(container, data) {
         holdRafId = requestAnimationFrame(step);
       }
     }
-
     holdRafId = requestAnimationFrame(step);
   }
 
@@ -1022,13 +1286,8 @@ export function renderSorryTemplate(container, data) {
     if (holdRafId) cancelAnimationFrame(holdRafId);
     treatyHoldBtn?.classList.remove('holding');
 
-    // Smooth reset
-    if (treatyHoldRing) {
-      treatyHoldRing.style.strokeDashoffset = `${ringCircumference}`;
-    }
-    if (treatyHoldLinearBar) {
-      treatyHoldLinearBar.style.width = `0%`;
-    }
+    if (treatyHoldRing) treatyHoldRing.style.strokeDashoffset = `${ringCircumference}`;
+    if (treatyHoldLinearBar) treatyHoldLinearBar.style.width = `0%`;
     if (treatyHoldInstruction) {
       treatyHoldInstruction.textContent = "👆 Press & Hold for 2 full seconds to sign!";
       treatyHoldInstruction.style.color = "#78350f";
@@ -1040,11 +1299,8 @@ export function renderSorryTemplate(container, data) {
     isHoldActive = false;
     if (holdRafId) cancelAnimationFrame(holdRafId);
 
-    // Audio effects
     playSound('stamp');
     setTimeout(() => playSound('chime'), 200);
-
-    // Tactile vibration
     if (navigator.vibrate) navigator.vibrate([60, 100, 60, 140]);
 
     if (treatyBtnIcon) treatyBtnIcon.textContent = "✅";
@@ -1058,23 +1314,13 @@ export function renderSorryTemplate(container, data) {
       treatyHoldInstruction.style.color = "#059669";
     }
 
-    // Celebratory YAYYY! CONVINCED! Confetti Blast
     confetti({
       particleCount: 110,
       spread: 90,
       origin: { y: 0.65 },
       colors: ['#ff4d6d', '#fbbf24', '#10b981', '#38bdf8', '#ffd700']
     });
-    setTimeout(() => {
-      confetti({
-        particleCount: 75,
-        spread: 120,
-        origin: { y: 0.5 },
-        colors: ['#34d399', '#f43f5e', '#a855f7', '#fbbf24']
-      });
-    }, 380);
 
-    // Pop up the YAYYY! CONVINCED! Banner with elastic bounce
     if (treatyConvincedCard) {
       treatyConvincedCard.style.display = 'block';
       gsap.fromTo(treatyConvincedCard,
@@ -1084,7 +1330,6 @@ export function renderSorryTemplate(container, data) {
     }
   }
 
-  // Pointer & Touch Events for 100% Mobile & Desktop Accuracy
   treatyHoldBtn?.addEventListener('pointerdown', onHoldStart);
   window.addEventListener('pointerup', onHoldEnd);
   window.addEventListener('pointercancel', onHoldEnd);
@@ -1093,8 +1338,75 @@ export function renderSorryTemplate(container, data) {
   window.addEventListener('touchcancel', onHoldEnd);
 
   // ==========================================
-  // STAGE 6: COUPONS CLAIMING
+  // STAGE 6: REAL SCRATCH-OFF FOIL ON COUPONS
   // ==========================================
+  container.querySelectorAll('.scratch-coupon-canvas').forEach(canvas => {
+    const sCtx = canvas.getContext('2d');
+    if (!sCtx) return;
+
+    // Fill with metallic gold foil texture
+    canvas.width = canvas.offsetWidth || 280;
+    canvas.height = canvas.offsetHeight || 90;
+
+    const goldGrad = sCtx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    goldGrad.addColorStop(0, '#d97706');
+    goldGrad.addColorStop(0.3, '#fde047');
+    goldGrad.addColorStop(0.5, '#fbbf24');
+    goldGrad.addColorStop(0.8, '#f59e0b');
+    goldGrad.addColorStop(1, '#b45309');
+    sCtx.fillStyle = goldGrad;
+    sCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+    sCtx.fillStyle = '#78350f';
+    sCtx.font = 'bold 12px sans-serif';
+    sCtx.textAlign = 'center';
+    sCtx.fillText('🪙 RUB TO SCRATCH & REVEAL 🪙', canvas.width / 2, canvas.height / 2 + 4);
+
+    let isScratching = false;
+
+    function scratch(x, y) {
+      sCtx.globalCompositeOperation = 'destination-out';
+      sCtx.beginPath();
+      sCtx.arc(x, y, 18, 0, Math.PI * 2);
+      sCtx.fill();
+      playSound('scratch');
+    }
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const cx = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+      const cy = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (cx - rect.left) * (canvas.width / rect.width),
+        y: (cy - rect.top) * (canvas.height / rect.height)
+      };
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      isScratching = true;
+      const p = getCanvasCoords(e);
+      scratch(p.x, p.y);
+    });
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isScratching) return;
+      const p = getCanvasCoords(e);
+      scratch(p.x, p.y);
+    });
+    window.addEventListener('mouseup', () => { isScratching = false; });
+
+    canvas.addEventListener('touchstart', (e) => {
+      isScratching = true;
+      const p = getCanvasCoords(e);
+      scratch(p.x, p.y);
+    }, { passive: true });
+    canvas.addEventListener('touchmove', (e) => {
+      if (!isScratching) return;
+      const p = getCanvasCoords(e);
+      scratch(p.x, p.y);
+    }, { passive: true });
+    window.addEventListener('touchend', () => { isScratching = false; });
+  });
+
   container.querySelectorAll('.sorry-coupon-card').forEach(card => {
     const btn = card.querySelector('.btn-claim-coupon');
     btn?.addEventListener('click', () => {
@@ -1104,12 +1416,15 @@ export function renderSorryTemplate(container, data) {
       btn.textContent = "Claimed ✓";
       btn.style.background = "#22c55e";
       btn.style.borderColor = "#22c55e";
-      confetti({ particleCount: 30, spread: 45, origin: { y: 0.6 } });
+      // Fade away scratch canvas
+      const cvs = card.querySelector('.scratch-coupon-canvas');
+      if (cvs) gsap.to(cvs, { opacity: 0, duration: 0.3, onComplete: () => { cvs.style.display = 'none'; } });
+      confetti({ particleCount: 35, spread: 45, origin: { y: 0.6 } });
     });
   });
 
   // ==========================================
-  // STAGE 7: RUNAWAY NO & YES VERDICT
+  // STAGE 7: RUNAWAY NO & YES VERDICT FINALE
   // ==========================================
   const btnNo = container.querySelector('#btnForgiveNo');
   const btnYes = container.querySelector('#btnForgiveYes');
@@ -1136,10 +1451,16 @@ export function renderSorryTemplate(container, data) {
   function dodgeNo() {
     dodgeCount++;
     playSound('boing');
-    const rx = (Math.random() - 0.5) * 240;
+    const rx = (Math.random() - 0.5) * 260;
     const ry = (Math.random() - 0.5) * 160;
-    const scale = Math.max(0.75, 1 - dodgeCount * 0.04);
-    btnNo.style.transform = `translate(${rx}px, ${ry}px) scale(${scale})`;
+    const scale = Math.max(0.72, 1 - dodgeCount * 0.04);
+    gsap.to(btnNo, {
+      x: rx,
+      y: ry,
+      scale: scale,
+      duration: 0.2,
+      ease: 'back.out(2)'
+    });
     quoteIdx = (quoteIdx + 1) % runawayQuotes.length;
     btnNo.textContent = runawayQuotes[quoteIdx];
     if (navigator.vibrate) navigator.vibrate(15);
@@ -1151,295 +1472,44 @@ export function renderSorryTemplate(container, data) {
     dodgeNo();
   });
 
-  // =========================================================================
-  // LIVING RAIN-TO-SUNSHINE CLEARING SKY CANVAS (60FPS)
-  // =========================================================================
-  let isForgiven = false;
-  const sCanvas = container.querySelector('#sorryCanvas');
-  if (sCanvas) {
-    const sCtx = sCanvas.getContext('2d');
-    let sW = (sCanvas.width = window.innerWidth);
-    let sH = (sCanvas.height = window.innerHeight);
-
-    const raindrops = Array.from({ length: 45 }, () => ({
-      x: Math.random() * sW,
-      y: Math.random() * sH,
-      len: 12 + Math.random() * 15,
-      speedY: 7 + Math.random() * 8,
-      speedX: -1 + (Math.random() - 0.5) * 0.5,
-      alpha: 0.2 + Math.random() * 0.4
-    }));
-
-    const sunnyHearts = Array.from({ length: 28 }, () => ({
-      x: Math.random() * sW,
-      y: sH + Math.random() * 50,
-      size: 8 + Math.random() * 12,
-      speedY: 0.8 + Math.random() * 1.4,
-      rot: Math.random() * 360,
-      alpha: 0.3 + Math.random() * 0.5,
-      color: ['#ff4d6d', '#f43f5e', '#fbbf24', '#f472b6'][Math.floor(Math.random() * 4)]
-    }));
-
-    function animSorry() {
-      sCtx.clearRect(0, 0, sW, sH);
-
-      if (!isForgiven) {
-        sCtx.strokeStyle = 'rgba(186, 230, 253, 0.4)';
-        sCtx.lineWidth = 1.5;
-        sCtx.lineCap = 'round';
-        for (const r of raindrops) {
-          r.y += r.speedY;
-          r.x += r.speedX;
-          if (r.y > sH) {
-            r.y = -20;
-            r.x = Math.random() * sW;
-          }
-          sCtx.beginPath();
-          sCtx.moveTo(r.x, r.y);
-          sCtx.lineTo(r.x + r.speedX * 2, r.y + r.len);
-          sCtx.stroke();
-        }
-      } else {
-        for (const h of sunnyHearts) {
-          h.y -= h.speedY;
-          if (h.y < -20) {
-            h.y = sH + 20;
-            h.x = Math.random() * sW;
-          }
-          sCtx.save();
-          sCtx.translate(h.x, h.y);
-          sCtx.fillStyle = h.color;
-          sCtx.globalAlpha = h.alpha;
-          sCtx.beginPath();
-          sCtx.arc(0, 0, h.size * 0.4, 0, Math.PI * 2);
-          sCtx.fill();
-          sCtx.restore();
-        }
-      }
-      requestAnimationFrame(animSorry);
-    }
-    requestAnimationFrame(animSorry);
-
-    window.addEventListener('resize', () => {
-      sW = sCanvas.width = window.innerWidth;
-      sH = sCanvas.height = window.innerHeight;
-    });
-  }
-
   btnYes?.addEventListener('click', () => {
-    isForgiven = true;
     playSound('chime');
-    if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+
+    if (btnNo) btnNo.style.display = 'none';
+    if (btnYes) btnYes.style.display = 'none';
+
+    if (successCard) {
+      successCard.style.display = 'block';
+      gsap.fromTo(successCard,
+        { scale: 0.6, opacity: 0, y: 30 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.6, ease: 'back.out(2)' }
+      );
+    }
+
+    const waMsg = encodeURIComponent(`I forgive you my love! 🥰❤️ Let's never fight again. I love you! 🫂✨`);
+    if (btnWhatsappHug) {
+      btnWhatsappHug.href = `https://wa.me/?text=${waMsg}`;
+    }
 
     confetti({
       particleCount: 140,
       spread: 100,
-      origin: { y: 0.6 },
-      colors: ['#ff4d6d', '#fbbf24', '#10b981', '#38bdf8', '#fff']
+      origin: { y: 0.5 },
+      colors: ['#ff4d6d', '#fbbf24', '#10b981', '#38bdf8', '#a855f7', '#ffd700']
     });
-
-    // Hide decision buttons & show success card
-    btnNo.style.display = 'none';
-    btnYes.style.display = 'none';
-    if (successCard) {
-      successCard.style.display = 'block';
-      successCard.style.animation = 'scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-    }
-
-    // Compile chosen and custom punishments assigned by the viewer
-    const chosenList = viewerPunishments.filter(p => p.checked).map(p => p.text);
-    let punishmentsText = "";
-    if (chosenList.length > 0) {
-      punishmentsText = `\n\n⚖️ Here are the punishments you MUST complete for me:\n` +
-        chosenList.map((p, idx) => `${idx + 1}. ${p}`).join('\n');
-    } else {
-      punishmentsText = `\n\nYou got off easy with no punishments this time, but don't mess up again! 😜`;
-    }
-
-    // Set WhatsApp hug link with punishments list
-    const hugMsg = `I forgive you, ${senderName}! ❤️🫂${punishmentsText}\n\nOur peace treaty is officially signed! See you soon 🥰✨`;
-    if (btnWhatsappHug) {
-      btnWhatsappHug.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(hugMsg)}`;
-    }
   });
 
   btnCelebrateMore?.addEventListener('click', () => {
     playSound('chime');
     confetti({
-      particleCount: 100,
-      spread: 120,
-      origin: { y: 0.5 }
+      particleCount: 120,
+      spread: 90,
+      origin: { y: 0.6 }
     });
   });
 
-  // =========================================================================
-  // INTERACTIVE 60FPS RAINSTORM TO RADIANT RAINBOW & KINTSUGI MENDED HEART ARENA
-  // =========================================================================
-  const kCanvas = container.querySelector('#kintsugiRainCanvas');
-  const kStage = container.querySelector('#kintsugiStage');
-  const btnMend = container.querySelector('#btnMendKintsugi');
-  const btnWipe = container.querySelector('#btnWipeStorm');
-  const heartLeft = container.querySelector('#heartHalfLeft');
-  const heartRight = container.querySelector('#heartHalfRight');
-  const goldSeam = container.querySelector('#kintsugiGoldSeam');
-  const goldAura = container.querySelector('#kintsugiAura');
-  const rainbow = container.querySelector('#kintsugiRainbow');
-  const stormPill = container.querySelector('#stormStatePill');
-  const battVal = container.querySelector('#heartBatteryVal');
-  const mendBanner = container.querySelector('#sorryMendBanner');
-
-  let isHeartMended = false;
-
-  if (kCanvas) {
-    const kCtx = kCanvas.getContext('2d');
-    let kW = (kCanvas.width = kCanvas.offsetWidth || 380);
-    let kH = (kCanvas.height = 260);
-
-    // Raindrops when storm active, golden sparkle motes when mended
-    const drops = Array.from({ length: 32 }, () => ({
-      x: Math.random() * kW,
-      y: Math.random() * kH,
-      vy: 2.5 + Math.random() * 4,
-      vx: (Math.random() - 0.5) * 0.8,
-      len: 8 + Math.random() * 12,
-      alpha: 0.25 + Math.random() * 0.5
-    }));
-
-    const goldMotes = Array.from({ length: 28 }, () => ({
-      x: Math.random() * kW,
-      y: Math.random() * kH,
-      vy: 0.4 + Math.random() * 0.8,
-      vx: (Math.random() - 0.5) * 0.6,
-      r: 1 + Math.random() * 2.5,
-      alpha: 0.3 + Math.random() * 0.7
-    }));
-
-    function renderKintsugiCanvas() {
-      kW = kCanvas.width = kCanvas.offsetWidth || 380;
-      kH = kCanvas.height = 260;
-      kCtx.clearRect(0, 0, kW, kH);
-
-      if (!isHeartMended) {
-        // Falling rain
-        kCtx.strokeStyle = 'rgba(186, 230, 253, 0.45)';
-        kCtx.lineWidth = 1.5;
-        kCtx.lineCap = 'round';
-        drops.forEach(d => {
-          d.y += d.vy;
-          d.x += d.vx;
-          if (d.y > kH) {
-            d.y = -15;
-            d.x = Math.random() * kW;
-          }
-          kCtx.globalAlpha = d.alpha;
-          kCtx.beginPath();
-          kCtx.moveTo(d.x, d.y);
-          kCtx.lineTo(d.x + d.vx * 2, d.y + d.len);
-          kCtx.stroke();
-        });
-      } else {
-        // Rising golden kintsugi motes
-        goldMotes.forEach(m => {
-          m.y -= m.vy;
-          m.x += m.vx;
-          if (m.y < -10) {
-            m.y = kH + 10;
-            m.x = Math.random() * kW;
-          }
-          kCtx.fillStyle = '#fbbf24';
-          kCtx.globalAlpha = m.alpha;
-          kCtx.beginPath();
-          kCtx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
-          kCtx.fill();
-        });
-      }
-      kCtx.globalAlpha = 1;
-      requestAnimationFrame(renderKintsugiCanvas);
-    }
-    requestAnimationFrame(renderKintsugiCanvas);
-  }
-
-  const mendQuotes = [
-    "✨ \"In Japanese Kintsugi, broken things are mended with gold to become even more cherished.\"",
-    "💖 \"Every crack in our journey is filled with pure gold and deeper love.\"",
-    "🌈 \"The storm has passed — only warmth, understanding, and joy ahead.\"",
-    "🫶 \"Thank you for healing our bond. You mean the entire world to me.\""
-  ];
-  let mendQuoteIdx = 0;
-
-  function triggerMendHeart() {
-    isHeartMended = true;
-    playSound('chime');
-    if (navigator.vibrate) navigator.vibrate([40, 80, 40]);
-
-    // Animate heart halves locking together seamlessly
-    gsap.to(heartLeft, {
-      rotate: 0,
-      x: 0,
-      duration: 0.6,
-      ease: 'back.out(1.7)'
-    });
-    gsap.to(heartRight, {
-      rotate: 0,
-      x: 0,
-      duration: 0.6,
-      ease: 'back.out(1.7)'
-    });
-
-    // Flare golden seam and glowing aura
-    gsap.to(goldSeam, {
-      opacity: 1,
-      scale: 1.15,
-      duration: 0.4,
-      yoyo: true,
-      repeat: 1,
-      ease: 'power2.out'
-    });
-    gsap.to(goldAura, {
-      opacity: 0.85,
-      scale: 1.4,
-      duration: 0.5,
-      yoyo: true,
-      repeat: 1,
-      ease: 'power2.out'
-    });
-
-    // Reveal glowing rainbow
-    if (rainbow) rainbow.style.opacity = '1';
-
-    // Update status pills and battery
-    if (stormPill) {
-      stormPill.textContent = "🌈 Radiant Skies • Bond Healed";
-      stormPill.style.background = "rgba(16, 185, 129, 0.25)";
-      stormPill.style.color = "#6ee7b7";
-      stormPill.style.borderColor = "rgba(16, 185, 129, 0.5)";
-    }
-    if (battVal) {
-      battVal.textContent = "Heart Level: 100% 💖 (Fully Restored)";
-      battVal.style.color = "#34d399";
-    }
-
-    mendQuoteIdx = (mendQuoteIdx + 1) % mendQuotes.length;
-    if (mendBanner) {
-      mendBanner.textContent = mendQuotes[mendQuoteIdx];
-      gsap.fromTo(mendBanner, { scale: 0.92 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
-    }
-
-    confetti({
-      particleCount: 55,
-      spread: 75,
-      origin: { y: 0.45 },
-      colors: ['#ffd700', '#f59e0b', '#f43f5e', '#38bdf8', '#ffffff']
-    });
-  }
-
-  kStage?.addEventListener('click', triggerMendHeart);
-  btnMend?.addEventListener('click', triggerMendHeart);
-  btnWipe?.addEventListener('click', triggerMendHeart);
-
-  // =========================================================================
-  // KEEPSAKE POLAROID DOWNLOAD & CINEMATIC MEDIUM ZOOM
-  // =========================================================================
+  // Medium zoom for polaroids
   try {
     mediumZoom(container.querySelectorAll('.polaroid-front img'), {
       background: 'rgba(10, 10, 15, 0.92)',
@@ -1447,6 +1517,7 @@ export function renderSorryTemplate(container, data) {
     });
   } catch (_) {}
 
+  // Keepsake download
   container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
