@@ -160,10 +160,10 @@ export function openShareModal(templateId, data) {
 
         <!-- Link Type Selector / Tabs -->
         <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
-          <button type="button" class="btn-link-tab active" id="tabVercelLink" style="padding:7px 14px; border-radius:10px; font-size:12px; font-weight:700; border:1px solid #d4235c; background:rgba(212,35,92,0.08); color:#d4235c; cursor:pointer; transition:all 0.2s ease;">
+          <button type="button" class="btn-link-tab active" id="tabVercelLink">
             ⚡ Vercel HTTPS (Recommended)
           </button>
-          <button type="button" class="btn-link-tab" id="tabCloudLink" style="padding:7px 14px; border-radius:10px; font-size:12px; font-weight:700; border:1px solid rgba(212,175,55,0.28); background:#fffdfa; color:#6a5862; cursor:pointer; transition:all 0.2s ease;">
+          <button type="button" class="btn-link-tab" id="tabCloudLink">
             🌐 Cloud Server (155.248.255.29)
           </button>
         </div>
@@ -171,10 +171,10 @@ export function openShareModal(templateId, data) {
         <!-- Clean Recipient Link -->
         <div class="share-link-group">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <label class="share-link-label" style="margin-bottom:0; color:#1c1216;">
-              🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#059669;">(Creating short link...)</span>
+            <label class="share-link-label" style="margin-bottom:0;">
+              🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#10b981;">(Creating short link...)</span>
             </label>
-            <span style="font-size:10px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35); color:#059669; padding:2px 6px; border-radius:10px; font-weight:700;">
+            <span style="font-size:10px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35); color:#10b981; padding:2px 6px; border-radius:10px; font-weight:700;">
               WhatsApp Hyperlink Active ✓
             </span>
           </div>
@@ -187,7 +187,7 @@ export function openShareModal(templateId, data) {
             </button>
           </div>
 
-          <div class="share-sub-hint" id="shareSubHint" style="margin-top:6px; font-size:11px; color:#059669;">
+          <div class="share-sub-hint" id="shareSubHint" style="margin-top:6px; font-size:11px; color:#10b981;">
             ✨ Guaranteed 100% clickable blue hyperlink in WhatsApp on all phones.
           </div>
 
@@ -206,11 +206,11 @@ export function openShareModal(templateId, data) {
         <!-- Creator Early Review -->
         <div class="share-link-group" style="margin-top:18px; border-top:1px dashed rgba(212,175,55,0.25); padding-top:14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <label class="share-link-label" style="color:#4a3840; margin-bottom:0;">
+            <label class="share-link-label" style="margin-bottom:0;">
               <i data-lucide="lock" style="width:12px; height:12px;"></i>
               <span>Creator Early Review (Bypasses Countdown)</span>
             </label>
-            <a href="#" target="_blank" id="linkTestCreator" style="color:#d4235c; font-size:11px; font-weight:700; text-decoration:underline;">
+            <a href="#" target="_blank" id="linkTestCreator" style="color:#f43f5e; font-size:11px; font-weight:700; text-decoration:underline;">
               Open Creator View →
             </a>
           </div>
@@ -221,7 +221,7 @@ export function openShareModal(templateId, data) {
               <span>Copy</span>
             </button>
           </div>
-          <div class="share-sub-hint" style="margin-top:4px; font-size:11px; color:#6a5862;">
+          <div class="share-sub-hint" style="margin-top:4px; font-size:11px;">
             Use this to verify your surprise before the event countdown ends. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
           </div>
         </div>
@@ -298,12 +298,8 @@ export function openShareModal(templateId, data) {
 
   // Tab switching between Vercel HTTPS and Cloud IP
   tabVercel?.addEventListener('click', () => {
-    tabVercel.style.borderColor = '#d4235c';
-    tabVercel.style.background = 'rgba(212,35,92,0.08)';
-    tabVercel.style.color = '#d4235c';
-    tabCloud.style.borderColor = 'rgba(212,175,55,0.28)';
-    tabCloud.style.background = '#fffdfa';
-    tabCloud.style.color = '#6a5862';
+    tabVercel.classList.add('active');
+    tabCloud.classList.remove('active');
 
     if (vercelDirectUrl) {
       updateActiveUrls(vercelDirectUrl, `${vercelDirectUrl}?review=true`);
@@ -311,12 +307,8 @@ export function openShareModal(templateId, data) {
   });
 
   tabCloud?.addEventListener('click', () => {
-    tabCloud.style.borderColor = '#d4235c';
-    tabCloud.style.background = 'rgba(212,35,92,0.08)';
-    tabCloud.style.color = '#d4235c';
-    tabVercel.style.borderColor = 'rgba(212,175,55,0.28)';
-    tabVercel.style.background = '#fffdfa';
-    tabVercel.style.color = '#6a5862';
+    tabCloud.classList.add('active');
+    tabVercel.classList.remove('active');
 
     if (cloudDirectUrl) {
       updateActiveUrls(cloudDirectUrl, `${cloudDirectUrl}?review=true`);
