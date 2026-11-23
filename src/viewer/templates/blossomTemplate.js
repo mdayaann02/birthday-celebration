@@ -121,6 +121,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   container.innerHTML = `
     <div class="tree-film-stage scene" id="treeFilmStage">
+      <!-- GLOBAL 60FPS THREE.JS GPU MASTER ENGINE -->
+      <canvas class="romance-master-three-canvas" id="romanceMaster3D" aria-hidden="true"></canvas>
+
+      <!-- CINEMATIC PORTAL FLASH TRANSITION OVERLAY -->
+      <div class="portal-flash-overlay" id="portalFlashOverlay" aria-hidden="true"></div>
       <!-- ACT 0: VIRAL REEL BLOSSOM OPENING GATE (SCENE 1) -->
       <div class="gate" id="treeGate" role="button" tabindex="0" aria-label="Touch the blossom to unwrap">
         <div class="gate__sparkles" aria-hidden="true">
@@ -327,9 +332,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         Again
       </button>
 
-      <button class="memoriesBtn tree-story-cta" id="treeMemoriesBtn" type="button" hidden>
-        <span class="tree-story-cta-icon">✨</span>
-        <span class="tree-story-cta-text">✦ Continue Our Story • Written in the Stars ❯ ✦</span>
+      <button class="btn-scene-next-hero tree-story-cta" id="treeMemoriesBtn" type="button" hidden>
+        <span class="btn-next-spark">✦</span>
+        <span class="btn-next-text">Continue to Chapter IV: Written in the Stars</span>
+        <span class="btn-next-arrow">❯</span>
       </button>
 
       <!-- UPPER-RIGHT SPINNING MINI VINYL CD PLAYER -->
@@ -386,9 +392,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             </div>
           </div>
 
-          <div class="fullscreen-scene-nav">
-            <button type="button" class="btn-scene-prev" data-target="3" data-prev="3">❮ Blossom Tree</button>
-            <button type="button" class="btn-scene-next" data-target="5" data-next="5">Keepsake Album ❯</button>
+          <div class="scene-forward-action">
+            <button type="button" class="btn-scene-next-hero" data-target="5">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Step into Chapter V: Treasured Keepsakes</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
           </div>
         </div>
       </section>
@@ -434,9 +443,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             </div>
           </div>
 
-          <div class="fullscreen-scene-nav">
-            <button type="button" class="btn-scene-prev" data-target="4" data-prev="4">❮ Celestial Stars</button>
-            <button type="button" class="btn-scene-next" data-target="6" data-next="6">Soundtrack of Us ❯</button>
+          <div class="scene-forward-action">
+            <button type="button" class="btn-scene-next-hero" data-target="6">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Step into Chapter VI: The Soundtrack of Us</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
           </div>
         </div>
       </section>
@@ -522,9 +534,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             </div>
           </div>
 
-          <div class="fullscreen-scene-nav">
-            <button type="button" class="btn-scene-prev" data-target="5" data-prev="5">❮ Keepsake Album</button>
-            <button type="button" class="btn-scene-next" data-target="7" data-next="7">Our Milestones ❯</button>
+          <div class="scene-forward-action">
+            <button type="button" class="btn-scene-next-hero" data-target="7">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Step into Chapter VII: Our Timeless Milestones</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
           </div>
         </div>
       </section>
@@ -555,9 +570,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             `).join('')}
           </div>
 
-          <div class="fullscreen-scene-nav">
-            <button type="button" class="btn-scene-prev" data-target="6" data-prev="6">❮ Soundtrack of Us</button>
-            <button type="button" class="btn-scene-next" data-target="8" data-next="8">The Sacred Letter ❯</button>
+          <div class="scene-forward-action">
+            <button type="button" class="btn-scene-next-hero" data-target="8">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Step into Chapter VIII: The Sacred Letter</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
           </div>
         </div>
       </section>
@@ -592,9 +610,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             </div>
           </div>
 
-          <div class="fullscreen-scene-nav">
-            <button type="button" class="btn-scene-prev" data-target="7" data-prev="7">❮ Our Milestones</button>
-            <button type="button" class="btn-scene-next" data-target="9" data-next="9">Twilight Lanterns ❯</button>
+          <div class="scene-forward-action">
+            <button type="button" class="btn-scene-next-hero" data-target="9">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Step into Chapter IX: Twilight Sky Lanterns</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
           </div>
         </div>
       </section>
@@ -618,9 +639,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             </div>
           </div>
 
-          <div class="fullscreen-scene-nav">
-            <button type="button" class="btn-scene-prev" data-target="8" data-prev="8">❮ The Sacred Letter</button>
-            <button type="button" class="btn-scene-next" data-target="10" data-next="10">Our Lifetime Vow ❯</button>
+          <div class="scene-forward-action">
+            <button type="button" class="btn-scene-next-hero" data-target="10">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Seal Our Forever Promise: Chapter X</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
           </div>
         </div>
       </section>
@@ -670,10 +694,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             <p class="watch-again-note">Relive our 10-chapter romantic journey from the beginning</p>
           </div>
 
-          <div class="fullscreen-scene-nav" style="margin-top:28px;">
-            <button type="button" class="btn-scene-prev" data-target="9" data-prev="9">❮ Twilight Lanterns</button>
-            <span style="flex:1;"></span>
-          </div>
+
         </div>
       </section>
 
@@ -687,6 +708,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   // DOM Elements
   const stage = container.querySelector('#treeFilmStage');
+  const master3DCanvas = container.querySelector('#romanceMaster3D');
+  const portalFlashOverlay = container.querySelector('#portalFlashOverlay');
   const gate = container.querySelector('#treeGate');
   const viralFlowerBtn = container.querySelector('#viralFlowerBtn');
   const burstCanvas = container.querySelector('#blossomBurstCanvas');
@@ -2088,7 +2111,269 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   });
 
   // =========================================================================
-  // ACTS IV - X: FULL-SCREEN CINEMATIC SCENE TRANSITIONS (NO PROGRESS BAR)
+  // HIGH-PERFORMANCE 60FPS THREE.JS GPU MASTER ENGINE
+  // =========================================================================
+  function initRomanceMaster3D(canvas) {
+    if (!canvas || typeof window === 'undefined') return null;
+
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000);
+    camera.position.set(0, 0, 50);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+
+    // 1. 3D Sakura Petals System (100 textured 3D petals with physics)
+    const petalCount = 85;
+    const petalGeo = new THREE.PlaneGeometry(1.2, 1.8, 2, 2);
+    const pos = petalGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const py = pos.getY(i);
+      pos.setZ(i, Math.sin((py + 0.9) / 1.8 * Math.PI) * 0.4);
+    }
+    petalGeo.computeVertexNormals();
+
+    const petalMat = new THREE.MeshStandardMaterial({
+      color: 0xffb7c5,
+      emissive: 0x9f1239,
+      emissiveIntensity: 0.18,
+      roughness: 0.4,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.88
+    });
+
+    const petalsGroup = new THREE.Group();
+    scene.add(petalsGroup);
+
+    const petalData = [];
+    for (let i = 0; i < petalCount; i++) {
+      const mesh = new THREE.Mesh(petalGeo, petalMat);
+      mesh.position.set(
+        (Math.random() - 0.5) * 80,
+        (Math.random() - 0.5) * 70,
+        (Math.random() - 0.5) * 40
+      );
+      mesh.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+      const scale = Math.random() * 0.6 + 0.6;
+      mesh.scale.set(scale, scale, scale);
+      petalsGroup.add(mesh);
+      petalData.push({
+        mesh,
+        vy: -(Math.random() * 0.08 + 0.04),
+        vx: (Math.random() - 0.5) * 0.03,
+        vz: (Math.random() - 0.5) * 0.02,
+        rx: Math.random() * 0.03,
+        ry: Math.random() * 0.04,
+        rz: Math.random() * 0.02,
+        swayFreq: Math.random() * 2 + 1,
+        swayOffset: Math.random() * Math.PI * 2
+      });
+    }
+
+    // 2. 3D Celestial Starfield System (800 glowing stars)
+    const starCount = 800;
+    const starGeo = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i += 3) {
+      starPositions[i] = (Math.random() - 0.5) * 160;
+      starPositions[i + 1] = (Math.random() - 0.5) * 140;
+      starPositions[i + 2] = (Math.random() - 0.5) * 120 - 20;
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMat = new THREE.PointsMaterial({
+      color: 0xffedd5,
+      size: 1.5,
+      transparent: true,
+      opacity: 0.75
+    });
+    const starField = new THREE.Points(starGeo, starMat);
+    scene.add(starField);
+
+    // 3. 3D Floating Twilight Lanterns (Scene 9 & ambient)
+    const lanternCount = 14;
+    const lanternGeo = new THREE.CylinderGeometry(1.4, 1.7, 3.4, 8);
+    const lanternMat = new THREE.MeshStandardMaterial({
+      color: 0xfbbf24,
+      emissive: 0xd97706,
+      emissiveIntensity: 0.8,
+      roughness: 0.3
+    });
+    const lanternsGroup = new THREE.Group();
+    scene.add(lanternsGroup);
+
+    const lanternsData = [];
+    for (let i = 0; i < lanternCount; i++) {
+      const mesh = new THREE.Mesh(lanternGeo, lanternMat);
+      mesh.position.set(
+        (Math.random() - 0.5) * 60,
+        -35 + i * 5,
+        (Math.random() - 0.5) * 35
+      );
+      mesh.rotation.y = Math.random() * Math.PI;
+      mesh.scale.setScalar(Math.random() * 0.4 + 0.8);
+      lanternsGroup.add(mesh);
+      lanternsData.push({
+        mesh,
+        speed: Math.random() * 0.06 + 0.04,
+        swaySpeed: Math.random() * 1.5 + 0.8,
+        swayOffset: Math.random() * Math.PI * 2
+      });
+    }
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xfff1f2, 0.75);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffedd5, 1.2);
+    directionalLight.position.set(20, 30, 25);
+    scene.add(directionalLight);
+
+    let currentMode = 'petals';
+    let clock = new THREE.Clock();
+    let rafId = 0;
+    let mouseX = 0, mouseY = 0;
+
+    function onPointerMove(e) {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
+    }
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+
+    function onResize() {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    }
+    window.addEventListener('resize', onResize);
+
+    function animate() {
+      const time = clock.getElapsedTime();
+
+      // Parallax camera tilt
+      camera.position.x += (mouseX * 3 - camera.position.x) * 0.04;
+      camera.position.y += (mouseY * 2.5 - camera.position.y) * 0.04;
+      camera.lookAt(0, 0, 0);
+
+      // Update Petals
+      if (petalsGroup.visible) {
+        for (let i = 0; i < petalData.length; i++) {
+          const p = petalData[i];
+          p.mesh.position.y += p.vy;
+          p.mesh.position.x += p.vx + Math.sin(time * p.swayFreq + p.swayOffset) * 0.03;
+          p.mesh.position.z += p.vz;
+          p.mesh.rotation.x += p.rx;
+          p.mesh.rotation.y += p.ry;
+          p.mesh.rotation.z += p.rz;
+
+          if (p.mesh.position.y < -40) {
+            p.mesh.position.y = 40;
+            p.mesh.position.x = (Math.random() - 0.5) * 80;
+          }
+        }
+      }
+
+      // Update Stars
+      starMat.opacity = 0.65 + Math.sin(time * 2) * 0.25;
+
+      // Update Lanterns
+      if (lanternsGroup.visible) {
+        for (let i = 0; i < lanternsData.length; i++) {
+          const l = lanternsData[i];
+          l.mesh.position.y += l.speed;
+          l.mesh.position.x += Math.sin(time * l.swaySpeed + l.swayOffset) * 0.03;
+          l.mesh.rotation.y += 0.008;
+          if (l.mesh.position.y > 45) {
+            l.mesh.position.y = -35;
+            l.mesh.position.x = (Math.random() - 0.5) * 60;
+          }
+        }
+      }
+
+      renderer.render(scene, camera);
+      rafId = requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    return {
+      setMode(mode) {
+        currentMode = mode;
+        if (mode === 'cosmos') {
+          petalsGroup.visible = false;
+          starField.visible = true;
+          lanternsGroup.visible = false;
+          starMat.size = 2.2;
+          starMat.color.setHex(0xfef08a);
+        } else if (mode === 'lanterns') {
+          petalsGroup.visible = false;
+          starField.visible = true;
+          lanternsGroup.visible = true;
+        } else {
+          petalsGroup.visible = true;
+          starField.visible = true;
+          lanternsGroup.visible = (mode === 'finale');
+        }
+      },
+      dollyForward(callback) {
+        gsap.to(camera.position, {
+          z: 20,
+          duration: 0.42,
+          ease: 'power2.in',
+          onComplete: () => {
+            if (callback) callback();
+            gsap.fromTo(camera.position, { z: 75 }, { z: 50, duration: 0.52, ease: 'power3.out' });
+          }
+        });
+      },
+      releaseLanterns(count = 6) {
+        for (let i = 0; i < count; i++) {
+          const mesh = new THREE.Mesh(lanternGeo, lanternMat);
+          mesh.position.set((Math.random() - 0.5) * 45, -34 - Math.random() * 8, (Math.random() - 0.5) * 30);
+          mesh.scale.setScalar(Math.random() * 0.4 + 0.9);
+          lanternsGroup.add(mesh);
+          lanternsData.push({
+            mesh,
+            speed: Math.random() * 0.08 + 0.06,
+            swaySpeed: Math.random() * 1.6 + 0.8,
+            swayOffset: Math.random() * Math.PI * 2
+          });
+        }
+      },
+      destroy() {
+        if (rafId) cancelAnimationFrame(rafId);
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('resize', onResize);
+        renderer.dispose();
+        petalGeo.dispose();
+        petalMat.dispose();
+        starGeo.dispose();
+        starMat.dispose();
+        lanternGeo.dispose();
+        lanternMat.dispose();
+      }
+    };
+  }
+
+  const master3D = initRomanceMaster3D(master3DCanvas);
+
+  // =========================================================================
+  // ACTS IV - X: FULL-SCREEN CINEMATIC SCENE TRANSITIONS (FORWARD-ONLY, ZERO-LAG)
   // =========================================================================
   let currentScene = 1;
   let isTransitioning = false;
@@ -2099,11 +2384,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     } else if (sceneNum === 6) {
       updateCassetteState(isPlaying);
     } else if (sceneNum === 9) {
-      if (!threeLanternsSky) {
-        const lanternSkyStage = container.querySelector('#lanternsSkyStage');
-        if (lanternSkyStage) threeLanternsSky = initThreeLanternsSky(lanternSkyStage);
-      }
-      if (threeLanternsSky) threeLanternsSky.releaseBatch(3);
+      if (master3D) master3D.releaseLanterns(4);
       spawnLanternBatch(2);
     }
   }
@@ -2114,7 +2395,26 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
     isTransitioning = true;
     soundFx.whoosh();
-    if (navigator.vibrate) navigator.vibrate(12);
+    soundFx.sparkle();
+    if (navigator.vibrate) navigator.vibrate([16, 32, 16]);
+
+    // Flash portal transition overlay
+    if (portalFlashOverlay) {
+      gsap.fromTo(portalFlashOverlay, 
+        { opacity: 0 }, 
+        { opacity: 0.65, duration: 0.22, yoyo: true, repeat: 1, ease: 'power2.inOut' }
+      );
+    }
+
+    // 3D Dolly Forward camera motion in Three.js
+    if (master3D) {
+      if (targetScene === 4) master3D.setMode('cosmos');
+      else if (targetScene === 9) master3D.setMode('lanterns');
+      else if (targetScene === 10) master3D.setMode('finale');
+      else master3D.setMode('petals');
+
+      master3D.dollyForward();
+    }
 
     const prevScene = currentScene;
 
@@ -2126,14 +2426,15 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     } else if (prevScene === 3) {
       if (replay) replay.classList.remove('is-shown');
       if (memoriesBtn) memoriesBtn.classList.remove('is-shown');
+      treeStop(); // PAUSE CPU CANVAS LOOP SO NO LAG OCCURS!
       gsap.to(canvas, { opacity: 0, duration: 0.35 });
     } else {
       const prevEl = container.querySelector(`.romance-fullscreen-scene[data-scene="${prevScene}"]`);
       if (prevEl) {
         gsap.to(prevEl, {
           opacity: 0,
-          scale: 0.94,
-          duration: 0.32,
+          scale: 1.08,
+          duration: 0.35,
           ease: 'power2.in',
           onComplete: () => {
             prevEl.classList.remove('active');
@@ -2174,7 +2475,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       });
       gsap.set(hero, { autoAlpha: 0 });
       gsap.to(canvas, { opacity: 1, duration: 0.4 });
-      if (!treeRAF) treeStart();
+      treeStart();
       armReplay();
       currentScene = 3;
       isTransitioning = false;
@@ -2185,13 +2486,13 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         nextEl.classList.add('active');
         nextEl.scrollTop = 0;
         gsap.fromTo(nextEl,
-          { opacity: 0, scale: 1.05 },
+          { opacity: 0, scale: 0.92 },
           {
             opacity: 1,
             scale: 1,
-            duration: 0.42,
-            ease: 'power2.out',
-            delay: 0.1,
+            duration: 0.48,
+            ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+            delay: 0.12,
             onComplete: () => {
               currentScene = targetScene;
               isTransitioning = false;
@@ -2205,13 +2506,13 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
   }
 
-  // Tree Memories Button transitions to Scene 4 (Written in the Stars)
+  // Tree Memories Button transitions forward to Scene 4 (Written in the Stars)
   memoriesBtn?.addEventListener('click', () => {
     goToScene(4);
   });
 
-  // Wire up all Next & Prev buttons across all full-screen scenes
-  container.querySelectorAll('.btn-scene-next').forEach(btn => {
+  // Wire up all forward hero action buttons across all full-screen scenes
+  container.querySelectorAll('.btn-scene-next-hero, .btn-scene-next').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const target = parseInt(btn.getAttribute('data-target') || btn.getAttribute('data-next') || '0', 10);
@@ -2219,13 +2520,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     });
   });
 
-  container.querySelectorAll('.btn-scene-prev').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const target = parseInt(btn.getAttribute('data-target') || btn.getAttribute('data-prev') || '0', 10);
-      if (target) goToScene(target);
-    });
-  });
 
   // 3D Flipbook Logic with Dynamic Z-Index, Tactile Audio, and Touch Swipes
   const leaves = container.querySelectorAll('.book-leaf');
@@ -2786,6 +3080,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
     if (threeLanternsSky) {
       try { threeLanternsSky.destroy(); } catch (_) {}
+    }
+    if (master3D) {
+      try { master3D.destroy(); } catch (_) {}
     }
   };
 }

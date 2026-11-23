@@ -17982,3 +17982,163 @@ textarea,
     padding: 8px 14px;
   }
 }
+
+
+/* =========================================================================
+   MASTER THREE.JS 3D GPU ENGINE & FORWARD-ONLY CINEMATIC HERO TRANSITIONS
+   ========================================================================= */
+
+.romance-master-three-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  display: block;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.portal-flash-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.98), rgba(244, 63, 94, 0.55));
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* Forward-Only Centered Progression Hero Bar */
+.scene-forward-action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 520px;
+  margin-top: 36px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 10;
+}
+
+.btn-scene-next-hero {
+  appearance: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  max-width: 440px;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #f43f5e 0%, #fb7185 50%, #fda4af 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 12px 36px rgba(244, 63, 94, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  animation: heroPulseGlow 2.6s infinite;
+  transform: translateZ(0);
+}
+
+.btn-scene-next-hero:hover {
+  transform: translateY(-2px) scale(1.03) translateZ(0);
+  box-shadow: 0 18px 48px rgba(244, 63, 94, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.btn-scene-next-hero:active {
+  transform: scale(0.97) translateZ(0);
+}
+
+.btn-next-spark {
+  font-size: 16px;
+  color: #fef08a;
+  text-shadow: 0 0 10px rgba(254, 240, 138, 0.8);
+}
+
+.btn-next-text {
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-next-arrow {
+  font-size: 16px;
+  font-weight: 900;
+  transition: transform 0.22s ease;
+}
+
+.btn-scene-next-hero:hover .btn-next-arrow {
+  transform: translateX(4px);
+}
+
+/* Tree Canvas Forward CTA Positioning */
+.tree-story-cta.btn-scene-next-hero {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+  z-index: 10;
+  width: calc(100% - 48px);
+  max-width: 420px;
+}
+
+.tree-story-cta.btn-scene-next-hero:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.03) translateZ(0);
+}
+
+.tree-story-cta.btn-scene-next-hero:active {
+  transform: translateX(-50%) scale(0.97) translateZ(0);
+}
+
+@keyframes heroPulseGlow {
+  0% {
+    box-shadow: 0 10px 30px rgba(244, 63, 94, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  }
+  50% {
+    box-shadow: 0 16px 44px rgba(244, 63, 94, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 10px 30px rgba(244, 63, 94, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  }
+}
+
+/* Mobile Responsiveness for 375px+ screens */
+@media (max-width: 640px) {
+  .btn-scene-next-hero {
+    font-size: 13.5px;
+    padding: 13px 20px;
+    gap: 8px;
+  }
+
+  .btn-next-spark {
+    font-size: 14px;
+  }
+
+  .btn-next-arrow {
+    font-size: 14px;
+  }
+
+  .scene-forward-action {
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }
+
+  .tree-story-cta.btn-scene-next-hero {
+    bottom: 24px;
+    width: calc(100% - 32px);
+  }
+}

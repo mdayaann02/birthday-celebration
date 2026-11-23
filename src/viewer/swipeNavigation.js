@@ -57,7 +57,7 @@ export function initSwipeNavigation(container = document) {
       if (deltaX < 0) {
         // Swiped Left -> Go Next Page
         const nextBtn = activeCard.querySelector(
-          '.btn-bday-next, .btn-anni-next, .btn-val-next, .btn-bff-next, .btn-sorry-next, .btn-fam-next, .btn-romance-page-next, .btn-scene-next, [data-next]'
+          '.btn-bday-next, .btn-anni-next, .btn-val-next, .btn-bff-next, .btn-sorry-next, .btn-fam-next, .btn-romance-page-next, .btn-scene-next-hero, .btn-scene-next, [data-next]'
         );
         if (nextBtn) {
           if (navigator.vibrate) navigator.vibrate(12);
@@ -88,7 +88,7 @@ export function initSwipeNavigation(container = document) {
 
     if (e.key === 'ArrowRight' || e.key === 'PageDown') {
       const nextBtn = activeCard.querySelector(
-        '.btn-bday-next, .btn-anni-next, .btn-val-next, .btn-bff-next, .btn-sorry-next, .btn-fam-next, .btn-romance-page-next, .btn-scene-next, [data-next]'
+        '.btn-bday-next, .btn-anni-next, .btn-val-next, .btn-bff-next, .btn-sorry-next, .btn-fam-next, .btn-romance-page-next, .btn-scene-next-hero, .btn-scene-next, [data-next]'
       );
       if (nextBtn) {
         soundFx.whoosh();
