@@ -76,13 +76,13 @@ export function renderStudioApp(root) {
               <i data-lucide="save"></i>
               <span class="hide-mobile">Save</span>
             </button>
-            <button type="button" class="btn-nav-primary" id="btnCreateWishNav">
+            <button type="button" class="btn-nav-primary" id="btnCreateWishNav" title="Create a celebration wish">
               <i data-lucide="wand-2"></i>
-              <span>Create a Wish</span>
+              <span class="hide-mobile">Create a Wish</span>
             </button>
             <button type="button" class="btn-nav-share" id="btnSharePublish" title="Get permanent shareable link">
               <i data-lucide="share-2"></i>
-              <span>Share Link</span>
+              <span class="hide-mobile">Share Link</span>
             </button>
           </div>
         </div>
