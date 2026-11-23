@@ -403,62 +403,57 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         </audio>
       </div>
 
-      <!-- ================= SCENE 4: CELESTIAL STARS (THANOR.AI STYLE) ================= -->
-      <section class="romance-fullscreen-scene" data-scene="4" id="sceneConstellation" style="display:none; opacity:0;">
-        <div class="scene-inner-wrap">
-          <div class="romance-chapter-header">
-            <span class="chapter-num-pill">CHAPTER IV • CELESTIAL ODYSSEY</span>
-            <h3 class="chapter-title">Written in the Stars</h3>
-            <p class="chapter-desc">Touch the glowing celestial stars. Stardust lines trace our memory constellation across the cosmos 💫</p>
-          </div>
+      <!-- ================= SCENE 4: CELESTIAL STARS (FULL-SCREEN 60FPS EXPERIENCE) ================= -->
+      <section class="romance-fullscreen-scene scene-stars-fullscreen" data-scene="4" id="sceneConstellation" style="display:none; opacity:0;">
+        <!-- Fullscreen Cosmic Canvas Engine -->
+        <canvas id="constellationCanvas" class="constellation-fullscreen-canvas"></canvas>
 
-          <div class="constellation-canvas-container" id="constellationStage">
-            <canvas id="constellationCanvas" class="constellation-canvas"></canvas>
-            
-            <!-- Thanor.ai Floating Active Constellation Card with Auto-Advance Progress Ring -->
-            <div class="constellation-memory-card thanor-star-card" id="constellationMemoryCard" style="display:none;">
-              <div class="constellation-card-header">
-                <span class="constellation-star-icon">⭐</span>
-                <div class="constellation-title-wrap">
-                  <h4 class="constellation-node-title" id="constNodeTitle">The First Spark</h4>
-                  <span class="constellation-node-date" id="constNodeDate">Where It Began</span>
-                </div>
-                <div class="thanor-timer-badge">
-                  <span class="thanor-timer-text" id="thanorTimerText">Next in 3s</span>
-                  <div class="thanor-timer-bar-wrap">
-                    <div class="thanor-timer-bar-fill" id="thanorTimerBar"></div>
-                  </div>
-                </div>
-              </div>
-              <p class="constellation-node-note" id="constNodeNote">The exact moment the universe guided my eyes to yours.</p>
-              <div class="thanor-card-footer">
-                <span class="thanor-guidance-text">✦ Touching stars connects the galaxy ✦</span>
-                <button type="button" class="btn-thanor-next-star" id="btnThanorNextStar">Next Star ❯</button>
-              </div>
+        <!-- Top Floating Cinematic Header -->
+        <div class="stars-floating-header">
+          <span class="stars-eyebrow">CHAPTER IV • CELESTIAL ODYSSEY</span>
+          <h2 class="stars-main-title">Written in the Stars</h2>
+          <p class="stars-sub-hint">✦ Touch any star or watch our constellation connect across the cosmos 💫 ✦</p>
+        </div>
+
+        <!-- Floating Cosmic Glass Memory Card -->
+        <div class="thanor-star-card" id="constellationMemoryCard" style="display:none;">
+          <div class="thanor-card-header">
+            <div class="thanor-star-icon-wrap">
+              <span class="thanor-star-emoji">⭐</span>
+              <span class="thanor-star-num" id="constNodeNum">STAR 01 / 05</span>
             </div>
-
-            <!-- Quick Star Selector Chips -->
-            <div class="constellation-star-chips" id="constStarChips">
-              ${constellationsList.map((c, i) => `
-                <button type="button" class="const-star-chip ${i === 0 ? 'active' : ''}" data-idx="${i}">
-                  <span>✦</span> ${c.title}
-                </button>
-              `).join('')}
-            </div>
-
-            <!-- Hyperdrive Warp Flash Overlay -->
-            <div class="hyperdrive-warp-overlay" id="hyperdriveWarpOverlay">
-              <div class="warp-speed-text">✦ ALL STARS CONNECTED • ENTERING HYPERDRIVE ✦</div>
+            <div class="thanor-timer-badge">
+              <span class="thanor-timer-text" id="thanorTimerText">Next in 3s</span>
+              <div class="thanor-timer-bar-wrap">
+                <div class="thanor-timer-bar-fill" id="thanorTimerBar"></div>
+              </div>
             </div>
           </div>
 
-          <div class="scene-forward-action">
-            <button type="button" class="btn-scene-next-hero" data-target="5" id="btnSkipToMixtape">
-              <span class="btn-next-spark">✦</span>
-              <span class="btn-next-text">Step into Chapter V: The Soundtrack of Us</span>
-              <span class="btn-next-arrow">❯</span>
+          <div class="thanor-card-content">
+            <h3 class="thanor-node-title" id="constNodeTitle">The First Spark</h3>
+            <span class="thanor-node-date" id="constNodeDate">Where It Began</span>
+            <p class="thanor-node-note" id="constNodeNote">The exact moment the universe guided my eyes to yours, and my world changed forever.</p>
+          </div>
+
+          <div class="thanor-card-footer">
+            <span class="thanor-guidance-text">✦ Tracing our memories across eternity ✦</span>
+            <button type="button" class="btn-thanor-next-star" id="btnThanorNextStar">Next Star ❯</button>
+          </div>
+        </div>
+
+        <!-- Quick Selector Chips at bottom -->
+        <div class="constellation-star-chips" id="constStarChips">
+          ${constellationsList.map((c, i) => `
+            <button type="button" class="const-star-chip ${i === 0 ? 'active' : ''}" data-idx="${i}">
+              <span>✦</span> ${c.title}
             </button>
-          </div>
+          `).join('')}
+        </div>
+
+        <!-- Hyperdrive Warp Overlay -->
+        <div class="hyperdrive-warp-overlay" id="hyperdriveWarpOverlay">
+          <div class="warp-speed-text">✦ ALL STARS ALIGNED • WARPING TO MIXTAPE ✦</div>
         </div>
       </section>
 
@@ -2022,6 +2017,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   btnTreeQuickShoot?.addEventListener('click', autoFire);
 
   function enterHero() {
+    if (memoriesBtn) {
+      memoriesBtn.classList.remove('is-shown');
+      memoriesBtn.hidden = true;
+      memoriesBtn.style.display = 'none';
+    }
     setActiveDockChip('cupid');
     gsap.set(hero, { autoAlpha: 1 });
     refreshRig();
@@ -2040,15 +2040,32 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       .to(hint, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 0.7);
   }
 
+  let treeAutoAdvanceTimer = null;
   function armReplay() {
+    // ONLY display after 3rd page blooms and if current scene is 3
+    if (currentScene !== 3) return;
     if (replay) {
       replay.hidden = false;
+      replay.style.display = '';
       requestAnimationFrame(() => replay.classList.add('is-shown'));
     }
     if (memoriesBtn) {
       memoriesBtn.hidden = false;
+      memoriesBtn.style.display = '';
       requestAnimationFrame(() => memoriesBtn.classList.add('is-shown'));
     }
+    // Automatically glide to Chapter IV after 7 seconds if user is admiring the tree
+    if (treeAutoAdvanceTimer) clearTimeout(treeAutoAdvanceTimer);
+    treeAutoAdvanceTimer = setTimeout(() => {
+      if (currentScene === 3) {
+        if (memoriesBtn) {
+          memoriesBtn.classList.remove('is-shown');
+          memoriesBtn.hidden = true;
+          memoriesBtn.style.display = 'none';
+        }
+        goToScene(4);
+      }
+    }, 7000);
   }
 
   function resetAll() {
@@ -2064,6 +2081,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (memoriesBtn) {
       memoriesBtn.classList.remove('is-shown');
       memoriesBtn.hidden = true;
+      memoriesBtn.style.display = 'none';
     }
     if (filmTL) filmTL.pause(0);
     gsap.set([flood, bloom], { autoAlpha: 0 });
@@ -2559,18 +2577,39 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   let currentScene = 1;
   let isTransitioning = false;
 
+  // Global transition & scene progression timers
+  let starTimer = null;
+  let starTimerInterval = null;
+  let constRafId = 0;
+  let mixtapeTimer = null;
+  let reasonsAutoTimer = null;
+  let milestoneTimer = null;
+  let letterTimer = null;
+  let lanternsTimer = null;
+
+  function clearAllSceneTimers() {
+    if (treeAutoAdvanceTimer) { clearTimeout(treeAutoAdvanceTimer); treeAutoAdvanceTimer = null; }
+    if (starTimer) { clearTimeout(starTimer); starTimer = null; }
+    if (starTimerInterval) { clearInterval(starTimerInterval); starTimerInterval = null; }
+    if (constRafId) { cancelAnimationFrame(constRafId); constRafId = 0; }
+    if (mixtapeTimer) { clearTimeout(mixtapeTimer); mixtapeTimer = null; }
+    if (reasonsAutoTimer) { clearInterval(reasonsAutoTimer); reasonsAutoTimer = null; }
+    if (milestoneTimer) { clearTimeout(milestoneTimer); milestoneTimer = null; }
+    if (letterTimer) { clearTimeout(letterTimer); letterTimer = null; }
+    if (lanternsTimer) { clearTimeout(lanternsTimer); lanternsTimer = null; }
+  }
+
   function onSceneEnter(sceneNum) {
     if (sceneNum === 4) {
-      initConstellationStage();
+      startConstellationStage();
     } else if (sceneNum === 5) {
-      updateCassetteState(isPlaying);
+      startMixtapeStage();
     } else if (sceneNum === 6) {
-      initStoryMilestones();
+      startStoryMilestones();
     } else if (sceneNum === 7) {
-      initMatchLetter();
+      startMatchLetter();
     } else if (sceneNum === 8) {
-      if (master3D) master3D.releaseLanterns(6);
-      spawnLanternBatch(3);
+      startLanternsStage();
     } else if (sceneNum === 9) {
       setupSignatureCanvas();
     }
@@ -2580,6 +2619,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (isTransitioning || targetScene === currentScene) return;
     if (targetScene < 1 || targetScene > 9) return;
 
+    clearAllSceneTimers();
     isTransitioning = true;
     soundFx.whoosh();
     soundFx.sparkle();
@@ -2593,93 +2633,92 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       );
     }
 
+    // ALWAYS hide the tree forward CTA and replay button whenever moving away from Scene 3
+    if (memoriesBtn) {
+      memoriesBtn.classList.remove('is-shown');
+      memoriesBtn.hidden = true;
+      memoriesBtn.style.display = 'none';
+    }
+    if (replay) {
+      replay.classList.remove('is-shown');
+      replay.hidden = true;
+      replay.style.display = 'none';
+    }
+
     // 3D Dolly Forward camera motion in Three.js
     if (master3D) {
       if (targetScene === 4) master3D.setMode('cosmos');
       else if (targetScene === 8) master3D.setMode('lanterns');
-      else if (targetScene === 9) master3D.setMode('finale');
-      else master3D.setMode('petals');
-
+      else master3D.setMode('ambient');
       master3D.dollyForward();
     }
 
-    const prevScene = currentScene;
+    setActiveDockChip(
+      targetScene === 1 ? 'gate' :
+      targetScene === 2 ? 'cupid' :
+      targetScene === 3 ? 'tree' :
+      targetScene === 4 ? 'stars' :
+      targetScene === 5 ? 'cassette' :
+      targetScene === 6 ? 'timeline' :
+      targetScene === 7 ? 'letter' :
+      targetScene === 8 ? 'lanterns' : 'finale'
+    );
 
-    // Leaving previous scene
-    if (prevScene === 1) {
-      gate.classList.add('is-open');
-    } else if (prevScene === 2) {
-      gsap.to(hero, { autoAlpha: 0, duration: 0.35 });
-    } else if (prevScene === 3) {
-      if (replay) replay.classList.remove('is-shown');
-      if (memoriesBtn) memoriesBtn.classList.remove('is-shown');
-      treeStop(); // PAUSE CPU CANVAS LOOP SO NO LAG OCCURS!
-      gsap.to(canvas, { opacity: 0, duration: 0.35 });
-    } else {
-      const prevEl = container.querySelector(`.romance-fullscreen-scene[data-scene="${prevScene}"]`);
-      if (prevEl) {
-        gsap.to(prevEl, {
-          opacity: 0,
-          scale: 1.08,
-          duration: 0.35,
-          ease: 'power2.in',
-          onComplete: () => {
-            prevEl.classList.remove('active');
-            prevEl.style.display = 'none';
-            gsap.set(prevEl, { scale: 1 });
-          }
-        });
-      }
-    }
-
-    // Entering target scene
-    if (targetScene === 1) {
-      container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
+    // Hide all scenes first to ensure true full-screen isolation
+    container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
+      const scIdx = parseInt(sc.getAttribute('data-scene') || '0', 10);
+      if (scIdx !== targetScene) {
         sc.classList.remove('active');
         sc.style.display = 'none';
         gsap.set(sc, { opacity: 0 });
-      });
+      }
+    });
+
+    if (targetScene === 1) {
       gate.classList.remove('is-open');
       gsap.set(gate, { opacity: 1, pointerEvents: 'auto' });
+      gsap.set(hero, { autoAlpha: 0 });
+      gsap.set(canvas, { opacity: 0 });
+      treeStop();
       resetAll();
       currentScene = 1;
       isTransitioning = false;
     } else if (targetScene === 2) {
-      container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
-        sc.classList.remove('active');
-        sc.style.display = 'none';
-        gsap.set(sc, { opacity: 0 });
-      });
+      gate.classList.add('is-open');
+      gsap.set(gate, { opacity: 0, pointerEvents: 'none' });
       gsap.set(canvas, { opacity: 0 });
+      treeStop();
       enterHero();
       currentScene = 2;
       isTransitioning = false;
     } else if (targetScene === 3) {
-      container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
-        sc.classList.remove('active');
-        sc.style.display = 'none';
-        gsap.set(sc, { opacity: 0 });
-      });
+      gate.classList.add('is-open');
+      gsap.set(gate, { opacity: 0, pointerEvents: 'none' });
       gsap.set(hero, { autoAlpha: 0 });
       gsap.to(canvas, { opacity: 1, duration: 0.4 });
-      treeStart();
-      armReplay();
+      treeStart(); // Note: armReplay() is called when blooming finishes in treeFrame!
       currentScene = 3;
       isTransitioning = false;
     } else {
+      gate.classList.add('is-open');
+      gsap.set(gate, { opacity: 0, pointerEvents: 'none' });
+      gsap.set(hero, { autoAlpha: 0 });
+      gsap.set(canvas, { opacity: 0 });
+      treeStop();
+
       const nextEl = container.querySelector(`.romance-fullscreen-scene[data-scene="${targetScene}"]`);
       if (nextEl) {
         nextEl.style.display = 'flex';
         nextEl.classList.add('active');
         nextEl.scrollTop = 0;
         gsap.fromTo(nextEl,
-          { opacity: 0, scale: 0.92 },
+          { opacity: 0, scale: 0.94 },
           {
             opacity: 1,
             scale: 1,
             duration: 0.48,
             ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
-            delay: 0.12,
+            delay: 0.1,
             onComplete: () => {
               currentScene = targetScene;
               isTransitioning = false;
@@ -2695,6 +2734,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   // Tree Memories Button transitions forward to Scene 4 (Written in the Stars)
   memoriesBtn?.addEventListener('click', () => {
+    if (treeAutoAdvanceTimer) clearTimeout(treeAutoAdvanceTimer);
+    memoriesBtn.classList.remove('is-shown');
+    memoriesBtn.hidden = true;
+    memoriesBtn.style.display = 'none';
     goToScene(4);
   });
 
@@ -2708,10 +2751,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   });
 
   // =========================================================================
-  // ACT IV: THANOR.AI CELESTIAL STARS WITH AUTO-ADVANCE & HYPERDRIVE WARP
+  // ACT IV: FULL-SCREEN 60FPS CELESTIAL STARS ENGINE (LIKE TREE CANVAS)
   // =========================================================================
   const constellationCanvas = container.querySelector('#constellationCanvas');
   const constellationCard = container.querySelector('#constellationMemoryCard');
+  const constNodeNum = container.querySelector('#constNodeNum');
   const constNodeTitle = container.querySelector('#constNodeTitle');
   const constNodeDate = container.querySelector('#constNodeDate');
   const constNodeNote = container.querySelector('#constNodeNote');
@@ -2721,92 +2765,279 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const constStarChips = container.querySelectorAll('.const-star-chip');
   const hyperdriveWarpOverlay = container.querySelector('#hyperdriveWarpOverlay');
 
-  let constInitialized = false;
   let activeConstIdx = 0;
-  let constRafId = 0;
-  let starTimer = null;
-  let starTimerInterval = null;
+  let constEngineReady = false;
+  let cCtx = null;
+  let cW = 0, cH = 0;
+  let bgStars = [];
+  let shootingStars = [];
+  let beamProgress = 1;
+  let beamFromIdx = 0;
+  let beamToIdx = 0;
+  let isWarping = false;
+  let warpParticles = [];
+  let touchSparks = [];
 
-  function initConstellationStage() {
-    if (!constellationCanvas || constInitialized) return;
-    constInitialized = true;
-    const cCtx = constellationCanvas.getContext('2d');
-    let cW = 0, cH = 0;
+  function resizeConstCanvas() {
+    if (!constellationCanvas) return;
+    cW = window.innerWidth || 400;
+    cH = window.innerHeight || 700;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    constellationCanvas.width = cW * dpr;
+    constellationCanvas.height = cH * dpr;
+    constellationCanvas.style.width = cW + 'px';
+    constellationCanvas.style.height = cH + 'px';
+    if (!cCtx) cCtx = constellationCanvas.getContext('2d');
+    cCtx.setTransform(1, 0, 0, 1, 0, 0);
+    cCtx.scale(dpr, dpr);
+  }
 
-    function resizeConstCanvas() {
-      const parent = constellationCanvas.parentElement;
-      cW = parent?.clientWidth || 360;
-      cH = Math.min(parent?.clientHeight || 340, 360);
-      if (cH < 260) cH = 280;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      constellationCanvas.width = cW * dpr;
-      constellationCanvas.height = cH * dpr;
-      cCtx.setTransform(1, 0, 0, 1, 0, 0);
-      cCtx.scale(dpr, dpr);
+  function getNodePositions() {
+    const isMobile = cW < 640;
+    const coords = isMobile ? [
+      { x: 0.22, y: 0.22 },
+      { x: 0.74, y: 0.20 },
+      { x: 0.82, y: 0.42 },
+      { x: 0.20, y: 0.44 },
+      { x: 0.50, y: 0.52 }
+    ] : [
+      { x: 0.22, y: 0.28 },
+      { x: 0.45, y: 0.20 },
+      { x: 0.78, y: 0.26 },
+      { x: 0.32, y: 0.56 },
+      { x: 0.70, y: 0.58 }
+    ];
+
+    return coords.map((c, i) => ({
+      x: (constellationsList[i]?.x ? (constellationsList[i].x / 100) : c.x) * cW,
+      y: (constellationsList[i]?.y ? (constellationsList[i].y / 100) : c.y) * cH
+    }));
+  }
+
+  function maybeSpawnShootingStar() {
+    if (shootingStars.length < 2 && Math.random() < 0.03) {
+      shootingStars.push({
+        x: Math.random() * cW * 0.8,
+        y: Math.random() * cH * 0.4,
+        len: Math.random() * 80 + 50,
+        speed: Math.random() * 12 + 10,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        alpha: 1,
+        decay: Math.random() * 0.02 + 0.015
+      });
     }
-    resizeConstCanvas();
+  }
 
-    // 40 Background Twinkling Stars
-    const bgStars = [];
-    for (let i = 0; i < 40; i++) {
-      bgStars.push({
-        x: Math.random() * (cW || 360),
-        y: Math.random() * (cH || 320),
-        r: Math.random() * 1.4 + 0.6,
-        phase: Math.random() * Math.PI * 2,
-        speed: Math.random() * 2 + 0.8
+  function spawnTouchSparks(x, y) {
+    for (let i = 0; i < 18; i++) {
+      const angle = (i / 18) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      const speed = Math.random() * 5 + 2.5;
+      touchSparks.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        r: Math.random() * 2.5 + 1.2,
+        alpha: 1,
+        color: ['#fbbf24', '#f43f5e', '#ffffff', '#a855f7'][Math.floor(Math.random() * 4)]
+      });
+    }
+  }
+
+  function startConstellationStage() {
+    if (!constellationCanvas) return;
+    resizeConstCanvas();
+    if (!constEngineReady) {
+      constEngineReady = true;
+      window.addEventListener('resize', resizeConstCanvas);
+
+      // Initialize 120 background drifting & twinkling stars
+      bgStars = [];
+      for (let i = 0; i < 120; i++) {
+        bgStars.push({
+          x: Math.random() * cW,
+          y: Math.random() * cH,
+          r: Math.random() * 1.6 + 0.4,
+          phase: Math.random() * Math.PI * 2,
+          speed: Math.random() * 2 + 0.8,
+          driftX: (Math.random() - 0.5) * 0.12,
+          driftY: (Math.random() - 0.5) * 0.12
+        });
+      }
+
+      // Tap / Touch anywhere on canvas advances star with spark ripple
+      constellationCanvas.addEventListener('pointerdown', (e) => {
+        const rect = constellationCanvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        spawnTouchSparks(clickX, clickY);
+
+        const points = getNodePositions();
+        for (let i = 0; i < points.length; i++) {
+          const dist = Math.hypot(clickX - points[i].x, clickY - points[i].y);
+          if (dist < 50) {
+            selectConstellationNode(i, true);
+            return;
+          }
+        }
+        if (activeConstIdx < constellationsList.length - 1) {
+          selectConstellationNode(activeConstIdx + 1, true);
+        } else {
+          triggerHyperdriveWarp();
+        }
+      });
+
+      btnThanorNextStar?.addEventListener('click', () => {
+        if (activeConstIdx < constellationsList.length - 1) {
+          selectConstellationNode(activeConstIdx + 1, true);
+        } else {
+          triggerHyperdriveWarp();
+        }
+      });
+
+      constStarChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const idx = parseInt(chip.getAttribute('data-idx') || '0', 10);
+          selectConstellationNode(idx, true);
+        });
       });
     }
 
+    isWarping = false;
+    touchSparks = [];
+    shootingStars = [];
     const startTime = Date.now();
 
-    function renderConstellation() {
+    function renderConstellationLoop() {
+      if (currentScene !== 4) return;
       const elapsed = (Date.now() - startTime) / 1000;
       cCtx.clearRect(0, 0, cW, cH);
 
-      // Background ambient space gradient
-      const grad = cCtx.createRadialGradient(cW * 0.5, cH * 0.45, 10, cW * 0.5, cH * 0.45, cW * 0.7);
-      grad.addColorStop(0, 'rgba(28, 16, 44, 0.75)');
-      grad.addColorStop(1, 'rgba(12, 8, 20, 0.98)');
-      cCtx.fillStyle = grad;
+      if (isWarping) {
+        cCtx.fillStyle = 'rgba(10, 4, 18, 0.32)';
+        cCtx.fillRect(0, 0, cW, cH);
+        cCtx.strokeStyle = '#ffffff';
+        cCtx.lineWidth = 2.8;
+        cCtx.shadowColor = '#fbbf24';
+        cCtx.shadowBlur = 12;
+
+        warpParticles.forEach(p => {
+          p.z -= p.speed;
+          if (p.z <= 0) {
+            p.x = (Math.random() - 0.5) * cW * 2;
+            p.y = (Math.random() - 0.5) * cH * 2;
+            p.z = 1000;
+          }
+          const k = 300 / p.z;
+          const px = p.x * k + cW / 2;
+          const py = p.y * k + cH / 2;
+          const prevK = 300 / (p.z + p.speed * 2.5);
+          const prevX = p.x * prevK + cW / 2;
+          const prevY = p.y * prevK + cH / 2;
+
+          cCtx.beginPath();
+          cCtx.moveTo(prevX, prevY);
+          cCtx.lineTo(px, py);
+          cCtx.stroke();
+        });
+        cCtx.shadowBlur = 0;
+        constRafId = requestAnimationFrame(renderConstellationLoop);
+        return;
+      }
+
+      // 1. Deep Galactic Space Gradient with Nebula Glow
+      const bgGrad = cCtx.createRadialGradient(cW * 0.5, cH * 0.4, 50, cW * 0.5, cH * 0.4, Math.max(cW, cH) * 0.85);
+      bgGrad.addColorStop(0, '#1c0c2e');
+      bgGrad.addColorStop(0.35, '#130721');
+      bgGrad.addColorStop(0.75, '#0a0311');
+      bgGrad.addColorStop(1, '#050208');
+      cCtx.fillStyle = bgGrad;
       cCtx.fillRect(0, 0, cW, cH);
 
-      // Twinkling stars
+      // Breathing Nebula Clouds
+      const breathe = Math.sin(elapsed * 0.8) * 0.03;
+      const neb1 = cCtx.createRadialGradient(cW * 0.3, cH * 0.35, 10, cW * 0.3, cH * 0.35, cW * 0.45);
+      neb1.addColorStop(0, `rgba(244, 63, 94, ${(0.13 + breathe).toFixed(3)})`);
+      neb1.addColorStop(1, 'transparent');
+      cCtx.fillStyle = neb1;
+      cCtx.fillRect(0, 0, cW, cH);
+
+      const neb2 = cCtx.createRadialGradient(cW * 0.7, cH * 0.45, 10, cW * 0.7, cH * 0.45, cW * 0.5);
+      neb2.addColorStop(0, `rgba(168, 85, 247, ${(0.13 - breathe).toFixed(3)})`);
+      neb2.addColorStop(1, 'transparent');
+      cCtx.fillStyle = neb2;
+      cCtx.fillRect(0, 0, cW, cH);
+
+      // 2. Background Twinkling & Drifting Stars
       bgStars.forEach(s => {
-        const alpha = 0.25 + 0.55 * Math.sin(elapsed * s.speed + s.phase);
-        cCtx.fillStyle = `rgba(255, 235, 215, ${Math.max(0.1, alpha.toFixed(2))})`;
+        s.x += s.driftX;
+        s.y += s.driftY;
+        if (s.x < 0) s.x = cW;
+        if (s.x > cW) s.x = 0;
+        if (s.y < 0) s.y = cH;
+        if (s.y > cH) s.y = 0;
+
+        const alpha = 0.25 + 0.65 * Math.sin(elapsed * s.speed + s.phase);
+        cCtx.fillStyle = `rgba(255, 240, 225, ${Math.max(0.1, alpha.toFixed(2))})`;
         cCtx.beginPath();
         cCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         cCtx.fill();
       });
 
-      // Calculate node positions
-      const points = constellationsList.map(c => ({
-        x: (c.x / 100) * cW,
-        y: (c.y / 100) * cH
-      }));
-
-      // Draw connecting glowing stardust constellation lines up to active star
-      cCtx.beginPath();
-      cCtx.lineWidth = 2.2;
-      cCtx.strokeStyle = 'rgba(251, 191, 36, 0.75)';
-      cCtx.shadowColor = '#fbbf24';
-      cCtx.shadowBlur = 10;
-      for (let i = 0; i < points.length; i++) {
-        if (i === 0) cCtx.moveTo(points[i].x, points[i].y);
-        else cCtx.lineTo(points[i].x, points[i].y);
+      // 3. Shooting stars
+      maybeSpawnShootingStar();
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const ss = shootingStars[i];
+        ss.x += Math.cos(ss.angle) * ss.speed;
+        ss.y += Math.sin(ss.angle) * ss.speed;
+        ss.alpha -= ss.decay;
+        if (ss.alpha <= 0) {
+          shootingStars.splice(i, 1);
+          continue;
+        }
+        const tailX = ss.x - Math.cos(ss.angle) * ss.len;
+        const tailY = ss.y - Math.sin(ss.angle) * ss.len;
+        const sGrad = cCtx.createLinearGradient(tailX, tailY, ss.x, ss.y);
+        sGrad.addColorStop(0, 'rgba(255,255,255,0)');
+        sGrad.addColorStop(1, `rgba(255,255,255,${ss.alpha.toFixed(2)})`);
+        cCtx.strokeStyle = sGrad;
+        cCtx.lineWidth = 1.8;
+        cCtx.beginPath();
+        cCtx.moveTo(tailX, tailY);
+        cCtx.lineTo(ss.x, ss.y);
+        cCtx.stroke();
       }
-      cCtx.stroke();
-      cCtx.shadowBlur = 0;
 
-      // Draw active connecting line shimmer
+      // 4. Touch sparks
+      for (let i = touchSparks.length - 1; i >= 0; i--) {
+        const sp = touchSparks[i];
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.alpha -= 0.035;
+        if (sp.alpha <= 0) {
+          touchSparks.splice(i, 1);
+          continue;
+        }
+        cCtx.save();
+        cCtx.globalAlpha = sp.alpha;
+        cCtx.fillStyle = sp.color;
+        cCtx.beginPath();
+        cCtx.arc(sp.x, sp.y, sp.r, 0, Math.PI * 2);
+        cCtx.fill();
+        cCtx.restore();
+      }
+
+      // 5. Calculate node positions
+      const points = getNodePositions();
+
+      // 6. Draw connecting constellation lines
       if (activeConstIdx > 0) {
         cCtx.beginPath();
-        cCtx.lineWidth = 3.5;
-        cCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-        cCtx.shadowColor = '#f43f5e';
-        cCtx.shadowBlur = 14;
-        for (let i = 0; i <= activeConstIdx; i++) {
+        cCtx.lineWidth = 2.4;
+        cCtx.strokeStyle = 'rgba(251, 191, 36, 0.75)';
+        cCtx.shadowColor = '#fbbf24';
+        cCtx.shadowBlur = 10;
+        for (let i = 0; i <= Math.min(beamFromIdx, activeConstIdx); i++) {
           if (i === 0) cCtx.moveTo(points[i].x, points[i].y);
           else cCtx.lineTo(points[i].x, points[i].y);
         }
@@ -2814,153 +3045,176 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         cCtx.shadowBlur = 0;
       }
 
-      // Draw star nodes
+      // Draw animated stardust beam from beamFromIdx to beamToIdx
+      if (beamProgress < 1 && beamToIdx > beamFromIdx) {
+        const p1 = points[beamFromIdx];
+        const p2 = points[beamToIdx];
+        const curX = p1.x + (p2.x - p1.x) * beamProgress;
+        const curY = p1.y + (p2.y - p1.y) * beamProgress;
+
+        cCtx.beginPath();
+        cCtx.lineWidth = 3.6;
+        cCtx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+        cCtx.shadowColor = '#f43f5e';
+        cCtx.shadowBlur = 16;
+        cCtx.moveTo(p1.x, p1.y);
+        cCtx.lineTo(curX, curY);
+        cCtx.stroke();
+        cCtx.shadowBlur = 0;
+
+        cCtx.fillStyle = '#ffffff';
+        cCtx.beginPath();
+        cCtx.arc(curX, curY, 4, 0, Math.PI * 2);
+        cCtx.fill();
+
+        beamProgress += 0.045;
+      }
+
+      // 7. Draw the 5 Great Stars
       points.forEach((pt, idx) => {
         const isActive = (idx === activeConstIdx);
         const isVisited = (idx <= activeConstIdx);
-        const pulse = Math.sin(elapsed * 3 + idx) * 2.5;
-        const outerR = isActive ? 16 + pulse : 9 + pulse * 0.5;
+        const pulse = Math.sin(elapsed * 3.5 + idx) * 3;
+        const outerR = isActive ? 22 + pulse : (isVisited ? 14 + pulse * 0.4 : 10);
 
-        // Outer pulsing ring
+        // Outer starlight halo
         cCtx.beginPath();
-        cCtx.arc(pt.x, pt.y, Math.max(2, outerR), 0, Math.PI * 2);
-        cCtx.strokeStyle = isActive ? 'rgba(251, 191, 36, 0.95)' : (isVisited ? 'rgba(244, 63, 94, 0.8)' : 'rgba(255, 255, 255, 0.3)');
-        cCtx.lineWidth = isActive ? 2.5 : 1;
+        cCtx.arc(pt.x, pt.y, Math.max(4, outerR), 0, Math.PI * 2);
+        cCtx.strokeStyle = isActive ? 'rgba(251, 191, 36, 0.95)' : (isVisited ? 'rgba(244, 63, 94, 0.7)' : 'rgba(255, 255, 255, 0.25)');
+        cCtx.lineWidth = isActive ? 2.5 : 1.2;
         cCtx.stroke();
 
-        // Core star
+        // 4-Point rotating diffraction spikes for active star
+        if (isActive || isVisited) {
+          const spikeLen = isActive ? 18 + pulse * 0.5 : 10;
+          const spikeRot = elapsed * 0.4 + idx;
+          cCtx.save();
+          cCtx.translate(pt.x, pt.y);
+          cCtx.rotate(spikeRot);
+          cCtx.strokeStyle = isActive ? 'rgba(255, 255, 255, 0.85)' : 'rgba(251, 191, 36, 0.5)';
+          cCtx.lineWidth = 1.5;
+          cCtx.beginPath();
+          cCtx.moveTo(-spikeLen, 0); cCtx.lineTo(spikeLen, 0);
+          cCtx.moveTo(0, -spikeLen); cCtx.lineTo(0, spikeLen);
+          cCtx.stroke();
+          cCtx.restore();
+        }
+
+        // Diamond core star
         cCtx.beginPath();
-        cCtx.arc(pt.x, pt.y, isActive ? 5.5 : 3.5, 0, Math.PI * 2);
+        cCtx.arc(pt.x, pt.y, isActive ? 6.5 : (isVisited ? 4.5 : 3.5), 0, Math.PI * 2);
         cCtx.fillStyle = isActive ? '#ffffff' : (isVisited ? '#fef08a' : '#d1d5db');
         cCtx.shadowColor = isActive ? '#fbbf24' : '#f43f5e';
-        cCtx.shadowBlur = isActive ? 14 : 5;
+        cCtx.shadowBlur = isActive ? 18 : 6;
         cCtx.fill();
         cCtx.shadowBlur = 0;
       });
 
-      constRafId = requestAnimationFrame(renderConstellation);
+      constRafId = requestAnimationFrame(renderConstellationLoop);
     }
-    renderConstellation();
 
-    function selectConstellationNode(idx, userInitiated = false) {
-      if (idx < 0 || idx >= constellationsList.length) return;
-      activeConstIdx = idx;
-      const dataItem = constellationsList[idx];
+    renderConstellationLoop();
+    selectConstellationNode(0);
+  }
 
-      constStarChips.forEach((chip, i) => {
-        chip.classList.toggle('active', i === idx);
+  function selectConstellationNode(idx, userInitiated = false) {
+    if (idx < 0 || idx >= constellationsList.length) return;
+    if (idx > activeConstIdx) {
+      beamFromIdx = activeConstIdx;
+      beamToIdx = idx;
+      beamProgress = 0;
+    }
+    activeConstIdx = idx;
+    const dataItem = constellationsList[idx];
+
+    constStarChips.forEach((chip, i) => {
+      chip.classList.toggle('active', i === idx);
+    });
+
+    if (constNodeNum) constNodeNum.textContent = `STAR 0${idx + 1} / 0${constellationsList.length}`;
+    if (constNodeTitle) constNodeTitle.textContent = dataItem.title;
+    if (constNodeDate) constNodeDate.textContent = dataItem.date;
+    if (constNodeNote) constNodeNote.textContent = dataItem.note;
+
+    if (constellationCard) {
+      constellationCard.style.display = 'block';
+      gsap.fromTo(constellationCard, 
+        { opacity: 0, y: 15, scale: 0.95 }, 
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(1.4)' }
+      );
+    }
+
+    chime(800 + idx * 80, 1100 + idx * 90);
+    soundFx.sparkle();
+    if (navigator.vibrate) navigator.vibrate([16, 28]);
+
+    // Timer ring / bar
+    if (starTimer) clearTimeout(starTimer);
+    if (starTimerInterval) clearInterval(starTimerInterval);
+
+    if (thanorTimerBar) {
+      thanorTimerBar.style.transition = 'none';
+      thanorTimerBar.style.width = '0%';
+      requestAnimationFrame(() => {
+        thanorTimerBar.style.transition = 'width 3.5s linear';
+        thanorTimerBar.style.width = '100%';
       });
-
-      if (constNodeTitle) constNodeTitle.textContent = dataItem.title;
-      if (constNodeDate) constNodeDate.textContent = dataItem.date;
-      if (constNodeNote) constNodeNote.textContent = dataItem.note;
-
-      if (constellationCard) {
-        constellationCard.style.display = 'block';
-        gsap.fromTo(constellationCard, 
-          { opacity: 0, y: 10, scale: 0.96 }, 
-          { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'back.out(1.5)' }
-        );
-      }
-
-      chime(800 + idx * 75, 1050 + idx * 80);
-      soundFx.sparkle();
-      if (navigator.vibrate) navigator.vibrate([15, 25]);
-
-      // Thanor.ai Auto-Advance Timer Progress
-      if (starTimer) clearTimeout(starTimer);
-      if (starTimerInterval) clearInterval(starTimerInterval);
-
-      if (thanorTimerBar) {
-        thanorTimerBar.style.transition = 'none';
-        thanorTimerBar.style.width = '0%';
-        requestAnimationFrame(() => {
-          thanorTimerBar.style.transition = 'width 3.5s linear';
-          thanorTimerBar.style.width = '100%';
-        });
-      }
-
-      let timeLeft = 3;
-      if (thanorTimerText) thanorTimerText.textContent = `Next in ${timeLeft}s`;
-      starTimerInterval = setInterval(() => {
-        timeLeft--;
-        if (thanorTimerText && timeLeft >= 0) {
-          thanorTimerText.textContent = (idx === constellationsList.length - 1) ? 'Warping...' : `Next in ${timeLeft}s`;
-        }
-      }, 1000);
-
-      starTimer = setTimeout(() => {
-        if (starTimerInterval) clearInterval(starTimerInterval);
-        if (activeConstIdx < constellationsList.length - 1) {
-          selectConstellationNode(activeConstIdx + 1);
-        } else {
-          // All stars completed! Hyperdrive warp into Mixtape
-          triggerHyperdriveWarp();
-        }
-      }, 3500);
     }
 
-    function triggerHyperdriveWarp() {
-      if (starTimer) clearTimeout(starTimer);
-      if (starTimerInterval) clearInterval(starTimerInterval);
-
-      chime(528, 1056);
-      soundFx.celebrate();
-      if (hyperdriveWarpOverlay) {
-        hyperdriveWarpOverlay.classList.add('active');
+    let timeLeft = 3;
+    if (thanorTimerText) thanorTimerText.textContent = `Next in ${timeLeft}s`;
+    starTimerInterval = setInterval(() => {
+      timeLeft--;
+      if (thanorTimerText && timeLeft >= 0) {
+        thanorTimerText.textContent = (idx === constellationsList.length - 1) ? 'Warping...' : `Next in ${timeLeft}s`;
       }
+    }, 1000);
 
-      confetti({
-        particleCount: 80,
-        spread: 85,
-        origin: { y: 0.5 },
-        colors: ['#fbbf24', '#f43f5e', '#ffffff']
-      });
-
-      if (master3D) master3D.dollyForward();
-
-      setTimeout(() => {
-        if (hyperdriveWarpOverlay) hyperdriveWarpOverlay.classList.remove('active');
-        goToScene(5);
-      }, 1300);
-    }
-
-    btnThanorNextStar?.addEventListener('click', () => {
+    starTimer = setTimeout(() => {
+      if (starTimerInterval) clearInterval(starTimerInterval);
       if (activeConstIdx < constellationsList.length - 1) {
-        selectConstellationNode(activeConstIdx + 1, true);
+        selectConstellationNode(activeConstIdx + 1);
       } else {
         triggerHyperdriveWarp();
       }
-    });
+    }, 3500);
+  }
 
-    // Canvas click detection for direct touching
-    constellationCanvas.addEventListener('pointerdown', (e) => {
-      const rect = constellationCanvas.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
+  function triggerHyperdriveWarp() {
+    if (starTimer) clearTimeout(starTimer);
+    if (starTimerInterval) clearInterval(starTimerInterval);
 
-      const points = constellationsList.map(c => ({
-        x: (c.x / 100) * cW,
-        y: (c.y / 100) * cH
-      }));
+    chime(528, 1056);
+    soundFx.celebrate();
+    if (hyperdriveWarpOverlay) {
+      hyperdriveWarpOverlay.classList.add('active');
+    }
 
-      for (let i = 0; i < points.length; i++) {
-        const dist = Math.hypot(clickX - points[i].x, clickY - points[i].y);
-        if (dist < 32) {
-          selectConstellationNode(i, true);
-          return;
-        }
-      }
-    });
-
-    constStarChips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        const idx = parseInt(chip.getAttribute('data-idx') || '0', 10);
-        selectConstellationNode(idx, true);
+    warpParticles = [];
+    for (let i = 0; i < 220; i++) {
+      warpParticles.push({
+        x: (Math.random() - 0.5) * cW * 2,
+        y: (Math.random() - 0.5) * cH * 2,
+        z: Math.random() * 1000,
+        speed: Math.random() * 25 + 30
       });
+    }
+    isWarping = true;
+
+    confetti({
+      particleCount: 100,
+      spread: 90,
+      origin: { y: 0.5 },
+      colors: ['#fbbf24', '#f43f5e', '#ffffff', '#a855f7']
     });
 
-    selectConstellationNode(0);
+    if (master3D) master3D.dollyForward();
+
+    setTimeout(() => {
+      if (hyperdriveWarpOverlay) hyperdriveWarpOverlay.classList.remove('active');
+      isWarping = false;
+      goToScene(5);
+    }, 1400);
   }
 
   // =========================================================================
@@ -3034,6 +3288,22 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     });
   });
 
+  function startMixtapeStage() {
+    updateCassetteState(isPlaying);
+    showReason(0);
+    // Auto-rotate reasons every 3.5 seconds
+    if (reasonsAutoTimer) clearInterval(reasonsAutoTimer);
+    reasonsAutoTimer = setInterval(() => {
+      if (currentScene === 5) showReason(currentReasonIdx + 1);
+    }, 3500);
+
+    // Auto-advance to Chapter VI after 14s if user just enjoys the music
+    if (mixtapeTimer) clearTimeout(mixtapeTimer);
+    mixtapeTimer = setTimeout(() => {
+      if (currentScene === 5) goToScene(6);
+    }, 14000);
+  }
+
   // =========================================================================
   // ACT VI: STORYTELLING MILESTONES WITH 3D FLYING LEAF ANIMATION
   // =========================================================================
@@ -3050,10 +3320,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const flyingLeavesSky = container.querySelector('#flyingLeavesSky');
 
   let currentMilestoneIdx = 0;
-
-  function initStoryMilestones() {
-    updateMilestoneCard();
-  }
 
   function updateMilestoneCard() {
     const item = milestonesList[currentMilestoneIdx];
@@ -3119,7 +3385,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
   }
 
-  btnFlyNextMilestone?.addEventListener('click', () => {
+  function flyToNextMilestone(userInitiated = false) {
     soundFx.whoosh();
     if (navigator.vibrate) navigator.vibrate(18);
 
@@ -3139,17 +3405,34 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             { x: 300, rotation: 14, scale: 0.88, opacity: 0 },
             { x: 0, rotation: 0, scale: 1, opacity: 1, duration: 0.48, ease: 'back.out(1.2)' }
           );
+          scheduleMilestoneAutoAdvance();
         }
       });
     } else {
-      // Last milestone reached - whirlwind carries into The Sacred Letter!
       spawnFlyingLeaves(35);
       soundFx.whoosh();
+      if (milestoneTimer) clearTimeout(milestoneTimer);
       setTimeout(() => {
         goToScene(7);
-      }, 650);
+      }, 700);
     }
-  });
+  }
+
+  function scheduleMilestoneAutoAdvance() {
+    if (milestoneTimer) clearTimeout(milestoneTimer);
+    milestoneTimer = setTimeout(() => {
+      if (currentScene === 6) flyToNextMilestone(false);
+    }, 4500);
+  }
+
+  function startStoryMilestones() {
+    currentMilestoneIdx = 0;
+    updateMilestoneCard();
+    scheduleMilestoneAutoAdvance();
+  }
+
+  btnFlyNextMilestone?.addEventListener('click', () => flyToNextMilestone(true));
+  storyMilestoneCard?.addEventListener('click', () => flyToNextMilestone(true));
 
   // =========================================================================
   // ACT VII: SACRED LETTER WITH REAL MATCH STRIKE & MELTING WAX SEAL
@@ -3162,11 +3445,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   const parchmentLetter = container.querySelector('#parchmentLetter');
   let matchStriken = false;
 
-  function initMatchLetter() {
-    // Ready
-  }
-
-  btnStrikeMatch?.addEventListener('click', () => {
+  function strikeMatchAction() {
     if (matchStriken) return;
     matchStriken = true;
 
@@ -3180,7 +3459,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       duration: 0.18,
       ease: 'power1.in',
       onComplete: () => {
-        // Ignition sparks
         confetti({
           particleCount: 45,
           spread: 50,
@@ -3188,21 +3466,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
           colors: ['#f59e0b', '#ef4444', '#ffd700']
         });
 
-        // Flame appears
         if (matchFlame) matchFlame.style.display = 'block';
 
-        // Match descends towards wax seal
         gsap.to(matchStick, {
           y: 65,
           x: 10,
           duration: 0.55,
           ease: 'power2.inOut',
           onComplete: () => {
-            // Sizzle wax seal
             if (waxSealStamp) waxSealStamp.classList.add('burned');
             soundFx.pop(300);
 
-            // Dissolve flame and melt seal
             setTimeout(() => {
               if (matchFlame) matchFlame.style.display = 'none';
               if (waxSealWrapper) waxSealWrapper.style.display = 'none';
@@ -3213,19 +3487,35 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
                   { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }
                 );
               }
+              // Auto-advance to Chapter VIII (Sky Lanterns) after 10s of reading
+              if (letterTimer) clearTimeout(letterTimer);
+              letterTimer = setTimeout(() => {
+                if (currentScene === 7) goToScene(8);
+              }, 10000);
             }, 600);
           }
         });
       }
     });
-  });
+  }
+
+  function startMatchLetter() {
+    if (!matchStriken) {
+      if (letterTimer) clearTimeout(letterTimer);
+      letterTimer = setTimeout(() => {
+        if (currentScene === 7 && !matchStriken) strikeMatchAction();
+      }, 1400);
+    }
+  }
+
+  btnStrikeMatch?.addEventListener('click', strikeMatchAction);
 
   // =========================================================================
   // ACT VIII: TWILIGHT SKY LANTERNS (THREE.JS WEBGL + RELEASE)
   // =========================================================================
   const btnReleaseMoreLanterns = container.querySelector('#btnReleaseMoreLanterns');
   const lanternField = container.querySelector('#floatingLanternField');
-  // threeLanternsSky already declared
+
   function spawnOneLantern() {
     if (!lanternField) return;
     const l = document.createElement('div');
@@ -3248,23 +3538,32 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     for (let i = 0; i < count; i++) setTimeout(spawnOneLantern, i * 350);
   }
 
-  btnReleaseMoreLanterns?.addEventListener('click', () => {
-    chime(780, 960);
-    if (navigator.vibrate) navigator.vibrate(25);
+  function startLanternsStage() {
     if (master3D) master3D.releaseLanterns(6);
+    spawnLanternBatch(4);
+    // Auto-advance to Chapter IX (Treaty) after 8s
+    if (lanternsTimer) clearTimeout(lanternsTimer);
+    lanternsTimer = setTimeout(() => {
+      if (currentScene === 8) goToScene(9);
+    }, 8500);
+  }
+
+  btnReleaseMoreLanterns?.addEventListener('click', () => {
+    soundFx.sparkle();
+    if (navigator.vibrate) navigator.vibrate(20);
     spawnLanternBatch(6);
-    confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 }, colors: ['#ffd700', '#ff69b4', '#fbcfe8'] });
+    if (master3D) master3D.releaseLanterns(6);
   });
 
   // =========================================================================
-  // ACT IX & X: TREATY OF ETERNAL DEVOTION WITH REAL DIGITAL SIGNING CANVAS
+  // ACT IX: SACRED TREATY OF DEVOTION & DIGITAL SIGNATURE
   // =========================================================================
   const sigCanvas = container.querySelector('#treatySignatureCanvas');
+  const sigWatermark = container.querySelector('#sigWatermark');
   const btnClearTreatySig = container.querySelector('#btnClearTreatySig');
   const btnAffixTreaty = container.querySelector('#btnAffixTreaty');
   const goldenWaxStamp = container.querySelector('#goldenWaxStamp');
   const signatureStatusBadge = container.querySelector('#signatureStatusBadge');
-  const sigWatermark = container.querySelector('#sigWatermark');
   const masterpieceThankYouCard = container.querySelector('#masterpieceThankYouCard');
   const btnWatchAgainMasterpiece = container.querySelector('#btnWatchAgainMasterpiece');
 
@@ -3347,13 +3646,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     soundFx.celebrate();
     if (navigator.vibrate) navigator.vibrate([40, 80, 50, 100]);
 
-    // Golden Wax Stamp slams down with 3D impact
     if (goldenWaxStamp) goldenWaxStamp.classList.add('stamped');
     if (signatureStatusBadge) signatureStatusBadge.style.display = 'block';
     btnAffixTreaty.innerHTML = '✨ Royal Treaty Officially Affixed &amp; Sealed! 💍';
     btnAffixTreaty.disabled = true;
 
-    // Confetti Cannon
     confetti({
       particleCount: 140,
       spread: 100,
@@ -3361,7 +3658,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       colors: ['#ffd700', '#f43f5e', '#ffffff', '#fbbf24']
     });
 
-    // Reveal Thank You & Rewatch card with gentle scroll
     if (masterpieceThankYouCard) {
       masterpieceThankYouCard.style.display = 'block';
       gsap.fromTo(masterpieceThankYouCard,
@@ -3372,6 +3668,55 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   });
 
   // =========================================================================
+  // ACT X: HEARTFELT THANK YOU & CLEAN REWATCH OPTION
+  // =========================================================================
+  btnWatchAgainMasterpiece?.addEventListener('click', () => {
+    clearAllSceneTimers();
+    chime(650, 850);
+    soundFx.whoosh();
+    if (navigator.vibrate) navigator.vibrate([25, 45, 25]);
+
+    // 1. Reset all state flags
+    isTreatyAffixed = false;
+    hasSignedTreaty = false;
+    matchStriken = false;
+    currentMilestoneIdx = 0;
+    activeConstIdx = 0;
+
+    if (sigCtx && sigCanvas) {
+      sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    }
+    if (sigWatermark) sigWatermark.style.opacity = '0.6';
+    if (goldenWaxStamp) goldenWaxStamp.classList.remove('stamped');
+    if (signatureStatusBadge) signatureStatusBadge.style.display = 'none';
+    if (btnAffixTreaty) {
+      btnAffixTreaty.innerHTML = '💍 Affix Royal Seal &amp; Sign Treaty';
+      btnAffixTreaty.disabled = false;
+    }
+    if (waxSealStamp) waxSealStamp.classList.remove('burned');
+    if (matchFlame) matchFlame.style.display = 'none';
+    if (waxSealWrapper) waxSealWrapper.style.display = 'flex';
+    if (parchmentLetter) parchmentLetter.classList.remove('visible');
+
+    // 2. Hide all fullscreen scenes
+    container.querySelectorAll('.romance-fullscreen-scene').forEach(sc => {
+      sc.classList.remove('active');
+      sc.style.display = 'none';
+      gsap.set(sc, { opacity: 0 });
+    });
+
+    // 3. Fullscreen transition back to Scene 1 (Gate)
+    goToScene(1);
+
+    // 4. Rewind audio to 0:00 and autoplay
+    if (audioEl) {
+      audioEl.currentTime = 0;
+      audioEl.play().then(() => {
+        setPlaying(true);
+        updateCassetteState(true);
+      }).catch(() => {});
+    }
+  });  // =========================================================================
   // ACT X: HEARTFELT THANK YOU & CLEAN REWATCH OPTION
   // =========================================================================
   btnWatchAgainMasterpiece?.addEventListener('click', () => {
