@@ -516,7 +516,7 @@ export function renderBirthdayTemplate(container, data) {
     if (stageTitleText) stageTitleText.textContent = STAGE_TITLES[p] || "Birthday Journey";
 
     if (navigator.vibrate) navigator.vibrate(12);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
   }
 
   container.querySelectorAll('.btn-bday-next').forEach(btn => {

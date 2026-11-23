@@ -64,6 +64,10 @@ export function renderStudioApp(root) {
 
           <!-- Primary Actions -->
           <div class="navbar-actions-group">
+            <button type="button" class="btn-nav-glass btn-theme-toggle" id="btnEditorThemeToggle" title="Toggle Dark / Light Mode">
+              <i data-lucide="moon" id="themeToggleIcon"></i>
+              <span class="hide-mobile" id="themeToggleLabel">Theme</span>
+            </button>
             <button type="button" class="btn-nav-glass btn-nav-guide" id="btnHeaderGuide" title="Step-by-step creator guide">
               <i data-lucide="compass"></i>
               <span class="hide-mobile">Guide</span>
@@ -364,6 +368,37 @@ export function renderStudioApp(root) {
   const btnMobilePreviewShare = root.querySelector('#btnMobilePreviewShare');
   const btnDockPreviewToggle = root.querySelector('#btnDockPreviewToggle');
   const btnPreviewReload = root.querySelector('#btnPreviewReload');
+  const btnEditorThemeToggle = root.querySelector('#btnEditorThemeToggle');
+
+  // --- Dark / Light Mode Controller (Editor Mode Only) ---
+  const savedTheme = localStorage.getItem('celebration_studio_editor_theme') || 'dark';
+  let activeTheme = savedTheme;
+  const studioLayoutEl = root.querySelector('.studio-layout');
+
+  function applyEditorTheme(theme) {
+    activeTheme = theme;
+    localStorage.setItem('celebration_studio_editor_theme', theme);
+    if (studioLayoutEl) {
+      studioLayoutEl.classList.remove('studio-theme-dark', 'studio-theme-light');
+      studioLayoutEl.classList.add(`studio-theme-${theme}`);
+    }
+    if (btnEditorThemeToggle) {
+      const isDark = theme === 'dark';
+      btnEditorThemeToggle.innerHTML = `
+        <i data-lucide="${isDark ? 'sun' : 'moon'}" id="themeToggleIcon"></i>
+        <span class="hide-mobile" id="themeToggleLabel">${isDark ? 'Light' : 'Dark'}</span>
+      `;
+      btnEditorThemeToggle.title = `Switch to ${isDark ? 'Light' : 'Dark'} Mode`;
+      renderStudioIcons(btnEditorThemeToggle);
+    }
+  }
+
+  applyEditorTheme(activeTheme);
+
+  btnEditorThemeToggle?.addEventListener('click', () => {
+    if (navigator.vibrate) navigator.vibrate(10);
+    applyEditorTheme(activeTheme === 'dark' ? 'light' : 'dark');
+  });
 
   // Hero section buttons
   const btnHeroCreate = root.querySelector('#btnHeroCreate');
@@ -376,14 +411,18 @@ export function renderStudioApp(root) {
   // Smooth scroll helpers
   function scrollToCustomizer() {
     switchMobileTab('editor');
-    const el = document.getElementById('customizerSection');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.innerWidth > 900) {
+      const el = document.getElementById('customizerSection');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   function scrollToTemplates() {
     switchMobileTab('templates');
-    const el = document.getElementById('templatesSection');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.innerWidth > 900) {
+      const el = document.getElementById('templatesSection');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   btnHeroCreate?.addEventListener('click', scrollToCustomizer);
@@ -488,43 +527,52 @@ export function renderStudioApp(root) {
       studioLayout.classList.add(`mobile-active-tab-${tab}`);
     }
 
+    const secHero = root.querySelector('#heroSection');
+    const sec3Step = root.querySelector('.studio-3step-strip');
     const secTemplates = root.querySelector('#templatesSection');
     const secCustomizer = root.querySelector('#customizerSection');
     const sidebar = root.querySelector('#studioSidebar');
     const previewPane = root.querySelector('#studioPreviewPane');
+    const footer = root.querySelector('.studio-footer-glass');
 
     if (window.innerWidth <= 900) {
       if (tab === 'templates') {
+        if (secHero) secHero.style.display = 'block';
+        if (sec3Step) sec3Step.style.display = 'block';
         if (secTemplates) secTemplates.style.display = 'block';
         if (secCustomizer) secCustomizer.style.display = 'none';
         if (sidebar) sidebar.style.display = 'none';
         if (previewPane) previewPane.style.display = 'none';
+        if (footer) footer.style.display = 'block';
         if (btnDockPreviewToggle) {
           btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon"><i data-lucide="eye"></i></span><span class="dock-btn-label">Live Preview</span>`;
           btnDockPreviewToggle.classList.remove('dock-active-preview');
           renderStudioIcons(btnDockPreviewToggle);
         }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (tab === 'editor') {
+        if (secHero) secHero.style.display = 'none';
+        if (sec3Step) sec3Step.style.display = 'none';
         if (secTemplates) secTemplates.style.display = 'none';
         if (secCustomizer) secCustomizer.style.display = 'block';
         if (sidebar) sidebar.style.display = 'block';
         if (previewPane) previewPane.style.display = 'none';
+        if (footer) footer.style.display = 'none';
         if (btnDockPreviewToggle) {
           btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon"><i data-lucide="eye"></i></span><span class="dock-btn-label">Live Preview</span>`;
           btnDockPreviewToggle.classList.remove('dock-active-preview');
           renderStudioIcons(btnDockPreviewToggle);
         }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (tab === 'preview') {
+        if (secHero) secHero.style.display = 'none';
+        if (sec3Step) sec3Step.style.display = 'none';
         if (secTemplates) secTemplates.style.display = 'none';
         if (secCustomizer) secCustomizer.style.display = 'block';
         if (sidebar) sidebar.style.display = 'none';
         if (previewPane) previewPane.style.display = 'flex';
+        if (footer) footer.style.display = 'none';
         if (needsPreviewUpdate) {
           updateLivePreview();
         }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
         if (btnDockPreviewToggle) {
           btnDockPreviewToggle.innerHTML = `<span class="dock-btn-icon"><i data-lucide="wand-2"></i></span><span class="dock-btn-label">Back to Edit</span>`;
           btnDockPreviewToggle.classList.add('dock-active-preview');
@@ -532,10 +580,13 @@ export function renderStudioApp(root) {
         }
       }
     } else {
-      if (secTemplates) secTemplates.style.display = 'block';
-      if (secCustomizer) secCustomizer.style.display = 'block';
-      if (sidebar) sidebar.style.display = 'block';
-      if (previewPane) previewPane.style.display = 'flex';
+      if (secHero) secHero.style.display = '';
+      if (sec3Step) sec3Step.style.display = '';
+      if (secTemplates) secTemplates.style.display = '';
+      if (secCustomizer) secCustomizer.style.display = '';
+      if (sidebar) sidebar.style.display = '';
+      if (previewPane) previewPane.style.display = '';
+      if (footer) footer.style.display = '';
     }
 
     if (tab !== 'preview') {
@@ -629,8 +680,10 @@ export function renderStudioApp(root) {
 
       if (action === 'preview') {
         switchMobileTab('preview');
-        const prevEl = document.getElementById('studioPreviewPane');
-        if (prevEl) prevEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (window.innerWidth > 900) {
+          const prevEl = document.getElementById('studioPreviewPane');
+          if (prevEl) prevEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       } else {
         scrollToCustomizer();
       }
@@ -723,18 +776,30 @@ export function renderStudioApp(root) {
     switchMobileTab('editor');
   }
 
+  let lastWidth = window.innerWidth;
   window.addEventListener('resize', () => {
-    if (window.innerWidth <= 900) {
-      switchMobileTab(currentMobileTab);
-    } else {
-      const secTemplates = root.querySelector('#templatesSection');
-      const secCustomizer = root.querySelector('#customizerSection');
-      const sidebar = root.querySelector('#studioSidebar');
-      const previewPane = root.querySelector('#studioPreviewPane');
-      if (secTemplates) secTemplates.style.display = 'block';
-      if (secCustomizer) secCustomizer.style.display = 'block';
-      if (sidebar) sidebar.style.display = 'block';
-      if (previewPane) previewPane.style.display = 'flex';
+    const isMobileNow = window.innerWidth <= 900;
+    const wasMobile = lastWidth <= 900;
+    if (isMobileNow !== wasMobile) {
+      lastWidth = window.innerWidth;
+      if (isMobileNow) {
+        switchMobileTab(currentMobileTab);
+      } else {
+        const secHero = root.querySelector('#heroSection');
+        const sec3Step = root.querySelector('.studio-3step-strip');
+        const secTemplates = root.querySelector('#templatesSection');
+        const secCustomizer = root.querySelector('#customizerSection');
+        const sidebar = root.querySelector('#studioSidebar');
+        const previewPane = root.querySelector('#studioPreviewPane');
+        const footer = root.querySelector('.studio-footer-glass');
+        if (secHero) secHero.style.display = '';
+        if (sec3Step) sec3Step.style.display = '';
+        if (secTemplates) secTemplates.style.display = '';
+        if (secCustomizer) secCustomizer.style.display = '';
+        if (sidebar) sidebar.style.display = '';
+        if (previewPane) previewPane.style.display = '';
+        if (footer) footer.style.display = '';
+      }
     }
   });
 }

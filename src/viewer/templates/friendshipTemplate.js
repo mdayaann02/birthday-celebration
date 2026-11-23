@@ -241,7 +241,7 @@ export function renderFriendshipTemplate(container, data) {
       card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
     });
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 

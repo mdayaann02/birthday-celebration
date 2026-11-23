@@ -128,8 +128,11 @@ export function openShareModal(templateId, data) {
     year: 'numeric'
   }) : '';
 
-  let activeRecipientUrl = "https://birthday-website-phi-one.vercel.app";
-  let activeMakerUrl = "https://birthday-website-phi-one.vercel.app?review=true";
+  const vercelBase = (typeof window !== 'undefined' && window.location.origin.includes('vercel.app'))
+    ? window.location.origin
+    : 'https://celebration-studio-02.vercel.app';
+  let activeRecipientUrl = vercelBase;
+  let activeMakerUrl = `${vercelBase}?review=true`;
   let cloudDirectUrl = "";
   let vercelDirectUrl = "";
   let currentSlug = "";
@@ -274,7 +277,7 @@ export function openShareModal(templateId, data) {
       
       // STRICT clean short links (NO ugly queries or base64!)
       cloudDirectUrl = `http://155.248.255.29/s/${currentSlug}`;
-      vercelDirectUrl = `https://birthday-website-phi-one.vercel.app/s/${currentSlug}`;
+      vercelDirectUrl = `${vercelBase}/s/${currentSlug}`;
 
       // Default to Vercel HTTPS for 100% WhatsApp hyperlink reliability
       updateActiveUrls(vercelDirectUrl, `${vercelDirectUrl}?review=true`);

@@ -610,7 +610,7 @@ export function renderSorryTemplate(container, data) {
     });
 
     // Scroll smoothly to top of viewport
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 

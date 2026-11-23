@@ -87,7 +87,6 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       actionLabel: "Choose Occasion 🎨",
       action: () => {
         if (onSwitchTab) onSwitchTab('templates');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
     {
@@ -115,7 +114,6 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       actionLabel: "Open Live Preview 👁️",
       action: () => {
         if (onSwitchTab) onSwitchTab('preview');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
     {
@@ -125,7 +123,7 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       icon: "share-2",
       shortLabel: "4. Share Link",
       title: "Step 4: Generate Clean Link & Share on WhatsApp",
-      desc: "Click 'Get Share Link' to generate your permanent short URL (https://birthday-website-phi-one.vercel.app/s/...). Send it directly via WhatsApp with 1 tap — guaranteed blue clickable hyperlink!",
+      desc: "Click 'Get Share Link' to generate your permanent short URL (https://celebration-studio-02.vercel.app/s/...). Send it directly via WhatsApp with 1 tap — guaranteed blue clickable hyperlink!",
       actionLabel: "Get Share Link Now 🚀",
       action: () => {
         if (onOpenShare) onOpenShare();
