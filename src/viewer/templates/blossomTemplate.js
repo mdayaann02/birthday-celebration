@@ -13,6 +13,7 @@ import Lenis from 'lenis';
 import pkgPageFlip from 'page-flip';
 import html2canvas from 'html2canvas';
 import mediumZoom from 'medium-zoom';
+import { soundFx } from '../audioSynth.js';
 
 const PageFlip = pkgPageFlip?.PageFlip || pkgPageFlip;
 
@@ -62,6 +63,52 @@ export function renderBlossomTemplate(container, initialData = {}, isMakerReview
     "How you make every single ordinary day feel like home",
     "Your endless kindness and the purest, most compassionate heart",
     "How we can talk for hours about absolutely everything and nothing"
+  ];
+
+  const constellationsList = data.constellations && data.constellations.length > 0 ? data.constellations : [
+    { title: "The First Spark", date: "Where It Began", note: "The exact moment the universe guided my eyes to yours, and my world changed forever.", x: 20, y: 32 },
+    { title: "Midnight Drives", date: "2 AM Talks", note: "Late-night drives with windows down, singing along, sharing every quiet dream.", x: 45, y: 22 },
+    { title: "Quiet Safe Harbor", date: "The Comfort", note: "Finding the only person in the world where silence feels completely peaceful and safe.", x: 78, y: 35 },
+    { title: "The Turning Point", date: "I Just Knew", note: "The day I caught myself smiling at nothing, realizing I never want a tomorrow without you.", x: 32, y: 72 },
+    { title: "Our North Star", date: "Forever Yours", note: "Through every storm, change of seasons, and adventure, you are my eternal guiding light.", x: 68, y: 76 }
+  ];
+
+  const milestonesList = data.milestones && data.milestones.length > 0 ? data.milestones : [
+    {
+      num: "01",
+      icon: "✨",
+      tag: "THE SPARK",
+      title: "Where Our Story Began",
+      desc: "One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my entire life."
+    },
+    {
+      num: "02",
+      icon: "🌙",
+      tag: "THE CONFESSION",
+      title: "Falling in Love with Your Soul",
+      desc: "Laughing so hard our ribs hurt, talking until 4 AM about childhood dreams and life philosophies. I realized I was falling completely."
+    },
+    {
+      num: "03",
+      icon: "🛡️",
+      tag: "THE ANCHOR",
+      title: "Weathering Every Storm Together",
+      desc: "Life isn't always sunny, but standing shoulder-to-shoulder with you proved that we can conquer any challenge as a team."
+    },
+    {
+      num: "04",
+      icon: "📸",
+      tag: "THE ADVENTURES",
+      title: "A Thousand Unfiltered Memories",
+      desc: "Spontaneous road trips, messy cooking experiments, late-night grocery runs. The ordinary world becomes pure magic with you."
+    },
+    {
+      num: "05",
+      icon: "💍",
+      tag: "ETERNITY",
+      title: "Today, Tomorrow & Across Lifetimes",
+      desc: "In a world of fleeting moments, choosing you is the easiest decision I'll ever make. My heart is, and will forever be, your home."
+    }
   ];
 
   const letterBody = data.letterText || `My Dearest ${recipient},
@@ -296,11 +343,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         Again
       </button>
 
-      <button class="memoriesBtn" id="treeMemoriesBtn" type="button" hidden>
-        <svg viewBox="0 0 24 24" aria-hidden="true" width="14" height="14">
-          <path d="M12 21s-7.5-4.6-10-9.3C.4 8 2 4.5 5.6 4c2-.3 3.7.6 4.9 2.2C11.7 4.6 13.4 3.7 15.4 4 19 4.5 20.6 8 20 11.7 17.5 16.4 12 21 12 21z" fill="currentColor"/>
-        </svg>
-        Our Memories
+      <button class="memoriesBtn tree-story-cta" id="treeMemoriesBtn" type="button" hidden>
+        <span class="tree-story-cta-icon">📖</span>
+        <span class="tree-story-cta-text">✦ Step into Our Storybook • 10 Romantic Chapters ✦</span>
       </button>
 
       <!-- UPPER-RIGHT SPINNING MINI VINYL CD PLAYER -->
@@ -327,111 +372,316 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         <div class="memories__inner" style="padding-top:72px;">
           <button class="memories__close" id="treeMemoriesClose" type="button" aria-label="Close">✕</button>
 
-          <p class="memories__eyebrow">CHAPTER IV • MEMORIES FLIPBOOK</p>
-          <h3 class="memories__title">${data.memoriesTitle || 'Treasured Memories'}</h3>
+          <!-- STORY INTRO BANNER -->
+          <div class="romance-story-hero">
+            <span class="romance-story-badge">✦ OUR CONTINUOUS ROMANCE MASTERPIECE ✦</span>
+            <h2 class="romance-story-title">${recipient} &amp; ${sender}</h2>
+            <p class="romance-story-subtitle">A lifetime of love, laughter, and promises written in the stars ✨</p>
+          </div>
 
-          <!-- REALISTIC 3D HARDCOVER MEMORY FLIPBOOK -->
-          <div class="realistic-flipbook-wrap" style="margin-bottom:38px;">
-            <div class="realistic-book" id="realisticBook">
-              <div class="book-hardcover-back"></div>
-              <div class="book-spine-crease"></div>
+          <!-- CHAPTER IV: CELESTIAL CONSTELLATION MAP -->
+          <div class="romance-chapter-block" id="chapterConstellation">
+            <div class="romance-chapter-header">
+              <span class="chapter-num-pill">CHAPTER IV</span>
+              <h3 class="chapter-title">Written in the Stars</h3>
+              <p class="chapter-desc">Tap the glowing celestial stars to trace our memory constellation across the cosmos 💫</p>
+            </div>
 
-              ${polaroids.map((p, i) => {
-                const rot = ((i % 2 === 0 ? -1.5 : 1.5) * (1 + (i % 3) * 0.5)).toFixed(1);
-                const noteText = p.note || loveNotesList[i % loveNotesList.length] || "Every moment by your side is a memory I treasure forever.";
-                return `
-                  <div class="book-leaf" data-leaf="${i}" style="z-index: ${polaroids.length - i};">
-                    <div class="leaf-face leaf-front">
-                      <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:11px; font-weight:800; color:#d4235c; letter-spacing:0.1em;">OUR STORY</span>
-                        <span style="font-size:11px; color:#8a6070; font-weight:700;">VOL. I</span>
-                      </div>
-                      <div class="book-polaroid-frame" style="--rot:${rot}deg;">
-                        <div class="book-polaroid-img-wrap">
-                          <img src="${p.image || '/images/sunset.jpg'}" class="book-polaroid-img" alt="Memory ${i+1}" onerror="this.src='/images/sunset.jpg'" />
-                        </div>
-                        <h4 class="book-polaroid-caption">${p.caption || 'Our favourite moment 💖'}</h4>
-                      </div>
-                      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-                        <button type="button" class="btn-download-polaroid" data-leaf-idx="${i}" title="Save Polaroid to Camera Roll">📸 Save Keepsake</button>
-                        <div class="leaf-page-number">Page ${i * 2 + 1} of ${polaroids.length * 2}</div>
-                      </div>
-                    </div>
-                    <div class="leaf-face leaf-back">
-                      <div class="book-note-header">
-                        <span class="book-note-stamp">MEMORIES &amp; HEARTBEATS</span>
-                        <span style="font-size:14px;">💌</span>
-                      </div>
-                      <div class="book-note-body">
-                        "${noteText}"
-                      </div>
-                      <div class="book-note-footer">
-                        Forever with you ♡
-                      </div>
-                      <div class="leaf-page-number" style="text-align:left;">Page ${i * 2 + 2} of ${polaroids.length * 2}</div>
-                    </div>
+            <div class="constellation-canvas-container" id="constellationStage">
+              <canvas id="constellationCanvas" class="constellation-canvas"></canvas>
+              
+              <!-- Floating Active Constellation Card -->
+              <div class="constellation-memory-card" id="constellationMemoryCard" style="display:none;">
+                <div class="constellation-card-header">
+                  <span class="constellation-star-icon">⭐</span>
+                  <div class="constellation-title-wrap">
+                    <h4 class="constellation-node-title" id="constNodeTitle">The First Spark</h4>
+                    <span class="constellation-node-date" id="constNodeDate">Where It Began</span>
                   </div>
-                `;
-              }).join('')}
-            </div>
-
-            <!-- Flip Controls -->
-            <div class="flipbook-controls-bar">
-              <button type="button" class="btn-flip-book" id="btnFlipPrev" disabled>❮ Previous</button>
-              <span class="flipbook-page-indicator" id="flipIndicator">Memory 1 of ${polaroids.length}</span>
-              <button type="button" class="btn-flip-book" id="btnFlipNext">Next ❯</button>
-            </div>
-          </div>
-
-          <!-- REASONS WALL -->
-          <p class="memories__eyebrow memories__eyebrow--2">a few reasons, out of many</p>
-          <div class="notes">
-            ${reasonsList.map((reason, i) => `
-              <div class="note note--${(i % 4) + 1}"><p>${reason}</p></div>
-            `).join('')}
-          </div>
-
-          <!-- SHUFFLE COMPLIMENT CARD -->
-          <div class="shuffleCard" id="treeShuffleCard" style="margin-top:28px;">
-            <p id="treeShuffleText">${loveNotesList[0] || 'tap for one more reason ✎'}</p>
-            <button type="button" id="treeShuffleBtn">🔀 another one</button>
-          </div>
-
-          <!-- ACT 5: WAX-SEALED BURN-TO-REVEAL LETTER -->
-          <p class="memories__eyebrow memories__eyebrow--2" style="margin-top:42px;">CHAPTER V • THE SACRED LETTER</p>
-          <div class="burn-letter-stage" style="margin-bottom:34px;">
-            <div class="wax-envelope-card" id="waxEnvelopeCard">
-              <div class="wax-seal-wrapper" id="waxSealWrapper">
-                <div class="wax-seal-stamp" id="waxSealStamp">
-                  <span>💌</span>
+                  <button type="button" class="btn-constellation-close" id="btnConstClose" aria-label="Close Note">✕</button>
                 </div>
-                <button type="button" class="btn-strike-match" id="btnStrikeMatch">
-                  🕯️ Strike Match &amp; Burn Seal
+                <p class="constellation-node-note" id="constNodeNote">The exact moment the universe guided my eyes to yours.</p>
+              </div>
+
+              <!-- Quick Star Selector Chips -->
+              <div class="constellation-star-chips" id="constStarChips">
+                ${constellationsList.map((c, i) => `
+                  <button type="button" class="const-star-chip ${i === 0 ? 'active' : ''}" data-idx="${i}">
+                    <span>✦</span> ${c.title}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- CHAPTER V: REALISTIC 3D HARDCOVER MEMORY FLIPBOOK -->
+          <div class="romance-chapter-block" id="chapterFlipbook">
+            <div class="romance-chapter-header">
+              <span class="chapter-num-pill">CHAPTER V</span>
+              <h3 class="chapter-title">Treasured Keepsakes</h3>
+              <p class="chapter-desc">Turn the pages of our 3D hardcover keepsake album &amp; save your favorite polaroids 📸</p>
+            </div>
+            
+            <div class="realistic-flipbook-wrap" style="margin-bottom:28px;">
+              <div class="realistic-book" id="realisticBook">
+                <div class="book-hardcover-back"></div>
+                <div class="book-spine-crease"></div>
+
+                ${polaroids.map((p, i) => {
+                  const rot = ((i % 2 === 0 ? -1.5 : 1.5) * (1 + (i % 3) * 0.5)).toFixed(1);
+                  const noteText = p.note || loveNotesList[i % loveNotesList.length] || "Every moment by your side is a memory I treasure forever.";
+                  return `
+                    <div class="book-leaf" data-leaf="${i}" style="z-index: ${polaroids.length - i};">
+                      <div class="leaf-face leaf-front">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                          <span style="font-size:11px; font-weight:800; color:#d4235c; letter-spacing:0.1em;">OUR STORY</span>
+                          <span style="font-size:11px; color:#8a6070; font-weight:700;">VOL. I</span>
+                        </div>
+                        <div class="book-polaroid-frame" style="--rot:${rot}deg;">
+                          <div class="book-polaroid-img-wrap">
+                            <img src="${p.image || '/images/sunset.jpg'}" class="book-polaroid-img" alt="Memory ${i+1}" onerror="this.src='/images/sunset.jpg'" />
+                          </div>
+                          <h4 class="book-polaroid-caption">${p.caption || 'Our favourite moment 💖'}</h4>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                          <button type="button" class="btn-download-polaroid" data-leaf-idx="${i}" title="Save Polaroid to Camera Roll">📸 Save Keepsake</button>
+                          <div class="leaf-page-number">Page ${i * 2 + 1} of ${polaroids.length * 2}</div>
+                        </div>
+                      </div>
+                      <div class="leaf-face leaf-back">
+                        <div class="book-note-header">
+                          <span class="book-note-stamp">MEMORIES &amp; HEARTBEATS</span>
+                          <span style="font-size:14px;">💌</span>
+                        </div>
+                        <div class="book-note-body">
+                          "${noteText}"
+                        </div>
+                        <div class="book-note-footer">
+                          Forever with you ♡
+                        </div>
+                        <div class="leaf-page-number" style="text-align:left;">Page ${i * 2 + 2} of ${polaroids.length * 2}</div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              <!-- Flip Controls -->
+              <div class="flipbook-controls-bar">
+                <button type="button" class="btn-flip-book" id="btnFlipPrev" disabled>❮ Previous</button>
+                <span class="flipbook-page-indicator" id="flipIndicator">Memory 1 of ${polaroids.length}</span>
+                <button type="button" class="btn-flip-book" id="btnFlipNext">Next ❯</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CHAPTER VI: VINTAGE CASSETTE & REASONS -->
+          <div class="romance-chapter-block" id="chapterCassette">
+            <div class="romance-chapter-header">
+              <span class="chapter-num-pill">CHAPTER VI</span>
+              <h3 class="chapter-title">The Soundtrack of Us</h3>
+              <p class="chapter-desc">Our special melody, spinning vintage tape reels, and endless reasons why you hold my heart 📻</p>
+            </div>
+
+            <div class="vintage-cassette-deck" id="vintageCassetteDeck">
+              <div class="cassette-body">
+                <div class="cassette-screws"><span>+</span><span>+</span><span>+</span><span>+</span></div>
+                <div class="cassette-label-sticker">
+                  <span class="cassette-side-badge">SIDE A</span>
+                  <span class="cassette-title-text">MIXTAPE FOR ${recipient.toUpperCase()} ♡</span>
+                  <div class="cassette-eq-bars" id="cassetteEqBars">
+                    <span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+                
+                <div class="cassette-window">
+                  <!-- Left Spool -->
+                  <div class="cassette-spool spool-left" id="spoolLeft">
+                    <div class="spool-core"></div>
+                    <div class="spool-teeth"></div>
+                  </div>
+                  <!-- Tape Bridge -->
+                  <div class="cassette-tape-ribbon"></div>
+                  <!-- Right Spool -->
+                  <div class="cassette-spool spool-right" id="spoolRight">
+                    <div class="spool-core"></div>
+                    <div class="spool-teeth"></div>
+                  </div>
+                </div>
+
+                <div class="cassette-controls-row">
+                  <button type="button" class="btn-cassette-play" id="btnCassettePlay">
+                    <span id="cassettePlayIcon">▶</span>
+                    <span id="cassettePlayLabel">Play Melody</span>
+                  </button>
+                  <span class="cassette-track-meta">${data.audioTitle || "Alfaaz - Romantic Score"}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- REASONS HERO SHOWCASE -->
+            <div class="reasons-showcase-wrap" style="margin-top:28px;">
+              <h4 class="reasons-section-subhead">A Few of a Thousand Reasons Why I Love You 💖</h4>
+              
+              <div class="reasons-interactive-deck" id="reasonsInteractiveDeck">
+                <div class="reason-hero-card" id="reasonHeroCard">
+                  <div class="reason-card-badge" id="reasonCardBadge">REASON #1</div>
+                  <div class="reason-card-body" id="reasonCardBody">
+                    "${reasonsList[0]}"
+                  </div>
+                  <div class="reason-card-footer">
+                    <span>Yours Always ♡</span>
+                    <span style="font-size:16px;">🌸</span>
+                  </div>
+                </div>
+                
+                <button type="button" class="btn-shuffle-reasons" id="btnShuffleReasons">
+                  🔀 Discover Another Reason
                 </button>
               </div>
-              <div class="parchment-letter-unfolded" id="parchmentLetter">
-                <div class="letter-greeting">Dearest ${recipient},</div>
-                <div class="letter-paragraph">${letterBody}</div>
-                <div class="letter-signature">With all my love,<br/>${sender} ♡</div>
+
+              <!-- Compact Reasons Grid -->
+              <div class="reasons-mini-grid">
+                ${reasonsList.map((r, i) => `
+                  <div class="reason-pill-item ${i === 0 ? 'active' : ''}" data-reason-idx="${i}">
+                    <span class="reason-num">#${i + 1}</span>
+                    <p class="reason-text">${r}</p>
+                  </div>
+                `).join('')}
               </div>
             </div>
           </div>
 
-          <!-- ACT 6: TWILIGHT SKY LANTERNS FINALE -->
-          <p class="memories__eyebrow memories__eyebrow--2" style="margin-top:38px;">CHAPTER VI • TWILIGHT SKY</p>
-          <div class="lanterns-sky-stage" id="lanternsSkyStage">
-            <div class="twilight-starfield"></div>
-            <div id="floatingLanternField" style="position:absolute; inset:0; pointer-events:none;"></div>
+          <!-- CHAPTER VII: LOVE MILESTONES TIMELINE -->
+          <div class="romance-chapter-block" id="chapterTimeline">
+            <div class="romance-chapter-header">
+              <span class="chapter-num-pill">CHAPTER VII</span>
+              <h3 class="chapter-title">Our Timeless Milestones</h3>
+              <p class="chapter-desc">Every step, laughter, and turning point that led us to this beautiful moment ⏳</p>
+            </div>
+
+            <div class="romance-timeline-container">
+              <div class="timeline-gold-track"></div>
+              
+              <div class="timeline-milestones-list">
+                ${milestonesList.map((m, idx) => `
+                  <div class="timeline-milestone-card" data-milestone="${idx + 1}">
+                    <div class="milestone-badge-dot">
+                      <span>${m.icon}</span>
+                    </div>
+                    <div class="milestone-card-glass">
+                      <div class="milestone-header">
+                        <span class="milestone-tag">${m.tag}</span>
+                        <span class="milestone-num">${m.num}</span>
+                      </div>
+                      <h4 class="milestone-title">${m.title}</h4>
+                      <p class="milestone-desc">${m.desc}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
           </div>
 
-          <div style="text-align:center; margin-bottom:24px;">
-            <button type="button" class="btn-release-lanterns-glow" id="btnReleaseMoreLanterns">
-              ✨ Release More Sky Lanterns 🏮
-            </button>
+          <!-- CHAPTER VIII: WAX-SEALED BURN-TO-REVEAL LETTER -->
+          <div class="romance-chapter-block" id="chapterLetter">
+            <div class="romance-chapter-header">
+              <span class="chapter-num-pill">CHAPTER VIII</span>
+              <h3 class="chapter-title">The Sacred Letter</h3>
+              <p class="chapter-desc">Strike the golden match to burn the wax seal and unfold my deepest words 🕯️</p>
+            </div>
+
+            <div class="burn-letter-stage" style="margin-bottom:34px;">
+              <div class="wax-envelope-card" id="waxEnvelopeCard">
+                <div class="wax-seal-wrapper" id="waxSealWrapper">
+                  <div class="wax-seal-stamp" id="waxSealStamp">
+                    <span>💌</span>
+                  </div>
+                  <button type="button" class="btn-strike-match" id="btnStrikeMatch">
+                    🕯️ Strike Match &amp; Burn Seal
+                  </button>
+                </div>
+                <div class="parchment-letter-unfolded" id="parchmentLetter">
+                  <div class="letter-greeting">Dearest ${recipient},</div>
+                  <div class="letter-paragraph">${letterBody}</div>
+                  <div class="letter-signature">With all my love,<br/>${sender} ♡</div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- MAKE A WISH BUTTON -->
-          <button class="wishBtn" id="treeWishBtn" type="button">🌠 make a wish</button>
+          <!-- CHAPTER IX: TWILIGHT SKY LANTERNS FINALE -->
+          <div class="romance-chapter-block" id="chapterLanterns">
+            <div class="romance-chapter-header">
+              <span class="chapter-num-pill">CHAPTER IX</span>
+              <h3 class="chapter-title">Twilight Sky Lanterns</h3>
+              <p class="chapter-desc">Watch floating golden lanterns rise across the evening cosmos, carrying our wishes 🏮</p>
+            </div>
+
+            <div class="lanterns-sky-stage" id="lanternsSkyStage">
+              <div class="twilight-starfield"></div>
+              <div id="floatingLanternField" style="position:absolute; inset:0; pointer-events:none;"></div>
+            </div>
+
+            <div style="text-align:center; margin:20px 0 16px;">
+              <button type="button" class="btn-release-lanterns-glow" id="btnReleaseMoreLanterns">
+                ✨ Release More Sky Lanterns 🏮
+              </button>
+            </div>
+
+            <!-- MAKE A WISH BUTTON -->
+            <button class="wishBtn" id="treeWishBtn" type="button">🌠 make a wish</button>
+          </div>
+
+          <!-- CHAPTER X: OUR LIFETIME PROMISE & GRAND FINALE -->
+          <div class="romance-chapter-block romance-grand-finale-block" id="chapterFinale">
+            <div class="romance-chapter-header">
+              <span class="chapter-num-pill">CHAPTER X • GRAND FINALE</span>
+              <h3 class="chapter-title">Our Lifetime Promise</h3>
+              <p class="chapter-desc">Sealed in my heart today, tomorrow, and through all our years to come 💍</p>
+            </div>
+
+            <div class="certificate-glass-frame" id="certificateGlassFrame">
+              <div class="cert-gold-border">
+                <div class="cert-badge">✦ ETERNAL LOVE VOW ✦</div>
+                <h2 class="cert-headline">To ${recipient}</h2>
+                <div class="cert-body-quote">
+                  "In a world where everything changes, you are my one constant. I promise to hold your hand through every season, to celebrate your happiest triumphs, to comfort your quietest worries, and to love you more with every beat of my heart."
+                </div>
+                <div class="cert-signatures-row">
+                  <div class="cert-sig-block">
+                    <span class="cert-sig-lbl">BOUND FOR</span>
+                    <strong class="cert-sig-val">Eternity</strong>
+                  </div>
+                  <div class="cert-seal-gold">
+                    <span>💍</span>
+                  </div>
+                  <div class="cert-sig-block">
+                    <span class="cert-sig-lbl">WITH ALL MY HEART</span>
+                    <strong class="cert-sig-val">${sender} ♡</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interactive Vow Buttons -->
+              <div class="finale-action-bar">
+                <button type="button" class="btn-seal-vow" id="btnSealForeverVow">
+                  💍 Seal Our Forever Promise 💖
+                </button>
+              </div>
+            </div>
+
+            <!-- WATCH AGAIN / RELIVE EXPERIENCE (AS REQUESTED) -->
+            <div class="watch-again-container">
+              <div class="watch-again-glow-ring"></div>
+              <p class="watch-again-eyebrow">WANT TO RELIVE OUR ENTIRE JOURNEY?</p>
+              <button type="button" class="btn-watch-again-masterpiece" id="btnWatchAgainMasterpiece" title="Watch our story again from the very beginning">
+                <span class="watch-again-icon">↺</span>
+                <span class="watch-again-text">Watch Again &amp; Relive Our Story 🌸</span>
+              </button>
+              <p class="watch-again-note">Takes you back to the opening bloom with music playing ✨</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1851,6 +2101,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     memories.classList.add('is-open');
     memories.setAttribute('aria-hidden', 'false');
     initLenisScroll();
+    initConstellationStage();
+    updateCassetteState(isPlaying);
     if (!threeLanternsSky) {
       const lanternSkyStage = container.querySelector('#lanternsSkyStage');
       if (lanternSkyStage) threeLanternsSky = initThreeLanternsSky(lanternSkyStage);
@@ -1875,8 +2127,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   memoriesBtn?.addEventListener('click', () => {
-    openMemoriesModal('#realisticBook');
-    setActiveDockChip('flipbook');
+    openMemoriesModal('#chapterConstellation');
+    setActiveDockChip('constellation');
   });
 
   memoriesClose?.addEventListener('click', closeMemoriesModal);
@@ -2104,17 +2356,29 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
         destroyLenisScroll();
         gsap.set(hero, { autoAlpha: 0 });
         treeStart();
+      } else if (act === 'constellation') {
+        gate.classList.add('is-open');
+        openMemoriesModal('#chapterConstellation');
       } else if (act === 'flipbook') {
         gate.classList.add('is-open');
-        openMemoriesModal('#realisticBook');
+        openMemoriesModal('#chapterFlipbook');
+      } else if (act === 'cassette') {
+        gate.classList.add('is-open');
+        openMemoriesModal('#chapterCassette');
+      } else if (act === 'timeline') {
+        gate.classList.add('is-open');
+        openMemoriesModal('#chapterTimeline');
       } else if (act === 'letter') {
         gate.classList.add('is-open');
-        openMemoriesModal('#waxEnvelopeCard');
+        openMemoriesModal('#chapterLetter');
       } else if (act === 'lanterns') {
         gate.classList.add('is-open');
-        openMemoriesModal('#lanternsSkyStage');
+        openMemoriesModal('#chapterLanterns');
         if (threeLanternsSky) threeLanternsSky.releaseBatch(4);
         spawnLanternBatch(4);
+      } else if (act === 'vow') {
+        gate.classList.add('is-open');
+        openMemoriesModal('#chapterFinale');
       }
     });
   });
@@ -2140,6 +2404,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       musicToggle?.classList.remove('playing');
       miniCd?.classList.remove('spinning');
     }
+    updateCassetteState(playing);
   }
 
   function startMusicAutoplay() {
@@ -2163,6 +2428,311 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
   });
 
+  // =========================================================================
+  // ACT IV: 60FPS CELESTIAL CONSTELLATION CANVAS
+  // =========================================================================
+  const constellationCanvas = container.querySelector('#constellationCanvas');
+  const constellationCard = container.querySelector('#constellationMemoryCard');
+  const constNodeTitle = container.querySelector('#constNodeTitle');
+  const constNodeDate = container.querySelector('#constNodeDate');
+  const constNodeNote = container.querySelector('#constNodeNote');
+  const constStarChips = container.querySelectorAll('.const-star-chip');
+  const btnConstClose = container.querySelector('#btnConstClose');
+
+  let constRafId = null;
+  let activeConstIdx = 0;
+  let constInitialized = false;
+
+  function initConstellationStage() {
+    if (!constellationCanvas || constInitialized) return;
+    constInitialized = true;
+    const cCtx = constellationCanvas.getContext('2d');
+    let cW = 0, cH = 0;
+
+    function resizeConstCanvas() {
+      const parent = constellationCanvas.parentElement;
+      cW = parent?.clientWidth || 360;
+      cH = Math.min(parent?.clientHeight || 340, 360);
+      if (cH < 260) cH = 280;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      constellationCanvas.width = cW * dpr;
+      constellationCanvas.height = cH * dpr;
+      cCtx.setTransform(1, 0, 0, 1, 0, 0);
+      cCtx.scale(dpr, dpr);
+    }
+    resizeConstCanvas();
+
+    // 40 Background Twinkling Stars
+    const bgStars = [];
+    for (let i = 0; i < 40; i++) {
+      bgStars.push({
+        x: Math.random() * (cW || 360),
+        y: Math.random() * (cH || 320),
+        r: Math.random() * 1.4 + 0.6,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 2 + 0.8
+      });
+    }
+
+    const startTime = Date.now();
+
+    function renderConstellation() {
+      const elapsed = (Date.now() - startTime) / 1000;
+      cCtx.clearRect(0, 0, cW, cH);
+
+      // Background ambient space gradient
+      const grad = cCtx.createRadialGradient(cW * 0.5, cH * 0.45, 10, cW * 0.5, cH * 0.45, cW * 0.7);
+      grad.addColorStop(0, 'rgba(28, 16, 44, 0.7)');
+      grad.addColorStop(1, 'rgba(12, 8, 20, 0.96)');
+      cCtx.fillStyle = grad;
+      cCtx.fillRect(0, 0, cW, cH);
+
+      // Twinkling stars
+      bgStars.forEach(s => {
+        const alpha = 0.25 + 0.55 * Math.sin(elapsed * s.speed + s.phase);
+        cCtx.fillStyle = `rgba(255, 235, 215, ${Math.max(0.1, alpha.toFixed(2))})`;
+        cCtx.beginPath();
+        cCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        cCtx.fill();
+      });
+
+      // Calculate node positions
+      const points = constellationsList.map(c => ({
+        x: (c.x / 100) * cW,
+        y: (c.y / 100) * cH
+      }));
+
+      // Draw connecting golden constellation lines
+      cCtx.beginPath();
+      cCtx.lineWidth = 1.8;
+      cCtx.strokeStyle = 'rgba(251, 191, 36, 0.55)';
+      cCtx.shadowColor = '#fbbf24';
+      cCtx.shadowBlur = 8;
+      for (let i = 0; i < points.length; i++) {
+        if (i === 0) cCtx.moveTo(points[i].x, points[i].y);
+        else cCtx.lineTo(points[i].x, points[i].y);
+      }
+      cCtx.stroke();
+      cCtx.shadowBlur = 0;
+
+      // Draw star nodes
+      points.forEach((pt, idx) => {
+        const isActive = (idx === activeConstIdx);
+        const pulse = Math.sin(elapsed * 3 + idx) * 2;
+        const outerR = isActive ? 15 + pulse : 9 + pulse * 0.5;
+
+        // Outer pulsing ring
+        cCtx.beginPath();
+        cCtx.arc(pt.x, pt.y, Math.max(2, outerR), 0, Math.PI * 2);
+        cCtx.strokeStyle = isActive ? 'rgba(251, 191, 36, 0.95)' : 'rgba(244, 63, 94, 0.6)';
+        cCtx.lineWidth = isActive ? 2 : 1;
+        cCtx.stroke();
+
+        // Core star
+        cCtx.beginPath();
+        cCtx.arc(pt.x, pt.y, isActive ? 5 : 3.5, 0, Math.PI * 2);
+        cCtx.fillStyle = isActive ? '#ffffff' : '#fef08a';
+        cCtx.shadowColor = isActive ? '#fbbf24' : '#f43f5e';
+        cCtx.shadowBlur = isActive ? 12 : 5;
+        cCtx.fill();
+        cCtx.shadowBlur = 0;
+      });
+
+      constRafId = requestAnimationFrame(renderConstellation);
+    }
+    renderConstellation();
+
+    function selectConstellationNode(idx) {
+      if (idx < 0 || idx >= constellationsList.length) return;
+      activeConstIdx = idx;
+      const dataItem = constellationsList[idx];
+
+      constStarChips.forEach((chip, i) => {
+        chip.classList.toggle('active', i === idx);
+      });
+
+      if (constNodeTitle) constNodeTitle.textContent = dataItem.title;
+      if (constNodeDate) constNodeDate.textContent = dataItem.date;
+      if (constNodeNote) constNodeNote.textContent = dataItem.note;
+
+      if (constellationCard) {
+        constellationCard.style.display = 'block';
+        gsap.fromTo(constellationCard, 
+          { opacity: 0, y: 10, scale: 0.96 }, 
+          { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'back.out(1.5)' }
+        );
+      }
+
+      chime(800, 1050);
+      soundFx.sparkle();
+      if (navigator.vibrate) navigator.vibrate([15, 25]);
+    }
+
+    // Canvas click detection
+    constellationCanvas.addEventListener('pointerdown', (e) => {
+      const rect = constellationCanvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      const points = constellationsList.map(c => ({
+        x: (c.x / 100) * cW,
+        y: (c.y / 100) * cH
+      }));
+
+      for (let i = 0; i < points.length; i++) {
+        const dist = Math.hypot(clickX - points[i].x, clickY - points[i].y);
+        if (dist < 28) {
+          selectConstellationNode(i);
+          return;
+        }
+      }
+    });
+
+    constStarChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const idx = parseInt(chip.getAttribute('data-idx') || '0', 10);
+        selectConstellationNode(idx);
+      });
+    });
+
+    btnConstClose?.addEventListener('click', () => {
+      if (constellationCard) constellationCard.style.display = 'none';
+    });
+
+    selectConstellationNode(0);
+  }
+
+  // =========================================================================
+  // ACT VI: VINTAGE CASSETTE DECK & REASONS ACCORDION
+  // =========================================================================
+  const btnCassettePlay = container.querySelector('#btnCassettePlay');
+  const cassettePlayIcon = container.querySelector('#cassettePlayIcon');
+  const cassettePlayLabel = container.querySelector('#cassettePlayLabel');
+  const spoolLeft = container.querySelector('#spoolLeft');
+  const spoolRight = container.querySelector('#spoolRight');
+  const cassetteEqBars = container.querySelector('#cassetteEqBars');
+  const btnShuffleReasons = container.querySelector('#btnShuffleReasons');
+  const reasonHeroCard = container.querySelector('#reasonHeroCard');
+  const reasonCardBadge = container.querySelector('#reasonCardBadge');
+  const reasonCardBody = container.querySelector('#reasonCardBody');
+  const reasonPillItems = container.querySelectorAll('.reason-pill-item');
+
+  let currentReasonIdx = 0;
+
+  function updateCassetteState(playing) {
+    if (spoolLeft) spoolLeft.classList.toggle('spinning', playing);
+    if (spoolRight) spoolRight.classList.toggle('spinning', playing);
+    if (cassetteEqBars) cassetteEqBars.classList.toggle('active', playing);
+    if (cassettePlayIcon) cassettePlayIcon.textContent = playing ? '❚❚' : '▶';
+    if (cassettePlayLabel) cassettePlayLabel.textContent = playing ? 'Pause Melody' : 'Play Melody';
+  }
+
+  btnCassettePlay?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!audioEl) return;
+    if (isPlaying) {
+      audioEl.pause();
+      setPlaying(false);
+      updateCassetteState(false);
+    } else {
+      audioEl.play().then(() => {
+        setPlaying(true);
+        updateCassetteState(true);
+      }).catch(() => {});
+    }
+  });
+
+  function showReason(idx) {
+    currentReasonIdx = idx % reasonsList.length;
+    if (reasonCardBadge) reasonCardBadge.textContent = `REASON #${currentReasonIdx + 1}`;
+    if (reasonCardBody) reasonCardBody.textContent = `"${reasonsList[currentReasonIdx]}"`;
+
+    reasonPillItems.forEach((pill, i) => {
+      pill.classList.toggle('active', i === currentReasonIdx);
+    });
+
+    if (reasonHeroCard) {
+      gsap.fromTo(reasonHeroCard, 
+        { rotateY: 90, opacity: 0 }, 
+        { rotateY: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }
+      );
+    }
+  }
+
+  btnShuffleReasons?.addEventListener('click', () => {
+    soundFx.pop(650);
+    if (navigator.vibrate) navigator.vibrate(12);
+    showReason(currentReasonIdx + 1);
+  });
+
+  reasonPillItems.forEach(pill => {
+    pill.addEventListener('click', () => {
+      soundFx.pop(720);
+      const idx = parseInt(pill.getAttribute('data-reason-idx') || '0', 10);
+      showReason(idx);
+    });
+  });
+
+  // =========================================================================
+  // ACT X: LIFETIME PROMISE & WATCH AGAIN GRAND FINALE
+  // =========================================================================
+  const btnSealForeverVow = container.querySelector('#btnSealForeverVow');
+  const btnWatchAgainMasterpiece = container.querySelector('#btnWatchAgainMasterpiece');
+
+  btnSealForeverVow?.addEventListener('click', () => {
+    soundFx.celebrate();
+    if (navigator.vibrate) navigator.vibrate([40, 60, 40, 80]);
+
+    confetti({
+      particleCount: 110,
+      spread: 95,
+      origin: { y: 0.7 },
+      colors: ['#fbbf24', '#f43f5e', '#a855f7', '#ffffff']
+    });
+
+    btnSealForeverVow.innerHTML = '✨ Forever Sealed in My Heart! 💖';
+    btnSealForeverVow.classList.add('sealed');
+  });
+
+  btnWatchAgainMasterpiece?.addEventListener('click', () => {
+    chime(650, 850);
+    soundFx.whoosh();
+    if (navigator.vibrate) navigator.vibrate([25, 45, 25]);
+
+    // 1. Close memories overlay smoothly
+    memories.classList.remove('is-open');
+    memories.setAttribute('aria-hidden', 'true');
+    destroyLenisScroll();
+
+    // 2. Reset gate and all acts
+    gate.classList.remove('is-open');
+    resetAll();
+
+    // 3. Smoothly scroll container/window back to the top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (stage) stage.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 4. Rewind audio to 0 and play
+    if (audioEl) {
+      audioEl.currentTime = 0;
+      audioEl.play().then(() => {
+        setPlaying(true);
+        updateCassetteState(true);
+      }).catch(() => {});
+    }
+
+    // 5. Reset active chip
+    setActiveDockChip('bloom');
+
+    // 6. Welcoming confetti
+    confetti({
+      particleCount: 65,
+      spread: 85,
+      origin: { y: 0.5 },
+      colors: ['#ff758c', '#ff7eb3', '#ffffff', '#fbbf24']
+    });
+  });
+
   return function cleanup() {
     window.removeEventListener('resize', onResize);
     treeStop();
@@ -2170,6 +2740,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (filmTL) filmTL.kill();
     if (audioEl) audioEl.pause();
     destroyLenisScroll();
+    if (constRafId) cancelAnimationFrame(constRafId);
     if (zoomInstance) {
       try { zoomInstance.detach(); } catch (_) {}
     }

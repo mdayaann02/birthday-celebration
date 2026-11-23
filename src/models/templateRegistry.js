@@ -44,7 +44,51 @@ export const TEMPLATES = {
         "Nobody in the world could ever replace you 👑",
         "Your happiness is my highest priority forever and always ✨"
       ],
-      letterText: "Dearest you,\n\nFrom the moment you walked into my life, you brought colors, laughter, and a warmth I never knew existed.\n\nWatching you grow, smile, and achieve your dreams is my greatest joy. Thank you for being my partner, my best friend, and my whole heart.\n\nHere is to celebrating you today, tomorrow, and across a lifetime of blooming love.\n\nI love you endlessly. ♡"
+      letterText: "Dearest you,\n\nFrom the moment you walked into my life, you brought colors, laughter, and a warmth I never knew existed.\n\nWatching you grow, smile, and achieve your dreams is my greatest joy. Thank you for being my partner, my best friend, and my whole heart.\n\nHere is to celebrating you today, tomorrow, and across a lifetime of blooming love.\n\nI love you endlessly. ♡",
+      constellations: [
+        { title: "The First Spark", date: "Where It Began", note: "The exact moment the universe guided my eyes to yours, and my world changed forever.", x: 20, y: 32 },
+        { title: "Midnight Drives", date: "2 AM Talks", note: "Late-night drives with windows down, singing along, sharing every quiet dream.", x: 45, y: 22 },
+        { title: "Quiet Safe Harbor", date: "The Comfort", note: "Finding the only person in the world where silence feels completely peaceful and safe.", x: 78, y: 35 },
+        { title: "The Turning Point", date: "I Just Knew", note: "The day I caught myself smiling at nothing, realizing I never want a tomorrow without you.", x: 32, y: 72 },
+        { title: "Our North Star", date: "Forever Yours", note: "Through every storm, change of seasons, and adventure, you are my eternal guiding light.", x: 68, y: 76 }
+      ],
+      milestones: [
+        {
+          num: "01",
+          icon: "✨",
+          tag: "THE SPARK",
+          title: "Where Our Story Began",
+          desc: "One single glance that stopped time. A brief hello that quietly turned into the most meaningful connection of my entire life."
+        },
+        {
+          num: "02",
+          icon: "🌙",
+          tag: "THE CONFESSION",
+          title: "Falling in Love with Your Soul",
+          desc: "Laughing so hard our ribs hurt, talking until 4 AM about childhood dreams and life philosophies. I realized I was falling completely."
+        },
+        {
+          num: "03",
+          icon: "🛡️",
+          tag: "THE ANCHOR",
+          title: "Weathering Every Storm Together",
+          desc: "Life isn't always sunny, but standing shoulder-to-shoulder with you proved that we can conquer any challenge as a team."
+        },
+        {
+          num: "04",
+          icon: "📸",
+          tag: "THE ADVENTURES",
+          title: "A Thousand Unfiltered Memories",
+          desc: "Spontaneous road trips, messy cooking experiments, late-night grocery runs. The ordinary world becomes pure magic with you."
+        },
+        {
+          num: "05",
+          icon: "💍",
+          tag: "ETERNITY",
+          title: "Today, Tomorrow & Across Lifetimes",
+          desc: "In a world of fleeting moments, choosing you is the easiest decision I'll ever make. My heart is, and will forever be, your home."
+        }
+      ]
     }
   },
 

@@ -16695,3 +16695,896 @@ textarea,
     max-width: 320px;
   }
 }
+
+
+/* =========================================================================
+   LONG ROMANCE MASTERPIECE — MULTI-CHAPTER STORYBOOK & WATCH AGAIN SUITE
+   Inspired by Thanor.ai Cinematic Art-Direction Standards
+   ========================================================================= */
+
+/* Tree Storybook Call-To-Action */
+.tree-story-cta {
+  position: absolute !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: 24px !important;
+  transform: translateX(-50%) translateY(14px) !important;
+  padding: 13px 26px !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(135deg, rgba(212, 35, 92, 0.95), rgba(255, 77, 109, 0.95)) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 12px 36px rgba(212, 35, 92, 0.55), 0 0 20px rgba(255, 207, 106, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  font-family: inherit !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  z-index: 12 !important;
+  white-space: nowrap !important;
+  max-width: 92vw !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, opacity 0.5s ease !important;
+}
+
+.tree-story-cta:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 16px 44px rgba(212, 35, 92, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+.tree-story-cta:active {
+  transform: translateX(-50%) scale(0.97) !important;
+}
+
+.tree-story-cta.is-shown {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
+}
+
+/* Story Intro Hero */
+.romance-story-hero {
+  text-align: center;
+  margin-bottom: 44px;
+  padding: 0 14px;
+}
+
+.romance-story-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2.2px;
+  color: #d4235c;
+  background: rgba(212, 35, 92, 0.08);
+  border: 1px solid rgba(212, 35, 92, 0.22);
+  border-radius: 9999px;
+  padding: 5px 14px;
+  margin-bottom: 12px;
+}
+
+.romance-story-title {
+  font-size: clamp(26px, 5.5vw, 38px);
+  font-weight: 800;
+  color: #1a121e;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.romance-story-subtitle {
+  font-size: 14.5px;
+  color: #7a5c68;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Individual Chapter Block */
+.romance-chapter-block {
+  margin-bottom: 58px;
+  position: relative;
+}
+
+.romance-chapter-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 0 10px;
+}
+
+.chapter-num-pill {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+  color: #b45309;
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 9999px;
+  padding: 3px 10px;
+  margin-bottom: 8px;
+}
+
+.chapter-title {
+  font-size: clamp(22px, 4.2vw, 30px);
+  font-weight: 800;
+  color: #241420;
+  margin: 0 0 6px 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.chapter-desc {
+  font-size: 13.5px;
+  color: #826070;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* =========================================================================
+   CHAPTER IV: CELESTIAL CONSTELLATION MAP
+   ========================================================================= */
+.constellation-canvas-container {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  height: 340px;
+  margin: 0 auto;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #0d0716;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.constellation-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+.constellation-memory-card {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  background: rgba(26, 16, 38, 0.94);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 14px 16px;
+  color: #ffffff;
+  z-index: 10;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.constellation-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.constellation-star-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.constellation-title-wrap {
+  flex: 1;
+}
+
+.constellation-node-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fbbf24;
+}
+
+.constellation-node-date {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
+
+.btn-constellation-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.constellation-node-note {
+  margin: 0;
+  font-size: 13px;
+  color: #f1e9f4;
+  line-height: 1.45;
+}
+
+.constellation-star-chips {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  z-index: 5;
+}
+
+.const-star-chip {
+  background: rgba(22, 14, 34, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.82);
+  border-radius: 9999px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.const-star-chip span {
+  color: #fbbf24;
+}
+
+.const-star-chip.active, .const-star-chip:hover {
+  background: rgba(212, 35, 92, 0.88);
+  border-color: #fbbf24;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* =========================================================================
+   CHAPTER VI: VINTAGE CASSETTE & REASONS ACCORDION
+   ========================================================================= */
+.vintage-cassette-deck {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto 28px;
+}
+
+.cassette-body {
+  position: relative;
+  background: linear-gradient(135deg, rgba(35, 24, 48, 0.95), rgba(18, 11, 26, 0.98));
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 20px;
+  padding: 16px 18px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  user-select: none;
+}
+
+.cassette-screws {
+  position: absolute;
+  inset: 6px 8px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.cassette-label-sticker {
+  background: linear-gradient(135deg, #fffaf5, #ffece0);
+  border: 1px solid rgba(212, 35, 92, 0.3);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.cassette-side-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #d4235c;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.cassette-title-text {
+  font-size: 11px;
+  font-weight: 800;
+  color: #3b1826;
+  letter-spacing: 0.6px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.cassette-eq-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.cassette-eq-bars span {
+  width: 3px;
+  height: 4px;
+  background: #d4235c;
+  border-radius: 1px;
+  transition: height 0.15s ease;
+}
+
+.cassette-eq-bars.active span:nth-child(1) { animation: eq-bounce 0.8s infinite ease-in-out; }
+.cassette-eq-bars.active span:nth-child(2) { animation: eq-bounce 0.6s infinite ease-in-out 0.15s; }
+.cassette-eq-bars.active span:nth-child(3) { animation: eq-bounce 0.9s infinite ease-in-out 0.08s; }
+.cassette-eq-bars.active span:nth-child(4) { animation: eq-bounce 0.7s infinite ease-in-out 0.22s; }
+.cassette-eq-bars.active span:nth-child(5) { animation: eq-bounce 0.85s infinite ease-in-out 0.12s; }
+
+@keyframes eq-bounce {
+  0%, 100% { height: 3px; }
+  50% { height: 14px; }
+}
+
+.cassette-window {
+  background: rgba(8, 4, 14, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.cassette-spool {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f8fafc 35%, #94a3b8 100%);
+  border: 2px solid #cbd5e1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.cassette-spool.spinning {
+  animation: spool-rotate 2.8s linear infinite;
+}
+
+@keyframes spool-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spool-core {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #1e1124;
+}
+
+.spool-teeth {
+  position: absolute;
+  width: 28px;
+  height: 4px;
+  background: #64748b;
+  border-radius: 2px;
+}
+
+.cassette-tape-ribbon {
+  height: 8px;
+  flex: 1;
+  background: linear-gradient(90deg, #3d2218, #603322 50%, #3d2218);
+  margin: 0 4px;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.cassette-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-cassette-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #d4235c, #ff4d6d);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
+  color: #ffffff;
+  padding: 6px 14px;
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(212, 35, 92, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.btn-cassette-play:hover {
+  transform: scale(1.05);
+}
+
+.cassette-track-meta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+/* Reasons Hero Deck */
+.reasons-showcase-wrap {
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.reasons-section-subhead {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #3b2230;
+  margin: 0 0 16px 0;
+}
+
+.reason-hero-card {
+  background: linear-gradient(145deg, #fff8f5, #fff0ea);
+  border: 1px solid rgba(212, 35, 92, 0.25);
+  box-shadow: 0 12px 32px rgba(180, 40, 80, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-radius: 18px;
+  padding: 22px 20px;
+  text-align: center;
+  margin-bottom: 14px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.reason-card-badge {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #d4235c;
+  background: rgba(212, 35, 92, 0.08);
+  padding: 3px 10px;
+  border-radius: 9999px;
+  margin-bottom: 10px;
+}
+
+.reason-card-body {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2b1722;
+  line-height: 1.5;
+  font-style: italic;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  margin-bottom: 12px;
+}
+
+.reason-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8c6070;
+  border-top: 1px dashed rgba(212, 35, 92, 0.15);
+  padding-top: 10px;
+}
+
+.btn-shuffle-reasons {
+  width: 100%;
+  padding: 11px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(212, 35, 92, 0.25);
+  color: #b91c1c;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.btn-shuffle-reasons:hover {
+  background: #ffffff;
+  border-color: #d4235c;
+  transform: translateY(-1px);
+}
+
+.reasons-mini-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.reason-pill-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(212, 35, 92, 0.12);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reason-pill-item.active, .reason-pill-item:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #d4235c;
+  transform: translateX(3px);
+  box-shadow: 0 4px 12px rgba(212, 35, 92, 0.1);
+}
+
+.reason-num {
+  font-size: 11px;
+  font-weight: 800;
+  color: #d4235c;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.reason-text {
+  margin: 0;
+  font-size: 12.5px;
+  color: #432835;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* =========================================================================
+   CHAPTER VII: LOVE MILESTONES TIMELINE
+   ========================================================================= */
+.romance-timeline-container {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 10px 0 10px 24px;
+}
+
+.timeline-gold-track {
+  position: absolute;
+  top: 10px;
+  bottom: 20px;
+  left: 36px;
+  width: 2px;
+  background: linear-gradient(180deg, #fbbf24 0%, #f43f5e 50%, #d4235c 100%);
+  border-radius: 1px;
+  opacity: 0.65;
+}
+
+.timeline-milestones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.timeline-milestone-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+}
+
+.milestone-badge-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fbbf24, #f43f5e);
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.4);
+  margin-top: 4px;
+}
+
+.milestone-card-glass {
+  flex: 1;
+  background: rgba(255, 252, 248, 0.88);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 16px 18px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.milestone-card-glass:hover {
+  transform: translateY(-2px);
+  border-color: #d4235c;
+  box-shadow: 0 12px 30px rgba(212, 35, 92, 0.15);
+}
+
+.milestone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.milestone-tag {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #b45309;
+}
+
+.milestone-num {
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.milestone-title {
+  margin: 0 0 6px 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: #2b1722;
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.milestone-desc {
+  margin: 0;
+  font-size: 12.5px;
+  color: #6a4c58;
+  line-height: 1.5;
+}
+
+/* =========================================================================
+   CHAPTER X: OUR LIFETIME PROMISE & WATCH AGAIN GRAND FINALE
+   ========================================================================= */
+.certificate-glass-frame {
+  max-width: 500px;
+  margin: 0 auto 36px;
+  background: rgba(255, 250, 244, 0.95);
+  border: 2px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 30px rgba(212, 175, 55, 0.2), inset 0 1px 0 #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  position: relative;
+}
+
+.cert-gold-border {
+  border: 1px dashed rgba(212, 175, 55, 0.6);
+  border-radius: 18px;
+  padding: 24px 18px;
+  text-align: center;
+}
+
+.cert-badge {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #b45309;
+  background: rgba(251, 191, 36, 0.15);
+  border-radius: 9999px;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+}
+
+.cert-headline {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e1124;
+  margin: 0 0 14px 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.cert-body-quote {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #543743;
+  font-style: italic;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  margin-bottom: 22px;
+}
+
+.cert-signatures-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  padding-top: 16px;
+}
+
+.cert-sig-block {
+  text-align: center;
+}
+
+.cert-sig-lbl {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #8c6a78;
+}
+
+.cert-sig-val {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #b91c1c;
+}
+
+.cert-seal-gold {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fef08a 20%, #eab308 60%, #b45309 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 16px rgba(234, 179, 8, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.finale-action-bar {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.btn-seal-vow {
+  padding: 13px 26px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #d4235c, #ff4d6d);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(212, 35, 92, 0.45);
+  transition: all 0.22s ease;
+}
+
+.btn-seal-vow:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 34px rgba(212, 35, 92, 0.6);
+}
+
+.btn-seal-vow.sealed {
+  background: linear-gradient(135deg, #059669, #10b981);
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.45);
+}
+
+/* WATCH AGAIN / RELIVE EXPERIENCE (PRO GRADE BUTTON) */
+.watch-again-container {
+  max-width: 440px;
+  margin: 36px auto 16px;
+  text-align: center;
+  position: relative;
+  padding: 28px 20px;
+  background: rgba(25, 16, 36, 0.94);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 35px rgba(244, 63, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.watch-again-eyebrow {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  color: #fbbf24;
+  margin: 0 0 14px 0;
+}
+
+.btn-watch-again-masterpiece {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #f43f5e, #fb7185, #fbbf24);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  box-shadow: 0 12px 36px rgba(244, 63, 94, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  width: 100%;
+  max-width: 340px;
+}
+
+.btn-watch-again-masterpiece:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 18px 44px rgba(244, 63, 94, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.btn-watch-again-masterpiece:active {
+  transform: scale(0.96);
+}
+
+.watch-again-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.watch-again-note {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 12px 0 0 0;
+}
+
+/* Mobile Responsiveness for Long Romance (Vivo V70, Vivo T3, 375px) */
+@media (max-width: 640px) {
+  .constellation-canvas-container {
+    height: 300px;
+  }
+
+  .constellation-memory-card {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    padding: 10px 12px;
+  }
+
+  .constellation-node-title {
+    font-size: 13.5px;
+  }
+
+  .constellation-node-note {
+    font-size: 12px;
+  }
+
+  .cassette-body {
+    padding: 12px 14px;
+  }
+
+  .cassette-window {
+    height: 62px;
+  }
+
+  .cassette-spool {
+    width: 38px;
+    height: 38px;
+  }
+
+  .romance-timeline-container {
+    padding-left: 14px;
+  }
+
+  .timeline-gold-track {
+    left: 26px;
+  }
+
+  .certificate-glass-frame {
+    padding: 16px;
+  }
+
+  .cert-gold-border {
+    padding: 18px 12px;
+  }
+
+  .cert-headline {
+    font-size: 22px;
+  }
+
+  .btn-watch-again-masterpiece {
+    font-size: 13px;
+    padding: 12px 20px;
+  }
+}
