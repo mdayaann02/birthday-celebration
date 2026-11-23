@@ -403,8 +403,14 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           <input type="text" class="form-input" id="edRomanceSpotify" value="${data.spotifyUrl || ''}" placeholder="e.g. https://open.spotify.com/playlist/... or track/..." />
         </div>
         <div class="form-group">
-          <label class="form-label">YouTube Video / Playlist URL</label>
-          <input type="text" class="form-input" id="edRomanceYoutube" value="${data.youtubeUrl || ''}" placeholder="e.g. https://www.youtube.com/watch?v=..." />
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label class="form-label" style="margin:0; font-weight:700;">YouTube Video / Playlist URL</label>
+            <button type="button" id="btnFetchYoutubeSongs" class="btn-fetch-yt" style="background:linear-gradient(135deg, #d4235c, #e11d48); color:#fff; border:none; padding:5px 12px; font-size:11px; font-weight:800; border-radius:999px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 3px 10px rgba(212,35,92,0.3); transition:all 0.15s ease;">
+              <span class="yt-fetch-icon">⚡</span> Auto-Fetch Songs from Link
+            </button>
+          </div>
+          <input type="text" class="form-input" id="edRomanceYoutube" value="${data.youtubeUrl || ''}" placeholder="e.g. https://www.youtube.com/playlist?list=... or watch?v=..." />
+          <div id="ytFetchStatus" style="font-size:11.5px; font-weight:600; margin-top:6px; display:none; padding:6px 10px; border-radius:8px; line-height:1.4;"></div>
         </div>
         <div class="editor-grid-2">
           <div class="form-group">
@@ -599,6 +605,156 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         if (inpAudio) inpAudio.value = data.audioSrc || '/audio/alfaaz.mp3';
         alert(res.error || "Upload failed. Please choose an audio preset or paste an MP3 URL.");
       }
+    });
+
+    // ⚡ Auto-Fetch Songs from YouTube Playlist or Video URL
+    const ytInp = specificBox.querySelector('#edRomanceYoutube');
+    const btnFetchYt = specificBox.querySelector('#btnFetchYoutubeSongs');
+    const statusYt = specificBox.querySelector('#ytFetchStatus');
+    let lastFetchedYt = '';
+
+    async function autoFetchYoutubeSongs(rawUrl) {
+      if (!rawUrl || !rawUrl.trim()) return;
+      const url = rawUrl.trim();
+      if (url === lastFetchedYt) return;
+
+      const isYt = url.includes('youtube.com') || url.includes('youtu.be') || /^(PL|RD|FL|UU|LL)[a-zA-Z0-9_-]+$/.test(url);
+      if (!isYt) return;
+
+      if (statusYt) {
+        statusYt.style.display = 'block';
+        statusYt.style.background = 'rgba(212,35,92,0.08)';
+        statusYt.style.border = '1px solid rgba(212,35,92,0.2)';
+        statusYt.style.color = '#be123c';
+        statusYt.innerHTML = '⚡ <b>Fetching songs from YouTube link...</b> Please wait a moment.';
+      }
+      if (btnFetchYt) {
+        btnFetchYt.disabled = true;
+        btnFetchYt.style.opacity = '0.65';
+      }
+
+      try {
+        let result = null;
+        // 1. Try local / Vercel API endpoint
+        try {
+          const res = await fetch(`/api/fetch-playlist?url=${encodeURIComponent(url)}`);
+          if (res.ok) {
+            result = await res.json();
+          }
+        } catch (_) {}
+
+        // 2. Client-side fallback to YouTube oEmbed API
+        if (!result || !result.success || !result.tracks || result.tracks.length === 0) {
+          try {
+            const oeRes = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
+            if (oeRes.ok) {
+              const oe = await oeRes.json();
+              const cleanTitle = (oe.title || 'Romantic Melody').replace(/[\(\[](Official|Music Video|Video|Lyrics|Audio|HD|4K|Visualizer|Lyric Video)[\)\]]/gi, '').trim();
+              result = {
+                success: true,
+                playlistTitle: cleanTitle,
+                tracks: [
+                  {
+                    id: 1,
+                    title: cleanTitle,
+                    artist: oe.author_name || 'YouTube Music',
+                    src: url,
+                    tag: 'OUR THEME 🌸',
+                    duration: '3:45'
+                  }
+                ]
+              };
+            }
+          } catch (_) {}
+        }
+
+        if (result && result.success && result.tracks && result.tracks.length > 0) {
+          lastFetchedYt = url;
+          const tracks = result.tracks;
+
+          // Render into romanceTracksList
+          if (tList) {
+            tList.innerHTML = tracks.map((t, idx) => `
+              <div class="sub-card-editor romance-track-row" data-t-idx="${idx}" style="margin-bottom:8px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:10px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span style="font-weight:800; font-size:11px; color:#d4235c;">#0${idx + 1} • TRACK</span>
+                  <button type="button" class="btn-del-track" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px;">✕</button>
+                </div>
+                <div class="editor-grid-2" style="margin-bottom:6px;">
+                  <input type="text" class="form-input rtrack-title" value="${(t.title || '').replace(/"/g, '&quot;')}" placeholder="Song Title" />
+                  <input type="text" class="form-input rtrack-artist" value="${(t.artist || '').replace(/"/g, '&quot;')}" placeholder="Artist" />
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <input type="text" class="form-input rtrack-src" value="${(t.src || '').replace(/"/g, '&quot;')}" placeholder="Audio URL (.mp3 or YouTube)" style="flex:1;" />
+                  <input type="text" class="form-input rtrack-tag" value="${(t.tag || `TRACK 0${idx + 1}`).replace(/"/g, '&quot;')}" placeholder="Tag" style="width:115px;" />
+                </div>
+              </div>
+            `).join('');
+
+            // Re-bind delete buttons and inputs
+            tList.querySelectorAll('.btn-del-track').forEach(b => {
+              b.addEventListener('click', (e) => {
+                const row = e.target.closest('.romance-track-row');
+                if (row) { row.remove(); emitChange(); }
+              });
+            });
+            tList.querySelectorAll('input').forEach(inp => {
+              inp.addEventListener('input', emitChange);
+            });
+          }
+
+          // Update Song Title on Cassette if default
+          const elAudTitle = specificBox.querySelector('#edRomanceAudioTitle');
+          if (elAudTitle && result.playlistTitle) {
+            elAudTitle.value = result.playlistTitle;
+          }
+
+          if (statusYt) {
+            statusYt.style.display = 'block';
+            statusYt.style.background = 'rgba(16,185,129,0.08)';
+            statusYt.style.border = '1px solid rgba(16,185,129,0.25)';
+            statusYt.style.color = '#059669';
+            statusYt.innerHTML = `✅ <b>Success!</b> Auto-fetched ${tracks.length} song${tracks.length > 1 ? 's' : ''} directly from YouTube playlist!`;
+          }
+
+          emitChange();
+        } else {
+          if (statusYt) {
+            statusYt.style.display = 'block';
+            statusYt.style.background = 'rgba(239,68,68,0.08)';
+            statusYt.style.border = '1px solid rgba(239,68,68,0.2)';
+            statusYt.style.color = '#dc2626';
+            statusYt.innerHTML = '⚠️ Could not auto-fetch songs from this link. You can add songs manually using the button below.';
+          }
+        }
+      } catch (err) {
+        if (statusYt) {
+          statusYt.style.display = 'block';
+          statusYt.style.background = 'rgba(239,68,68,0.08)';
+          statusYt.style.border = '1px solid rgba(239,68,68,0.2)';
+          statusYt.style.color = '#dc2626';
+          statusYt.innerHTML = '⚠️ Auto-fetch error: ' + (err.message || 'Network error');
+        }
+      } finally {
+        if (btnFetchYt) {
+          btnFetchYt.disabled = false;
+          btnFetchYt.style.opacity = '1';
+        }
+      }
+    }
+
+    btnFetchYt?.addEventListener('click', () => {
+      if (ytInp && ytInp.value) autoFetchYoutubeSongs(ytInp.value);
+    });
+
+    ytInp?.addEventListener('paste', () => {
+      setTimeout(() => {
+        if (ytInp && ytInp.value) autoFetchYoutubeSongs(ytInp.value);
+      }, 120);
+    });
+
+    ytInp?.addEventListener('blur', () => {
+      if (ytInp && ytInp.value) autoFetchYoutubeSongs(ytInp.value);
     });
 
   } else if (templateId === 'blossom' || templateId === 'bestie_girl' || templateId === 'bestie_boy') {

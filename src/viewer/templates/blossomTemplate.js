@@ -200,24 +200,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       <!-- GLOBAL 60FPS THREE.JS GPU MASTER ENGINE -->
       <canvas class="romance-master-three-canvas" id="romanceMaster3D" aria-hidden="true"></canvas>
 
-      <!-- CONTINUOUS AMBIENT SAKURA BLOSSOM PETALS RAIN -->
-      <div class="ambient-sakura-rain-layer" id="ambientSakuraRain" aria-hidden="true">
-        <span class="sakura-petal-rain sp-1"></span>
-        <span class="sakura-petal-rain sp-2"></span>
-        <span class="sakura-petal-rain sp-3"></span>
-        <span class="sakura-petal-rain sp-4"></span>
-        <span class="sakura-petal-rain sp-5"></span>
-        <span class="sakura-petal-rain sp-6"></span>
-        <span class="sakura-petal-rain sp-7"></span>
-        <span class="sakura-petal-rain sp-8"></span>
-        <span class="sakura-petal-rain sp-9"></span>
-        <span class="sakura-petal-rain sp-10"></span>
-        <span class="sakura-petal-rain sp-11"></span>
-        <span class="sakura-petal-rain sp-12"></span>
-        <span class="sakura-petal-rain sp-13"></span>
-        <span class="sakura-petal-rain sp-14"></span>
-      </div>
-
       <!-- CINEMATIC PORTAL FLASH TRANSITION OVERLAY -->
       <div class="portal-flash-overlay" id="portalFlashOverlay" aria-hidden="true"></div>
       <!-- ACT 0: VIRAL REEL BLOSSOM OPENING GATE (SCENE 1) -->
@@ -2543,9 +2525,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       opacity: 0.75
     });
     const starField = new THREE.Points(starGeo, starMat);
+    starField.visible = false;
     scene.add(starField);
 
-    // 3. 3D Floating Twilight Lanterns (Scene 9 & ambient)
+    // 3. 3D Floating Twilight Lanterns (Scene 8 & ambient)
     const lanternCount = 14;
     const lanternGeo = new THREE.CylinderGeometry(1.4, 1.7, 3.4, 8);
     const lanternMat = new THREE.MeshStandardMaterial({
@@ -2555,6 +2538,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       roughness: 0.3
     });
     const lanternsGroup = new THREE.Group();
+    lanternsGroup.visible = false;
     scene.add(lanternsGroup);
 
     const lanternsData = [];
@@ -2656,19 +2640,23 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     return {
       setMode(mode) {
         currentMode = mode;
-        // Keep 3D cherry blossom petals drifting across all scenes for authentic blossom aesthetic!
-        petalsGroup.visible = true;
         if (mode === 'cosmos') {
+          // Act IV Stars: Cosmic starry sky unobstructed by drifting petals
+          petalsGroup.visible = false;
           starField.visible = true;
           lanternsGroup.visible = false;
           starMat.size = 2.2;
           starMat.color.setHex(0xfbcfe8);
         } else if (mode === 'lanterns') {
+          // Act VIII Lanterns: Twilight sky lanterns ONLY
+          petalsGroup.visible = false;
           starField.visible = true;
           lanternsGroup.visible = true;
         } else {
-          starField.visible = true;
-          lanternsGroup.visible = (mode === 'finale');
+          // Ambient: Drifting petals in background, NO lanterns, NO stars
+          petalsGroup.visible = true;
+          starField.visible = false;
+          lanternsGroup.visible = false;
         }
       },
       dollyForward(callback) {
@@ -2716,6 +2704,9 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   const master3D = initRomanceMaster3D(master3DCanvas) || fallbackMaster3D;
+  if (master3D && typeof master3D.setMode === 'function') {
+    master3D.setMode('ambient');
+  }
 
   // =========================================================================
   // ACTS IV - X: FULL-SCREEN CINEMATIC SCENE TRANSITIONS (CONTINUOUS & DYNAMIC)
@@ -3502,6 +3493,44 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
 
     updateCassetteState(isPlaying);
+
+    // YouTube track playback
+    const isYt = track.videoId || (track.src && (track.src.includes('youtube.com') || track.src.includes('youtu.be')));
+    if (isYt) {
+      if (audioEl && isPlaying) {
+        audioEl.pause();
+      }
+      setPlaying(true);
+      updateCassetteState(true);
+
+      let vId = track.videoId;
+      if (!vId && track.src) {
+        const m = track.src.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+        if (m) vId = m[1];
+      }
+
+      // Switch to YouTube tab & embed player
+      const btnYt = container.querySelector('.source-tab-btn[data-source="youtube"]');
+      if (btnYt) {
+        container.querySelectorAll('.source-tab-btn').forEach(b => b.classList.remove('active'));
+        btnYt.classList.add('active');
+        const pNative = container.querySelector('#tabPanelNative');
+        const pSpotify = container.querySelector('#tabPanelSpotify');
+        const pYoutube = container.querySelector('#tabPanelYoutube');
+        if (pNative) pNative.style.display = 'block';
+        if (pSpotify) pSpotify.style.display = 'none';
+        if (pYoutube) {
+          pYoutube.style.display = 'block';
+          pYoutube.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+
+      const ytIframe = container.querySelector('#tabPanelYoutube iframe');
+      if (ytIframe && vId) {
+        ytIframe.src = `https://www.youtube.com/embed/${vId}?autoplay=1&rel=0`;
+      }
+      return;
+    }
 
     if (audioEl) {
       const currentSrc = audioEl.currentSrc || audioEl.src || '';
