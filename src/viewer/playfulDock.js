@@ -171,15 +171,18 @@ export function initPlayfulDock(container = document.body, data = {}) {
           font-size: ${Math.random() * 12 + 24}px;
           pointer-events: none;
           z-index: 999999;
-          transform: translate(-50%, -50%) scale(0.6);
-          transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.1s ease-out;
-          opacity: 1;
+          transform: translate(-50%, -50%) scale(0.85);
+          transition: transform 0.95s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+          opacity: 0;
         `;
         document.body.appendChild(span);
 
         requestAnimationFrame(() => {
+          span.style.opacity = '1';
           span.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.3) rotate(${rot}deg)`;
-          span.style.opacity = '0';
+          setTimeout(() => {
+            span.style.opacity = '0';
+          }, 450);
         });
 
         setTimeout(() => span.remove(), 1200);

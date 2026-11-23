@@ -27,17 +27,20 @@ export function initInteractiveSparkles(container = document.body) {
       z-index: 99999;
       user-select: none;
       -webkit-user-select: none;
-      transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg) scale(0.6);
-      opacity: 1;
-      transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.85s ease-out;
+      transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg) scale(0.85);
+      opacity: 0;
+      transition: transform 0.75s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1);
       filter: drop-shadow(0 2px 6px rgba(244, 114, 182, 0.6));
     `;
 
     document.body.appendChild(el);
 
     requestAnimationFrame(() => {
+      el.style.opacity = '1';
       el.style.transform = `translate(-50%, -50%) translate3d(${destX}px, ${destY}px, 0) rotate(${rot}deg) scale(1.25)`;
-      el.style.opacity = '0';
+      setTimeout(() => {
+        el.style.opacity = '0';
+      }, 400);
     });
 
     setTimeout(() => {

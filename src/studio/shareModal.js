@@ -315,12 +315,24 @@ export function openShareModal(templateId, data) {
     }
   });
 
-  // Event handlers
-  overlay.querySelector('#btnCloseShareModal')?.addEventListener('click', () => {
-    overlay.remove();
-  });
+  // Event handlers with smooth dismiss animation
+  function closeModal() {
+    const card = overlay.querySelector('.share-modal-card');
+    if (card) {
+      card.style.transition = 'transform 180ms cubic-bezier(0.23, 1, 0.32, 1), opacity 180ms cubic-bezier(0.23, 1, 0.32, 1)';
+      card.style.transform = 'scale(0.95)';
+      card.style.opacity = '0';
+      overlay.style.transition = 'opacity 180ms cubic-bezier(0.23, 1, 0.32, 1)';
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.remove(), 180);
+    } else {
+      overlay.remove();
+    }
+  }
+
+  overlay.querySelector('#btnCloseShareModal')?.addEventListener('click', closeModal);
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) overlay.remove();
+    if (e.target === overlay) closeModal();
   });
 
   function showSuccess(btnElem) {

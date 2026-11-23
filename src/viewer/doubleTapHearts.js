@@ -22,20 +22,21 @@ export function initDoubleTapHearts(root = document) {
       font-size: 52px;
       pointer-events: none;
       z-index: 999999;
-      transform: translate(-50%, -50%) scale(0) rotate(0deg);
-      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s ease-out;
+      transform: translate(-50%, -50%) scale(0.85) rotate(0deg);
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1);
       filter: drop-shadow(0 4px 18px rgba(244, 63, 94, 0.8));
-      opacity: 1;
+      opacity: 0;
       user-select: none;
     `;
 
     document.body.appendChild(heart);
 
     requestAnimationFrame(() => {
+      heart.style.opacity = '1';
       heart.style.transform = `translate(-50%, -120%) scale(1.35) rotate(${rot}deg)`;
       setTimeout(() => {
         heart.style.opacity = '0';
-      }, 350);
+      }, 320);
     });
 
     setTimeout(() => {
