@@ -83,17 +83,21 @@ function playBroTone(type) {
 export function renderBrotherTemplate(container, data) {
   const polaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
     { title: "Chaos & Adventures 🚗", image: "/images/sunset.jpg", note: "Late night drives, wild plans that almost got us into trouble, and countless memories." },
-    { title: "Gaming Battles 🎮", image: "/images/always_you.jpg", note: "Yelling at the TV screen, blaming the controller, and legendary 3 AM tournament wins." },
-    { title: "Brothers for Life 🤜🤛", image: "/images/dream_girl.jpg", note: "No matter how much we roast each other, you are the one person I can always count on." }
+    { title: "Gaming Battles 🎮", image: "/images/vogue_cover.jpg", note: "Yelling at the TV screen, blaming the controller, and legendary 3 AM tournament wins." },
+    { title: "Brothers for Life 🤜🤛", image: "/images/sunset.jpg", note: "No matter how much we roast each other, you are the one person I can always count on." }
   ];
 
-  const broCodeClauses = [
+  const defaultBroClauses = [
     { id: 1, title: "Clause 1: Never Snitch to Mom 🤐", text: "What happens in the sibling chaos stays strictly in the sibling chaos. Zero exceptions under parent interrogation." },
     { id: 2, title: "Clause 2: The Sacred Last Slice Rule 🍕", text: "You must always loudly ask 'Anyone want this?' while already taking a huge bite out of it." },
     { id: 3, title: "Clause 3: TV Controller & Shotgun Privilege 🎮", text: "He who shouts 'SHOTGUN' or grabs the player 1 controller first owns the sovereign rights forever." },
     { id: 4, title: "Clause 4: 2 AM Bailout Guarantee 🚗", text: "No questions asked. If your brother calls at 2 AM stranded with a flat tire or bad date, you pull up immediately." },
     { id: 5, title: "Clause 5: Instant Defense in Public 🛡️", text: "We might roast and tackle each other at home, but if anyone from the outside touches a hair on you, they answer to me." }
   ];
+
+  let broCodeClauses = (data.broCodeClauses && data.broCodeClauses.length > 0)
+    ? JSON.parse(JSON.stringify(data.broCodeClauses))
+    : defaultBroClauses;
 
   container.innerHTML = `
     <!-- Top Audio Player -->
@@ -106,11 +110,11 @@ export function renderBrotherTemplate(container, data) {
       <!-- Stage Progress Bar & Passive Indicator -->
       <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
         <div class="fam-step-progress-track">
-          <div class="fam-step-progress-fill" id="broStepProgressFill" style="width: 16.6%;"></div>
+          <div class="fam-step-progress-fill" id="broStepProgressFill" style="width: 20%;"></div>
         </div>
         <div class="fam-stage-indicator-bar">
           <div class="fam-stage-info-pill">
-            <span class="stage-step-tag" id="broStageStepPill">PAGE 1 OF 6</span>
+            <span class="stage-step-tag" id="broStageStepPill">PAGE 1 OF 5</span>
             <span class="stage-step-separator">•</span>
             <span class="stage-title-text" id="broStageTitleText">The Bhai Bro-Code Opening 🤜🤛</span>
           </div>
@@ -192,10 +196,10 @@ export function renderBrotherTemplate(container, data) {
             <div class="punchcard-container" id="punchcardContainer">
               <div class="punchcard-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <span class="punchcard-tag" style="font-weight:700; color:#f59e0b;">BRO-CODE CONSTITUTION</span>
-                <span class="punch-counter" id="punchCounter" style="font-size:12px; color:#d97706; font-weight:700;">0 / 5 Clauses Ratified</span>
+                <span class="punch-counter" id="punchCounter" style="font-size:12px; color:#d97706; font-weight:700;">0 / ${broCodeClauses.length} Clauses Ratified</span>
               </div>
 
-              <div class="punchcard-list">
+              <div class="punchcard-list" id="broPunchcardList">
                 ${broCodeClauses.map(c => `
                   <div class="punchcard-row" data-id="${c.id}" style="position:relative; cursor:pointer; background:#0f172a; padding:14px; border-radius:14px; margin-bottom:12px; border:1.5px solid rgba(245,158,11,0.4); box-shadow:0 4px 14px rgba(0,0,0,0.4); transition:all 0.2s ease;">
                     <div class="punchcard-info">
@@ -209,9 +213,30 @@ export function renderBrotherTemplate(container, data) {
                 `).join('')}
               </div>
 
-              <!-- Rubber Stamp All Action -->
-              <div style="text-align:center; margin-top:14px;">
-                <button class="btn-fam-action" id="btnStampAllBro" style="background:linear-gradient(135deg, #dc2626, #991b1b); color:#fff; border-radius:20px; font-weight:800; padding:8px 20px; border:2px solid #f87171;">
+              <!-- Dynamic Bro Add Clause Form -->
+              <div style="margin-top:14px; text-align:center; display:flex; flex-direction:column; gap:8px; align-items:center;">
+                <button type="button" class="btn-add-bro-clause" id="btnToggleBroAddClause" style="margin: 0 auto;">
+                  <span>➕ Add My Custom Bro-Code Clause (For Bro) ✍️</span>
+                </button>
+
+                <div id="broAddClauseInlineBox" style="display:none; width:100%; text-align:left; background:#1e293b; border:1.5px dashed #f59e0b; border-radius:14px; padding:14px; box-sizing:border-box;">
+                  <div style="font-weight:800; font-size:12px; color:#fbbf24; margin-bottom:8px;">
+                    ✍️ ADD BRO-CODE CLAUSE TO CONSTITUTION:
+                  </div>
+                  <input type="text" id="newBroClauseTitle" placeholder="Clause Title (e.g. Clause ${broCodeClauses.length + 1}: FIFA Loser Buys Shawarma 🍕)" style="width:100%; box-sizing:border-box; padding:8px 10px; background:#0f172a; border:1px solid #f59e0b; border-radius:8px; color:#fff; font-size:12px; margin-bottom:8px;" />
+                  <textarea id="newBroClauseText" rows="2" placeholder="The sibling rule description..." style="width:100%; box-sizing:border-box; padding:8px 10px; background:#0f172a; border:1px solid #f59e0b; border-radius:8px; color:#fff; font-size:12px; margin-bottom:8px;"></textarea>
+                  <div style="display:flex; gap:8px;">
+                    <button type="button" id="btnConfirmAddBroClause" style="flex:1; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-weight:800; font-size:12px; padding:8px 12px; border-radius:8px; border:none; cursor:pointer;">
+                      ✅ Ratify & Add Clause
+                    </button>
+                    <button type="button" id="btnCancelAddBroClause" style="background:#334155; color:#94a3b8; font-weight:700; font-size:12px; padding:8px 12px; border-radius:8px; border:none; cursor:pointer;">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Rubber Stamp All Action -->
+                <button class="btn-fam-action" id="btnStampAllBro" style="background:linear-gradient(135deg, #dc2626, #991b1b); color:#fff; border-radius:20px; font-weight:800; padding:8px 20px; border:2px solid #f87171; margin-top:2px;">
                   🔴 SLAM "BRO-CODE RATIFIED" RUBBER STAMP
                 </button>
               </div>
@@ -221,60 +246,14 @@ export function renderBrotherTemplate(container, data) {
           <div class="fam-nav-dock">
             <button type="button" class="btn-fam-prev" data-prev="1">⬅ Back</button>
             <button type="button" class="btn-fam-next" data-next="3">
-              <span>Superbike Turbo Overdrive 🏍️</span>
-              <span>➔</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- PAGE 3: SUPERBIKE HORSEPOWER & TURBO OVERDRIVE -->
-        <section class="fam-page-card" data-page="3">
-          <div class="bro-gaming-card">
-            <h2 class="fam-section-title" style="margin-bottom:6px; text-align:center;">🏍️ Sibling Superbike Horsepower &amp; Turbo Stats</h2>
-            <p class="fam-section-desc" style="text-align:center; margin-bottom:16px;">
-              Countless late-night highway sprints, full throttle speed runs, and unbreakable brotherhood.
-            </p>
-
-            <!-- Superbike Turbo Overdrive Interactive Centerpiece -->
-            <div class="arcade-gauge-wrap" style="background:#0f172a; border:2px solid #06b6d4; border-radius:14px; padding:18px; margin-bottom:18px; text-align:center; box-shadow:0 8px 24px rgba(6,182,212,0.25);">
-              <div style="font-size:12px; font-weight:800; color:#38bdf8; letter-spacing:1.5px; margin-bottom:6px;">⚡ BHAI NITRO HORSEPOWER OVERDRIVE ⚡</div>
-              
-              <div style="position:relative; width:100%; height:26px; background:#1e293b; border-radius:13px; overflow:hidden; border:2px solid #0891b2; margin-bottom:10px;">
-                <div id="arcadePowerFill" style="width:25%; height:100%; background:linear-gradient(90deg, #06b6d4, #f59e0b, #ef4444); border-radius:11px; transition:width 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);"></div>
-              </div>
-              
-              <div id="arcadeLevelText" style="font-size:16px; font-weight:900; color:#fbbf24; margin-bottom:12px;">240+ KM/H SUPERBIKE LEGEND (TAP TO BOOST!)</div>
-              
-              <button class="btn-fam-action" id="btnBoostBroPower" style="background:linear-gradient(135deg, #06b6d4, #2563eb); color:#fff; font-weight:900; border-radius:24px; padding:9px 24px; border:none; box-shadow:0 4px 14px rgba(6,182,212,0.4);">
-                🔥 NITRO BOOST (+500 HP)
-              </button>
-            </div>
-
-            <div class="gaming-stats-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-              <div style="background:#0f172a; padding:14px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
-                <div style="font-size:26px;">🏍️</div>
-                <div style="font-size:18px; font-weight:900; color:#fbbf24;">9,999+ KM</div>
-                <div style="font-size:11.5px; color:#cbd5e1;">Highway Sprints Conquered</div>
-              </div>
-              <div style="background:#0f172a; padding:14px; border-radius:12px; border:1px solid rgba(245,158,11,0.3); text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
-                <div style="font-size:26px;">⚡</div>
-                <div style="font-size:18px; font-weight:900; color:#fbbf24;">240+ KM/H</div>
-                <div style="font-size:11.5px; color:#cbd5e1;">Top Brotherhood Velocity</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="fam-nav-dock">
-            <button type="button" class="btn-fam-prev" data-prev="2">⬅ Back</button>
-            <button type="button" class="btn-fam-next" data-next="4">
               <span>Chronicles of Chaos 📸</span>
               <span>➔</span>
             </button>
           </div>
         </section>
 
-        <!-- PAGE 4: POLAROIDS SCRAPBOOK -->
-        <section class="fam-page-card" data-page="4">
+        <!-- PAGE 3: POLAROIDS SCRAPBOOK -->
+        <section class="fam-page-card" data-page="3">
           <div class="fam-memories-card">
             <h2 class="fam-section-title" style="margin-bottom:6px; text-align:center;">📸 Chronicles of Absolute Chaos</h2>
             <p class="fam-section-desc" style="text-align:center; margin-bottom:18px;">
@@ -299,16 +278,16 @@ export function renderBrotherTemplate(container, data) {
           </div>
 
           <div class="fam-nav-dock">
-            <button type="button" class="btn-fam-prev" data-prev="3">⬅ Back</button>
-            <button type="button" class="btn-fam-next" data-next="5">
+            <button type="button" class="btn-fam-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="4">
               <span>Bro-Fist Sealed Treaty 💌</span>
               <span>➔</span>
             </button>
           </div>
         </section>
 
-        <!-- PAGE 5: BROTHERHOOD TREATY LETTER -->
-        <section class="fam-page-card" data-page="5">
+        <!-- PAGE 4: BROTHERHOOD TREATY LETTER -->
+        <section class="fam-page-card" data-page="4">
           <div class="fam-letter-preview-card">
             <div class="letter-wax-envelope">
               <div class="letter-stamp-crest">🤜🤛</div>
@@ -348,16 +327,16 @@ export function renderBrotherTemplate(container, data) {
           </div>
 
           <div class="fam-nav-dock">
-            <button type="button" class="btn-fam-prev" data-prev="4">⬅ Back</button>
-            <button type="button" class="btn-fam-next" data-next="6">
+            <button type="button" class="btn-fam-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-fam-next" data-next="5">
               <span>Bhai Hall of Fame 🏆</span>
               <span>➔</span>
             </button>
           </div>
         </section>
 
-        <!-- PAGE 6: CERTIFIED LIVING LEGEND -->
-        <section class="fam-page-card" data-page="6">
+        <!-- PAGE 5: CERTIFIED LIVING LEGEND -->
+        <section class="fam-page-card" data-page="5">
           <div class="fam-cert-container">
             <div class="fam-cert-border gold-border" style="border-color:#f59e0b; background:#0b1120; color:#fef3c7; box-shadow:0 12px 35px rgba(245,158,11,0.25);">
               <div class="fam-cert-seal">🏆</div>
@@ -382,7 +361,7 @@ export function renderBrotherTemplate(container, data) {
           </div>
 
           <div class="fam-nav-dock">
-            <button type="button" class="btn-fam-prev" data-prev="5">⬅ Back</button>
+            <button type="button" class="btn-fam-prev" data-prev="4">⬅ Back</button>
             <button type="button" class="btn-fam-replay" id="btnBroReplay">
               <span>🔥 Replay Bhai's Celebration ↺</span>
             </button>
@@ -396,10 +375,9 @@ export function renderBrotherTemplate(container, data) {
   const broPageTitles = [
     { num: 1, title: "The Bhai Bro-Code Opening 🤜🤛" },
     { num: 2, title: "The Sacred Bro-Code 📜" },
-    { num: 3, title: "Superbike Turbo Overdrive 🏍️" },
-    { num: 4, title: "Chronicles of Absolute Chaos 📸" },
-    { num: 5, title: "Bro-Fist Sealed Treaty 💌" },
-    { num: 6, title: "Certified Living Legend 🏆" }
+    { num: 3, title: "Chronicles of Absolute Chaos 📸" },
+    { num: 4, title: "Bro-Fist Sealed Treaty 💌" },
+    { num: 5, title: "Certified Living Legend 🏆" }
   ];
 
   const totalPages = broPageTitles.length;
@@ -834,18 +812,24 @@ export function renderBrotherTemplate(container, data) {
   btnFist?.addEventListener('click', executeFistBump);
 
   // =========================================================================
-  // 3. PAGE 2: TACTILE RUBBER STAMP RATIFICATION
+  // 3. PAGE 2: TACTILE RUBBER STAMP RATIFICATION & BRO ADD CLAUSE
   // =========================================================================
   let stampedCount = 0;
   const punchCounter = container.querySelector('#punchCounter');
-  const rows = container.querySelectorAll('.punchcard-row');
+  const listContainer = container.querySelector('#broPunchcardList');
   const btnStampAll = container.querySelector('#btnStampAllBro');
+
+  function updatePunchCounter() {
+    if (punchCounter) {
+      punchCounter.textContent = `${stampedCount} / ${broCodeClauses.length} Clauses Ratified ${stampedCount >= broCodeClauses.length ? '✓ (All Enforced!)' : ''}`;
+    }
+  }
 
   function stampRow(row) {
     if (!row.classList.contains('stamped')) {
       row.classList.add('stamped');
       const id = row.getAttribute('data-id');
-      const slot = container.querySelector(`#punchSlot_${id}`);
+      const slot = row.querySelector(`#punchSlot_${id}`) || row.querySelector('.punchcard-slot');
       playBroTone('stamp');
 
       if (slot) {
@@ -856,7 +840,7 @@ export function renderBrotherTemplate(container, data) {
       }
 
       stampedCount++;
-      punchCounter.textContent = `${stampedCount} / 5 Clauses Ratified ✓ (All Enforced!)`;
+      updatePunchCounter();
 
       confetti({
         particleCount: 25,
@@ -867,38 +851,84 @@ export function renderBrotherTemplate(container, data) {
     }
   }
 
-  rows.forEach(row => {
-    row.addEventListener('click', () => stampRow(row));
-  });
+  function bindRowClickListeners() {
+    container.querySelectorAll('.punchcard-row').forEach(row => {
+      row.onclick = () => stampRow(row);
+    });
+  }
+  bindRowClickListeners();
+  updatePunchCounter();
 
   btnStampAll?.addEventListener('click', () => {
-    rows.forEach(r => stampRow(r));
+    container.querySelectorAll('.punchcard-row').forEach(r => stampRow(r));
   });
 
-  // =========================================================================
-  // 4. PAGE 3: ARCADE TURBO OVERDRIVE
-  // =========================================================================
-  const btnBoost = container.querySelector('#btnBoostBroPower');
-  const powerFill = container.querySelector('#arcadePowerFill');
-  const levelText = container.querySelector('#arcadeLevelText');
-  let currentPower = 25;
-  let brotherLevel = 100;
+  // Bro Add Clause controls
+  const btnToggleAdd = container.querySelector('#btnToggleBroAddClause');
+  const boxAdd = container.querySelector('#broAddClauseInlineBox');
+  const btnCancelAdd = container.querySelector('#btnCancelAddBroClause');
+  const btnConfirmAdd = container.querySelector('#btnConfirmAddBroClause');
+  const inpTitle = container.querySelector('#newBroClauseTitle');
+  const inpText = container.querySelector('#newBroClauseText');
 
-  btnBoost?.addEventListener('click', () => {
+  btnToggleAdd?.addEventListener('click', () => {
+    if (boxAdd) {
+      const isHidden = boxAdd.style.display === 'none';
+      boxAdd.style.display = isHidden ? 'block' : 'none';
+      if (isHidden && inpTitle) inpTitle.focus();
+    }
+  });
+
+  btnCancelAdd?.addEventListener('click', () => {
+    if (boxAdd) boxAdd.style.display = 'none';
+  });
+
+  btnConfirmAdd?.addEventListener('click', () => {
+    const titleVal = inpTitle?.value?.trim() || `Clause ${broCodeClauses.length + 1}: Bro Honor Rule 🤜🤛`;
+    const textVal = inpText?.value?.trim() || `Agreed and ratified by Bhai under sovereign sibling treaty.`;
+
+    const newClause = {
+      id: Date.now(),
+      title: titleVal,
+      text: textVal
+    };
+
+    broCodeClauses.push(newClause);
+    data.broCodeClauses = broCodeClauses;
+
+    // Render new row
+    const rowEl = document.createElement('div');
+    rowEl.className = 'punchcard-row';
+    rowEl.setAttribute('data-id', newClause.id);
+    rowEl.style.cssText = 'position:relative; cursor:pointer; background:#0f172a; padding:14px; border-radius:14px; margin-bottom:12px; border:1.5px solid rgba(245,158,11,0.4); box-shadow:0 4px 14px rgba(0,0,0,0.4); transition:all 0.2s ease;';
+    rowEl.innerHTML = `
+      <div class="punchcard-info">
+        <h4 style="margin:0 0 4px 0; color:#fbbf24; font-size:14px;">${newClause.title}</h4>
+        <p style="margin:0; font-size:12px; line-height:1.45; color:#cbd5e1;">${newClause.text}</p>
+      </div>
+      <div class="punchcard-slot" id="punchSlot_${newClause.id}" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:2px dashed #f59e0b; display:flex; align-items:center; justify-content:center; font-weight:900;">
+        <span class="stamp-slot-empty"></span>
+      </div>
+    `;
+
+    listContainer?.appendChild(rowEl);
+    bindRowClickListeners();
+    updatePunchCounter();
+
+    // Auto-stamp the newly added clause with celebration
+    stampRow(rowEl);
     playBroTone('arcade');
-    currentPower = Math.min(100, currentPower + 25);
-    brotherLevel += 200;
 
-    powerFill.style.width = `${currentPower}%`;
-    levelText.textContent = `LEVEL ${brotherLevel} BROTHER OVERDRIVE 🔥`;
-
-    gsap.fromTo(levelText, { scale: 1.3 }, { scale: 1, duration: 0.25, ease: 'back.out(2)' });
+    // Reset inputs & close
+    if (inpTitle) inpTitle.value = '';
+    if (inpText) inpText.value = '';
+    if (boxAdd) boxAdd.style.display = 'none';
 
     confetti({
-      particleCount: 40,
-      spread: 60,
-      origin: { y: 0.4 },
-      colors: ['#06b6d4', '#f59e0b', '#ffffff']
+      particleCount: 50,
+      spread: 70,
+      origin: { y: 0.5 },
+      colors: ['#10b981', '#f59e0b', '#dc2626', '#ffffff']
     });
   });
 

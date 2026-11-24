@@ -47,7 +47,10 @@ function toggleSongPreview(src, btn) {
 
 function renderGenPolaroidsBlock(prefix, label, polaroids) {
   return `
-    <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 18px 0 8px;">📸 ${label}:</div>
+    <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 18px 0 8px; display:flex; align-items:center; justify-content:space-between;">
+      <span>📸 ${label}:</span>
+      <span style="font-size:11px; color:#94a3b8;">${polaroids.length} Photo${polaroids.length !== 1 ? 's' : ''}</span>
+    </div>
     <div id="${prefix}PolaroidsList">
       ${polaroids.map((p, i) => `
         <div class="sub-card-editor gen-polaroid-row" data-prefix="${prefix}" data-i="${i}">
@@ -61,23 +64,62 @@ function renderGenPolaroidsBlock(prefix, label, polaroids) {
               </label>
             </div>
             <div class="bcard-caption-col">
-              <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
+                <button type="button" class="btn-del-gen-polaroid" data-prefix="${prefix}" data-i="${i}" title="Remove photo" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; border-radius:6px; padding:2px 8px; font-size:11px; cursor:pointer;">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
               <input type="text" class="form-input gen-pol-title" data-prefix="${prefix}" data-i="${i}" value="${p.title || ''}" placeholder="Title / Caption (e.g. Unforgettable Smile)" />
             </div>
           </div>
           <div class="bcard-presets-chips">
             <span class="preset-chip-label">Quick Pick:</span>
             <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/sunset.jpg"><img src="/images/sunset.jpg" class="preset-chip-img" /> Sunset</button>
+            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/vogue_cover.jpg"><img src="/images/vogue_cover.jpg" class="preset-chip-img" /> Magazine</button>
             <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/always_you.jpg"><img src="/images/always_you.jpg" class="preset-chip-img" /> Always You</button>
             <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/pretty.jpg"><img src="/images/pretty.jpg" class="preset-chip-img" /> Pretty</button>
-            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/dream_girl.jpg"><img src="/images/dream_girl.jpg" class="preset-chip-img" /> Dream Girl</button>
-            <button type="button" class="btn-quick-gen-preset" data-prefix="${prefix}" data-i="${i}" data-src="/images/queen.jpg"><img src="/images/queen.jpg" class="preset-chip-img" /> Queen</button>
           </div>
           <input type="text" class="form-input gen-pol-img" data-prefix="${prefix}" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap camera to upload)" />
           <input type="text" class="form-input gen-pol-note" data-prefix="${prefix}" data-i="${i}" style="margin-top:6px;" value="${p.note || ''}" placeholder="Secret Note / Memory on Tap" />
         </div>
       `).join('')}
     </div>
+    <button type="button" class="btn-add-gen-polaroid" data-prefix="${prefix}" style="margin-top:8px; width:100%; background:rgba(245,158,11,0.15); border:1.5px dashed #f59e0b; color:#fbbf24; padding:8px 14px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+      <i data-lucide="plus-circle"></i> Add Polaroid Photo
+    </button>
+  `;
+}
+
+function renderBroClausesBlock(clauses) {
+  return `
+    <div style="font-weight:700; font-size:13px; color:#fbbf24; margin: 20px 0 8px; display:flex; align-items:center; justify-content:space-between;">
+      <span>📜 Bhai Bro-Code Constitution Clauses:</span>
+      <span style="font-size:11px; color:#94a3b8;">${clauses.length} Clause${clauses.length !== 1 ? 's' : ''}</span>
+    </div>
+    <div id="broClausesList">
+      ${clauses.map((c, i) => `
+        <div class="clause-editor-card" data-idx="${i}">
+          <div class="clause-editor-header">
+            <span style="font-size:11px; font-weight:800; color:#f59e0b;">CLAUSE #${i + 1}</span>
+            <button type="button" class="btn-del-clause" data-idx="${i}">
+              <i data-lucide="trash-2"></i> Delete
+            </button>
+          </div>
+          <div class="form-group" style="margin-bottom:6px;">
+            <label class="form-label" style="font-size:11px;">Clause Title / Rule Name</label>
+            <input type="text" class="form-input ed-clause-title" data-idx="${i}" value="${c.title || ''}" placeholder="e.g. Clause 1: Never Snitch to Mom 🤐" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" style="font-size:11px;">Clause Text / Constitution Rule</label>
+            <textarea rows="2" class="form-textarea ed-clause-text" data-idx="${i}" placeholder="Enter the non-negotiable sibling rule...">${c.text || ''}</textarea>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <button type="button" id="btnAddBroClause" class="btn-add-bro-clause" style="width:100%; justify-content:center; margin-top:8px;">
+      <i data-lucide="plus-circle"></i> Add New Bro-Code Clause
+    </button>
   `;
 }
 
@@ -1140,9 +1182,18 @@ export function renderVisualEditor(container, templateId, data, onChange) {
   } else if (templateId === 'brother') {
     const broPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
       { title: "Chaos & Adventures 🚗", image: "/images/sunset.jpg", note: "Late night drives, wild plans that almost got us into trouble, and countless memories." },
-      { title: "Gaming Battles 🎮", image: "/images/always_you.jpg", note: "Yelling at the TV screen, blaming the controller, and legendary 3 AM tournament wins." },
-      { title: "Brothers for Life 🤜🤛", image: "/images/dream_girl.jpg", note: "No matter how much we roast each other, you are the one person I can always count on." }
+      { title: "Gaming Battles 🎮", image: "/images/vogue_cover.jpg", note: "Yelling at the TV screen, blaming the controller, and legendary 3 AM tournament wins." },
+      { title: "Brothers for Life 🤜🤛", image: "/images/sunset.jpg", note: "No matter how much we roast each other, you are the one person I can always count on." }
     ];
+
+    const defaultClauses = [
+      { id: 1, title: "Clause 1: Never Snitch to Mom 🤐", text: "What happens in the sibling chaos stays strictly in the sibling chaos. Zero exceptions under parent interrogation." },
+      { id: 2, title: "Clause 2: The Sacred Last Slice Rule 🍕", text: "You must always loudly ask 'Anyone want this?' while already taking a huge bite out of it." },
+      { id: 3, title: "Clause 3: TV Controller & Shotgun Privilege 🎮", text: "He who shouts 'SHOTGUN' or grabs the player 1 controller first owns the sovereign rights forever." },
+      { id: 4, title: "Clause 4: 2 AM Bailout Guarantee 🚗", text: "No questions asked. If your brother calls at 2 AM stranded with a flat tire or bad date, you pull up immediately." },
+      { id: 5, title: "Clause 5: Instant Defense in Public 🛡️", text: "We might roast and tackle each other at home, but if anyone from the outside touches a hair on you, they answer to me." }
+    ];
+    const broClauses = (data.broCodeClauses && data.broCodeClauses.length > 0) ? data.broCodeClauses : defaultClauses;
 
     specificBox.innerHTML = `
       <div class="section-title">🤜🤛 Brother Special (Bhai) Details</div>
@@ -1151,6 +1202,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <textarea rows="5" class="form-textarea" id="edBroLetter">${data.letter || ''}</textarea>
       </div>
       ${renderGenPolaroidsBlock('bro', 'Brotherhood Hall of Fame Polaroids', broPols)}
+      ${renderBroClausesBlock(broClauses)}
     `;
   }
 
@@ -1404,6 +1456,59 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     });
   });
 
+  // Bro-Code clause add/delete buttons
+  container.querySelectorAll('.btn-del-clause').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-idx'));
+      const clauses = extractBroCodeClauses() || [];
+      clauses.splice(idx, 1);
+      data.broCodeClauses = clauses;
+      renderVisualEditor(container, templateId, data, onChange);
+      onChange(data);
+    });
+  });
+
+  container.querySelector('#btnAddBroClause')?.addEventListener('click', () => {
+    const clauses = extractBroCodeClauses() || [];
+    const num = clauses.length + 1;
+    clauses.push({
+      id: num,
+      title: `Clause ${num}: Sibling Rule 🤜🤛`,
+      text: ''
+    });
+    data.broCodeClauses = clauses;
+    renderVisualEditor(container, templateId, data, onChange);
+    onChange(data);
+  });
+
+  // Generic polaroid add/delete buttons
+  container.querySelectorAll('.btn-del-gen-polaroid').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prefix = btn.getAttribute('data-prefix');
+      const idx = parseInt(btn.getAttribute('data-i'));
+      const pols = extractGenPols(prefix) || [];
+      pols.splice(idx, 1);
+      data.polaroids = pols;
+      renderVisualEditor(container, templateId, data, onChange);
+      onChange(data);
+    });
+  });
+
+  container.querySelectorAll('.btn-add-gen-polaroid').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prefix = btn.getAttribute('data-prefix');
+      const pols = extractGenPols(prefix) || [];
+      pols.push({
+        title: `Memory #${pols.length + 1} 📸`,
+        image: '/images/sunset.jpg',
+        note: ''
+      });
+      data.polaroids = pols;
+      renderVisualEditor(container, templateId, data, onChange);
+      onChange(data);
+    });
+  });
+
   // Bind text input listeners
   function emitChange() {
     const updated = { ...data };
@@ -1419,6 +1524,18 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         arr.push({ image: img, title, note });
       });
       return arr;
+    }
+
+    function extractBroCodeClauses() {
+      const cards = container.querySelectorAll('.clause-editor-card');
+      if (cards.length === 0) return null;
+      const list = [];
+      cards.forEach((card, i) => {
+        const title = card.querySelector('.ed-clause-title')?.value || `Clause ${i + 1}`;
+        const text = card.querySelector('.ed-clause-text')?.value || '';
+        list.push({ id: i + 1, title, text });
+      });
+      return list;
     }
     const elRec = container.querySelector('#edRecipient');
     const elSend = container.querySelector('#edSender');
@@ -1648,6 +1765,8 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (elBL) updated.letter = elBL.value;
       const broPols = extractGenPols('bro');
       if (broPols) updated.polaroids = broPols;
+      const clauses = extractBroCodeClauses();
+      if (clauses) updated.broCodeClauses = clauses;
     }
 
     onChange(updated);
