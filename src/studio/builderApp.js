@@ -39,28 +39,30 @@ export function renderStudioApp(root) {
       <!-- 1. NEUMORPHIC TOP NAVBAR (Sticky) -->
       <header class="studio-navbar-glass neu-navbar" id="studioNavbar">
         <div class="navbar-glass-inner neu-raised-card">
-          <!-- Brand Mark -->
-          <a href="/" class="studio-brand-link">
-            <div class="studio-brand-gem neu-convex-gem">
-              <i data-lucide="sparkles"></i>
-            </div>
-            <div class="studio-brand-meta">
-              <div class="brand-title-row">
-                <span class="brand-name">Celebration Studio</span>
-                <span class="badge-free-pill neu-badge-pill">Studio Editor</span>
+          <!-- Left Group: Brand Mark + Active Occasion Switcher -->
+          <div class="navbar-left-group">
+            <a href="/" class="studio-brand-link">
+              <div class="studio-brand-gem neu-convex-gem">
+                <i data-lucide="sparkles"></i>
               </div>
-              <span class="brand-subtext">Interactive Wishing Workstation</span>
-            </div>
-          </a>
+              <div class="studio-brand-meta">
+                <div class="brand-title-row">
+                  <span class="brand-name">Celebration Studio</span>
+                  <span class="badge-free-pill neu-badge-pill">Studio Editor</span>
+                </div>
+                <span class="brand-subtext">Interactive Wishing Workstation</span>
+              </div>
+            </a>
 
-          <!-- Active Occasion Quick Badge & Switcher Button (Desktop & Tablet) -->
-          <button type="button" class="btn-nav-glass btn-nav-active-tmpl neu-btn" id="btnNavbarOccasions" title="Browse all 14 celebration occasions">
-            <span class="nav-tmpl-icon" id="navTmplIcon">🌸</span>
-            <span class="nav-tmpl-name" id="navTmplName">Long Romance</span>
-            <i data-lucide="chevron-down" style="width:13px; height:13px; opacity:0.7;"></i>
-          </button>
+            <!-- Active Occasion Quick Badge & Switcher Button (Desktop & Tablet) -->
+            <button type="button" class="btn-nav-glass btn-nav-active-tmpl neu-btn" id="btnNavbarOccasions" title="Browse all 14 celebration occasions">
+              <span class="nav-tmpl-icon" id="navTmplIcon">🌸</span>
+              <span class="nav-tmpl-name" id="navTmplName">Long Romance</span>
+              <i data-lucide="chevron-down" style="width:13px; height:13px; opacity:0.7;"></i>
+            </button>
+          </div>
 
-          <!-- Primary Actions Group -->
+          <!-- Primary Actions Group (Right Aligned) -->
           <div class="navbar-actions-group">
             <button type="button" class="btn-nav-glass btn-theme-toggle neu-btn" id="btnEditorThemeToggle" title="Toggle Soft UI Light / Dark Mode">
               <i data-lucide="moon" id="themeToggleIcon"></i>
@@ -108,10 +110,13 @@ export function renderStudioApp(root) {
             <!-- Neumorphic Quick Occasion Switcher Strip -->
             <div class="occ-quick-strip-wrap neu-inset-well" id="occQuickStripWrap">
               <div class="occ-strip-header">
-                <span class="occ-strip-label">
-                  <i data-lucide="palette"></i>
-                  <span>Switch Occasion:</span>
-                </span>
+                <div class="occ-strip-active-meta">
+                  <span class="occ-strip-label"><i data-lucide="palette"></i> <span>Theme:</span></span>
+                  <span class="occ-active-badge neu-badge-pill" id="stripActiveBadge">
+                    <span id="stripActiveIcon">🌸</span>
+                    <strong id="stripActiveName">Long Romance</strong>
+                  </span>
+                </div>
                 <button type="button" class="btn-browse-all-occasions neu-btn-pill" id="btnOpenOccasionModal">
                   <i data-lucide="grid"></i>
                   <span>All 14 Themes</span>
@@ -124,9 +129,6 @@ export function renderStudioApp(root) {
 
             <!-- Step-by-Step Interactive Creator Journey Guide Mount -->
             <div id="creatorGuideMount"></div>
-
-            <!-- Current Occasion Active Switcher Banner -->
-            <div class="studio-occasion-banner" id="studioOccasionBanner"></div>
 
             <div class="customizer-subheading">
               <i data-lucide="sliders"></i>
@@ -392,30 +394,15 @@ export function renderStudioApp(root) {
 
   function renderOccasionBanner() {
     const tmpl = TEMPLATES[activeTemplateId] || TEMPLATES.long_romance;
-    if (!occasionBannerMount) return;
+    const stripIcon = root.querySelector('#stripActiveIcon');
+    const stripName = root.querySelector('#stripActiveName');
+    if (stripIcon) stripIcon.textContent = tmpl.icon;
+    if (stripName) stripName.textContent = tmpl.name;
 
-    occasionBannerMount.innerHTML = `
-      <div class="occ-banner-card neu-raised-card">
-        <div class="occ-banner-left">
-          <div class="occ-banner-icon-wrap neu-convex-gem">
-            <span class="occ-banner-icon">${tmpl.icon}</span>
-          </div>
-          <div class="occ-banner-info">
-            <span class="occ-banner-badge">${tmpl.badge}</span>
-            <span class="occ-banner-name">${tmpl.name}</span>
-          </div>
-        </div>
-        <button type="button" class="btn-switch-occasion neu-btn" id="btnBannerSwitchOccasion">
-          <i data-lucide="palette"></i>
-          <span>Change Occasion</span>
-        </button>
-      </div>
-    `;
-    renderStudioIcons(occasionBannerMount);
-
-    occasionBannerMount.querySelector('#btnBannerSwitchOccasion')?.addEventListener('click', () => {
-      openOccasionModal();
-    });
+    const navIcon = root.querySelector('#navTmplIcon');
+    const navName = root.querySelector('#navTmplName');
+    if (navIcon) navIcon.textContent = tmpl.icon;
+    if (navName) navName.textContent = tmpl.name;
   }
 
   function switchMobileTab(tab) {

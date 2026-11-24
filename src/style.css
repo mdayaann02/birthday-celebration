@@ -2539,19 +2539,26 @@ button, [role="button"], .btn {
   background: var(--neu-surface);
   border: var(--neu-border);
   box-shadow: var(--neu-shadow-md);
-  border-radius: 20px;
-  padding: 10px 20px;
+  border-radius: 18px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   transition: all 0.2s ease;
+}
+
+.navbar-left-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
 
 .studio-brand-link {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   color: var(--text-main);
   flex-shrink: 0;
@@ -2559,17 +2566,17 @@ button, [role="button"], .btn {
 
 .studio-brand-gem,
 .neu-convex-gem {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
   background: linear-gradient(145deg, #f43f5e, #e11d48);
   border: var(--neu-border);
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25), -3px -3px 8px rgba(255, 255, 255, 0.15);
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.22), -2px -2px 6px rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 19px;
+  font-size: 17px;
   flex-shrink: 0;
   transition: transform 0.18s ease;
 }
@@ -2580,12 +2587,12 @@ button, [role="button"], .btn {
 .brand-title-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .brand-name {
   font-family: 'Playfair Display', serif;
-  font-size: 18.5px;
+  font-size: 17px;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.2px;
@@ -2597,15 +2604,15 @@ button, [role="button"], .btn {
   box-shadow: var(--neu-inset-sm);
   border: var(--neu-border-inset);
   color: var(--emerald-accent);
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 10px;
-  letter-spacing: 0.4px;
+  padding: 2px 7px;
+  border-radius: 8px;
+  letter-spacing: 0.3px;
 }
 
 .brand-subtext {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-dim);
   font-weight: 600;
   display: block;
@@ -2616,15 +2623,16 @@ button, [role="button"], .btn {
   background: var(--neu-surface-sunken);
   box-shadow: var(--neu-inset-sm);
   border: var(--neu-border-subtle);
-  border-radius: 12px;
-  padding: 6px 14px;
+  border-radius: 10px;
+  padding: 5px 12px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--text-main);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+  min-height: 34px;
   transition: all 0.18s ease;
 }
 .btn-nav-active-tmpl:hover {
@@ -2632,14 +2640,15 @@ button, [role="button"], .btn {
   box-shadow: var(--neu-inset-md);
 }
 .nav-tmpl-icon {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 /* Navbar Buttons & Controls */
 .navbar-actions-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .btn-nav-glass,
@@ -2648,16 +2657,16 @@ button, [role="button"], .btn {
   border: var(--neu-border);
   box-shadow: var(--neu-shadow-sm);
   color: var(--text-secondary);
-  padding: 8px 14px;
-  border-radius: 12px;
-  font-size: 12.5px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   text-decoration: none;
-  min-height: 38px;
+  min-height: 34px;
   box-sizing: border-box;
   transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
@@ -2677,8 +2686,8 @@ button, [role="button"], .btn {
 
 .btn-theme-toggle i,
 .btn-nav-glass i {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
 }
 
 .btn-nav-recipient {
@@ -2693,26 +2702,26 @@ button, [role="button"], .btn {
   background: linear-gradient(145deg, #f43f5e, #e11d48);
   border: var(--neu-border);
   color: #ffffff !important;
-  box-shadow: 4px 4px 12px rgba(244, 63, 94, 0.35), -3px -3px 8px rgba(255, 255, 255, 0.15);
-  padding: 9px 18px;
-  border-radius: 12px;
-  font-size: 13px;
+  box-shadow: 3px 3px 10px rgba(244, 63, 94, 0.35), -2px -2px 6px rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 38px;
+  gap: 6px;
+  min-height: 34px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .btn-nav-share:hover,
 .neu-btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 6px 6px 16px rgba(244, 63, 94, 0.5), -4px -4px 10px rgba(255, 255, 255, 0.2);
+  box-shadow: 4px 4px 14px rgba(244, 63, 94, 0.5), -3px -3px 8px rgba(255, 255, 255, 0.2);
 }
 .btn-nav-share:active,
 .neu-btn-primary:active {
-  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.15);
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.3), inset -2px -2px 5px rgba(255, 255, 255, 0.15);
   transform: translateY(1px);
 }
 
@@ -2721,7 +2730,7 @@ button, [role="button"], .btn {
   position: relative;
   z-index: 10;
   max-width: 1360px;
-  margin: 18px auto 40px auto;
+  margin: 12px auto 30px auto;
   padding: 0 16px;
   width: 100%;
   box-sizing: border-box;
@@ -2729,7 +2738,7 @@ button, [role="button"], .btn {
 
 .studio-workspace {
   display: flex;
-  gap: 22px;
+  gap: 16px;
   align-items: flex-start;
   min-height: calc(100vh - 120px);
   position: relative;
@@ -2741,10 +2750,10 @@ button, [role="button"], .btn {
   max-width: 580px;
   height: 870px;
   overflow-y: auto;
-  padding: 22px 20px;
+  padding: 16px 16px;
   background: var(--neu-surface);
   border: var(--neu-border);
-  border-radius: 24px;
+  border-radius: 20px;
   box-shadow: var(--neu-shadow-md);
   box-sizing: border-box;
   scrollbar-width: thin;
@@ -2765,27 +2774,52 @@ button, [role="button"], .btn {
   background: var(--neu-surface-sunken);
   box-shadow: var(--neu-inset-sm);
   border: var(--neu-border-inset);
-  border-radius: 18px;
-  padding: 12px 14px;
-  margin-bottom: 18px;
+  border-radius: 14px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
 }
 
 .occ-strip-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.occ-strip-active-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .occ-strip-label {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
+  gap: 5px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--primary-accent);
+}
+
+.occ-active-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  gap: 4px;
+  color: var(--primary-accent);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-sm);
+  border-radius: 8px;
+  border: var(--neu-border);
+  display: inline-flex;
+  align-items: center;
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn-browse-all-occasions,
@@ -2794,15 +2828,16 @@ button, [role="button"], .btn {
   border: var(--neu-border);
   box-shadow: var(--neu-shadow-sm);
   color: var(--text-main);
-  padding: 5px 12px;
-  border-radius: 20px;
+  padding: 4px 10px;
+  border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 .btn-browse-all-occasions:hover {
   color: var(--primary-accent);
@@ -2815,9 +2850,9 @@ button, [role="button"], .btn {
 
 .occ-quick-pills-row {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   overflow-x: auto;
-  padding: 4px 2px 8px 2px;
+  padding: 2px 2px 4px 2px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -2830,14 +2865,14 @@ button, [role="button"], .btn {
   border: var(--neu-border);
   box-shadow: var(--neu-shadow-sm);
   color: var(--text-secondary);
-  padding: 7px 14px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   white-space: nowrap;
   flex-shrink: 0;
   transition: all 0.16s ease;
@@ -2859,116 +2894,32 @@ button, [role="button"], .btn {
 }
 
 .occ-pill-icon {
-  font-size: 14px;
+  font-size: 13px;
 }
 .occ-pill-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--primary-accent);
-  box-shadow: 0 0 6px var(--primary-accent);
+  box-shadow: 0 0 5px var(--primary-accent);
 }
 
-/* Occasion Active Banner */
+/* Occasion Active Banner (deprecated / hidden in streamlined layout) */
 .studio-occasion-banner {
-  margin-bottom: 18px;
-}
-
-.occ-banner-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: var(--neu-surface);
-  border: var(--neu-border);
-  box-shadow: var(--neu-shadow-sm);
-  border-radius: 16px;
-  padding: 12px 16px;
-}
-
-.occ-banner-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.occ-banner-icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--neu-surface-sunken);
-  box-shadow: var(--neu-inset-sm);
-  border: var(--neu-border-inset);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.occ-banner-icon {
-  font-size: 22px;
-}
-
-.occ-banner-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.occ-banner-badge {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--gold-accent);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.occ-banner-name {
-  font-size: 14.5px;
-  font-weight: 800;
-  color: var(--text-main);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.btn-switch-occasion {
-  background: var(--neu-surface);
-  border: var(--neu-border);
-  box-shadow: var(--neu-shadow-sm);
-  color: var(--text-main);
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 8px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.16s ease;
-}
-.btn-switch-occasion:hover {
-  color: var(--primary-accent);
-  box-shadow: var(--neu-shadow-hover);
-}
-.btn-switch-occasion:active {
-  box-shadow: var(--neu-inset-sm);
-  transform: translateY(1px);
+  display: none !important;
 }
 
 .customizer-subheading {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-size: 10.5px;
+  letter-spacing: 1.5px;
   color: var(--primary-accent);
   font-weight: 800;
-  margin-bottom: 14px;
-  margin-top: 6px;
+  margin-bottom: 8px;
+  margin-top: 4px;
 }
 
 /* Visual Editor Form Sections & Accordions */
@@ -2976,9 +2927,9 @@ button, [role="button"], .btn {
   background: var(--neu-surface);
   border: var(--neu-border);
   box-shadow: var(--neu-shadow-sm);
-  border-radius: 18px;
-  padding: 18px 16px;
-  margin-bottom: 16px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
   color: var(--text-main);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -2998,7 +2949,7 @@ button, [role="button"], .btn {
   align-items: center;
   cursor: pointer;
   user-select: none;
-  padding: 2px 0 4px 0;
+  padding: 2px 0 2px 0;
 }
 
 .editor-section.collapsed .editor-section-body {
@@ -3006,8 +2957,8 @@ button, [role="button"], .btn {
 }
 
 .section-collapse-arrow {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--neu-surface);
   box-shadow: var(--neu-shadow-sm);
@@ -3026,7 +2977,7 @@ button, [role="button"], .btn {
 }
 
 .section-title {
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-main);
   letter-spacing: -0.1px;
@@ -3037,23 +2988,23 @@ button, [role="button"], .btn {
   background: var(--neu-surface-sunken);
   box-shadow: var(--neu-inset-sm);
   border: var(--neu-border-inset);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 14px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
   color: var(--text-main);
 }
 
 /* Neumorphic Form Controls (Debossed Wells) */
 .form-group {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .form-label {
   display: block;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   letter-spacing: 0.2px;
 }
 
@@ -3064,12 +3015,12 @@ select.form-input {
   background: var(--neu-surface-sunken) !important;
   box-shadow: var(--neu-inset-md) !important;
   border: var(--neu-border-inset) !important;
-  border-radius: 12px !important;
+  border-radius: 10px !important;
   color: var(--text-main) !important;
-  padding: 10px 14px !important;
-  font-size: 13.5px !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
   font-family: inherit !important;
-  min-height: 42px !important;
+  min-height: 38px !important;
   width: 100% !important;
   box-sizing: border-box !important;
   outline: none !important;
@@ -3183,6 +3134,79 @@ select option {
   animation: liveDotPulse 1.5s infinite;
 }
 
+/* Quick Pick Photo Chips & Polaroid Presets */
+.bcard-presets-chips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.preset-chip-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+.btn-quick-preset,
+.btn-quick-pol-preset,
+.btn-quick-gen-preset,
+.btn-quick-tree-preset {
+  background: var(--neu-surface);
+  border: var(--neu-border);
+  box-shadow: var(--neu-shadow-sm);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  margin: 0;
+}
+.btn-quick-preset:hover,
+.btn-quick-pol-preset:hover,
+.btn-quick-gen-preset:hover,
+.btn-quick-tree-preset:hover {
+  color: var(--primary-accent);
+  box-shadow: var(--neu-shadow-hover);
+  transform: translateY(-1px);
+}
+.btn-quick-preset:active,
+.btn-quick-pol-preset:active,
+.btn-quick-gen-preset:active,
+.btn-quick-tree-preset:active {
+  box-shadow: var(--neu-inset-sm);
+  transform: translateY(1px);
+}
+.preset-chip-img {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  object-fit: cover;
+}
+
+/* Editor Form Footer Actions */
+.editor-form-footer {
+  margin-top: 12px !important;
+  padding-top: 10px !important;
+  border-top: var(--neu-border-inset);
+  display: flex;
+  gap: 8px !important;
+  align-items: center;
+}
+.btn-footer-save,
+.btn-footer-share {
+  flex: 1;
+  justify-content: center;
+  padding: 8px 14px !important;
+  font-size: 12px !important;
+  min-height: 36px !important;
+}
+
 /* 3. NEUMORPHIC LIVE PREVIEW PANE */
 .studio-preview-pane {
   flex: 1;
@@ -3193,26 +3217,26 @@ select option {
   flex-direction: column;
   background: var(--neu-surface);
   border: var(--neu-border);
-  border-radius: 24px;
+  border-radius: 20px;
   box-shadow: var(--neu-shadow-md);
   overflow: hidden;
-  padding: 16px;
+  padding: 12px;
   box-sizing: border-box;
 }
 
 .preview-device-header {
-  height: 48px;
+  height: 40px;
   background: var(--neu-surface-sunken);
   box-shadow: var(--neu-inset-sm);
   border: var(--neu-border-inset);
-  border-radius: 16px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 12px;
-  gap: 10px;
+  padding: 0 10px;
+  gap: 8px;
   color: var(--text-main);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   flex-shrink: 0;
 }
 
@@ -3222,24 +3246,24 @@ select option {
   background: var(--neu-surface-inset);
   box-shadow: var(--neu-inset-sm);
   border: var(--neu-border-inset);
-  padding: 3px;
-  border-radius: 12px;
-  gap: 3px;
+  padding: 2px;
+  border-radius: 9px;
+  gap: 2px;
 }
 
 .btn-viewport-toggle,
 .neu-viewport-btn {
   border: none;
   background: transparent;
-  padding: 6px 12px;
-  border-radius: 9px;
+  padding: 4px 8px;
+  border-radius: 7px;
   font-size: 11px;
   font-weight: 700;
   color: var(--text-dim);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   transition: all 0.16s ease;
 }
 .btn-viewport-toggle:hover {
@@ -3255,23 +3279,24 @@ select option {
 
 .preview-url-bar,
 .neu-inset-pill {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-dim);
   background: var(--neu-surface-inset);
   box-shadow: var(--neu-inset-sm);
   border: var(--neu-border-inset);
-  padding: 5px 12px;
-  border-radius: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
   letter-spacing: 0.3px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .preview-device-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .btn-preview-reload,
@@ -3279,9 +3304,9 @@ select option {
   background: var(--neu-surface);
   border: var(--neu-border);
   box-shadow: var(--neu-shadow-sm);
-  border-radius: 10px;
-  width: 32px;
-  height: 32px;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;

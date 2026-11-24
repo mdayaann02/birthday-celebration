@@ -25,7 +25,7 @@ export function startStudioTour({ onSwitchTab, onOpenShare, onFocusEditor } = {}
       },
       steps: [
         {
-          element: '#studioOccasionBanner',
+          element: '#occQuickStripWrap',
           popover: {
             title: '🎨 1. Choose Occasion & Template',
             description: 'Pick who this celebration is for: Long Romance Masterpiece, Cupid & Tree, Birthday, Anniversary, Sorry, and more.',
@@ -73,7 +73,7 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
   if (!container) return;
 
   let currentStep = 1;
-  let isCollapsed = false;
+  let isCollapsed = true;
 
   const stepsData = [
     {
