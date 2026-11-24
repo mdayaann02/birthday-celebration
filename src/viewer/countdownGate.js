@@ -15,14 +15,8 @@ export function checkCountdownLock(data) {
     return { isLocked: false };
   }
 
-  // Check if maker review flag is active in query / hash / session
-  const urlParams = new URLSearchParams(window.location.search);
-  const hash = window.location.hash || '';
-  if (
-    urlParams.get("review") === "true" ||
-    hash.includes("review=true") ||
-    sessionStorage.getItem("maker_review_unlocked") === "true"
-  ) {
+  // Only allow early review if authenticated in session storage
+  if (sessionStorage.getItem("maker_review_unlocked") === "true") {
     return { isLocked: false, isMakerReview: true };
   }
 
@@ -111,9 +105,28 @@ export function renderCountdownGate(container, data, onUnlock) {
           <button class="btn-maker-review" id="btnMakerReview">
             👁️ Are you the creator? Review Website
           </button>
-          <div style="margin-top:8px;">
-            <button type="button" class="btn-test-curtains" id="btnTestCurtains" style="background:none; border:none; color:#f472b6; font-size:11.5px; text-decoration:underline; cursor:pointer;">
-              🎭 Preview Curtains Opening Animation
+        </div>
+      </div>
+
+      <!-- Secure Creator Early Review Authentication Modal -->
+      <div id="makerAuthModal" style="display:none; position:fixed; inset:0; background:rgba(2,6,23,0.85); backdrop-filter:blur(10px); z-index:999999; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#0f172a; border:1.5px solid rgba(245,158,11,0.5); border-radius:20px; max-width:350px; width:100%; padding:24px 20px; box-shadow:0 16px 40px rgba(0,0,0,0.8); text-align:center; box-sizing:border-box;">
+          <div style="font-size:32px; margin-bottom:8px;">🔐</div>
+          <h3 style="margin:0 0 6px 0; color:#fbbf24; font-size:17px; font-weight:800;">Creator Passcode Required</h3>
+          <p style="margin:0 0 16px 0; font-size:12px; color:#94a3b8; line-height:1.45;">
+            Surprise is locked until event countdown ends. Enter the secret Editor Passcode to unlock early review.
+          </p>
+          <div style="margin-bottom:14px; text-align:left;">
+            <label style="display:block; font-size:11px; font-weight:700; color:#cbd5e1; margin-bottom:6px;">Secret Editor Passcode</label>
+            <input type="password" id="inpReviewPasscode" placeholder="••••" autocomplete="off" style="width:100%; box-sizing:border-box; padding:12px 14px; border-radius:12px; background:#1e293b; border:1.5px solid rgba(245,158,11,0.5); color:#fff; font-size:16px; letter-spacing:4px; text-align:center;" />
+            <div id="reviewPassError" style="display:none; color:#f87171; font-size:11.5px; margin-top:8px; font-weight:700;">❌ Incorrect passcode! Access denied.</div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button type="button" id="btnSubmitReviewPass" style="flex:1; background:linear-gradient(135deg, #f59e0b, #d97706); color:#000; font-weight:800; font-size:13px; padding:11px 14px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(245,158,11,0.3);">
+              Unlock Review 🔓
+            </button>
+            <button type="button" id="btnCancelReviewPass" style="background:#334155; color:#94a3b8; font-weight:700; font-size:13px; padding:11px 16px; border-radius:12px; border:none; cursor:pointer;">
+              Cancel
             </button>
           </div>
         </div>
@@ -235,24 +248,62 @@ export function renderCountdownGate(container, data, onUnlock) {
   updateClock();
   const timerInterval = setInterval(updateClock, 1000);
 
-  // Curtains animation preview button
-  document.getElementById("btnTestCurtains")?.addEventListener("click", () => {
-    playCurtainsReveal(() => {
-      onUnlock(true);
-    });
-  });
+  // Secure Maker Review Authentication Modal Handlers
+  const authModal = document.getElementById("makerAuthModal");
+  const inpPass = document.getElementById("inpReviewPasscode");
+  const errPass = document.getElementById("reviewPassError");
+  const btnSubmit = document.getElementById("btnSubmitReviewPass");
+  const btnCancel = document.getElementById("btnCancelReviewPass");
 
-  // Maker review bypass handler
-  document.getElementById("btnMakerReview")?.addEventListener("click", () => {
-    const entered = prompt("Enter Maker Passcode to preview early (Default: " + (data.passcode || "1234") + "):", "");
-    if (entered === (data.passcode || "1234") || entered === "admin") {
+  function openReviewAuthModal() {
+    if (authModal) {
+      authModal.style.display = "flex";
+      if (errPass) errPass.style.display = "none";
+      if (inpPass) {
+        inpPass.value = "";
+        inpPass.style.borderColor = "rgba(245,158,11,0.5)";
+        setTimeout(() => inpPass.focus(), 120);
+      }
+    }
+  }
+
+  function handleVerifyPasscode() {
+    const entered = (inpPass?.value || "").trim();
+    const correctPass = String(data.passcode || "1234").trim();
+
+    if (entered.length > 0 && entered === correctPass) {
       sessionStorage.setItem("maker_review_unlocked", "true");
+      if (authModal) authModal.style.display = "none";
       clearInterval(timerInterval);
       playCurtainsReveal(() => {
         onUnlock(true);
       });
-    } else if (entered !== null) {
-      alert("Incorrect passcode! Only the website creator can unlock early review mode.");
+    } else {
+      if (errPass) {
+        errPass.style.display = "block";
+        errPass.textContent = "❌ Incorrect passcode! Access denied.";
+      }
+      if (inpPass) {
+        inpPass.style.borderColor = "#ef4444";
+        inpPass.focus();
+        inpPass.select();
+      }
     }
+  }
+
+  btnSubmit?.addEventListener("click", handleVerifyPasscode);
+  inpPass?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleVerifyPasscode();
   });
+  btnCancel?.addEventListener("click", () => {
+    if (authModal) authModal.style.display = "none";
+  });
+  document.getElementById("btnMakerReview")?.addEventListener("click", openReviewAuthModal);
+
+  // If visitor navigated with ?review=true or #review=true, open authentication modal for creator
+  const urlParams = new URLSearchParams(window.location.search);
+  const hash = window.location.hash || "";
+  if (urlParams.get("review") === "true" || hash.includes("review=true")) {
+    openReviewAuthModal();
+  }
 }

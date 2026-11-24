@@ -95,7 +95,7 @@ export function renderBrotherTemplate(container, data) {
     { id: 5, title: "Clause 5: Instant Defense in Public 🛡️", text: "We might roast and tackle each other at home, but if anyone from the outside touches a hair on you, they answer to me." }
   ];
 
-  let broCodeClauses = (data.broCodeClauses && data.broCodeClauses.length > 0)
+  let broCodeClauses = Array.isArray(data.broCodeClauses)
     ? JSON.parse(JSON.stringify(data.broCodeClauses))
     : defaultBroClauses;
 
@@ -231,14 +231,23 @@ export function renderBrotherTemplate(container, data) {
               </div>
 
               <div class="punchcard-list" id="broPunchcardList">
-                ${broCodeClauses.map(c => `
+                ${broCodeClauses.length === 0 ? `
+                  <div style="text-align:center; padding:18px; color:#94a3b8; font-size:12px; background:#0f172a; border-radius:12px; border:1px dashed rgba(245,158,11,0.4);">
+                    No clauses in the constitution yet. Tap below to establish brotherly laws!
+                  </div>
+                ` : broCodeClauses.map(c => `
                   <div class="punchcard-row" data-id="${c.id}" style="position:relative; cursor:pointer; background:#0f172a; padding:14px; border-radius:14px; margin-bottom:12px; border:1.5px solid rgba(245,158,11,0.4); box-shadow:0 4px 14px rgba(0,0,0,0.4); transition:all 0.2s ease;">
-                    <div class="punchcard-info">
+                    <div class="punchcard-info" style="padding-right: 76px;">
                       <h4 style="margin:0 0 4px 0; color:#fbbf24; font-size:14px;">${c.title}</h4>
                       <p style="margin:0; font-size:12px; line-height:1.45; color:#cbd5e1;">${c.text}</p>
                     </div>
-                    <div class="punchcard-slot" id="punchSlot_${c.id}" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:2px dashed #f59e0b; display:flex; align-items:center; justify-content:center; font-weight:900;">
-                      <span class="stamp-slot-empty"></span>
+                    <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:8px;">
+                      <button type="button" class="btn-del-bro-clause" data-id="${c.id}" title="Delete clause" style="background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.45); color:#f87171; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; padding:0; transition:all 0.15s ease;">
+                        ✕
+                      </button>
+                      <div class="punchcard-slot" id="punchSlot_${c.id}" style="width:32px; height:32px; border-radius:50%; border:2px dashed #f59e0b; display:flex; align-items:center; justify-content:center; font-weight:900;">
+                        <span class="stamp-slot-empty"></span>
+                      </div>
                     </div>
                   </div>
                 `).join('')}
@@ -1019,8 +1028,10 @@ export function renderBrotherTemplate(container, data) {
   const ratifiedBanner = container.querySelector('#broRatifiedBanner');
 
   function updatePunchCounter() {
+    const stampedRows = listContainer?.querySelectorAll('.punchcard-row.stamped') || [];
+    stampedCount = stampedRows.length;
     if (punchCounter) {
-      punchCounter.textContent = `${stampedCount} / ${broCodeClauses.length} Clauses Ratified ${stampedCount >= broCodeClauses.length ? '✓ (All Enforced!)' : ''}`;
+      punchCounter.textContent = `${stampedCount} / ${broCodeClauses.length} Clauses Ratified ${broCodeClauses.length > 0 && stampedCount >= broCodeClauses.length ? '✓ (All Enforced!)' : ''}`;
     }
   }
 
@@ -1059,7 +1070,6 @@ export function renderBrotherTemplate(container, data) {
         );
       }
 
-      stampedCount++;
       updatePunchCounter();
 
       confetti({
@@ -1069,10 +1079,40 @@ export function renderBrotherTemplate(container, data) {
         colors: ['#dc2626', '#f59e0b', '#ffffff']
       });
 
-      if (stampedCount >= broCodeClauses.length) {
+      if (stampedCount >= broCodeClauses.length && broCodeClauses.length > 0) {
         triggerRatificationCeremony();
       }
     }
+  }
+
+  function bindDeleteClauseListeners() {
+    container.querySelectorAll('.btn-del-bro-clause').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const cid = btn.getAttribute('data-id');
+        const row = btn.closest('.punchcard-row');
+        if (!row) return;
+
+        row.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+        row.style.transform = 'scale(0.85) translateX(30px)';
+        row.style.opacity = '0';
+
+        setTimeout(() => {
+          row.remove();
+          broCodeClauses = broCodeClauses.filter(c => String(c.id) !== String(cid));
+          data.broCodeClauses = broCodeClauses;
+          updatePunchCounter();
+
+          if (broCodeClauses.length === 0 && listContainer) {
+            listContainer.innerHTML = `
+              <div style="text-align:center; padding:18px; color:#94a3b8; font-size:12px; background:#0f172a; border-radius:12px; border:1px dashed rgba(245,158,11,0.4);">
+                No clauses in the constitution yet. Tap below to establish brotherly laws!
+              </div>
+            `;
+          }
+        }, 220);
+      };
+    });
   }
 
   function bindRowClickListeners() {
@@ -1081,6 +1121,7 @@ export function renderBrotherTemplate(container, data) {
     });
   }
   bindRowClickListeners();
+  bindDeleteClauseListeners();
   updatePunchCounter();
 
   btnStampAll?.addEventListener('click', () => {
@@ -1121,23 +1162,33 @@ export function renderBrotherTemplate(container, data) {
     broCodeClauses.push(newClause);
     data.broCodeClauses = broCodeClauses;
 
+    // Remove empty state message if present
+    const emptyMsg = listContainer?.querySelector('div[style*="No clauses in the constitution"]');
+    if (emptyMsg) emptyMsg.remove();
+
     // Render new row
     const rowEl = document.createElement('div');
     rowEl.className = 'punchcard-row';
     rowEl.setAttribute('data-id', newClause.id);
     rowEl.style.cssText = 'position:relative; cursor:pointer; background:#0f172a; padding:14px; border-radius:14px; margin-bottom:12px; border:1.5px solid rgba(245,158,11,0.4); box-shadow:0 4px 14px rgba(0,0,0,0.4); transition:all 0.2s ease;';
     rowEl.innerHTML = `
-      <div class="punchcard-info">
+      <div class="punchcard-info" style="padding-right: 76px;">
         <h4 style="margin:0 0 4px 0; color:#fbbf24; font-size:14px;">${newClause.title}</h4>
         <p style="margin:0; font-size:12px; line-height:1.45; color:#cbd5e1;">${newClause.text}</p>
       </div>
-      <div class="punchcard-slot" id="punchSlot_${newClause.id}" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:2px dashed #f59e0b; display:flex; align-items:center; justify-content:center; font-weight:900;">
-        <span class="stamp-slot-empty"></span>
+      <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:8px;">
+        <button type="button" class="btn-del-bro-clause" data-id="${newClause.id}" title="Delete clause" style="background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.45); color:#f87171; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; padding:0; transition:all 0.15s ease;">
+          ✕
+        </button>
+        <div class="punchcard-slot" id="punchSlot_${newClause.id}" style="width:32px; height:32px; border-radius:50%; border:2px dashed #f59e0b; display:flex; align-items:center; justify-content:center; font-weight:900;">
+          <span class="stamp-slot-empty"></span>
+        </div>
       </div>
     `;
 
     listContainer?.appendChild(rowEl);
     bindRowClickListeners();
+    bindDeleteClauseListeners();
     updatePunchCounter();
 
     // Auto-stamp the newly added clause with celebration

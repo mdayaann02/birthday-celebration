@@ -92,13 +92,18 @@ function renderGenPolaroidsBlock(prefix, label, polaroids) {
 }
 
 function renderBroClausesBlock(clauses) {
+  const safeClauses = Array.isArray(clauses) ? clauses : [];
   return `
     <div style="font-weight:700; font-size:13px; color:#fbbf24; margin: 20px 0 8px; display:flex; align-items:center; justify-content:space-between;">
       <span>📜 Bhai Bro-Code Constitution Clauses:</span>
-      <span style="font-size:11px; color:#94a3b8;">${clauses.length} Clause${clauses.length !== 1 ? 's' : ''}</span>
+      <span style="font-size:11px; color:#94a3b8;">${safeClauses.length} Clause${safeClauses.length !== 1 ? 's' : ''}</span>
     </div>
     <div id="broClausesList">
-      ${clauses.map((c, i) => `
+      ${safeClauses.length === 0 ? `
+        <div style="text-align:center; padding:16px; background:rgba(245,158,11,0.06); border:1.5px dashed rgba(245,158,11,0.3); border-radius:12px; margin-bottom:10px; color:#94a3b8; font-size:12px;">
+          No clauses in constitution yet. Click below to add one!
+        </div>
+      ` : safeClauses.map((c, i) => `
         <div class="clause-editor-card" data-idx="${i}">
           <div class="clause-editor-header">
             <span style="font-size:11px; font-weight:800; color:#f59e0b;">CLAUSE #${i + 1}</span>
@@ -1193,7 +1198,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       { id: 4, title: "Clause 4: 2 AM Bailout Guarantee 🚗", text: "No questions asked. If your brother calls at 2 AM stranded with a flat tire or bad date, you pull up immediately." },
       { id: 5, title: "Clause 5: Instant Defense in Public 🛡️", text: "We might roast and tackle each other at home, but if anyone from the outside touches a hair on you, they answer to me." }
     ];
-    const broClauses = (data.broCodeClauses && data.broCodeClauses.length > 0) ? data.broCodeClauses : defaultClauses;
+    const broClauses = Array.isArray(data.broCodeClauses) ? data.broCodeClauses : defaultClauses;
 
     specificBox.innerHTML = `
       <div class="section-title">🤜🤛 Brother Special (Bhai) Details</div>
@@ -1456,48 +1461,83 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     });
   });
 
+  // Hoisted helper extractors for dynamic sections
+  function extractGenPols(prefix) {
+    const rows = container.querySelectorAll(`.gen-polaroid-row[data-prefix="${prefix}"]`);
+    if (rows.length === 0) return [];
+    const arr = [];
+    rows.forEach(row => {
+      const img = row.querySelector('.gen-pol-img')?.value || '/images/sunset.jpg';
+      const title = row.querySelector('.gen-pol-title')?.value || '';
+      const note = row.querySelector('.gen-pol-note')?.value || '';
+      arr.push({ image: img, title, note });
+    });
+    return arr;
+  }
+
+  function extractBroCodeClauses() {
+    const cards = container.querySelectorAll('.clause-editor-card');
+    if (cards.length === 0) return [];
+    const list = [];
+    cards.forEach((card, i) => {
+      const title = card.querySelector('.ed-clause-title')?.value || `Clause ${i + 1}`;
+      const text = card.querySelector('.ed-clause-text')?.value || '';
+      list.push({ id: i + 1, title, text });
+    });
+    return list;
+  }
+
   // Bro-Code clause add/delete buttons
   container.querySelectorAll('.btn-del-clause').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const idx = parseInt(btn.getAttribute('data-idx'));
-      const clauses = extractBroCodeClauses() || [];
-      clauses.splice(idx, 1);
-      data.broCodeClauses = clauses;
-      renderVisualEditor(container, templateId, data, onChange);
-      onChange(data);
+      const clauses = extractBroCodeClauses();
+      if (idx >= 0 && idx < clauses.length) {
+        clauses.splice(idx, 1);
+        data.broCodeClauses = clauses;
+        renderVisualEditor(container, templateId, data, onChange);
+        emitChange();
+      }
     });
   });
 
-  container.querySelector('#btnAddBroClause')?.addEventListener('click', () => {
-    const clauses = extractBroCodeClauses() || [];
+  container.querySelector('#btnAddBroClause')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const clauses = extractBroCodeClauses();
     const num = clauses.length + 1;
     clauses.push({
-      id: num,
+      id: Date.now(),
       title: `Clause ${num}: Sibling Rule 🤜🤛`,
       text: ''
     });
     data.broCodeClauses = clauses;
     renderVisualEditor(container, templateId, data, onChange);
-    onChange(data);
+    emitChange();
   });
 
   // Generic polaroid add/delete buttons
   container.querySelectorAll('.btn-del-gen-polaroid').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       const prefix = btn.getAttribute('data-prefix');
       const idx = parseInt(btn.getAttribute('data-i'));
-      const pols = extractGenPols(prefix) || [];
-      pols.splice(idx, 1);
-      data.polaroids = pols;
-      renderVisualEditor(container, templateId, data, onChange);
-      onChange(data);
+      const pols = extractGenPols(prefix);
+      if (idx >= 0 && idx < pols.length) {
+        pols.splice(idx, 1);
+        data.polaroids = pols;
+        renderVisualEditor(container, templateId, data, onChange);
+        emitChange();
+      }
     });
   });
 
   container.querySelectorAll('.btn-add-gen-polaroid').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       const prefix = btn.getAttribute('data-prefix');
-      const pols = extractGenPols(prefix) || [];
+      const pols = extractGenPols(prefix);
       pols.push({
         title: `Memory #${pols.length + 1} 📸`,
         image: '/images/sunset.jpg',
@@ -1505,38 +1545,13 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       });
       data.polaroids = pols;
       renderVisualEditor(container, templateId, data, onChange);
-      onChange(data);
+      emitChange();
     });
   });
 
   // Bind text input listeners
   function emitChange() {
     const updated = { ...data };
-
-    function extractGenPols(prefix) {
-      const rows = container.querySelectorAll(`.gen-polaroid-row[data-prefix="${prefix}"]`);
-      if (rows.length === 0) return null;
-      const arr = [];
-      rows.forEach(row => {
-        const img = row.querySelector('.gen-pol-img')?.value || '/images/sunset.jpg';
-        const title = row.querySelector('.gen-pol-title')?.value || '';
-        const note = row.querySelector('.gen-pol-note')?.value || '';
-        arr.push({ image: img, title, note });
-      });
-      return arr;
-    }
-
-    function extractBroCodeClauses() {
-      const cards = container.querySelectorAll('.clause-editor-card');
-      if (cards.length === 0) return null;
-      const list = [];
-      cards.forEach((card, i) => {
-        const title = card.querySelector('.ed-clause-title')?.value || `Clause ${i + 1}`;
-        const text = card.querySelector('.ed-clause-text')?.value || '';
-        list.push({ id: i + 1, title, text });
-      });
-      return list;
-    }
     const elRec = container.querySelector('#edRecipient');
     const elSend = container.querySelector('#edSender');
     const elHeroT = container.querySelector('#edHeroTitle');
@@ -1764,9 +1779,9 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const elBL = container.querySelector('#edBroLetter');
       if (elBL) updated.letter = elBL.value;
       const broPols = extractGenPols('bro');
-      if (broPols) updated.polaroids = broPols;
+      if (Array.isArray(broPols)) updated.polaroids = broPols;
       const clauses = extractBroCodeClauses();
-      if (clauses) updated.broCodeClauses = clauses;
+      if (Array.isArray(clauses)) updated.broCodeClauses = clauses;
     }
 
     onChange(updated);
