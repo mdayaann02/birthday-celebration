@@ -104,6 +104,37 @@ export function renderBrotherTemplate(container, data) {
     <div id="broPlayerSlot"></div>
 
     <div class="fam-page-viewport fam-storybook-viewport brother-viewport">
+      <!-- SACRED BHAI BRO-CODE VAULT GATE (VIRAL CINEMATIC OPENER) -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="broGate" role="button" tabindex="0" aria-label="Tap to strike the sacred Bhai Bro-Code oath">
+        <div class="bro-gate-circuit-bg" aria-hidden="true"></div>
+        <canvas id="broGateBurstCanvas" class="bro-gate-burst-canvas"></canvas>
+
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring"></div>
+          <div class="bro-gate-fists-wrap" id="broGateFists">
+            <span class="bro-gate-fist left-fist">🤜</span>
+            <div class="bro-gate-core-spark">⚡</div>
+            <span class="bro-gate-fist right-fist">🤛</span>
+          </div>
+        </div>
+
+        <div class="bro-gate-badge">
+          <span>⚡ TOP SECRET SIBLING ARCHIVE • BROTHERHOOD PROTOCOL ⚡</span>
+        </div>
+
+        <h2 class="bro-gate-title">
+          The Sacred Bhai Bro-Code
+        </h2>
+
+        <p class="bro-gate-label">
+          ✦ TAP / SLAM FISTS TO RATIFY OATH &amp; UNLOCK ✦
+        </p>
+
+        <div class="bro-gate-hint">
+          <span>Strike fists together to enter the archives</span>
+        </div>
+      </div>
+
       <!-- Ambient Cyber Amber/Cyan Sparks Canvas -->
       <canvas id="broStarCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
@@ -239,6 +270,20 @@ export function renderBrotherTemplate(container, data) {
                 <button class="btn-fam-action" id="btnStampAllBro" style="background:linear-gradient(135deg, #dc2626, #991b1b); color:#fff; border-radius:20px; font-weight:800; padding:8px 20px; border:2px solid #f87171; margin-top:2px;">
                   🔴 SLAM "BRO-CODE RATIFIED" RUBBER STAMP
                 </button>
+
+                <!-- Holographic Bro-Code Ratified Ceremony Card -->
+                <div id="broRatifiedBanner" class="bro-ratified-ceremony" style="display:none; width:100%; box-sizing:border-box;">
+                  <div class="bro-seal-crown">👑 📜 ⚡</div>
+                  <h3 style="color:#fbbf24; margin:4px 0 6px 0; font-size:15px; font-weight:900; text-transform:uppercase; letter-spacing:0.8px;">
+                    Bro-Code Ratified For Eternity!
+                  </h3>
+                  <p style="color:#cbd5e1; font-size:12px; margin:0 0 10px 0; line-height:1.45;">
+                    The Sacred Sibling Constitution is locked into sovereign brotherhood law. Zero exceptions under parent interrogation! 🤜🤛🔥
+                  </p>
+                  <div class="bro-ratified-chip">
+                    <span>OATH RATIFIED • ALL CLAUSES ENFORCED</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -433,57 +478,210 @@ export function renderBrotherTemplate(container, data) {
   });
 
   // =========================================================================
-  // 1. CYBER NEON SPARKS CANVAS (60FPS INTERACTIVE)
+  // SACRED BHAI BRO-CODE VAULT OPENER GATE LOGIC
+  // =========================================================================
+  const broGate = container.querySelector('#broGate');
+  const gateFists = container.querySelector('#broGateFists');
+  const leftGateFist = container.querySelector('.bro-gate-fist.left-fist');
+  const rightGateFist = container.querySelector('.bro-gate-fist.right-fist');
+  const burstCanvas = container.querySelector('#broGateBurstCanvas');
+
+  function openBroGate() {
+    if (!broGate || broGate.classList.contains('is-open')) return;
+
+    if (navigator.vibrate) navigator.vibrate([40, 60, 100]);
+    playBroTone('fist');
+    playBroTone('arcade');
+
+    // Fist impact animation
+    gsap.timeline()
+      .to(leftGateFist, { x: 26, duration: 0.14, ease: 'power2.in' })
+      .to(rightGateFist, { x: -26, duration: 0.14, ease: 'power2.in' }, '<')
+      .to([leftGateFist, rightGateFist], { scale: 1.3, duration: 0.1 }, '<')
+      .to([leftGateFist, rightGateFist], { scale: 1, duration: 0.2, ease: 'back.out(2)' });
+
+    // Custom spark burst on canvas
+    if (burstCanvas) {
+      const bCtx = burstCanvas.getContext('2d');
+      const bW = (burstCanvas.width = burstCanvas.offsetWidth || 340);
+      const bH = (burstCanvas.height = burstCanvas.offsetHeight || 340);
+      burstCanvas.style.opacity = '1';
+      const particles = [];
+      const colors = ['#f59e0b', '#fbbf24', '#06b6d4', '#38bdf8', '#dc2626', '#ffffff'];
+      for (let i = 0; i < 45; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 7 + 2.5;
+        particles.push({
+          x: bW / 2,
+          y: bH / 2,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 6 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1
+        });
+      }
+
+      function renderBurst() {
+        bCtx.clearRect(0, 0, bW, bH);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.025;
+          if (p.alpha > 0) {
+            alive = true;
+            bCtx.save();
+            bCtx.globalAlpha = p.alpha;
+            bCtx.fillStyle = p.color;
+            bCtx.beginPath();
+            bCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            bCtx.fill();
+            bCtx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(renderBurst);
+      }
+      requestAnimationFrame(renderBurst);
+    }
+
+    confetti({
+      particleCount: 65,
+      spread: 80,
+      origin: { y: 0.5 },
+      colors: ['#f59e0b', '#fbbf24', '#06b6d4', '#ef4444', '#ffffff']
+    });
+
+    setTimeout(() => {
+      broGate.classList.add('is-open');
+    }, 450);
+  }
+
+  broGate?.addEventListener('click', openBroGate);
+
+  // =========================================================================
+  // 1. 60FPS KINETIC BROTHERHOOD CONSTELLATION & ENERGY MESH ENGINE
   // =========================================================================
   const canvas = container.querySelector('#broStarCanvas');
   if (canvas) {
     const ctx = canvas.getContext('2d');
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let width = (canvas.width = canvas.offsetWidth || window.innerWidth);
+    let height = (canvas.height = canvas.offsetHeight || window.innerHeight);
 
     let mouseX = width / 2;
     let mouseY = height / 2;
+    let isInteracting = false;
+    let shockwaves = [];
 
-    window.addEventListener('pointermove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+    function handlePointer(e) {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+      isInteracting = true;
+    }
+
+    window.addEventListener('pointermove', handlePointer, { passive: true });
+    window.addEventListener('pointerdown', (e) => {
+      handlePointer(e);
+      shockwaves.push({
+        x: mouseX,
+        y: mouseY,
+        radius: 5,
+        maxRadius: Math.min(width, height) * 0.4,
+        alpha: 0.8
+      });
     }, { passive: true });
 
-    const embers = Array.from({ length: 30 }, () => ({
+    // Neural Constellation Nodes
+    const NODE_COUNT = Math.min(36, Math.floor((width * height) / 20000) + 12);
+    const nodes = Array.from({ length: NODE_COUNT }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: 1.5 + Math.random() * 3,
-      speedY: 0.6 + Math.random() * 1.2,
-      speedX: (Math.random() - 0.5) * 0.8,
-      alpha: 0.3 + Math.random() * 0.6,
-      color: Math.random() > 0.4 ? '#f59e0b' : '#06b6d4'
+      vx: (Math.random() - 0.5) * 0.7,
+      vy: (Math.random() - 0.5) * 0.7,
+      baseRadius: 1.8 + Math.random() * 2.5,
+      color: Math.random() > 0.4 ? '#f59e0b' : '#06b6d4',
+      pulse: Math.random() * Math.PI * 2
     }));
 
-    function anim() {
+    function renderConstellation() {
       ctx.clearRect(0, 0, width, height);
-      embers.forEach(e => {
-        e.y -= e.speedY;
-        e.x += e.speedX;
-        if (e.y < 0) {
-          e.y = height;
-          e.x = Math.random() * width;
+
+      // Render shockwaves
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        const sw = shockwaves[i];
+        sw.radius += 4.5;
+        sw.alpha -= 0.02;
+        if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
+          shockwaves.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.strokeStyle = '#06b6d4';
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = sw.alpha;
+        ctx.beginPath();
+        ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Update and connect nodes
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        n.x += n.vx;
+        n.y += n.vy;
+        n.pulse += 0.03;
+
+        // Bounce at boundaries
+        if (n.x < 0 || n.x > width) n.vx *= -1;
+        if (n.y < 0 || n.y > height) n.vy *= -1;
+
+        // Magnetic pull toward mouse/touch
+        if (isInteracting) {
+          const dx = mouseX - n.x;
+          const dy = mouseY - n.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 140 && dist > 2) {
+            const force = (140 - dist) / 140;
+            n.x += (dx / dist) * force * 1.5;
+            n.y += (dy / dist) * force * 1.5;
+          }
         }
 
-        ctx.fillStyle = e.color;
-        ctx.globalAlpha = e.alpha;
+        // Draw node with glow
+        const rad = n.baseRadius + Math.sin(n.pulse) * 0.6;
+        ctx.fillStyle = n.color;
+        ctx.globalAlpha = 0.75 + Math.sin(n.pulse) * 0.2;
         ctx.beginPath();
-        ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+        ctx.arc(n.x, n.y, rad, 0, Math.PI * 2);
         ctx.fill();
-      });
+
+        // Connect nearby nodes
+        for (let j = i + 1; j < nodes.length; j++) {
+          const n2 = nodes[j];
+          const dist = Math.hypot(n.x - n2.x, n.y - n2.y);
+          if (dist < 110) {
+            ctx.strokeStyle = n.color;
+            ctx.globalAlpha = (1 - dist / 110) * 0.28;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(n2.x, n2.y);
+            ctx.stroke();
+          }
+        }
+      }
+
       ctx.globalAlpha = 1;
-      requestAnimationFrame(anim);
+      requestAnimationFrame(renderConstellation);
     }
-    requestAnimationFrame(anim);
+    renderConstellation();
 
     window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
+      width = canvas.width = canvas.offsetWidth || window.innerWidth;
+      height = canvas.height = canvas.offsetHeight || window.innerHeight;
+    }, { passive: true });
   }
 
   // =========================================================================
@@ -818,11 +1016,29 @@ export function renderBrotherTemplate(container, data) {
   const punchCounter = container.querySelector('#punchCounter');
   const listContainer = container.querySelector('#broPunchcardList');
   const btnStampAll = container.querySelector('#btnStampAllBro');
+  const ratifiedBanner = container.querySelector('#broRatifiedBanner');
 
   function updatePunchCounter() {
     if (punchCounter) {
       punchCounter.textContent = `${stampedCount} / ${broCodeClauses.length} Clauses Ratified ${stampedCount >= broCodeClauses.length ? '✓ (All Enforced!)' : ''}`;
     }
+  }
+
+  function triggerRatificationCeremony() {
+    if (!ratifiedBanner || ratifiedBanner.style.display === 'block') return;
+    ratifiedBanner.style.display = 'block';
+    playBroTone('arcade');
+    if (navigator.vibrate) navigator.vibrate([60, 80, 140]);
+    gsap.fromTo(ratifiedBanner, 
+      { scale: 0.8, opacity: 0, y: 15 }, 
+      { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: 'back.out(2)' }
+    );
+    confetti({
+      particleCount: 75,
+      spread: 90,
+      origin: { y: 0.55 },
+      colors: ['#fbbf24', '#f59e0b', '#06b6d4', '#dc2626', '#ffffff']
+    });
   }
 
   function stampRow(row) {
@@ -833,10 +1049,14 @@ export function renderBrotherTemplate(container, data) {
       playBroTone('stamp');
 
       if (slot) {
-        slot.style.background = '#dc2626';
+        slot.style.background = 'linear-gradient(135deg, #dc2626, #991b1b)';
         slot.style.borderColor = '#ef4444';
-        slot.innerHTML = `<span style="color:#fff; font-size:16px;">✓</span>`;
-        gsap.fromTo(slot, { scale: 2, rotate: -20 }, { scale: 1, rotate: 0, duration: 0.3, ease: 'back.out(2)' });
+        slot.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.6)';
+        slot.innerHTML = `<span style="color:#fff; font-size:14px; font-weight:900;">✓</span>`;
+        gsap.fromTo(slot, 
+          { scale: 2.6, rotate: -28, opacity: 0 }, 
+          { scale: 1, rotate: 0, opacity: 1, duration: 0.32, ease: 'back.out(2.5)' }
+        );
       }
 
       stampedCount++;
@@ -848,6 +1068,10 @@ export function renderBrotherTemplate(container, data) {
         origin: { y: 0.45 },
         colors: ['#dc2626', '#f59e0b', '#ffffff']
       });
+
+      if (stampedCount >= broCodeClauses.length) {
+        triggerRatificationCeremony();
+      }
     }
   }
 
@@ -861,6 +1085,7 @@ export function renderBrotherTemplate(container, data) {
 
   btnStampAll?.addEventListener('click', () => {
     container.querySelectorAll('.punchcard-row').forEach(r => stampRow(r));
+    triggerRatificationCeremony();
   });
 
   // Bro Add Clause controls
