@@ -1,6 +1,7 @@
 // src/viewer/sparkleEffect.js - 60fps Interactive Touch & Click Sparkle / Heart Particle System
 
 export function initInteractiveSparkles(container = document.body) {
+  if (window.isCelebrationEditorMode) return;
   if (window.__sparklesInitialized) return;
   window.__sparklesInitialized = true;
 

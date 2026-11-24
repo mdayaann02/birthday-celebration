@@ -18,6 +18,7 @@ import { renderStudioIcons } from './icons.js';
 export function renderStudioApp(root) {
   // Flag that editor mode is active so audio players never auto-play on click/touch in editor
   window.isCelebrationEditorMode = true;
+  document.body.classList.add('is-editor-mode');
 
   const searchParams = new URLSearchParams(window.location.search);
   const hash = window.location.hash.replace(/^#/, '');

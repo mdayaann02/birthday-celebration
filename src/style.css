@@ -2545,6 +2545,11 @@ button, [role="button"], .btn {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
   transition: all 0.2s ease;
 }
 
@@ -2744,11 +2749,20 @@ button, [role="button"], .btn {
   position: relative;
 }
 
-.studio-sidebar,
+/* Neumorphic raised card token */
 .neu-raised-card {
-  flex: 1;
-  max-width: 580px;
-  height: 870px;
+  background: var(--neu-surface);
+  border: var(--neu-border);
+  box-shadow: var(--neu-shadow-md);
+  border-radius: 20px;
+}
+
+/* Editor Workstation Sidebar */
+.studio-sidebar {
+  flex: 0 0 540px;
+  max-width: 540px;
+  height: calc(100vh - 96px);
+  min-height: 580px;
   overflow-y: auto;
   padding: 16px 16px;
   background: var(--neu-surface);
@@ -3209,10 +3223,12 @@ select option {
 
 /* 3. NEUMORPHIC LIVE PREVIEW PANE */
 .studio-preview-pane {
-  flex: 1;
-  height: 870px;
+  flex: 1 1 0;
+  min-width: 0;
+  height: calc(100vh - 96px);
+  min-height: 580px;
   position: sticky;
-  top: 86px;
+  top: 76px;
   display: flex;
   flex-direction: column;
   background: var(--neu-surface);
@@ -3334,8 +3350,38 @@ select option {
   background: #000000;
   border-radius: 18px;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   transition: max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s;
+  transform: translateZ(0);
+  contain: paint layout;
+  isolation: isolate;
+}
+
+/* Strict Container Isolation: Keep template fixed/absolute scenes trapped inside chassis */
+.preview-frame-container .tree-film-stage,
+.preview-frame-container .tree-film-stage.scene,
+.preview-frame-container .romance-fullscreen-scene,
+.preview-frame-container .romance-master-three-canvas,
+.preview-frame-container .portal-flash-overlay,
+.preview-frame-container .gate,
+.preview-frame-container .countdown-gate-wrap,
+.preview-frame-container .gate-bg-slideshow,
+.preview-frame-container .gate-bg-scrim,
+.preview-frame-container .scene {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.preview-frame-container .corner-fullscreen-btn,
+.preview-frame-container .curtain-stage-overlay,
+.preview-frame-container .maker-review-banner {
+  display: none !important;
 }
 
 .preview-frame-container.preview-viewport-mobile,
@@ -4986,6 +5032,62 @@ select option {
 
 /* Desktop layout defaults (min-width: 901px) */
 @media (min-width: 901px) {
+  .studio-layout {
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+
+  .studio-navbar-glass {
+    width: calc(100% - 32px) !important;
+    max-width: 1400px !important;
+    margin: 12px auto !important;
+    position: sticky !important;
+    top: 12px !important;
+    height: auto !important;
+  }
+
+  .navbar-glass-inner {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 52px !important;
+    max-height: none !important;
+    padding: 8px 18px !important;
+    overflow: visible !important;
+  }
+
+  .studio-customizer-section {
+    max-width: 1400px !important;
+    margin: 12px auto 30px auto !important;
+    padding: 0 16px !important;
+    width: 100% !important;
+  }
+
+  .studio-workspace {
+    display: flex !important;
+    gap: 20px !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+  }
+
+  #studioSidebar {
+    display: block !important;
+    flex: 0 0 540px !important;
+    max-width: 540px !important;
+    width: 540px !important;
+    height: calc(100vh - 96px) !important;
+    overflow-y: auto !important;
+  }
+
+  #studioPreviewPane {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    height: calc(100vh - 96px) !important;
+    position: sticky !important;
+    top: 80px !important;
+  }
+
   .studio-mobile-tabs {
     display: none !important;
   }
@@ -5013,12 +5115,13 @@ select option {
   .studio-workspace {
     gap: 16px !important;
   }
-  .studio-sidebar {
-    max-width: 48% !important;
-    padding: 18px 14px !important;
+  #studioSidebar {
+    flex: 0 0 460px !important;
+    max-width: 460px !important;
+    width: 460px !important;
+    padding: 16px 14px !important;
   }
-  .studio-preview-pane {
-    max-width: 50% !important;
+  #studioPreviewPane {
     padding: 12px !important;
   }
 }
@@ -5055,17 +5158,22 @@ select option {
     right: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    border-radius: 0 0 18px 18px !important;
+    border-radius: 0 0 16px 16px !important;
     box-sizing: border-box !important;
     z-index: 500 !important;
+    height: auto !important;
   }
   .navbar-glass-inner {
-    border-radius: 0 0 18px 18px !important;
+    border-radius: 0 0 16px 16px !important;
     padding: 8px 12px !important;
     border-top: none !important;
     border-left: none !important;
     border-right: none !important;
     gap: 8px !important;
+    height: auto !important;
+    min-height: 48px !important;
+    max-height: 54px !important;
+    overflow: visible !important;
   }
   .btn-nav-active-tmpl {
     display: none !important; /* Strip is right below navbar on mobile */
@@ -5101,6 +5209,7 @@ select option {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
+    min-height: auto !important;
     overflow: visible !important;
     padding: 14px 10px 100px 10px !important;
     border-radius: 18px !important;
@@ -5110,9 +5219,23 @@ select option {
     width: 100% !important;
     max-width: 100% !important;
     height: calc(100vh - 130px) !important;
+    min-height: auto !important;
     padding: 10px !important;
     border-radius: 18px !important;
     position: static !important;
+  }
+
+  .studio-layout.mobile-active-tab-editor #studioSidebar {
+    display: block !important;
+  }
+  .studio-layout.mobile-active-tab-editor #studioPreviewPane {
+    display: none !important;
+  }
+  .studio-layout.mobile-active-tab-preview #studioSidebar {
+    display: none !important;
+  }
+  .studio-layout.mobile-active-tab-preview #studioPreviewPane {
+    display: flex !important;
   }
 
   .btn-preview-back-mobile {
