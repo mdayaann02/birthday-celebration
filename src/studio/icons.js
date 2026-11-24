@@ -6,7 +6,7 @@ import {
   Compass, BookOpen, Wand2, Sliders, CheckCircle2, RotateCcw, UploadCloud, 
   GripVertical, Play, Square, Volume2, Smartphone, Tablet, Monitor, 
   ChevronDown, ChevronRight, Copy, ExternalLink, X, Plus, Trash2, ArrowRight,
-  Sparkle, ShieldCheck, HelpCircle, Layers, Check, Camera
+  Sparkle, ShieldCheck, HelpCircle, Layers, Check, Camera, Moon, Sun, Grid
 } from 'lucide';
 
 export const STUDIO_ICONS = {
@@ -14,7 +14,7 @@ export const STUDIO_ICONS = {
   Compass, BookOpen, Wand2, Sliders, CheckCircle2, RotateCcw, UploadCloud, 
   GripVertical, Play, Square, Volume2, Smartphone, Tablet, Monitor, 
   ChevronDown, ChevronRight, Copy, ExternalLink, X, Plus, Trash2, ArrowRight,
-  Sparkle, ShieldCheck, HelpCircle, Layers, Check, Camera
+  Sparkle, ShieldCheck, HelpCircle, Layers, Check, Camera, Moon, Sun, Grid
 };
 
 export function renderStudioIcons(root = document) {

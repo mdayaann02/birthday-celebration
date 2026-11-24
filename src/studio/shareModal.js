@@ -139,15 +139,15 @@ export function openShareModal(templateId, data) {
 
   const overlay = document.createElement("div");
   overlay.id = "shareModalOverlay";
-  overlay.className = "share-modal-overlay";
+  overlay.className = "share-modal-overlay neu-modal-overlay";
   overlay.innerHTML = `
-    <div class="share-modal-card">
+    <div class="share-modal-card neu-raised-card">
       <div class="share-modal-header">
         <h3 class="share-modal-title">
-          <i data-lucide="sparkles"></i>
+          <i data-lucide="sparkles" style="color:var(--primary-accent);"></i>
           <span>Your Celebration Website is Ready!</span>
         </h3>
-        <button class="btn-close-modal" id="btnCloseShareModal" aria-label="Close">
+        <button class="btn-close-modal btn-neu-icon" id="btnCloseShareModal" aria-label="Close">
           <i data-lucide="x"></i>
         </button>
       </div>
@@ -159,44 +159,44 @@ export function openShareModal(templateId, data) {
         </p>
 
         <!-- Link Type Selector / Tabs -->
-        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
-          <button type="button" class="btn-link-tab active" id="tabVercelLink">
+        <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+          <button type="button" class="btn-link-tab active neu-tab-btn" id="tabVercelLink">
             ⚡ Vercel HTTPS (Recommended)
           </button>
-          <button type="button" class="btn-link-tab" id="tabCloudLink">
+          <button type="button" class="btn-link-tab neu-tab-btn" id="tabCloudLink">
             🌐 Cloud Server (155.248.255.29)
           </button>
         </div>
 
         <!-- Clean Recipient Link -->
-        <div class="share-link-group">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <div class="share-link-group neu-inset-well" style="padding:14px 16px; border-radius:18px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <label class="share-link-label" style="margin-bottom:0;">
               🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#10b981;">(Creating short link...)</span>
             </label>
-            <span style="font-size:10px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35); color:#10b981; padding:2px 6px; border-radius:10px; font-weight:700;">
+            <span style="font-size:10px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); color:#10b981; padding:2px 7px; border-radius:10px; font-weight:800;">
               WhatsApp Hyperlink Active ✓
             </span>
           </div>
 
           <div class="share-input-row">
             <input type="text" class="share-url-input" readonly id="inpRecipientUrl" value="Generating short link..." />
-            <button class="btn-copy-link" id="btnCopyRecipient">
+            <button class="btn-copy-link neu-btn-primary" id="btnCopyRecipient">
               <i data-lucide="copy"></i>
               <span>Copy</span>
             </button>
           </div>
 
-          <div class="share-sub-hint" id="shareSubHint" style="margin-top:6px; font-size:11px; color:#10b981;">
+          <div class="share-sub-hint" id="shareSubHint" style="margin-top:8px; font-size:11.5px; color:#10b981; font-weight:600;">
             ✨ Guaranteed 100% clickable blue hyperlink in WhatsApp on all phones.
           </div>
 
           <div class="share-quick-actions" style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:12px 20px; border-radius:12px; font-size:13.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4); flex:1; justify-content:center; min-height:46px; text-decoration:none;">
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-share-whatsapp" id="btnShareWhatsapp" style="background:#25D366; color:#fff; border:none; padding:12px 20px; border-radius:14px; font-size:13.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow: 4px 4px 14px rgba(37, 211, 102, 0.4), -2px -2px 8px rgba(255, 255, 255, 0.15); flex:1; justify-content:center; min-height:46px; text-decoration:none;">
               <i data-lucide="share-2"></i>
               <span>Share on WhatsApp</span>
             </a>
-            <a href="#" target="_blank" class="btn-open-preview" id="linkOpenPreview" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 18px; border-radius:12px; font-size:13px; font-weight:700; background:linear-gradient(135deg, #d4235c, #e11d48); color:#fff; text-decoration:none; min-height:46px; box-shadow: 0 4px 16px rgba(212, 35, 92, 0.35);">
+            <a href="#" target="_blank" class="btn-open-preview" id="linkOpenPreview" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 18px; border-radius:14px; font-size:13px; font-weight:700; background:linear-gradient(145deg, #f43f5e, #e11d48); color:#fff; text-decoration:none; min-height:46px; box-shadow: 4px 4px 14px rgba(244, 63, 94, 0.35), -2px -2px 8px rgba(255, 255, 255, 0.15);">
               <i data-lucide="external-link"></i>
               <span>Test Website</span>
             </a>
@@ -204,24 +204,24 @@ export function openShareModal(templateId, data) {
         </div>
 
         <!-- Creator Early Review -->
-        <div class="share-link-group" style="margin-top:18px; border-top:1px dashed rgba(212,175,55,0.25); padding-top:14px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <div class="share-link-group neu-inset-well" style="padding:14px 16px; border-radius:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <label class="share-link-label" style="margin-bottom:0;">
               <i data-lucide="lock" style="width:12px; height:12px;"></i>
               <span>Creator Early Review (Bypasses Countdown)</span>
             </label>
-            <a href="#" target="_blank" id="linkTestCreator" style="color:#f43f5e; font-size:11px; font-weight:700; text-decoration:underline;">
+            <a href="#" target="_blank" id="linkTestCreator" style="color:var(--primary-accent); font-size:11.5px; font-weight:700; text-decoration:none;">
               Open Creator View →
             </a>
           </div>
           <div class="share-input-row">
-            <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="Generating creator review link..." style="font-size:11px;" />
-            <button class="btn-copy-link" id="btnCopyMaker" style="font-size:11px;">
+            <input type="text" class="share-url-input" readonly id="inpMakerUrl" value="Generating creator review link..." style="font-size:11.5px;" />
+            <button class="btn-copy-link neu-btn-primary" id="btnCopyMaker" style="font-size:11px; padding:6px 14px;">
               <i data-lucide="copy"></i>
               <span>Copy</span>
             </button>
           </div>
-          <div class="share-sub-hint" style="margin-top:4px; font-size:11px;">
+          <div class="share-sub-hint" style="margin-top:6px; font-size:11px; color:var(--text-dim);">
             Use this to verify your surprise before the event countdown ends. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
           </div>
         </div>

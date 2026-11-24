@@ -273,12 +273,12 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       <div class="editor-section" id="templateSpecificFields"></div>
 
       <!-- Section E: Quick Action Footer -->
-      <div class="editor-form-footer" style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(212,175,55,0.25); display:flex; gap:10px; flex-wrap:wrap;">
-        <button type="button" class="btn-studio-action btn-footer-save" id="btnBottomSave" style="flex:1; justify-content:center; padding:12px 18px; font-weight:700;">
+      <div class="editor-form-footer" style="margin-top:20px; padding-top:16px; border-top:var(--neu-border-inset); display:flex; gap:12px; flex-wrap:wrap;">
+        <button type="button" class="btn-studio-action btn-footer-save neu-btn" id="btnBottomSave" style="flex:1; justify-content:center; padding:12px 18px; font-weight:700; min-height:46px;">
           <i data-lucide="save"></i>
           <span>Save Website</span>
         </button>
-        <button type="button" class="btn-studio-primary btn-footer-share" id="btnBottomShare" style="flex:1; justify-content:center; padding:12px 18px; font-weight:700;">
+        <button type="button" class="btn-studio-primary btn-footer-share neu-btn-primary" id="btnBottomShare" style="flex:1; justify-content:center; padding:12px 18px; font-weight:700; min-height:46px;">
           <i data-lucide="share-2"></i>
           <span>Get Share Link</span>
         </button>
