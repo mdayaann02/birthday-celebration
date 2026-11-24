@@ -75,22 +75,31 @@ export function renderBestieGirlTemplate(container, data) {
       <!-- Ambient Rose Quartz Sparkle Canvas (60FPS) -->
       <canvas id="bestieGirlCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Bar & Passive Indicator -->
-      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
-        <div class="fam-step-progress-track">
-          <div class="fam-step-progress-fill" id="girlStepProgressFill" style="width: 16.6%;"></div>
-        </div>
-        <div class="fam-stage-indicator-bar">
-          <div class="fam-stage-info-pill">
-            <span class="stage-step-tag" id="girlStageStepPill">PAGE 1 OF 6</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="girlStageTitleText">Soul Sister Main Character 💅</span>
+      <!-- SACRED SOUL SISTER OPENER GATE -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="bestieGirlGate" role="button" tabindex="0" aria-label="Tap to unlock Bestie celebration" style="background: radial-gradient(circle at center, #23081c 0%, #0c020a 80%);">
+        <div class="bro-gate-circuit-bg" aria-hidden="true" style="opacity:0.25;"></div>
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring" style="border-color:#f472b6; box-shadow: 0 0 35px rgba(244,114,182,0.6);"></div>
+          <div style="font-size:54px; margin-bottom:12px; filter: drop-shadow(0 0 18px rgba(244,114,182,0.8)); animation: floatMini 2.5s ease-in-out infinite alternate;">
+            👯‍♀️💖
+          </div>
+          <div class="bro-gate-badge" style="background:rgba(244,114,182,0.18); border-color:#f472b6; color:#fbcfe8;">
+            SOUL SISTER CELEBRATION
+          </div>
+          <h2 class="bro-gate-title" style="color:#fff; text-shadow:0 0 20px rgba(244,114,182,0.6);">
+            To My Soul Sister, My Bestie 💅
+          </h2>
+          <p class="bro-gate-label" style="color:#cbd5e1; max-width:320px; margin:0 auto 18px;">
+            Partner in crime, 2 AM therapist, and forever hype woman.
+          </p>
+          <div class="bro-gate-hint" style="color:#fbcfe8; border-color:rgba(244,114,182,0.4); background:rgba(244,114,182,0.12);">
+            ✨ TAP TO ENTER SISTERHOOD REALM ✨
           </div>
         </div>
-      </header>
+      </div>
 
-      <!-- Multi-Page Content Cards Container -->
-      <main class="fam-pages-container" id="girlPagesContainer">
+      <!-- Multi-Page Content Cards Container (Continuous Immersive Flow) -->
+      <main class="fam-pages-container" id="girlPagesContainer" style="display:flex; flex-direction:column; gap:28px;">
         <!-- PAGE 1: HERO & MAIN CHARACTER CROWN -->
         <section class="fam-page-card active" data-page="1">
           <header class="fam-hero-section">
@@ -114,6 +123,44 @@ export function renderBestieGirlTemplate(container, data) {
               </button>
             </div>
             <div id="hypeFeedback" class="fam-feedback-text"></div>
+
+            <!-- GEN-Z RAGE-BAIT: RUNAWAY 3 AM VOICE NOTES BUTTON -->
+            <div class="girl-ragebait-card" style="margin:22px auto 14px; background:rgba(255,255,255,0.96); border:1.5px solid rgba(244,114,182,0.6); border-radius:18px; padding:18px 16px; text-align:center; box-shadow:0 10px 28px rgba(244,114,182,0.25); max-width:440px;">
+              <div style="font-size:11px; font-weight:800; color:#db2777; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">
+                🎀 THE UNHINGED BESTIE VAULT 🎀
+              </div>
+              <div style="font-size:15px; font-weight:800; color:#4c0527; margin-bottom:14px;">
+                Should we permanently delete our 3 AM voice notes?
+              </div>
+              <div style="display:flex; justify-content:center; gap:12px; position:relative; min-height:52px; align-items:center;">
+                <button type="button" class="btn-fam-action" id="btnDeleteVoiceNotes" style="background:#fce7f3; color:#831843; border-radius:20px; font-weight:800; padding:10px 22px; border:1px solid #f472b6; transition:transform 0.15s ease; user-select:none; -webkit-user-select:none;">
+                  Delete Immediately 😂
+                </button>
+                <button type="button" class="btn-fam-action" id="btnKeepVoiceNotes" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; border-radius:20px; font-weight:800; padding:10px 22px; box-shadow:0 4px 14px rgba(236,72,153,0.35);">
+                  Keep For Wedding Speech 💅
+                </button>
+              </div>
+              <div id="girlRageToast" style="margin-top:10px; font-weight:800; font-size:13px; color:#e11d48; min-height:20px; transition:all 0.2s ease;"></div>
+            </div>
+
+            <!-- MAIN CHARACTER DELUSION & SLAY METER -->
+            <div class="girl-aura-card" style="margin:16px auto; background:rgba(255,255,255,0.96); border:1.5px solid rgba(244,114,182,0.5); border-radius:18px; padding:16px; text-align:center; max-width:440px; box-shadow:0 8px 24px rgba(244,114,182,0.2);">
+              <div style="font-size:11px; font-weight:800; color:#db2777; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">
+                💅 MAIN CHARACTER DELUSION LEVEL 💅
+              </div>
+              <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin:8px 0;">
+                <span style="font-size:32px; font-weight:900; color:#db2777; font-family:monospace;" id="girlAuraScore">+10,000,000</span>
+                <span style="font-size:11px; font-weight:800; background:#fce7f3; color:#831843; padding:2px 8px; border-radius:10px; border:1px solid #f472b6;" id="girlAuraRank">CERTIFIED SLAYING 👑</span>
+              </div>
+              <div style="display:flex; justify-content:center; gap:8px; margin-top:10px;">
+                <button type="button" id="btnSpillTea" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; font-size:12px; font-weight:800; padding:8px 14px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 4px 10px rgba(236,72,153,0.3);">
+                  ✨ Spill The Tea (+50k)
+                </button>
+                <button type="button" id="btnSendEmergencyBoba" style="background:#fff1f2; color:#be123c; border:1px solid #f43f5e; font-size:12px; font-weight:800; padding:8px 14px; border-radius:12px; cursor:pointer;">
+                  🧋 Emergency Boba Run
+                </button>
+              </div>
+            </div>
           </header>
           <div class="fam-nav-dock">
             <button type="button" class="btn-fam-next" data-next="2">
@@ -339,28 +386,38 @@ export function renderBestieGirlTemplate(container, data) {
     { num: 6, title: "Soul Sister of the Century 👑" }
   ];
 
+  // Opener Gate Execution
+  const girlGate = container.querySelector('#bestieGirlGate');
+  if (girlGate) {
+    const executeOpenGirlGate = () => {
+      if (girlGate.classList.contains('is-open')) return;
+      playGirlTone('chime');
+      confetti({
+        particleCount: 80,
+        spread: 90,
+        origin: { y: 0.5 },
+        colors: ['#f472b6', '#fbbf24', '#f43f5e', '#ffffff']
+      });
+      girlGate.classList.add('is-open');
+    };
+    girlGate.addEventListener('click', executeOpenGirlGate);
+  }
+
+  // Ensure all story cards are displayed in continuous flow
+  container.querySelectorAll('.fam-page-card').forEach(card => {
+    card.style.display = 'block';
+    card.classList.add('active');
+  });
+
   const totalPages = girlPageTitles.length;
   let currentPage = 1;
 
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
-
-    const progressPct = Math.round((currentPage / totalPages) * 100);
-    const fill = container.querySelector('#girlStepProgressFill');
-    if (fill) fill.style.width = `${progressPct}%`;
-
-    const stepPill = container.querySelector('#girlStageStepPill');
-    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
-    const titleText = container.querySelector('#girlStageTitleText');
-    if (titleText && girlPageTitles[currentPage - 1]) {
-      titleText.textContent = girlPageTitles[currentPage - 1].title;
+    const targetCard = container.querySelector(`.fam-page-card[data-page="${currentPage}"]`);
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    container.querySelectorAll('.fam-page-card').forEach(card => {
-      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
-    });
-
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 
@@ -467,6 +524,75 @@ export function renderBestieGirlTemplate(container, data) {
       spread: 75,
       origin: { y: 0.4 },
       colors: ['#f472b6', '#fbbf24', '#e11d48', '#ffffff']
+    });
+  });
+
+  // =========================================================================
+  // GEN-Z RAGE-BAIT: RUNAWAY 3 AM VOICE NOTES BUTTON & MAIN CHARACTER METER
+  // =========================================================================
+  const btnDeleteVoiceNotes = container.querySelector('#btnDeleteVoiceNotes');
+  const btnKeepVoiceNotes = container.querySelector('#btnKeepVoiceNotes');
+  const girlRageToast = container.querySelector('#girlRageToast');
+
+  const girlRageQuotes = [
+    "Girl really thought 💅💀",
+    "DECLINED! Evidence preserved for your wedding roast speech 😂",
+    "404: Delete button doesn't exist in our dictionary 🎀",
+    "We are taking these voice notes to the grave 🔒",
+    "L + Ratio + Zero shame in our sisterhood 💖",
+    "Nice try, this drama is permanently archived! ✨"
+  ];
+
+  function dodgeVoiceNotesButton() {
+    playGirlTone('sparkle');
+    const x = (Math.random() - 0.5) * 160;
+    const y = (Math.random() - 0.5) * 80;
+    gsap.to(btnDeleteVoiceNotes, { x, y, duration: 0.2, ease: 'back.out(2)' });
+    const randomQuote = girlRageQuotes[Math.floor(Math.random() * girlRageQuotes.length)];
+    if (girlRageToast) girlRageToast.textContent = randomQuote;
+    if (navigator.vibrate) navigator.vibrate(20);
+  }
+
+  btnDeleteVoiceNotes?.addEventListener('mouseenter', dodgeVoiceNotesButton);
+  btnDeleteVoiceNotes?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    dodgeVoiceNotesButton();
+  });
+
+  btnKeepVoiceNotes?.addEventListener('click', () => {
+    playGirlTone('chime');
+    if (girlRageToast) girlRageToast.innerHTML = "💅 <strong>CHEF'S KISS!</strong> The sacred archive of unhinged moments remains eternal. ✨👑";
+    confetti({
+      particleCount: 45,
+      spread: 70,
+      origin: { y: 0.4 },
+      colors: ['#f472b6', '#fbbf24', '#e11d48', '#ffffff']
+    });
+  });
+
+  // Main Character Aura & Delusion Tracker
+  let girlAura = 10000000;
+  const girlAuraScore = container.querySelector('#girlAuraScore');
+  const girlAuraRank = container.querySelector('#girlAuraRank');
+  const btnSpillTea = container.querySelector('#btnSpillTea');
+  const btnSendEmergencyBoba = container.querySelector('#btnSendEmergencyBoba');
+
+  btnSpillTea?.addEventListener('click', () => {
+    girlAura += 50000;
+    playGirlTone('sparkle');
+    if (girlAuraScore) girlAuraScore.textContent = '+' + girlAura.toLocaleString();
+    if (girlAuraRank) girlAuraRank.textContent = "COSMIC SLAYING DIVA 👑✨";
+    gsap.fromTo(girlAuraScore, { scale: 1.3, color: '#ec4899' }, { scale: 1, color: '#db2777', duration: 0.3 });
+  });
+
+  btnSendEmergencyBoba?.addEventListener('click', () => {
+    playGirlTone('chime');
+    if (girlRageToast) girlRageToast.innerHTML = "🧋 <strong>BOBA DISPATCHED!</strong> Brown sugar boba & waffle fries on the way. 🧇✨";
+    confetti({
+      particleCount: 35,
+      spread: 60,
+      origin: { y: 0.4 },
+      colors: ['#f472b6', '#fbbf24', '#ffffff']
     });
   });
 

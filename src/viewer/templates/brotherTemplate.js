@@ -138,22 +138,8 @@ export function renderBrotherTemplate(container, data) {
       <!-- Ambient Cyber Amber/Cyan Sparks Canvas -->
       <canvas id="broStarCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Bar & Passive Indicator -->
-      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
-        <div class="fam-step-progress-track">
-          <div class="fam-step-progress-fill" id="broStepProgressFill" style="width: 20%;"></div>
-        </div>
-        <div class="fam-stage-indicator-bar">
-          <div class="fam-stage-info-pill">
-            <span class="stage-step-tag" id="broStageStepPill">PAGE 1 OF 5</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="broStageTitleText">The Bhai Bro-Code Opening 🤜🤛</span>
-          </div>
-        </div>
-      </header>
-
-      <!-- Multi-Page Content Cards Container -->
-      <main class="fam-pages-container" id="broPagesContainer">
+      <!-- Multi-Page Content Cards Container (Continuous Immersive Flow) -->
+      <main class="fam-pages-container" id="broPagesContainer" style="display:flex; flex-direction:column; gap:28px;">
         <!-- PAGE 1: HERO & FIST BUMP SLAM ARENA -->
         <section class="fam-page-card active" data-page="1">
           <header class="fam-hero-section">
@@ -207,6 +193,44 @@ export function renderBrotherTemplate(container, data) {
               </button>
             </div>
             <div id="fistBumpFeedback" class="fam-feedback-text"></div>
+
+            <!-- GEN-Z RAGE-BAIT: MOM'S FAVORITE CHILD RUNAWAY TEST -->
+            <div class="bro-ragebait-card" style="margin:22px auto 14px; background:rgba(15,23,42,0.92); border:1.5px solid rgba(245,158,11,0.5); border-radius:18px; padding:18px 16px; text-align:center; box-shadow:0 10px 28px rgba(0,0,0,0.4); max-width:440px;">
+              <div style="font-size:11px; font-weight:800; color:#f59e0b; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">
+                ⚡ THE ULTIMATE SIBLING TRUTH AUDIT ⚡
+              </div>
+              <div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:14px;">
+                Who is objectively Mom's favorite child?
+              </div>
+              <div style="display:flex; justify-content:center; gap:12px; position:relative; min-height:52px; align-items:center;">
+                <button type="button" class="btn-fam-action" id="btnVoteBroMe" style="background:#1e293b; color:#fbbf24; border-radius:20px; font-weight:800; padding:10px 22px; border:1px solid #f59e0b; transition:transform 0.15s ease; user-select:none; -webkit-user-select:none;">
+                  Obviously Bhai 👑
+                </button>
+                <button type="button" class="btn-fam-action" id="btnVoteSiblingFav" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000; border-radius:20px; font-weight:800; padding:10px 22px; box-shadow:0 4px 14px rgba(245,158,11,0.4);">
+                  The Sibling Who Made This Site 😌
+                </button>
+              </div>
+              <div id="broRageToast" style="margin-top:10px; font-weight:800; font-size:13px; color:#f87171; min-height:20px; transition:all 0.2s ease;"></div>
+            </div>
+
+            <!-- REAL-TIME GIGACHAD AURA COUNTER -->
+            <div class="bro-aura-card" style="margin:16px auto; background:rgba(15,23,42,0.92); border:1.5px solid rgba(6,182,212,0.4); border-radius:18px; padding:16px; text-align:center; max-width:440px; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+              <div style="font-size:11px; font-weight:800; color:#38bdf8; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">
+                ⚡ REAL-TIME SIBLING AURA LEVEL ⚡
+              </div>
+              <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin:8px 0;">
+                <span style="font-size:32px; font-weight:900; color:#38bdf8; font-family:monospace;" id="broAuraScore">+1,000,000</span>
+                <span style="font-size:11px; font-weight:800; background:#0369a1; color:#e0f2fe; padding:2px 8px; border-radius:10px;" id="broAuraRank">GIGACHAD</span>
+              </div>
+              <div style="display:flex; justify-content:center; gap:8px; margin-top:10px;">
+                <button type="button" id="btnFlexAura" style="background:linear-gradient(135deg, #06b6d4, #0284c7); color:#fff; font-size:12px; font-weight:800; padding:8px 14px; border-radius:12px; border:none; cursor:pointer;">
+                  ⚡ Flex Aura (+10k)
+                </button>
+                <button type="button" id="btnCringeAura" style="background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); font-size:12px; font-weight:800; padding:8px 14px; border-radius:12px; cursor:pointer;">
+                  💀 Cringe Joke (-5k)
+                </button>
+              </div>
+            </div>
           </header>
           <div class="fam-nav-dock">
             <button type="button" class="btn-fam-next" data-next="2">
@@ -329,6 +353,50 @@ export function renderBrotherTemplate(container, data) {
                 </div>
               `).join('')}
             </div>
+
+            <!-- TOP SECRET BRO MYSTERY CRATE (GEN-Z RAGE-BAIT UNBOXING) -->
+            <div class="bro-mystery-crate-arena" style="margin:28px auto 14px; background:linear-gradient(135deg, #090d16 0%, #1e1b4b 100%); border:2px dashed #f59e0b; border-radius:20px; padding:22px 18px; text-align:center; max-width:440px; box-shadow:0 12px 35px rgba(0,0,0,0.5);">
+              <div style="font-size:11px; font-weight:800; color:#fbbf24; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px;">
+                🎁 TOP SECRET BHAI BIRTHDAY DROP 🎁
+              </div>
+              <h3 style="color:#fff; font-size:17px; font-weight:900; margin:0 0 6px 0;">
+                The Ultimate VIP Mystery Crate
+              </h3>
+              <p style="color:#94a3b8; font-size:12px; margin:0 0 16px 0;">
+                Is it a PS5 Pro? iPhone 16 Pro Max? Or a Lamborghini key? Tap below to unbox!
+              </p>
+
+              <div id="broCrateGraphic" style="font-size:64px; margin:8px auto 14px; cursor:pointer; display:inline-block; transition:transform 0.2s ease;">
+                📦
+              </div>
+
+              <div style="margin-bottom:12px;">
+                <button type="button" id="btnUnboxBroCrate" style="background:linear-gradient(135deg, #f59e0b, #dc2626); color:#fff; font-size:13px; font-weight:900; padding:10px 24px; border-radius:24px; border:none; cursor:pointer; box-shadow:0 6px 20px rgba(245,158,11,0.4); text-transform:uppercase; letter-spacing:0.8px;">
+                  ✦ Tap To Unbox Mystery Crate ✦
+                </button>
+              </div>
+
+              <!-- Unboxed Reveal Card (Hidden initially) -->
+              <div id="broCrateReveal" style="display:none; background:#0f172a; border:1.5px solid #ef4444; border-radius:14px; padding:16px; margin-top:14px; text-align:left; animation:fadeInUp 0.4s ease;">
+                <div style="text-align:center; font-size:15px; font-weight:900; color:#f87171; margin-bottom:8px; text-transform:uppercase;">
+                  💀 BRO REALLY THOUGHT HE GOT A PS5 💀
+                </div>
+                <p style="text-align:center; color:#e2e8f0; font-size:12px; margin:0 0 12px 0;">
+                  Nice try! But you just unlocked the sovereign brotherhood perks:
+                </p>
+                <div style="font-size:12px; color:#fbbf24; display:flex; flex-direction:column; gap:6px; line-height:1.4;">
+                  <div>✦ <strong>1x Co-Op Gaming Carry Pass</strong> (Zero rage-quits guaranteed)</div>
+                  <div>✦ <strong>1x Blame Deflection Shield</strong> (We blame the dog or the neighbor)</div>
+                  <div>✦ <strong>Unlimited Brotherly Loyalty</strong> (Ride or die since day one)</div>
+                  <div style="color:#f87171; font-weight:800; margin-top:4px;">✦ Bill for Tonight: You are paying for the Shawarma / Pizza 🍕</div>
+                </div>
+                <div style="margin-top:12px; text-align:center;">
+                  <span style="display:inline-block; background:rgba(239,68,68,0.2); color:#fca5a5; font-size:11px; font-weight:800; padding:4px 12px; border-radius:12px; border:1px solid rgba(239,68,68,0.4);">
+                    ✓ OFFICIAL PERKS CLAIMED (+1,000,000 AURA)
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="fam-nav-dock">
@@ -437,25 +505,18 @@ export function renderBrotherTemplate(container, data) {
   const totalPages = broPageTitles.length;
   let currentPage = 1;
 
+  // Ensure all story cards are displayed in continuous flow
+  container.querySelectorAll('.fam-page-card').forEach(card => {
+    card.style.display = 'block';
+    card.classList.add('active');
+  });
+
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
-
-    const progressPct = Math.round((currentPage / totalPages) * 100);
-    const fill = container.querySelector('#broStepProgressFill');
-    if (fill) fill.style.width = `${progressPct}%`;
-
-    const stepPill = container.querySelector('#broStageStepPill');
-    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
-    const titleText = container.querySelector('#broStageTitleText');
-    if (titleText && broPageTitles[currentPage - 1]) {
-      titleText.textContent = broPageTitles[currentPage - 1].title;
+    const targetCard = container.querySelector(`.fam-page-card[data-page="${currentPage}"]`);
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    container.querySelectorAll('.fam-page-card').forEach(card => {
-      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
-    });
-
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 
@@ -1017,6 +1078,120 @@ export function renderBrotherTemplate(container, data) {
 
   fistArena?.addEventListener('click', executeFistBump);
   btnFist?.addEventListener('click', executeFistBump);
+
+  // =========================================================================
+  // GEN-Z RAGE-BAIT: RUNAWAY FAVORITE CHILD BUTTON & AURA COUNTER
+  // =========================================================================
+  const btnVoteBroMe = container.querySelector('#btnVoteBroMe');
+  const btnVoteSiblingFav = container.querySelector('#btnVoteSiblingFav');
+  const broRageToast = container.querySelector('#broRageToast');
+
+  const broRageQuotes = [
+    "Bro really thought 💀",
+    "Nice try lil bro, mom literally said I'm the favorite 😂",
+    "Error 404: Evidence Not Found 📉",
+    "-100,000 Aura for lying to yourself 💀",
+    "L + Ratio + Zero parental favoritism detected 💅",
+    "Cap detected! 🧢 Try again never."
+  ];
+
+  function dodgeBroButton() {
+    playBroTone('click');
+    const x = (Math.random() - 0.5) * 180;
+    const y = (Math.random() - 0.5) * 80;
+    gsap.to(btnVoteBroMe, { x, y, duration: 0.2, ease: 'back.out(2)' });
+    const randomQuote = broRageQuotes[Math.floor(Math.random() * broRageQuotes.length)];
+    if (broRageToast) broRageToast.textContent = randomQuote;
+    if (navigator.vibrate) navigator.vibrate(20);
+  }
+
+  btnVoteBroMe?.addEventListener('mouseenter', dodgeBroButton);
+  btnVoteBroMe?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    dodgeBroButton();
+  });
+
+  btnVoteSiblingFav?.addEventListener('click', () => {
+    playBroTone('nitro');
+    if (broRageToast) broRageToast.innerHTML = "✨ <strong>FACTS ONLY!</strong> Objective truth verified by universal sibling law. 👑";
+    confetti({
+      particleCount: 45,
+      spread: 70,
+      origin: { y: 0.4 },
+      colors: ['#f59e0b', '#10b981', '#38bdf8', '#ffffff']
+    });
+  });
+
+  // Real-Time Aura Counter
+  let currentAura = 1000000;
+  const broAuraScore = container.querySelector('#broAuraScore');
+  const broAuraRank = container.querySelector('#broAuraRank');
+  const btnFlexAura = container.querySelector('#btnFlexAura');
+  const btnCringeAura = container.querySelector('#btnCringeAura');
+
+  function updateAuraDisplay() {
+    if (broAuraScore) {
+      broAuraScore.textContent = (currentAura >= 0 ? '+' : '') + currentAura.toLocaleString();
+    }
+    if (broAuraRank) {
+      if (currentAura >= 1050000) broAuraRank.textContent = "COSMIC GIGACHAD 🗿";
+      else if (currentAura >= 1000000) broAuraRank.textContent = "GIGACHAD 🔥";
+      else if (currentAura >= 980000) broAuraRank.textContent = "SIGMA BHAI ⚡";
+      else broAuraRank.textContent = "IN SIBLING DEBT 📉";
+    }
+  }
+
+  btnFlexAura?.addEventListener('click', () => {
+    currentAura += 10000;
+    playBroTone('fist');
+    updateAuraDisplay();
+    gsap.fromTo(broAuraScore, { scale: 1.3, color: '#34d399' }, { scale: 1, color: '#38bdf8', duration: 0.3 });
+  });
+
+  btnCringeAura?.addEventListener('click', () => {
+    currentAura -= 5000;
+    playBroTone('click');
+    updateAuraDisplay();
+    gsap.fromTo(broAuraScore, { scale: 0.8, color: '#f87171' }, { scale: 1, color: '#38bdf8', duration: 0.3 });
+  });
+
+  // =========================================================================
+  // TOP SECRET BRO MYSTERY CRATE UNBOXING
+  // =========================================================================
+  const btnUnboxBroCrate = container.querySelector('#btnUnboxBroCrate');
+  const broCrateGraphic = container.querySelector('#broCrateGraphic');
+  const broCrateReveal = container.querySelector('#broCrateReveal');
+  let isCrateUnboxed = false;
+
+  function unboxCrate() {
+    if (isCrateUnboxed) return;
+    isCrateUnboxed = true;
+    playBroTone('fist');
+    if (navigator.vibrate) navigator.vibrate([40, 60, 100]);
+
+    gsap.timeline()
+      .to(broCrateGraphic, { rotation: -15, scale: 1.25, duration: 0.1, yoyo: true, repeat: 5 })
+      .to(broCrateGraphic, { scale: 1.4, duration: 0.2, ease: 'back.out(2)' })
+      .call(() => {
+        playBroTone('nitro');
+        broCrateGraphic.textContent = "💥 🎁 💥";
+        if (broCrateReveal) broCrateReveal.style.display = 'block';
+        if (btnUnboxBroCrate) {
+          btnUnboxBroCrate.textContent = "✓ MYSTERY REVEALED";
+          btnUnboxBroCrate.style.opacity = '0.7';
+          btnUnboxBroCrate.style.pointerEvents = 'none';
+        }
+        confetti({
+          particleCount: 70,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#ef4444', '#f59e0b', '#38bdf8', '#ffffff']
+        });
+      });
+  }
+
+  btnUnboxBroCrate?.addEventListener('click', unboxCrate);
+  broCrateGraphic?.addEventListener('click', unboxCrate);
 
   // =========================================================================
   // 3. PAGE 2: TACTILE RUBBER STAMP RATIFICATION & BRO ADD CLAUSE

@@ -175,26 +175,31 @@ export function renderSorryTemplate(container, data) {
       <!-- Ambient Dynamic Weather & Sparkles Canvas -->
       <canvas id="sorryCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Indicator Bar -->
-      <header class="sorry-floating-nav" style="pointer-events:none; user-select:none; z-index:20;">
-        <div class="sorry-step-progress-track">
-          <div class="sorry-step-progress-fill" id="stepProgressFill" style="width: 14%;"></div>
-        </div>
-
-        <div class="sorry-stage-indicator-bar">
-          <div class="sorry-stage-info-pill">
-            <span class="stage-step-tag" id="stageStepPill">STAGE 1 OF 7</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="stageTitleText">The Sincere Confession 💌</span>
+      <!-- SACRED APOLOGY OPENER GATE -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="sorryGate" role="button" tabindex="0" aria-label="Tap to unlock sincere apology" style="background: radial-gradient(circle at center, #1e112a 0%, #080511 80%);">
+        <div class="bro-gate-circuit-bg" aria-hidden="true" style="opacity:0.25;"></div>
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring" style="border-color:#10b981; box-shadow: 0 0 35px rgba(16,185,129,0.5);"></div>
+          <div style="font-size:54px; margin-bottom:12px; filter: drop-shadow(0 0 18px rgba(16,185,129,0.8)); animation: floatMini 2.5s ease-in-out infinite alternate;">
+            🕊️❤️‍🩹
           </div>
-          <div class="sorry-stage-locked-tag">
-            <span>🔒 Sincere Order Enforced</span>
+          <div class="bro-gate-badge" style="background:rgba(16,185,129,0.18); border-color:#10b981; color:#6ee7b7;">
+            SINCERE ATONEMENT & HEALING
+          </div>
+          <h2 class="bro-gate-title" style="color:#fff; text-shadow:0 0 20px rgba(16,185,129,0.6);">
+            From the Bottom of My Heart
+          </h2>
+          <p class="bro-gate-label" style="color:#cbd5e1; max-width:320px; margin:0 auto 18px;">
+            A sincere confession, peace treaty, and promise to make things right.
+          </p>
+          <div class="bro-gate-hint" style="color:#6ee7b7; border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.12);">
+            🕊️ TAP TO HEAR MY SINCERE HEART ✨
           </div>
         </div>
-      </header>
+      </div>
 
-      <!-- Multi-Page Content Slider Container -->
-      <main class="sorry-pages-container" id="sorryPagesContainer" style="position:relative; z-index:10;">
+      <!-- Multi-Page Content Slider Container (Continuous Immersive Flow) -->
+      <main class="sorry-pages-container" id="sorryPagesContainer" style="position:relative; z-index:10; display:flex; flex-direction:column; gap:28px;">
         
         <!-- ============================================================ -->
         <!-- PAGE 1: 💌 THE SINCERE CONFESSION & INTERACTIVE KINTSUGI MEND -->
@@ -672,40 +677,38 @@ export function renderSorryTemplate(container, data) {
   });
 
   // Page Switcher Engine
+  // Opener Gate Execution
+  const sorryGate = container.querySelector('#sorryGate');
+  if (sorryGate) {
+    const executeOpenSorryGate = () => {
+      if (sorryGate.classList.contains('is-open')) return;
+      confetti({
+        particleCount: 75,
+        spread: 85,
+        origin: { y: 0.5 },
+        colors: ['#10b981', '#34d399', '#f472b6', '#ffffff']
+      });
+      sorryGate.classList.add('is-open');
+    };
+    sorryGate.addEventListener('click', executeOpenSorryGate);
+  }
+
+  // Ensure all story cards are displayed in continuous flow
+  container.querySelectorAll('.sorry-page-card').forEach(card => {
+    card.style.display = 'block';
+    card.classList.add('active');
+  });
+
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
-
-    // Update Progress Bar
-    const progressPct = Math.round((currentPage / totalPages) * 100);
-    const fill = container.querySelector('#stepProgressFill');
-    if (fill) fill.style.width = `${progressPct}%`;
-
-    // Update Stage Banner
-    const stepPill = container.querySelector('#stageStepPill');
-    if (stepPill) stepPill.textContent = `STAGE ${currentPage} OF ${totalPages}`;
-    const titleText = container.querySelector('#stageTitleText');
-    if (titleText && pageTitles[currentPage - 1]) {
-      titleText.textContent = `${pageTitles[currentPage - 1].title} ${pageTitles[currentPage - 1].icon}`;
+    const targetCard = container.querySelector(`.sorry-page-card[data-page="${currentPage}"]`);
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    // Update Page View with GSAP
-    container.querySelectorAll('.sorry-page-card').forEach(card => {
-      const isTarget = parseInt(card.getAttribute('data-page')) === currentPage;
-      if (isTarget) {
-        card.style.display = 'block';
-        card.classList.add('active');
-        gsap.fromTo(card, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
-      } else {
-        card.classList.remove('active');
-        card.style.display = 'none';
-      }
-    });
-
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 
-  // Bind Next / Prev buttons
+  // Bind Next / Prev buttons to smooth scroll instead of page toggling
   container.querySelectorAll('.btn-sorry-next').forEach(btn => {
     btn.addEventListener('click', () => {
       const next = parseInt(btn.getAttribute('data-next'));

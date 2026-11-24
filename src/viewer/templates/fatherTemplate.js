@@ -83,22 +83,31 @@ export function renderFatherTemplate(container, data) {
       <!-- Ambient Bronze Stardust Canvas (60FPS Celestial) -->
       <canvas id="dadStarCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Bar & Passive Indicator -->
-      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
-        <div class="fam-step-progress-track">
-          <div class="fam-step-progress-fill" id="dadStepProgressFill" style="width: 16.6%;"></div>
-        </div>
-        <div class="fam-stage-indicator-bar">
-          <div class="fam-stage-info-pill">
-            <span class="stage-step-tag" id="dadStageStepPill">PAGE 1 OF 6</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="dadStageTitleText">The First Hero Tribute 🌟</span>
+      <!-- SACRED FATHER SOVEREIGN HERO OPENER GATE -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="fatherGate" role="button" tabindex="0" aria-label="Tap to unlock Father tribute" style="background: radial-gradient(circle at center, #101c2e 0%, #03060c 80%);">
+        <div class="bro-gate-circuit-bg" aria-hidden="true" style="opacity:0.25;"></div>
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring" style="border-color:#d97706; box-shadow: 0 0 35px rgba(217,119,6,0.6);"></div>
+          <div style="font-size:54px; margin-bottom:12px; filter: drop-shadow(0 0 18px rgba(217,119,6,0.8)); animation: floatMini 2.5s ease-in-out infinite alternate;">
+            🛡️🧭
+          </div>
+          <div class="bro-gate-badge" style="background:rgba(217,119,6,0.18); border-color:#d97706; color:#fed7aa;">
+            SOVEREIGN PATERNAL TRIBUTE
+          </div>
+          <h2 class="bro-gate-title" style="color:#fff; text-shadow:0 0 20px rgba(217,119,6,0.6);">
+            To My Father: My Unsung Hero 🌟
+          </h2>
+          <p class="bro-gate-label" style="color:#cbd5e1; max-width:320px; margin:0 auto 18px;">
+            A father's sacrifice is quiet, yet it moves mountains. My life's unshakeable foundation.
+          </p>
+          <div class="bro-gate-hint" style="color:#fed7aa; border-color:rgba(217,119,6,0.4); background:rgba(217,119,6,0.12);">
+            🛡️ TAP TO UNSEAL PAPA'S HERO TRIBUTE 🌟
           </div>
         </div>
-      </header>
+      </div>
 
-      <!-- Multi-Page Content Cards Container -->
-      <main class="fam-pages-container" id="dadPagesContainer">
+      <!-- Multi-Page Content Cards Container (Continuous Immersive Flow) -->
+      <main class="fam-pages-container" id="dadPagesContainer" style="display:flex; flex-direction:column; gap:28px;">
         <!-- PAGE 1: HERO & SHIELD OF HONOR -->
         <section class="fam-page-card active" data-page="1">
           <header class="fam-hero-section">
@@ -405,31 +414,38 @@ export function renderFatherTemplate(container, data) {
     { num: 6, title: "Greatest Father in the Universe 🌟" }
   ];
 
+  // Opener Gate Execution
+  const dadGate = container.querySelector('#fatherGate');
+  if (dadGate) {
+    const executeOpenDadGate = () => {
+      if (dadGate.classList.contains('is-open')) return;
+      playDadTone('brass');
+      confetti({
+        particleCount: 80,
+        spread: 90,
+        origin: { y: 0.5 },
+        colors: ['#d97706', '#f59e0b', '#3b82f6', '#ffffff']
+      });
+      dadGate.classList.add('is-open');
+    };
+    dadGate.addEventListener('click', executeOpenDadGate);
+  }
+
+  // Ensure all story cards are displayed in continuous flow
+  container.querySelectorAll('.fam-page-card').forEach(card => {
+    card.style.display = 'block';
+    card.classList.add('active');
+  });
+
   const totalPages = dadPageTitles.length;
   let currentPage = 1;
 
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
-
-    // Update Progress Bar
-    const progressPct = Math.round((currentPage / totalPages) * 100);
-    const fill = container.querySelector('#dadStepProgressFill');
-    if (fill) fill.style.width = `${progressPct}%`;
-
-    // Update Stage Indicator Banner
-    const stepPill = container.querySelector('#dadStageStepPill');
-    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
-    const titleText = container.querySelector('#dadStageTitleText');
-    if (titleText && dadPageTitles[currentPage - 1]) {
-      titleText.textContent = dadPageTitles[currentPage - 1].title;
+    const targetCard = container.querySelector(`.fam-page-card[data-page="${currentPage}"]`);
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    // Update Page View
-    container.querySelectorAll('.fam-page-card').forEach(card => {
-      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
-    });
-
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 

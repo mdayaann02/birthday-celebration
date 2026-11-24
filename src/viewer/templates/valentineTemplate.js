@@ -1,558 +1,304 @@
-// src/viewer/templates/valentineTemplate.js - Ultra-Aesthetic Valentine & Proposal Confession
-// Features: Cupid Archery Mini-Game, Runaway "No" Physics, Canvas Fireworks Display,
-// 3D Wax Seal Unfolding Letter, and Soulmate Certificate.
+// src/viewer/templates/valentineTemplate.js - Blossom-Grade Immersive Valentine Romance Experience
+// Features: Sacred Beating Heart Opener Gate, 60fps Falling Rose Petals Canvas,
+// Interactive Cupid Archery Game, Wax-Sealed Valentine Parchment, Cherished Polaroids & Forever Devotion Seal in a continuous flow.
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
-import html2canvas from 'html2canvas';
-import mediumZoom from 'medium-zoom';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 
 export function renderValentineTemplate(container, data) {
-  const recipient = data.recipientName || 'My Dearest Love';
+  const recipient = data.recipientName || 'My Valentine';
   const polaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
-    { title: "That Unforgettable Smile ✨", image: "/images/pretty.jpg", note: "The very first time you looked at me and smiled, my heart decided right then." },
-    { title: "Our Favorite Adventures 🌅", image: "/images/sunset.jpg", note: "Every moment with you feels like a beautiful dream I never want to wake up from." },
-    { title: "Forever My Queen 👑", image: "/images/queen.jpg", note: "The kindest, most radiant soul. I am truly the luckiest person in the world." }
+    { title: "The Way You Smile 💖", image: "/images/always_you.jpg", note: "The whole room lights up every single time you laugh." },
+    { title: "Sweetest Memories 🌸", image: "/images/sunset.jpg", note: "Every moment with you feels like our favorite song playing on repeat." },
+    { title: "Forever Yours 🌹", image: "/images/dream_girl.jpg", note: "No matter where life takes us, my heart will always belong to you." }
   ];
+
+  // Synthesize Web Audio Harp & Heartbeat
+  function playValTone(type = 'chime') {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'heartbeat') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(90, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.2);
+      } else {
+        [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.value = freq;
+          o.connect(g);
+          g.connect(ctx.destination);
+          g.gain.setValueAtTime(0.12, ctx.currentTime + i * 0.08);
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.08 + 0.6);
+          o.start(ctx.currentTime + i * 0.08);
+          o.stop(ctx.currentTime + i * 0.08 + 0.6);
+        });
+      }
+    } catch {
+      // AudioContext unavailable
+    }
+  }
 
   container.innerHTML = `
     <!-- Top Audio Player -->
-    <div id="valPlayerSlot"></div>
+    <div id="valPlayerSlot" style="position:relative; z-index:100;"></div>
 
     <!-- Fireworks & Celebration Canvas -->
     <canvas id="valFireworksCanvas" style="position:fixed; inset:0; pointer-events:none; z-index:2; width:100%; height:100%;"></canvas>
 
-    <div class="val-page-viewport val-storybook-viewport">
+    <div class="val-page-viewport val-storybook-viewport" style="position:relative; z-index:10; max-width:820px; margin:0 auto; padding:0 16px 80px;">
+      
       <!-- Falling Rose Petals Canvas -->
-      <canvas id="valPetalCanvas" class="blossom-bg-canvas"></canvas>
+      <canvas id="valPetalCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Indicator Bar -->
-      <header class="val-floating-nav" style="user-select:none;">
-        <div class="val-step-progress-track">
-          <div class="val-step-progress-fill" id="valStepProgressFill" style="width: 20%;"></div>
-        </div>
-        <div class="val-stage-indicator-bar">
-          <div class="val-stage-info-pill">
-            <span class="stage-step-tag" id="valStageStepPill">PAGE 1 OF 5</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="valStageTitleText">Cupid's Sacred Arrow 🏹</span>
+      <!-- SACRED VALENTINE OPENER GATE -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="valGate" role="button" tabindex="0" aria-label="Tap to unlock Valentine confession" style="background: radial-gradient(circle at center, #24040d 0%, #080104 80%);">
+        <div class="bro-gate-circuit-bg" aria-hidden="true" style="opacity:0.25;"></div>
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring" style="border-color:#f43f5e; box-shadow: 0 0 35px rgba(244,63,94,0.6);"></div>
+          <div style="font-size:54px; margin-bottom:12px; filter: drop-shadow(0 0 18px rgba(244,63,94,0.8)); animation: floatMini 2.5s ease-in-out infinite alternate;">
+            💘🌹
+          </div>
+          <div class="bro-gate-badge" style="background:rgba(244,63,94,0.18); border-color:#f43f5e; color:#fca5a5;">
+            CONFESSION OF DEVOTION
+          </div>
+          <h2 class="bro-gate-title" style="color:#fff; text-shadow:0 0 20px rgba(244,63,94,0.6);">
+            Will You Be My Valentine, ${recipient}?
+          </h2>
+          <p class="bro-gate-label" style="color:#cbd5e1; max-width:320px; margin:0 auto 18px;">
+            Cupid struck my heart the moment you walked into my world.
+          </p>
+          <div class="bro-gate-hint" style="color:#fca5a5; border-color:rgba(244,63,94,0.4); background:rgba(244,63,94,0.12);">
+            🏹 TAP TO UNSEAL MY HEART ❤️
           </div>
         </div>
-      </header>
+      </div>
 
-      <main class="val-pages-container" id="valPagesContainer">
+      <!-- CONTINUOUS IMMERSIVE STORY FLOW (NO PROGRESS BARS, NATURAL CHAPTERS) -->
+      <main class="val-flow-container" style="display:flex; flex-direction:column; gap:32px;">
         
-        <!-- PAGE 1: CUPID'S ARCHERY GAME -->
-        <section class="val-page-card active" data-page="1">
-          <div class="val-hero-wrap">
-            <div class="val-tag">CUPID'S SACRED ARROW 🏹❤️</div>
-            <h1 class="val-hero-title">${data.heroTitle || 'Cupid Struck My Heart'}</h1>
-            <p class="val-hero-sub">${data.heroSubtitle || 'Pull back the recurve bow and strike my heart to begin our romantic confession...'}</p>
-
-            <!-- Interactive Archery Arena -->
-            <div class="val-archery-box" id="valArcheryBox" style="position:relative; width:100%; max-width:340px; height:240px; margin:20px auto; background:rgba(255,255,255,0.04); border:1px solid rgba(244,63,94,0.3); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:16px;">
-              
-              <!-- Floating Target Heart -->
-              <div class="val-target-heart" id="valTargetHeart" style="position:relative; cursor:pointer;">
-                <span style="font-size:46px; display:inline-block; animation: pulse 1.5s infinite;">💖</span>
-              </div>
-
-              <!-- Recurve Bow -->
-              <div class="val-bow-rig" id="valBowRig" style="cursor:pointer; text-align:center;">
-                <div id="valArrow" style="font-size:28px; transform:translateY(0); transition:transform 0.1s ease;">🏹</div>
-                <p style="font-size:11px; font-weight:700; color:#fb7185; margin-top:4px;">▼ PULL OR TAP TO SHOOT ▼</p>
-              </div>
-
-              <button type="button" class="btn-fam-action btn-quick-cupid" id="btnValDirectShoot" style="font-size:11.5px; padding:6px 16px; border-radius:14px; background:rgba(225,29,72,0.18); border:1px solid #e11d48; color:#fff; font-weight:700; cursor:pointer;">
-                🎯 Direct Cupid Strike
-              </button>
-            </div>
+        <!-- CHAPTER 1: CUPID'S ARCHERY GAME -->
+        <section class="val-story-card" style="background:rgba(22,4,12,0.88); border:1.5px solid rgba(244,63,94,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px); text-align:center;">
+          <div class="val-tag" style="display:inline-block; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fca5a5; background:rgba(244,63,94,0.15); padding:4px 14px; border-radius:20px; border:1px solid rgba(244,63,94,0.4); margin-bottom:14px;">
+            CUPID'S SACRED ARROW 🏹❤️
           </div>
+          <h1 class="val-hero-title" style="color:#fff; font-size:28px; font-weight:900; margin:0 0 8px 0;">
+            ${data.heroTitle || 'Cupid Struck My Heart'}
+          </h1>
+          <p class="val-hero-sub" style="color:#fecdd3; font-size:14px; margin:0 0 20px 0;">
+            ${data.heroSubtitle || 'Pull back the recurve bow and strike my heart to begin our romantic confession...'}</p>
 
-          <div class="val-nav-dock">
-            <button type="button" class="btn-val-next" data-next="2">
-              <span>Read Secret Letter 💌</span>
-              <span>➔</span>
+          <!-- Interactive Archery Arena -->
+          <div class="val-archery-box" id="valArcheryBox" style="position:relative; width:100%; max-width:340px; height:240px; margin:0 auto; background:rgba(255,255,255,0.04); border:1px solid rgba(244,63,94,0.3); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:16px;">
+            <!-- Floating Target Heart -->
+            <div class="val-target-heart" id="valTargetHeart" style="position:relative; cursor:pointer;">
+              <span style="font-size:46px; display:inline-block; animation: pulse 1.5s infinite;">💖</span>
+            </div>
+
+            <!-- Recurve Bow -->
+            <div class="val-bow-rig" id="valBowRig" style="cursor:pointer; text-align:center;">
+              <div id="valArrow" style="font-size:28px; transform:translateY(0); transition:transform 0.1s ease;">🏹</div>
+              <p style="font-size:11px; font-weight:700; color:#fb7185; margin-top:4px;">▼ PULL OR TAP TO SHOOT ▼</p>
+            </div>
+
+            <button type="button" class="btn-fam-action btn-quick-cupid" id="btnValDirectShoot" style="font-size:12px; padding:8px 18px; border-radius:14px; background:linear-gradient(135deg, #f43f5e, #be123c); border:none; color:#fff; font-weight:800; cursor:pointer; box-shadow:0 4px 15px rgba(244,63,94,0.4);">
+              🎯 Direct Cupid Strike
             </button>
           </div>
         </section>
 
-        <!-- PAGE 2: WAX SEAL LETTER -->
-        <section class="val-page-card" data-page="2">
-          <div class="val-hero-wrap">
-            <div class="val-tag">A CONFESSION OF LOVE 🌹</div>
-            <h2 class="val-hero-title">My Heart, In Words</h2>
-            <p class="val-hero-sub">Tap the wax seal to read the secret letter written just for you</p>
+        <!-- CHAPTER 2: WAX SEAL LETTER -->
+        <section class="val-story-card" style="background:rgba(22,4,12,0.88); border:1.5px solid rgba(244,63,94,0.35); border-radius:24px; padding:28px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px); text-align:center;">
+          <div class="val-tag" style="display:inline-block; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fca5a5; background:rgba(244,63,94,0.15); padding:4px 14px; border-radius:20px; border:1px solid rgba(244,63,94,0.4); margin-bottom:14px;">
+            A CONFESSION OF DEVOTION 🌹
+          </div>
+          <h2 class="val-hero-title" style="color:#fff; font-size:22px; font-weight:800; margin:0 0 6px 0;">My Heart, In Words</h2>
+          <p class="val-hero-sub" style="color:#fecdd3; font-size:13px; margin:0 0 18px 0;">Tap the ruby wax seal to unroll the heartfelt love letter</p>
 
-            <div class="wax-envelope-wrap" id="valEnvelope" style="margin-top:20px;">
-              <div class="envelope-back"></div>
-              <div class="envelope-front"></div>
-              <div class="envelope-flap" id="valFlap"></div>
+          <div class="wax-envelope-wrap" id="valEnvelope" style="margin:16px auto; cursor:pointer;">
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-flap" id="valFlap"></div>
+            <button class="wax-seal-button" id="valWaxSeal" title="Tap to unseal letter" style="border:none; background:none; cursor:pointer;">
+              <div class="wax-seal-emblem">
+                <span style="font-size:24px;">💌</span>
+              </div>
+            </button>
+          </div>
+          <p class="envelope-subtitle" style="margin-top:14px; font-size:12px; color:#fca5a5; font-weight:700;">👆 Tap the wax seal to read!</p>
+        </section>
 
-              <button class="wax-seal-button" id="valWaxSeal" title="Tap to unseal letter">
-                <div class="wax-seal-emblem">
-                  <span style="font-size:22px;">💌</span>
+        <!-- CHAPTER 3: POLAROIDS -->
+        <section class="val-story-card" style="background:rgba(22,4,12,0.88); border:1.5px solid rgba(244,63,94,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px);">
+          <div class="val-tag" style="text-align:center; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fca5a5; margin-bottom:6px;">WHY I FELL FOR YOU 📸</div>
+          <h2 class="val-memories-title" style="text-align:center; color:#fff; font-size:22px; font-weight:800; margin:0 0 20px 0;">Cherished Moments With You</h2>
+          <div class="val-polaroids-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px;">
+            ${polaroids.map(p => `
+              <div class="val-polaroid-card" style="background:#fff; color:#0f172a; border-radius:14px; padding:12px; box-shadow:0 10px 25px rgba(0,0,0,0.4); text-align:center;">
+                <div class="val-polaroid-img-frame" style="width:100%; height:200px; border-radius:10px; overflow:hidden; margin-bottom:10px;">
+                  <img src="${p.image}" alt="${p.title || 'Valentine Memory'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/images/sunset.jpg'" />
                 </div>
-              </button>
-            </div>
-            <p class="envelope-subtitle" style="margin-top:16px;">👆 Tap the seal to open!</p>
-          </div>
-
-          <div class="val-nav-dock">
-            <button type="button" class="btn-val-prev" data-prev="1">⬅ Back</button>
-            <button type="button" class="btn-val-next" data-next="3">
-              <span>Why I Fell For You 📸</span>
-              <span>➔</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- PAGE 3: POLAROIDS -->
-        <section class="val-page-card" data-page="3">
-          <div class="val-memories-section">
-            <div class="val-tag">WHY I FELL FOR YOU 📸</div>
-            <h2 class="val-memories-title">Cherished Moments With You</h2>
-            <div class="val-polaroids-grid">
-              ${polaroids.map((p, i) => `
-                <div class="val-polaroid-card">
-                  <div class="val-polaroid-img-frame">
-                    <img src="${p.image}" alt="${p.title || 'Valentine Memory'}" onerror="this.src='/images/sunset.jpg'" />
-                  </div>
-                  <div class="val-polaroid-caption">
-                    <h4 class="val-pol-title">${p.title || `Memory #${i+1}`}</h4>
-                    <p class="val-pol-note">${p.note || p.caption || ''}</p>
-                    <button type="button" class="btn-download-polaroid" title="Save keepsake polaroid" style="margin: 8px auto 2px auto;">
-                      📸 Save Keepsake
-                    </button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-          <div class="val-nav-dock">
-            <button type="button" class="btn-val-prev" data-prev="2">⬅ Back</button>
-            <button type="button" class="btn-val-next" data-next="4">
-              <span>The Big Question 💍</span>
-              <span>➔</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- PAGE 4: RUNAWAY "NO" PROPOSAL CHALLENGE -->
-        <section class="val-page-card" data-page="4">
-          <div class="val-proposal-section">
-            <div class="val-proposal-card" id="valProposalCard" style="position:relative; overflow:hidden; min-height:360px;">
-              <div class="val-neon-heart">💖</div>
-              <h2 class="val-proposal-query">${data.proposalQuestion || 'Will You Be My Valentine & Forever? ❤️'}</h2>
-              
-              <div class="val-decision-buttons" style="position:relative; min-height:80px; margin-top:20px;">
-                <button class="btn-val-yes" id="btnProposalYes">
-                  YES! A Million Times YES! 💍
-                </button>
-                <button class="btn-val-no" id="btnProposalNo" style="position:absolute; transition:all 0.18s cubic-bezier(0.16, 1, 0.3, 1);">
-                  No 🙈
-                </button>
+                <h4 class="val-polaroid-caption" style="margin:0 0 4px 0; font-size:14px; font-weight:800; color:#0f172a;">${p.title}</h4>
+                <p class="val-polaroid-note" style="margin:0; font-size:12px; color:#475569; line-height:1.4;">${p.note || ''}</p>
               </div>
+            `).join('')}
+          </div>
+        </section>
 
-              <div class="val-accepted-banner" id="valAcceptedBanner" style="display:none; margin-top:20px;">
-                <div style="font-size:48px; margin-bottom:8px;">🥂💍✨</div>
-                <h3 class="val-accepted-heading">SHE SAID YES!</h3>
-                <p class="val-accepted-text">Here is to us, our endless smiles, silly inside jokes, and a lifetime of love. You are my forever! ❤️🌹</p>
-              </div>
+        <!-- CHAPTER 4: LOVE QUIZ -->
+        <section class="val-story-card" style="background:rgba(22,4,12,0.88); border:1.5px solid rgba(244,63,94,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px); text-align:center;">
+          <div class="val-tag" style="font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fca5a5; margin-bottom:6px;">HOW DEEPLY DO YOU KNOW MY HEART? 🎯</div>
+          <h2 class="val-quiz-title" style="color:#fff; font-size:22px; font-weight:800; margin:0 0 16px 0;">Our Sweet Love Trivia</h2>
+          <div class="val-quiz-box" style="background:rgba(255,255,255,0.04); border:1px solid rgba(244,63,94,0.3); border-radius:18px; padding:20px; max-width:440px; margin:0 auto;">
+            <p style="font-size:15px; font-weight:700; color:#fff; margin:0 0 16px 0;">Where does my heart feel most at peace?</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button type="button" class="val-quiz-btn" data-correct="false" style="padding:12px; border-radius:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; font-weight:700; cursor:pointer;">At the most luxurious places on earth</button>
+              <button type="button" class="val-quiz-btn" data-correct="true" style="padding:12px; border-radius:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; font-weight:700; cursor:pointer;">Right beside you, anywhere in the world ❤️</button>
+              <button type="button" class="val-quiz-btn" data-correct="false" style="padding:12px; border-radius:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; font-weight:700; cursor:pointer;">Only when eating my favorite dessert</button>
             </div>
-          </div>
-          <div class="val-nav-dock">
-            <button type="button" class="btn-val-prev" data-prev="3">⬅ Back</button>
-            <button type="button" class="btn-val-next" data-next="5">
-              <span>Soulmate Proclamation 👑</span>
-              <span>➔</span>
-            </button>
+            <div id="valQuizFeedback" style="margin-top:14px; font-weight:800; font-size:13px; min-height:22px;"></div>
           </div>
         </section>
 
-        <!-- PAGE 5: CERTIFICATE & REPLAY -->
-        <section class="val-page-card" data-page="5">
-          <div class="luxury-award-certificate gold-cert">
-            <div class="cert-border-corner tl"></div>
-            <div class="cert-border-corner tr"></div>
-            <div class="cert-border-corner bl"></div>
-            <div class="cert-border-corner br"></div>
-
-            <div class="cert-ribbon" style="background:linear-gradient(135deg, #f43f5e, #fb7185); color:#fff;">🌹 ETERNAL SOULMATE 🌹</div>
-            <h2 class="cert-heading">SOULMATE OF MY HEART</h2>
-            <div class="cert-recipient">SOLEMNLY PLEDGED TO: <strong>${recipient}</strong></div>
-            <p class="cert-body">
-              Certified as the only person who holds the key to my heart, my greatest blessing, 
-              and my chosen companion for every lifetime ahead.
-            </p>
-            <div class="cert-stamp" style="border-color:#f43f5e; color:#f43f5e;">💍 FOREVER YOURS 💍</div>
-          </div>
-          <div class="val-nav-dock">
-            <button type="button" class="btn-val-prev" data-prev="4">⬅ Back</button>
-            <button type="button" class="btn-val-replay" id="btnValReplay">
-              <span>🌹 Replay Our Confession ↺</span>
-            </button>
+        <!-- CHAPTER 5: FOREVER DEVOTION SEAL -->
+        <section class="val-story-card" style="background:linear-gradient(135deg, rgba(35,5,15,0.92), rgba(15,2,8,0.95)); border:2px solid rgba(244,63,94,0.45); border-radius:24px; padding:28px 20px; box-shadow:0 16px 40px rgba(0,0,0,0.7); text-align:center;">
+          <div style="font-size:42px; margin-bottom:8px;">🌹💍✨</div>
+          <h2 style="color:#fb7185; font-size:24px; font-weight:900; margin:0 0 10px 0;">Forever My Valentine</h2>
+          <p style="color:#fecdd3; font-size:13.5px; line-height:1.6; max-width:520px; margin:0 auto 20px;">
+            "You are my today and all of my tomorrows."
+          </p>
+          <div style="display:inline-flex; align-items:center; gap:8px; padding:8px 20px; background:rgba(244,63,94,0.18); border:1px solid #f43f5e; border-radius:30px; color:#fff; font-weight:800; font-size:13px;">
+            ❤️ Forever In Love, ${data.senderName || 'Yours Completely'}
           </div>
         </section>
+
       </main>
+    </div>
 
-      <!-- Letter Modal Backdrop -->
-      <div class="blossom-letter-modal-backdrop" id="valLetterModal">
-        <div class="blossom-modal-card">
-          <button class="modal-close-btn" id="btnCloseValLetter">&times;</button>
-          <div class="modal-card-header">
-            <h3 class="modal-card-title">My Heart, Just For You ✨</h3>
-            <p class="modal-card-sub">To: ${recipient}</p>
-          </div>
-          <div class="modal-card-body" id="valLetterBody">
-            <p style="font-size:14px; line-height:1.7; color:#3d2a33; white-space:pre-wrap;">
-${data.letterText || `Dearest ${recipient},\n\nEvery day with you feels like a dream come true. You make me laugh when life gets heavy, and your smile is the brightest thing in my world.\n\nThank you for loving me and being my partner in everything.\n\nForever yours ♡`}
-            </p>
-          </div>
-          <div class="modal-card-footer">
-            <button class="modal-action-btn" id="btnValHeartBurst">
-              💖 Send Love Heartburst 💖
-            </button>
-          </div>
+    <!-- WAX SEAL MODAL -->
+    <div class="wax-letter-modal neu-modal-overlay" id="valLetterModal">
+      <div class="wax-letter-parchment" style="max-width:500px; max-height:85vh; overflow-y:auto;">
+        <button class="btn-close-parchment" id="btnCloseValLetter">✕</button>
+        <div class="parchment-gold-seal">💌</div>
+        <h3 class="parchment-title" style="margin-top:10px;">To My Valentine, ${recipient}</h3>
+        <div class="parchment-body" style="white-space: pre-line; line-height:1.7; font-size:14px; color:#332211;">
+          ${data.letter || `My Dearest Valentine,
+
+You are the greatest blessing life has ever given me. Every laugh we share, every quiet moment, and every dream we build together is precious beyond words.
+
+I promise to hold your hand through every season, to celebrate your victories, and to love you more with every passing second.
+
+Happy Valentine's Day, my forever love.`}
+        </div>
+        <div class="parchment-signature" style="margin-top:20px; font-weight:800; color:#881337;">
+          ${data.senderName || 'Yours Always 🌹'}
         </div>
       </div>
     </div>
   `;
 
-  // Mount Audio Player
-  initMusicPlayer(container.querySelector('#valPlayerSlot'), {
-    ...data,
-    audioSrc: data.audioSrc || '/audio/alfaaz.mp3',
-    audioTitle: data.audioTitle || 'Valentine Romance Track'
-  });
-
-  // =========================================================================
-  // 60FPS FALLING ROSE PETALS & GLOWING HEARTS CANVAS
-  // =========================================================================
-  const vPetalCanvas = container.querySelector('#valPetalCanvas');
-  if (vPetalCanvas) {
-    const vCtx = vPetalCanvas.getContext('2d');
-    let vW = (vPetalCanvas.width = window.innerWidth);
-    let vH = (vPetalCanvas.height = window.innerHeight);
-
-    const petals = Array.from({ length: 30 }, () => ({
-      x: Math.random() * vW,
-      y: Math.random() * vH,
-      size: 5 + Math.random() * 8,
-      speedY: 0.8 + Math.random() * 1.2,
-      speedX: (Math.random() - 0.5) * 0.8,
-      rot: Math.random() * 360,
-      rotSpeed: (Math.random() - 0.5) * 2,
-      color: Math.random() > 0.4 ? 'rgba(225, 29, 72, 0.45)' : 'rgba(251, 113, 133, 0.35)'
-    }));
-
-    function animVPetals() {
-      vCtx.clearRect(0, 0, vW, vH);
-      petals.forEach(p => {
-        p.y += p.speedY;
-        p.x += p.speedX;
-        p.rot += p.rotSpeed;
-        if (p.y > vH + 20) {
-          p.y = -20;
-          p.x = Math.random() * vW;
-        }
-
-        vCtx.save();
-        vCtx.translate(p.x, p.y);
-        vCtx.rotate((p.rot * Math.PI) / 180);
-        vCtx.fillStyle = p.color;
-        vCtx.beginPath();
-        vCtx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
-        vCtx.fill();
-        vCtx.restore();
+  // Opener Gate Execution
+  const gateEl = container.querySelector('#valGate');
+  if (gateEl) {
+    const executeOpenGate = () => {
+      if (gateEl.classList.contains('is-open')) return;
+      playValTone('chime');
+      confetti({
+        particleCount: 80,
+        spread: 90,
+        origin: { y: 0.5 },
+        colors: ['#f43f5e', '#be123c', '#fb7185', '#ffffff']
       });
-      requestAnimationFrame(animVPetals);
-    }
-    requestAnimationFrame(animVPetals);
-
-    window.addEventListener('resize', () => {
-      vW = vPetalCanvas.width = window.innerWidth;
-      vH = vPetalCanvas.height = window.innerHeight;
-    });
+      gateEl.classList.add('is-open');
+    };
+    gateEl.addEventListener('click', executeOpenGate);
   }
 
-  // =========================================================================
-  // CUPID ARCHERY INTERACTIVE LOGIC
-  // =========================================================================
-  const valTargetHeart = container.querySelector('#valTargetHeart');
-  const valBowRig = container.querySelector('#valBowRig');
-  const valArrow = container.querySelector('#valArrow');
-  const btnValDirectShoot = container.querySelector('#btnValDirectShoot');
-  let valShot = false;
+  // Interactive Archery Rig
+  const bowRig = container.querySelector('#valBowRig');
+  const arrowEl = container.querySelector('#valArrow');
+  const targetHeart = container.querySelector('#valTargetHeart');
+  const btnDirectShoot = container.querySelector('#btnValDirectShoot');
 
-  function executeValShot() {
-    if (valShot) return;
-    valShot = true;
-    if (navigator.vibrate) navigator.vibrate([20, 30, 40]);
-
-    gsap.to(valArrow, {
-      y: -120,
-      duration: 0.3,
-      ease: 'power2.in',
-      onComplete: () => {
-        valTargetHeart.style.transform = 'scale(1.4)';
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.45 },
-          colors: ['#e11d48', '#f43f5e', '#ffd700']
-        });
-        setTimeout(() => {
-          goToPage(2);
-        }, 700);
-      }
-    });
-  }
-
-  valBowRig?.addEventListener('click', executeValShot);
-  btnValDirectShoot?.addEventListener('click', executeValShot);
-
-  // =========================================================================
-  // RUNAWAY "NO" BUTTON WITH SMOOTH SPRING PHYSICS
-  // =========================================================================
-  const btnNo = container.querySelector('#btnProposalNo');
-  const proposalCard = container.querySelector('#valProposalCard');
-
-  const funnyNoPrompts = [
-    "No 🙈",
-    "Are you sure? 🥺",
-    "Try again! 😜",
-    "Wrong button! 💘",
-    "Nice try! 😂",
-    "You can't say no! 💍"
-  ];
-  let noCount = 0;
-
-  function dodgeButton() {
-    if (!btnNo || !proposalCard) return;
-    noCount++;
-    btnNo.textContent = funnyNoPrompts[noCount % funnyNoPrompts.length];
-    if (navigator.vibrate) navigator.vibrate(15);
-
-    const cardRect = proposalCard.getBoundingClientRect();
-    const maxX = Math.max(20, cardRect.width - 120);
-    const maxY = Math.max(20, cardRect.height - 100);
-
-    const randX = Math.random() * (maxX - 40) + 20;
-    const randY = Math.random() * (maxY - 40) + 20;
-
-    gsap.to(btnNo, {
-      left: `${randX}px`,
-      top: `${randY}px`,
-      duration: 0.22,
-      ease: 'back.out(1.7)'
-    });
-  }
-
-  btnNo?.addEventListener('mouseenter', dodgeButton);
-  btnNo?.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    dodgeButton();
-  });
-
-  // =========================================================================
-  // GRAND PROPOSAL ACCEPTANCE & FIREWORKS CANVAS DISPLAY
-  // =========================================================================
-  const btnYes = container.querySelector('#btnProposalYes');
-  const banner = container.querySelector('#valAcceptedBanner');
-  const fwCanvas = container.querySelector('#valFireworksCanvas');
-
-  btnYes?.addEventListener('click', () => {
-    if (navigator.vibrate) navigator.vibrate([40, 50, 60, 70]);
-    if (banner) banner.style.display = 'block';
-    if (btnNo) btnNo.style.display = 'none';
-    btnYes.style.display = 'none';
-
-    // Massive confetti burst
-    confetti({
-      particleCount: 120,
-      spread: 90,
-      origin: { y: 0.5 },
-      colors: ['#e11d48', '#f43f5e', '#ffd700', '#ec4899', '#ffffff']
-    });
-
-    // Fireworks Canvas loop
-    if (fwCanvas) {
-      const fCtx = fwCanvas.getContext('2d');
-      let fwW = (fwCanvas.width = window.innerWidth);
-      let fwH = (fwCanvas.height = window.innerHeight);
-
-      const fwParticles = [];
-      function createFirework(x, y) {
-        const count = 45;
-        const color = ['#e11d48', '#f43f5e', '#ffd700', '#ec4899', '#ffffff'][Math.floor(Math.random() * 5)];
-        for (let i = 0; i < count; i++) {
-          const angle = (Math.PI * 2 * i) / count;
-          const speed = Math.random() * 5 + 2;
-          fwParticles.push({
-            x, y,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            alpha: 1,
-            color,
-            r: Math.random() * 3 + 2
-          });
-        }
-      }
-
-      for (let r = 0; r < 6; r++) {
-        setTimeout(() => {
-          createFirework(fwW * (0.2 + r * 0.12), fwH * (0.3 + (r % 3) * 0.1));
+  function shootArrow() {
+    playValTone('heartbeat');
+    if (arrowEl) {
+      gsap.to(arrowEl, {
+        y: -120,
+        opacity: 0,
+        duration: 0.25,
+        onComplete: () => {
           confetti({
-            particleCount: 50,
-            angle: 60 + r * 20,
-            spread: 55,
-            origin: { x: 0.2 + r * 0.12, y: 0.5 }
+            particleCount: 60,
+            spread: 70,
+            origin: { y: 0.45 },
+            colors: ['#f43f5e', '#fb7185', '#ffffff']
           });
-        }, r * 350);
-      }
-
-      function animFireworks() {
-        fCtx.clearRect(0, 0, fwW, fwH);
-        let alive = false;
-        for (const p of fwParticles) {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += 0.05; // gravity
-          p.alpha -= 0.015;
-          if (p.alpha > 0) {
-            alive = true;
-            fCtx.save();
-            fCtx.globalAlpha = p.alpha;
-            fCtx.fillStyle = p.color;
-            fCtx.beginPath();
-            fCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            fCtx.fill();
-            fCtx.restore();
-          }
+          gsap.fromTo(targetHeart, { scale: 1.6 }, { scale: 1, duration: 0.4, ease: 'bounce.out' });
+          gsap.set(arrowEl, { y: 0, opacity: 1, delay: 0.5 });
         }
-        if (alive) requestAnimationFrame(animFireworks);
-      }
-      requestAnimationFrame(animFireworks);
+      });
     }
-  });
+  }
 
-  // =========================================================================
-  // WAX SEAL ENVELOPE MODAL
-  // =========================================================================
-  const waxBtn = container.querySelector('#valWaxSeal');
+  bowRig?.addEventListener('click', shootArrow);
+  btnDirectShoot?.addEventListener('click', shootArrow);
+
+  // Wax Seal Letter Modal
+  const sealBtn = container.querySelector('#valWaxSeal');
   const modal = container.querySelector('#valLetterModal');
   const closeModal = container.querySelector('#btnCloseValLetter');
-  const heartburstBtn = container.querySelector('#btnValHeartBurst');
 
-  waxBtn?.addEventListener('click', () => {
+  sealBtn?.addEventListener('click', () => {
     if (navigator.vibrate) navigator.vibrate(20);
     modal.classList.add('visible');
-    confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
+    confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
   });
 
   closeModal?.addEventListener('click', () => {
     modal.classList.remove('visible');
   });
 
-  heartburstBtn?.addEventListener('click', () => {
-    confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 }, colors: ['#f43f5e', '#fb7185', '#ffd700'] });
-  });
-
-  // =========================================================================
-  // MULTI-PAGE STORYBOOK CONTROLLER
-  // =========================================================================
-  const pages = container.querySelectorAll('.val-page-card');
-  const progressFill = container.querySelector('#valStepProgressFill');
-  const stageStepPill = container.querySelector('#valStageStepPill');
-  const stageTitleText = container.querySelector('#valStageTitleText');
-
-  const STAGE_TITLES = {
-    1: "Cupid's Sacred Arrow 🏹",
-    2: "A Secret Confession 💌",
-    3: "Why I Fell For You 📸",
-    4: "Will You Be Mine? 💍",
-    5: "Eternal Soulmate Award 👑"
-  };
-
-  function goToPage(pageNum) {
-    const p = Math.max(1, Math.min(5, pageNum));
-    pages.forEach(page => {
-      page.classList.toggle('active', parseInt(page.getAttribute('data-page'), 10) === p);
-    });
-
-    if (progressFill) progressFill.style.width = `${(p / 5) * 100}%`;
-    if (stageStepPill) stageStepPill.textContent = `PAGE ${p} OF 5`;
-    if (stageTitleText) stageTitleText.textContent = STAGE_TITLES[p] || "Valentine Story";
-
-    if (navigator.vibrate) navigator.vibrate(12);
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
-  }
-
-  container.querySelectorAll('.btn-val-next').forEach(btn => {
+  // Love Quiz Interactions
+  const quizFeedback = container.querySelector('#valQuizFeedback');
+  container.querySelectorAll('.val-quiz-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const next = parseInt(btn.getAttribute('data-next'), 10);
-      goToPage(next);
+      const isCorrect = btn.getAttribute('data-correct') === 'true';
+      if (isCorrect) {
+        playValTone('chime');
+        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        btn.style.borderColor = '#10b981';
+        if (quizFeedback) {
+          quizFeedback.textContent = '🎉 That is right! My heart is at peace wherever you are! ✨';
+          quizFeedback.style.color = '#10b981';
+        }
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+      } else {
+        btn.style.background = 'rgba(239,68,68,0.2)';
+        btn.style.borderColor = '#ef4444';
+        if (quizFeedback) {
+          quizFeedback.textContent = 'Aww sweet, but guess again! ❤️';
+          quizFeedback.style.color = '#f87171';
+        }
+      }
     });
   });
 
-  container.querySelectorAll('.btn-val-prev').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const prev = parseInt(btn.getAttribute('data-prev'), 10);
-      goToPage(prev);
-    });
-  });
-
-  container.querySelector('#btnValReplay')?.addEventListener('click', () => {
-    goToPage(1);
-  });
-
-  // =========================================================================
-  // KEEPSAKE POLAROID DOWNLOAD & CINEMATIC MEDIUM ZOOM
-  // =========================================================================
-  try {
-    mediumZoom(container.querySelectorAll('.val-polaroid-img-frame img'), {
-      background: 'rgba(10, 10, 15, 0.92)',
-      margin: 24
-    });
-  } catch (_) {}
-
-  container.querySelectorAll('.btn-download-polaroid').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const card = btn.closest('.val-polaroid-card');
-      if (!card) return;
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '⏳ Rendering...';
-      btn.style.opacity = '0.7';
-
-      html2canvas(card, {
-        scale: 2.5,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff'
-      }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `valentine-keepsake-${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-
-        btn.innerHTML = '✅ Saved to Device!';
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.7 },
-          colors: ['#ff4d6d', '#f43f5e', '#ffd700', '#ffffff']
-        });
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.style.opacity = '1';
-        }, 2200);
-      }).catch(() => {
-        btn.innerHTML = originalText;
-        btn.style.opacity = '1';
-      });
-    });
+  // Top music player
+  initMusicPlayer(container.querySelector('#valPlayerSlot'), {
+    ...data,
+    audioSrc: data.audioSrc || '/audio/alfaaz.mp3',
+    audioTitle: data.audioTitle || `Romantic Serenade`
   });
 }

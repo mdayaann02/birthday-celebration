@@ -102,22 +102,31 @@ export function renderSisterTemplate(container, data) {
       <!-- Ambient Terracotta & Rose Quartz Shimmer Canvas -->
       <canvas id="sisStarCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Bar & Passive Indicator -->
-      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
-        <div class="fam-step-progress-track">
-          <div class="fam-step-progress-fill" id="sisStepProgressFill" style="width: 16.6%;"></div>
-        </div>
-        <div class="fam-stage-indicator-bar">
-          <div class="fam-stage-info-pill">
-            <span class="stage-step-tag" id="sisStageStepPill">PAGE 1 OF 6</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="sisStageTitleText">Partner in Crime Opening 💅</span>
+      <!-- SACRED SISTERHOOD OPENER GATE -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="sisterGate" role="button" tabindex="0" aria-label="Tap to unlock Sisterhood celebration" style="background: radial-gradient(circle at center, #23081e 0%, #0c020a 80%);">
+        <div class="bro-gate-circuit-bg" aria-hidden="true" style="opacity:0.25;"></div>
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring" style="border-color:#ec4899; box-shadow: 0 0 35px rgba(236,72,153,0.6);"></div>
+          <div style="font-size:54px; margin-bottom:12px; filter: drop-shadow(0 0 18px rgba(236,72,153,0.8)); animation: floatMini 2.5s ease-in-out infinite alternate;">
+            🎀🧸
+          </div>
+          <div class="bro-gate-badge" style="background:rgba(236,72,153,0.18); border-color:#ec4899; color:#fbcfe8;">
+            OFFICIAL SISTERHOOD REALM
+          </div>
+          <h2 class="bro-gate-title" style="color:#fff; text-shadow:0 0 20px rgba(236,72,153,0.6);">
+            To My Crazy, Annoying, Irreplaceable Sister 💅✨
+          </h2>
+          <p class="bro-gate-label" style="color:#cbd5e1; max-width:320px; margin:0 auto 18px;">
+            We fight, we steal each other's clothes... but no one has my back like you do!
+          </p>
+          <div class="bro-gate-hint" style="color:#fbcfe8; border-color:rgba(236,72,153,0.4); background:rgba(236,72,153,0.12);">
+            🎀 TAP TO UNLOCK SISTERHOOD VAULT ✨
           </div>
         </div>
-      </header>
+      </div>
 
-      <!-- Multi-Page Content Cards Container -->
-      <main class="fam-pages-container" id="sisPagesContainer">
+      <!-- Multi-Page Content Cards Container (Continuous Immersive Flow) -->
+      <main class="fam-pages-container" id="sisPagesContainer" style="display:flex; flex-direction:column; gap:28px;">
         <!-- PAGE 1: HERO & RUNAWAY "WHO IS SMARTER?" BUTTON -->
         <section class="fam-page-card active" data-page="1">
           <header class="fam-hero-section">
@@ -236,6 +245,26 @@ export function renderSisterTemplate(container, data) {
                 </button>
                 <button type="button" class="btn-fam-action" id="btnVoteSibling" style="background:#fce7f3; color:#701a40; border-radius:20px; font-weight:800; padding:9px 22px; border:1px solid #f472b6; transition:transform 0.15s ease;">
                   Me (Never!) 😂
+                </button>
+              </div>
+              <div id="siblingDodgeToast" style="margin-top:10px; font-weight:800; font-size:13px; color:#e11d48; min-height:20px; transition:all 0.2s ease;"></div>
+            </div>
+
+            <!-- SISTER SLAYING AURA & BOBA DEBT TRACKER -->
+            <div class="sis-aura-box" style="margin:16px auto; background:rgba(255,255,255,0.95); border:1.5px solid rgba(244,114,182,0.5); border-radius:18px; padding:16px; text-align:center; max-width:440px; box-shadow:0 8px 24px rgba(244,114,182,0.2);">
+              <div style="font-size:11px; font-weight:800; color:#db2777; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">
+                💅 MAIN CHARACTER AURA &amp; SLAY METER 💅
+              </div>
+              <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin:8px 0;">
+                <span style="font-size:32px; font-weight:900; color:#db2777; font-family:monospace;" id="sisAuraScore">+9,999,999</span>
+                <span style="font-size:11px; font-weight:800; background:#fce7f3; color:#831843; padding:2px 8px; border-radius:10px; border:1px solid #f472b6;" id="sisAuraRank">QUEEN SLAYING 👑</span>
+              </div>
+              <div style="display:flex; justify-content:center; gap:8px; margin-top:10px;">
+                <button type="button" id="btnSlayAura" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; font-size:12px; font-weight:800; padding:8px 14px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 4px 10px rgba(236,72,153,0.3);">
+                  💅 Boost Slay Aura (+50k)
+                </button>
+                <button type="button" id="btnPayBoba" style="background:#fff1f2; color:#be123c; border:1px solid #f43f5e; font-size:12px; font-weight:800; padding:8px 14px; border-radius:12px; cursor:pointer;">
+                  🧋 Pay Boba Debt
                 </button>
               </div>
             </div>
@@ -366,6 +395,50 @@ export function renderSisterTemplate(container, data) {
                 </div>
               `).join('')}
             </div>
+
+            <!-- TOP SECRET SISTER MYSTERY GIFT BOX (GEN-Z RAGE-BAIT UNBOXING) -->
+            <div class="sis-mystery-box-arena" style="margin:28px auto 14px; background:linear-gradient(135deg, #fff1f2 0%, #fdf2f8 100%); border:2px dashed #f472b6; border-radius:20px; padding:22px 18px; text-align:center; max-width:440px; box-shadow:0 10px 25px rgba(244,114,182,0.25);">
+              <div style="font-size:11px; font-weight:800; color:#db2777; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px;">
+                🎁 TOP SECRET SISTER BIRTHDAY DROP 🎁
+              </div>
+              <h3 style="color:#831843; font-size:17px; font-weight:900; margin:0 0 6px 0;">
+                The Ultimate VIP Mystery Gift Box
+              </h3>
+              <p style="color:#9d174d; font-size:12px; margin:0 0 16px 0;">
+                Is it a Dyson Airwrap? Sephora spree? Or Taylor Swift front-row tickets? Tap to unbox!
+              </p>
+
+              <div id="sisBoxGraphic" style="font-size:64px; margin:8px auto 14px; cursor:pointer; display:inline-block; transition:transform 0.2s ease;">
+                🎁
+              </div>
+
+              <div style="margin-bottom:12px;">
+                <button type="button" id="btnUnboxSisBox" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; font-size:13px; font-weight:900; padding:10px 24px; border-radius:24px; border:none; cursor:pointer; box-shadow:0 6px 20px rgba(236,72,153,0.35); text-transform:uppercase; letter-spacing:0.8px;">
+                  ✦ Tap To Unbox Mystery Gift ✦
+                </button>
+              </div>
+
+              <!-- Unboxed Reveal Card -->
+              <div id="sisBoxReveal" style="display:none; background:#ffffff; border:1.5px solid #f43f5e; border-radius:14px; padding:16px; margin-top:14px; text-align:left; animation:fadeInUp 0.4s ease;">
+                <div style="text-align:center; font-size:15px; font-weight:900; color:#e11d48; margin-bottom:8px; text-transform:uppercase;">
+                  💀 YOU REALLY THOUGHT YOU WERE GETTING A DYSON 💀
+                </div>
+                <p style="text-align:center; color:#4c0527; font-size:12px; margin:0 0 12px 0;">
+                  Nice try! But you just unlocked exclusive lifetime sister rights:
+                </p>
+                <div style="font-size:12px; color:#831843; display:flex; flex-direction:column; gap:6px; line-height:1.4;">
+                  <div>✦ <strong>1x Permanent Closet Raiding License</strong> (You already do it anyway)</div>
+                  <div>✦ <strong>1x Personal Uber Driver Voucher</strong> (Subject to driver's mood)</div>
+                  <div>✦ <strong>Unlimited 2 AM Emergency Gossip Calls</strong> (Spill all the tea)</div>
+                  <div style="color:#e11d48; font-weight:800; margin-top:4px;">✦ Payment Due: You buy iced matcha lattes tomorrow 🍵</div>
+                </div>
+                <div style="margin-top:12px; text-align:center;">
+                  <span style="display:inline-block; background:#ffe4e6; color:#e11d48; font-size:11px; font-weight:800; padding:4px 12px; border-radius:12px; border:1px solid #fecdd3;">
+                    ✓ SISTER PRIVILEGES UNLOCKED (+9,999,999 AURA)
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="fam-nav-dock">
@@ -472,28 +545,38 @@ export function renderSisterTemplate(container, data) {
     { num: 6, title: "Best Sister in the Universe 👑" }
   ];
 
+  // Opener Gate Execution
+  const sisGate = container.querySelector('#sisterGate');
+  if (sisGate) {
+    const executeOpenSisGate = () => {
+      if (sisGate.classList.contains('is-open')) return;
+      playSisTone('sparkle');
+      confetti({
+        particleCount: 80,
+        spread: 90,
+        origin: { y: 0.5 },
+        colors: ['#ec4899', '#f472b6', '#fbbf24', '#ffffff']
+      });
+      sisGate.classList.add('is-open');
+    };
+    sisGate.addEventListener('click', executeOpenSisGate);
+  }
+
+  // Ensure all story cards are displayed in continuous flow
+  container.querySelectorAll('.fam-page-card').forEach(card => {
+    card.style.display = 'block';
+    card.classList.add('active');
+  });
+
   const totalPages = sisPageTitles.length;
   let currentPage = 1;
 
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
-
-    const progressPct = Math.round((currentPage / totalPages) * 100);
-    const fill = container.querySelector('#sisStepProgressFill');
-    if (fill) fill.style.width = `${progressPct}%`;
-
-    const stepPill = container.querySelector('#sisStageStepPill');
-    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
-    const titleText = container.querySelector('#sisStageTitleText');
-    if (titleText && sisPageTitles[currentPage - 1]) {
-      titleText.textContent = sisPageTitles[currentPage - 1].title;
+    const targetCard = container.querySelector(`.fam-page-card[data-page="${currentPage}"]`);
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    container.querySelectorAll('.fam-page-card').forEach(card => {
-      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
-    });
-
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 
@@ -730,16 +813,29 @@ export function renderSisterTemplate(container, data) {
   }
 
   // =========================================================================
-  // 2. PAGE 1: RUNAWAY "WHO IS SMARTER?" BUTTON
+  // 2. PAGE 1: RUNAWAY "WHO IS SMARTER?" BUTTON & SISTER SLAYING AURA
   // =========================================================================
   const btnVoteSibling = container.querySelector('#btnVoteSibling');
   const btnVoteSister = container.querySelector('#btnVoteSister');
+  const siblingDodgeToast = container.querySelector('#siblingDodgeToast');
+
+  const sisRageQuotes = [
+    "Bro really thought 💀",
+    "Error 404: Evidence Not Found 📉",
+    "Nice try lil bro! Mom literally told me I'm the favorite 😌💅",
+    "-100,000 Aura for even trying 📉",
+    "L + Ratio + She's older/smarter 💀",
+    "Delusional behavior detected! Try again never 💅"
+  ];
 
   function dodgeButton() {
     playSisTone('tick');
     const x = (Math.random() - 0.5) * 160;
     const y = (Math.random() - 0.5) * 80;
     gsap.to(btnVoteSibling, { x, y, duration: 0.2, ease: 'back.out(2)' });
+    const randomQuote = sisRageQuotes[Math.floor(Math.random() * sisRageQuotes.length)];
+    if (siblingDodgeToast) siblingDodgeToast.textContent = randomQuote;
+    if (navigator.vibrate) navigator.vibrate(20);
   }
 
   btnVoteSibling?.addEventListener('mouseenter', dodgeButton);
@@ -750,6 +846,7 @@ export function renderSisterTemplate(container, data) {
 
   btnVoteSister?.addEventListener('click', () => {
     playSisTone('sparkle');
+    if (siblingDodgeToast) siblingDodgeToast.innerHTML = "✨ <strong>QUEEN SUPREMACY CONFIRMED!</strong> Universal sibling order restored. 👑💅";
     gsap.fromTo(btnVoteSister, { scale: 1.4 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
     confetti({
       particleCount: 50,
@@ -758,6 +855,68 @@ export function renderSisterTemplate(container, data) {
       colors: ['#ea580c', '#fbbf24', '#f472b6', '#ffffff']
     });
   });
+
+  // Sister Aura & Boba Tracker
+  let sisAura = 9999999;
+  const sisAuraScore = container.querySelector('#sisAuraScore');
+  const sisAuraRank = container.querySelector('#sisAuraRank');
+  const btnSlayAura = container.querySelector('#btnSlayAura');
+  const btnPayBoba = container.querySelector('#btnPayBoba');
+
+  btnSlayAura?.addEventListener('click', () => {
+    sisAura += 50000;
+    playSisTone('sparkle');
+    if (sisAuraScore) sisAuraScore.textContent = '+' + sisAura.toLocaleString();
+    if (sisAuraRank) sisAuraRank.textContent = "COSMIC SLAYER 👑✨";
+    gsap.fromTo(sisAuraScore, { scale: 1.3, color: '#ec4899' }, { scale: 1, color: '#db2777', duration: 0.3 });
+  });
+
+  btnPayBoba?.addEventListener('click', () => {
+    playSisTone('sparkle');
+    if (siblingDodgeToast) siblingDodgeToast.innerHTML = "🧋 <strong>BOBA DEBT CLEARED!</strong> Temporary sibling immunity granted for 24 hours. 🍟";
+    confetti({
+      particleCount: 35,
+      spread: 60,
+      origin: { y: 0.4 },
+      colors: ['#f472b6', '#fbbf24', '#ffffff']
+    });
+  });
+
+  // Top Secret Sister Mystery Gift Box
+  const btnUnboxSisBox = container.querySelector('#btnUnboxSisBox');
+  const sisBoxGraphic = container.querySelector('#sisBoxGraphic');
+  const sisBoxReveal = container.querySelector('#sisBoxReveal');
+  let isSisBoxUnboxed = false;
+
+  function unboxSisterBox() {
+    if (isSisBoxUnboxed) return;
+    isSisBoxUnboxed = true;
+    playSisTone('tick');
+    if (navigator.vibrate) navigator.vibrate([40, 60, 100]);
+
+    gsap.timeline()
+      .to(sisBoxGraphic, { rotation: -15, scale: 1.25, duration: 0.1, yoyo: true, repeat: 5 })
+      .to(sisBoxGraphic, { scale: 1.4, duration: 0.2, ease: 'back.out(2)' })
+      .call(() => {
+        playSisTone('sparkle');
+        sisBoxGraphic.textContent = "💖 🎁 💖";
+        if (sisBoxReveal) sisBoxReveal.style.display = 'block';
+        if (btnUnboxSisBox) {
+          btnUnboxSisBox.textContent = "✓ SURPRISE UNVEILED";
+          btnUnboxSisBox.style.opacity = '0.7';
+          btnUnboxSisBox.style.pointerEvents = 'none';
+        }
+        confetti({
+          particleCount: 70,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#ec4899', '#f43f5e', '#fbbf24', '#ffffff']
+        });
+      });
+  }
+
+  btnUnboxSisBox?.addEventListener('click', unboxSisterBox);
+  sisBoxGraphic?.addEventListener('click', unboxSisterBox);
 
   // =========================================================================
   // 3. PAGE 2: WARDROBE HANGER SWING & FINE COLLECTION

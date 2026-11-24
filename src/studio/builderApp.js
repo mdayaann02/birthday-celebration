@@ -629,6 +629,13 @@ export function renderStudioApp(root) {
     switchMobileTab('editor');
   }
 
+  // Start editor by prompting creator to choose the occasion first if not specified in URL
+  if (!urlTid) {
+    setTimeout(() => {
+      openOccasionModal();
+    }, 150);
+  }
+
   let lastWidth = window.innerWidth;
   window.addEventListener('resize', () => {
     const isMobileNow = window.innerWidth <= 900;

@@ -73,22 +73,31 @@ export function renderBestieBoyTemplate(container, data) {
       <!-- Ambient Amber/Cobalt Stardust Canvas (60FPS) -->
       <canvas id="bestieBoyCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Bar & Passive Indicator -->
-      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
-        <div class="fam-step-progress-track">
-          <div class="fam-step-progress-fill" id="boyStepProgressFill" style="width: 16.6%;"></div>
-        </div>
-        <div class="fam-stage-indicator-bar">
-          <div class="fam-stage-info-pill">
-            <span class="stage-step-tag" id="boyStageStepPill">PAGE 1 OF 6</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="boyStageTitleText">Bro Code Opening 👊⚡</span>
+      <!-- SACRED RIDE OR DIE BRO OPENER GATE -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="bestieBoyGate" role="button" tabindex="0" aria-label="Tap to strike the sacred Bro Code" style="background: radial-gradient(circle at center, #101c2e 0%, #040810 80%);">
+        <div class="bro-gate-circuit-bg" aria-hidden="true" style="opacity:0.25;"></div>
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring" style="border-color:#38bdf8; box-shadow: 0 0 35px rgba(56,189,248,0.6);"></div>
+          <div style="font-size:54px; margin-bottom:12px; filter: drop-shadow(0 0 18px rgba(56,189,248,0.8)); animation: floatMini 2.5s ease-in-out infinite alternate;">
+            👊⚡
+          </div>
+          <div class="bro-gate-badge" style="background:rgba(56,189,248,0.18); border-color:#38bdf8; color:#bae6fd;">
+            RIDE OR DIE BROTHERHOOD
+          </div>
+          <h2 class="bro-gate-title" style="color:#fff; text-shadow:0 0 20px rgba(56,189,248,0.6);">
+            To My Day One, My Brother 👊
+          </h2>
+          <p class="bro-gate-label" style="color:#cbd5e1; max-width:320px; margin:0 auto 18px;">
+            Unbreakable bro code, legendary adventures, and zero snitching.
+          </p>
+          <div class="bro-gate-hint" style="color:#bae6fd; border-color:rgba(56,189,248,0.4); background:rgba(56,189,248,0.12);">
+            👊 TAP TO STRIKE THE BRO CODE ⚡
           </div>
         </div>
-      </header>
+      </div>
 
-      <!-- Multi-Page Content Cards Container -->
-      <main class="fam-pages-container" id="boyPagesContainer">
+      <!-- Multi-Page Content Cards Container (Continuous Immersive Flow) -->
+      <main class="fam-pages-container" id="boyPagesContainer" style="display:flex; flex-direction:column; gap:28px;">
         <!-- PAGE 1: HERO & CLINKING CHEERS STEINS -->
         <section class="fam-page-card active" data-page="1">
           <header class="fam-hero-section">
@@ -112,6 +121,44 @@ export function renderBestieBoyTemplate(container, data) {
               </button>
             </div>
             <div id="broVaultFeedback" class="fam-feedback-text"></div>
+
+            <!-- GEN-Z RAGE-BAIT: RUNAWAY GROUP CHAT LEAK BUTTON -->
+            <div class="boy-ragebait-card" style="margin:22px auto 14px; background:rgba(15,23,42,0.92); border:1.5px solid rgba(245,158,11,0.5); border-radius:18px; padding:18px 16px; text-align:center; box-shadow:0 10px 28px rgba(0,0,0,0.4); max-width:440px;">
+              <div style="font-size:11px; font-weight:800; color:#f59e0b; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">
+                ⚡ THE SACRED GROUP CHAT PROTOCOL ⚡
+              </div>
+              <div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:14px;">
+                Should we leak the 3 AM screenshots to the public?
+              </div>
+              <div style="display:flex; justify-content:center; gap:12px; position:relative; min-height:52px; align-items:center;">
+                <button type="button" class="btn-fam-action" id="btnLeakChat" style="background:#1e293b; color:#fbbf24; border-radius:20px; font-weight:800; padding:10px 22px; border:1px solid #f59e0b; transition:transform 0.15s ease; user-select:none; -webkit-user-select:none;">
+                  Leak Everything 😂
+                </button>
+                <button type="button" class="btn-fam-action" id="btnProtectChat" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000; border-radius:20px; font-weight:800; padding:10px 22px; box-shadow:0 4px 14px rgba(245,158,11,0.4);">
+                  Protect Code of Silence 🔒
+                </button>
+              </div>
+              <div id="boyRageToast" style="margin-top:10px; font-weight:800; font-size:13px; color:#f87171; min-height:20px; transition:all 0.2s ease;"></div>
+            </div>
+
+            <!-- WINGMAN AURA METER -->
+            <div class="boy-aura-card" style="margin:16px auto; background:rgba(15,23,42,0.92); border:1.5px solid rgba(56,189,248,0.4); border-radius:18px; padding:16px; text-align:center; max-width:440px; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+              <div style="font-size:11px; font-weight:800; color:#38bdf8; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">
+                ⚡ DAY ONE WINGMAN AURA LEVEL ⚡
+              </div>
+              <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin:8px 0;">
+                <span style="font-size:32px; font-weight:900; color:#38bdf8; font-family:monospace;" id="boyAuraScore">+1,000,000</span>
+                <span style="font-size:11px; font-weight:800; background:#0369a1; color:#e0f2fe; padding:2px 8px; border-radius:10px;" id="boyAuraRank">CERTIFIED GIGACHAD 🗿</span>
+              </div>
+              <div style="display:flex; justify-content:center; gap:8px; margin-top:10px;">
+                <button type="button" id="btnBoostBoyAura" style="background:linear-gradient(135deg, #06b6d4, #0284c7); color:#fff; font-size:12px; font-weight:800; padding:8px 14px; border-radius:12px; border:none; cursor:pointer;">
+                  ⚡ Clutch Play (+25k)
+                </button>
+                <button type="button" id="btnLeftOnRead" style="background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); font-size:12px; font-weight:800; padding:8px 14px; border-radius:12px; cursor:pointer;">
+                  💀 Left on Read (-10k)
+                </button>
+              </div>
+            </div>
           </header>
           <div class="fam-nav-dock">
             <button type="button" class="btn-fam-next" data-next="2">
@@ -329,28 +376,38 @@ export function renderBestieBoyTemplate(container, data) {
     { num: 6, title: "Certified Living Legend 🏆" }
   ];
 
+  // Opener Gate Execution
+  const boyGate = container.querySelector('#bestieBoyGate');
+  if (boyGate) {
+    const executeOpenBoyGate = () => {
+      if (boyGate.classList.contains('is-open')) return;
+      playBoyTone('clink');
+      confetti({
+        particleCount: 80,
+        spread: 90,
+        origin: { y: 0.5 },
+        colors: ['#38bdf8', '#0ea5e9', '#f59e0b', '#ffffff']
+      });
+      boyGate.classList.add('is-open');
+    };
+    boyGate.addEventListener('click', executeOpenBoyGate);
+  }
+
+  // Ensure all story cards are displayed in continuous flow
+  container.querySelectorAll('.fam-page-card').forEach(card => {
+    card.style.display = 'block';
+    card.classList.add('active');
+  });
+
   const totalPages = boyPageTitles.length;
   let currentPage = 1;
 
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
-
-    const progressPct = Math.round((currentPage / totalPages) * 100);
-    const fill = container.querySelector('#boyStepProgressFill');
-    if (fill) fill.style.width = `${progressPct}%`;
-
-    const stepPill = container.querySelector('#boyStageStepPill');
-    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
-    const titleText = container.querySelector('#boyStageTitleText');
-    if (titleText && boyPageTitles[currentPage - 1]) {
-      titleText.textContent = boyPageTitles[currentPage - 1].title;
+    const targetCard = container.querySelector(`.fam-page-card[data-page="${currentPage}"]`);
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    container.querySelectorAll('.fam-page-card').forEach(card => {
-      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
-    });
-
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 
@@ -457,6 +514,72 @@ export function renderBestieBoyTemplate(container, data) {
       origin: { y: 0.38 },
       colors: ['#fbbf24', '#f59e0b', '#38bdf8', '#ffffff']
     });
+  });
+
+  // =========================================================================
+  // GEN-Z RAGE-BAIT: RUNAWAY GROUP CHAT BUTTON & WINGMAN AURA
+  // =========================================================================
+  const btnLeakChat = container.querySelector('#btnLeakChat');
+  const btnProtectChat = container.querySelector('#btnProtectChat');
+  const boyRageToast = container.querySelector('#boyRageToast');
+
+  const boyRageQuotes = [
+    "Bro really thought 💀",
+    "DECLINED! Federal group chat treaty violated 😂",
+    "Error 404: Snitches Not Found 📉",
+    "-500,000 Aura for even thinking about it 🗿",
+    "L + Ratio + Zero loyalty detected 🧢",
+    "Nice try, this vault is encrypted forever 🔒"
+  ];
+
+  function dodgeLeakButton() {
+    playBoyTone('clink');
+    const x = (Math.random() - 0.5) * 160;
+    const y = (Math.random() - 0.5) * 80;
+    gsap.to(btnLeakChat, { x, y, duration: 0.2, ease: 'back.out(2)' });
+    const randomQuote = boyRageQuotes[Math.floor(Math.random() * boyRageQuotes.length)];
+    if (boyRageToast) boyRageToast.textContent = randomQuote;
+    if (navigator.vibrate) navigator.vibrate(20);
+  }
+
+  btnLeakChat?.addEventListener('mouseenter', dodgeLeakButton);
+  btnLeakChat?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    dodgeLeakButton();
+  });
+
+  btnProtectChat?.addEventListener('click', () => {
+    playBoyTone('ping');
+    if (boyRageToast) boyRageToast.innerHTML = "🔒 <strong>BROTHERHOOD CODE HONORED!</strong> Secrets safe in the vault forever. 👊🔥";
+    confetti({
+      particleCount: 45,
+      spread: 70,
+      origin: { y: 0.4 },
+      colors: ['#38bdf8', '#fbbf24', '#10b981', '#ffffff']
+    });
+  });
+
+  // Wingman Aura Tracker
+  let boyAura = 1000000;
+  const boyAuraScore = container.querySelector('#boyAuraScore');
+  const boyAuraRank = container.querySelector('#boyAuraRank');
+  const btnBoostBoyAura = container.querySelector('#btnBoostBoyAura');
+  const btnLeftOnRead = container.querySelector('#btnLeftOnRead');
+
+  btnBoostBoyAura?.addEventListener('click', () => {
+    boyAura += 25000;
+    playBoyTone('clink');
+    if (boyAuraScore) boyAuraScore.textContent = '+' + boyAura.toLocaleString();
+    if (boyAuraRank) boyAuraRank.textContent = "COSMIC GIGACHAD 🗿⚡";
+    gsap.fromTo(boyAuraScore, { scale: 1.3, color: '#34d399' }, { scale: 1, color: '#38bdf8', duration: 0.3 });
+  });
+
+  btnLeftOnRead?.addEventListener('click', () => {
+    boyAura -= 10000;
+    playBoyTone('clink');
+    if (boyAuraScore) boyAuraScore.textContent = (boyAura >= 0 ? '+' : '') + boyAura.toLocaleString();
+    if (boyAuraRank) boyAuraRank.textContent = "TEMPORARY SNOOZE 📉";
+    gsap.fromTo(boyAuraScore, { scale: 0.85, color: '#f87171' }, { scale: 1, color: '#38bdf8', duration: 0.3 });
   });
 
   // =========================================================================

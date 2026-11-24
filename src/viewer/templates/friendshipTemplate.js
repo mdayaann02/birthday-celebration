@@ -68,21 +68,30 @@ export function renderFriendshipTemplate(container, data) {
       <!-- Ambient Friendship Constellations Canvas (60FPS) -->
       <canvas id="bffCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Bar & Passive Indicator -->
-      <header class="bff-floating-nav" style="pointer-events:none; user-select:none;">
-        <div class="bff-step-progress-track">
-          <div class="bff-step-progress-fill" id="bffStepProgressFill" style="width: 25%;"></div>
-        </div>
-        <div class="bff-stage-indicator-bar">
-          <div class="bff-stage-info-pill">
-            <span class="stage-step-tag" id="bffStageStepPill">PAGE 1 OF 4</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="bffStageTitleText">Partners in Crime 🏆</span>
+      <!-- SACRED BEST FRIENDS OPENER GATE -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="friendshipGate" role="button" tabindex="0" aria-label="Tap to unlock friendship celebration" style="background: radial-gradient(circle at center, #241407 0%, #0c0602 80%);">
+        <div class="bro-gate-circuit-bg" aria-hidden="true" style="opacity:0.25;"></div>
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring" style="border-color:#f59e0b; box-shadow: 0 0 35px rgba(245,158,11,0.6);"></div>
+          <div style="font-size:54px; margin-bottom:12px; filter: drop-shadow(0 0 18px rgba(245,158,11,0.8)); animation: floatMini 2.5s ease-in-out infinite alternate;">
+            👯‍♀️🥂
+          </div>
+          <div class="bro-gate-badge" style="background:rgba(245,158,11,0.18); border-color:#f59e0b; color:#fde68a;">
+            BEST FRIENDS FOREVER
+          </div>
+          <h2 class="bro-gate-title" style="color:#fff; text-shadow:0 0 20px rgba(245,158,11,0.6);">
+            To My Partner in Crime ✨
+          </h2>
+          <p class="bro-gate-label" style="color:#cbd5e1; max-width:320px; margin:0 auto 18px;">
+            Unstoppable duo, uncontrollable laughter, and lifetime memories.
+          </p>
+          <div class="bro-gate-hint" style="color:#fde68a; border-color:rgba(245,158,11,0.4); background:rgba(245,158,11,0.12);">
+            🥂 TAP TO ENTER FRIENDSHIP ARENA ✨
           </div>
         </div>
-      </header>
+      </div>
 
-      <main class="bff-pages-container" id="bffPagesContainer">
+      <main class="bff-pages-container" id="bffPagesContainer" style="display:flex; flex-direction:column; gap:28px;">
         <!-- PAGE 1: HERO & INTERACTIVE HIGH-FIVE ARENA -->
         <section class="bff-page-card active" data-page="1">
           <div class="bff-hero-wrap">
@@ -220,28 +229,38 @@ export function renderFriendshipTemplate(container, data) {
     { num: 4, title: "Bestie Memories & Toast 🥂" }
   ];
 
+  // Opener Gate Execution
+  const bffGate = container.querySelector('#friendshipGate');
+  if (bffGate) {
+    const executeOpenBffGate = () => {
+      if (bffGate.classList.contains('is-open')) return;
+      playBffTone('chime');
+      confetti({
+        particleCount: 80,
+        spread: 90,
+        origin: { y: 0.5 },
+        colors: ['#f59e0b', '#fbbf24', '#2ed573', '#ffffff']
+      });
+      bffGate.classList.add('is-open');
+    };
+    bffGate.addEventListener('click', executeOpenBffGate);
+  }
+
+  // Ensure all story cards are displayed in continuous flow
+  container.querySelectorAll('.bff-page-card').forEach(card => {
+    card.style.display = 'block';
+    card.classList.add('active');
+  });
+
   const totalPages = bffPageTitles.length;
   let currentPage = 1;
 
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
-
-    const progressPct = Math.round((currentPage / totalPages) * 100);
-    const fill = container.querySelector('#bffStepProgressFill');
-    if (fill) fill.style.width = `${progressPct}%`;
-
-    const stepPill = container.querySelector('#bffStageStepPill');
-    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
-    const titleText = container.querySelector('#bffStageTitleText');
-    if (titleText && bffPageTitles[currentPage - 1]) {
-      titleText.textContent = bffPageTitles[currentPage - 1].title;
+    const targetCard = container.querySelector(`.bff-page-card[data-page="${currentPage}"]`);
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    container.querySelectorAll('.bff-page-card').forEach(card => {
-      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
-    });
-
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 

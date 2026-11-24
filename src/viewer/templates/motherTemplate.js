@@ -97,22 +97,31 @@ export function renderMotherTemplate(container, data) {
       <!-- Ambient Golden Petals Canvas (60FPS Interactive Physics) -->
       <canvas id="momPetalCanvas" class="blossom-bg-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:1; width:100%; height:100%;"></canvas>
 
-      <!-- Stage Progress Bar & Passive Indicator -->
-      <header class="fam-floating-nav" style="pointer-events:none; user-select:none;">
-        <div class="fam-step-progress-track">
-          <div class="fam-step-progress-fill" id="momStepProgressFill" style="width: 16.6%;"></div>
-        </div>
-        <div class="fam-stage-indicator-bar">
-          <div class="fam-stage-info-pill">
-            <span class="stage-step-tag" id="momStageStepPill">PAGE 1 OF 6</span>
-            <span class="stage-step-separator">•</span>
-            <span class="stage-title-text" id="momStageTitleText">Royal Maternal Tribute 👑</span>
+      <!-- SACRED MAA DEVOTION OPENER GATE -->
+      <div class="bro-gate ${window.isCelebrationEditorMode ? 'is-open' : ''}" id="motherGate" role="button" tabindex="0" aria-label="Tap to unlock Maa devotion tribute" style="background: radial-gradient(circle at center, #2e1a06 0%, #0d0701 80%);">
+        <div class="bro-gate-circuit-bg" aria-hidden="true" style="opacity:0.25;"></div>
+        <div class="bro-gate-centerpiece">
+          <div class="bro-gate-energy-ring" style="border-color:#fbbf24; box-shadow: 0 0 35px rgba(251,191,36,0.6);"></div>
+          <div style="font-size:54px; margin-bottom:12px; filter: drop-shadow(0 0 18px rgba(251,191,36,0.8)); animation: floatMini 2.5s ease-in-out infinite alternate;">
+            🌸👑
+          </div>
+          <div class="bro-gate-badge" style="background:rgba(251,191,36,0.18); border-color:#fbbf24; color:#fef08a;">
+            SACRED MATERNAL TRIBUTE
+          </div>
+          <h2 class="bro-gate-title" style="color:#fff; text-shadow:0 0 20px rgba(251,191,36,0.6);">
+            To My Queen, My Beloved Maa ❤️
+          </h2>
+          <p class="bro-gate-label" style="color:#cbd5e1; max-width:320px; margin:0 auto 18px;">
+            In your gentle smile lies my universe, in your quiet prayers my greatest strength.
+          </p>
+          <div class="bro-gate-hint" style="color:#fef08a; border-color:rgba(251,191,36,0.4); background:rgba(251,191,36,0.12);">
+            🌸 TAP TO UNSEAL MAA'S SACRED BLESSING 👑
           </div>
         </div>
-      </header>
+      </div>
 
-      <!-- Multi-Page Content Cards Container -->
-      <main class="fam-pages-container" id="momPagesContainer">
+      <!-- Multi-Page Content Cards Container (Continuous Immersive Flow) -->
+      <main class="fam-pages-container" id="momPagesContainer" style="display:flex; flex-direction:column; gap:28px;">
         <!-- PAGE 1: HERO & BLOOMING LOTUS BLESSING -->
         <section class="fam-page-card active" data-page="1">
           <header class="fam-hero-section">
@@ -412,31 +421,38 @@ export function renderMotherTemplate(container, data) {
     { num: 6, title: "Royal Proclamation of Honor 👑" }
   ];
 
+  // Opener Gate Execution
+  const momGate = container.querySelector('#motherGate');
+  if (momGate) {
+    const executeOpenMomGate = () => {
+      if (momGate.classList.contains('is-open')) return;
+      playMomTone('chime');
+      confetti({
+        particleCount: 80,
+        spread: 90,
+        origin: { y: 0.5 },
+        colors: ['#fbbf24', '#f59e0b', '#f472b6', '#ffffff']
+      });
+      momGate.classList.add('is-open');
+    };
+    momGate.addEventListener('click', executeOpenMomGate);
+  }
+
+  // Ensure all story cards are displayed in continuous flow
+  container.querySelectorAll('.fam-page-card').forEach(card => {
+    card.style.display = 'block';
+    card.classList.add('active');
+  });
+
   const totalPages = momPageTitles.length;
   let currentPage = 1;
 
   function goToPage(page) {
     currentPage = Math.max(1, Math.min(totalPages, page));
-
-    // Update Progress Bar
-    const progressPct = Math.round((currentPage / totalPages) * 100);
-    const fill = container.querySelector('#momStepProgressFill');
-    if (fill) fill.style.width = `${progressPct}%`;
-
-    // Update Stage Indicator Banner
-    const stepPill = container.querySelector('#momStageStepPill');
-    if (stepPill) stepPill.textContent = `PAGE ${currentPage} OF ${totalPages}`;
-    const titleText = container.querySelector('#momStageTitleText');
-    if (titleText && momPageTitles[currentPage - 1]) {
-      titleText.textContent = momPageTitles[currentPage - 1].title;
+    const targetCard = container.querySelector(`.fam-page-card[data-page="${currentPage}"]`);
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    // Update Page View
-    container.querySelectorAll('.fam-page-card').forEach(card => {
-      card.classList.toggle('active', parseInt(card.getAttribute('data-page')) === currentPage);
-    });
-
-    if (!window.isCelebrationEditorMode) { window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (container) { container.scrollTop = 0; }
     if (navigator.vibrate) navigator.vibrate(15);
   }
 

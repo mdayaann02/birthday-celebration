@@ -14466,26 +14466,55 @@ svg {
   width: 100%;
 }
 
+/* ==========================================================================
+   Continuous Immersive Story Flow Across All Templates (No Artificial Pagination)
+   ========================================================================== */
 .bday-page-card,
 .fam-page-card,
 .anni-page-card,
 .val-page-card,
-.bff-page-card {
-  display: none;
-  opacity: 0;
-  transform: translateY(16px) scale(0.985);
-  transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-  width: 100%;
+.bff-page-card,
+.sorry-page-card {
+  display: block !important;
+  opacity: 1 !important;
+  transform: none !important;
+  width: 100% !important;
+  margin-bottom: 28px !important;
 }
 
-.bday-page-card.active,
-.fam-page-card.active,
-.anni-page-card.active,
-.val-page-card.active,
-.bff-page-card.active {
-  display: block;
-  opacity: 1;
-  transform: translateY(0) scale(1);
+/* Eliminate Artificial Progress Bars & Pagination Tracks */
+.bday-floating-nav,
+.fam-floating-nav,
+.anni-floating-nav,
+.val-floating-nav,
+.bff-floating-nav,
+.sorry-floating-nav,
+.bday-step-progress-track,
+.fam-step-progress-track,
+.anni-step-progress-track,
+.val-step-progress-track,
+.bff-step-progress-track,
+.sorry-step-progress-track,
+.bday-persona-selector-dock,
+.bday-nav-dock,
+.fam-nav-dock,
+.anni-nav-dock,
+.val-nav-dock,
+.bff-nav-dock,
+.sorry-nav-dock,
+.btn-bday-prev,
+.btn-bday-next,
+.btn-fam-prev,
+.btn-fam-next,
+.btn-anni-prev,
+.btn-anni-next,
+.btn-val-prev,
+.btn-val-next,
+.btn-bff-prev,
+.btn-bff-next,
+.btn-sorry-prev,
+.btn-sorry-next {
+  display: none !important;
 }
 
 /* Stage 1: Interactive Balloons Glass Tray & Mini-Game */
@@ -21510,3 +21539,64 @@ html, body {
     height: 320px;
   }
 }
+
+/* ==========================================================================
+   GEN-Z AESTHETIC & INTERACTIVE RAGE-BAIT MODULES
+   ========================================================================== */
+.bro-ragebait-card,
+.boy-ragebait-card,
+.girl-ragebait-card,
+.sister-debate-box {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+}
+
+.bro-ragebait-card:hover,
+.boy-ragebait-card:hover,
+.girl-ragebait-card:hover,
+.sister-debate-box:hover {
+  transform: translateY(-2px);
+}
+
+.bro-aura-card,
+.boy-aura-card,
+.girl-aura-card,
+.sis-aura-box {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bro-mystery-crate-arena,
+.sis-mystery-box-arena {
+  animation: cratePulseBorder 3s infinite alternate ease-in-out;
+}
+
+@keyframes cratePulseBorder {
+  0% {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(245, 158, 11, 0.2);
+  }
+  100% {
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.4);
+  }
+}
+
+#broRageToast,
+#siblingDodgeToast,
+#boyRageToast,
+#girlRageToast {
+  animation: rageToastPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes rageToastPop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
