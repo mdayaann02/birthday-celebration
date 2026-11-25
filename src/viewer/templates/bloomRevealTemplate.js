@@ -133,7 +133,7 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
   const isEditorMode = Boolean(window.isCelebrationEditorMode);
 
   container.innerHTML = `
-    <div id="bloomContainer" class="relative min-h-screen w-full overflow-hidden" style="background-color: #EDD9ED; font-family: 'Dancing Script', cursive;">
+    <div id="bloomContainer" class="relative min-h-screen w-full overflow-hidden" style="background-color: #EDD9ED; font-family: 'Dancing Script', cursive; overflow-x: clip;">
       
       <!-- Editor Mode Subtle Action Pill (Only in Studio Workspace) -->
       ${isEditorMode ? `
@@ -265,15 +265,15 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
         </section>
 
         <!-- SECTION 3: THE LOVE LETTER (Td - 260vh Sticky Scroll Reveal) -->
-        <section id="bloomSecLetter" class="relative w-full" style="height: 260vh; background-image: url('/bloom/section3-bg.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-          <div class="sticky top-0 z-10 flex h-screen w-full items-center justify-center px-6">
+        <section id="bloomSecLetter" class="bloom-sec-letter relative w-full" style="height: 260vh; background-image: url('/bloom/section3-bg.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+          <div id="bloomLetterStickyFrame" class="bloom-letter-sticky-frame sticky top-0 z-10 flex h-screen w-full items-center justify-center px-6" style="height: 100vh; height: 100dvh;">
             <div class="w-full max-w-3xl">
-              <div class="relative mx-auto w-full rounded-sm"
-                style="background: linear-gradient(180deg, #fdfaf3 0%, #f8f1e4 100%); padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 3.5rem); box-shadow: 0 30px 60px -20px rgba(54,15,90,0.35), 0 12px 24px -12px rgba(54,15,90,0.25), inset 0 0 40px rgba(180,150,90,0.08); border: 1px solid rgba(180,150,90,0.18);">
-                <p class="text-center" style="font-family: 'Caveat', cursive; color: #360f5a; font-size: clamp(1.2rem, 2.4vw, 1.9rem); line-height: 1.7; letter-spacing: 0.01em;">
+              <div class="bloom-letter-card relative mx-auto w-full rounded-sm"
+                style="background: linear-gradient(180deg, #fdfaf3 0%, #f8f1e4 100%); padding: clamp(1.25rem, 4vw, 3.5rem) clamp(1rem, 4vw, 3rem); box-shadow: 0 30px 60px -20px rgba(54,15,90,0.35), 0 12px 24px -12px rgba(54,15,90,0.25), inset 0 0 40px rgba(180,150,90,0.08); border: 1px solid rgba(180,150,90,0.18);">
+                <p class="text-center" style="font-family: 'Caveat', cursive; color: #360f5a; font-size: clamp(1.05rem, 2.3vw, 1.85rem); line-height: 1.6; letter-spacing: 0.01em;">
                   ${words.map((word, i) => `
-                    <span class="bloom-letter-word" data-w="${i}" style="opacity: 0.08; display: inline-block; margin-right: 0.35em; transition: opacity 0.25s ease;">${word}</span>
-                  `).join(' ')}
+                    <span class="bloom-letter-word" data-w="${i}" style="opacity: 0.08; display: inline-block; margin-right: 0.3em; transition: opacity 0.25s ease;">${word}</span>
+                  `).join('')}
                 </p>
               </div>
             </div>
@@ -453,6 +453,8 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
     gateLayer.style.display = 'none';
     revealedLayer.style.display = 'block';
     rootWrap.classList.remove('overflow-hidden');
+    rootWrap.style.overflow = 'visible';
+    rootWrap.style.overflowX = 'clip';
 
     // After Nd = 2600ms, reveal is complete
     setTimeout(() => {
@@ -475,6 +477,7 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
       curtainRight.style.transform = 'translate3d(0, 0, 0)';
       gateLayer.style.display = 'block';
       rootWrap.classList.add('overflow-hidden');
+      rootWrap.style.overflow = 'hidden';
     }, 500);
   }
 
@@ -489,6 +492,8 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
         gateLayer.style.display = 'none';
         revealedLayer.style.display = 'block';
         rootWrap.classList.remove('overflow-hidden');
+        rootWrap.style.overflow = 'visible';
+        rootWrap.style.overflowX = 'clip';
         stage = 'revealed';
         initRevealedEffects();
       } else {
@@ -497,8 +502,17 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
     });
   }
 
+  let cleanupRevealed = null;
+
   // INITIALIZE INTERACTIVE REVEALED FEATURES
   function initRevealedEffects() {
+    // Ensure overflow is visible on rootWrap so sticky works seamlessly
+    if (rootWrap) {
+      rootWrap.classList.remove('overflow-hidden');
+      rootWrap.style.overflow = 'visible';
+      rootWrap.style.overflowX = 'clip';
+    }
+
     // 1. Accordion Toggle
     let openCardIdx = null;
     const cards = container.querySelectorAll('.bloom-accordion-card');
@@ -527,25 +541,89 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
       });
     });
 
-    // 2. Scroll-Illuminated Letter (Td)
+    // 2. Scroll-Illuminated Letter (Td - Stationary Pinned Card with Word-by-Word Reveal)
     const secLetter = container.querySelector('#bloomSecLetter');
+    const stickyFrame = container.querySelector('#bloomLetterStickyFrame');
     const wordSpans = container.querySelectorAll('.bloom-letter-word');
     const totalWords = wordSpans.length;
 
+    // Detect scroll parent (window in viewer, or .preview-frame-container in studio editor)
+    function findScrollParent(el) {
+      let cur = el ? el.parentElement : null;
+      while (cur && cur !== document.body && cur !== document.documentElement) {
+        const ovY = window.getComputedStyle(cur).overflowY;
+        if (ovY === 'auto' || ovY === 'scroll') {
+          return cur;
+        }
+        cur = cur.parentElement;
+      }
+      return window;
+    }
+
+    const scrollParent = findScrollParent(container);
+    const isWindowScroll = scrollParent === window;
+
+    // Inside phone chassis or custom container, match sticky frame height to the chassis viewport
+    if (!isWindowScroll && stickyFrame) {
+      stickyFrame.style.height = `${scrollParent.clientHeight}px`;
+    }
+
     function handleLetterScroll() {
-      if (!secLetter) return;
-      const rect = secLetter.getBoundingClientRect();
-      const windowH = window.innerHeight;
-      const scrollProgress = -rect.top / (rect.height - windowH);
+      if (!secLetter || !stickyFrame) return;
+
+      const secRect = secLetter.getBoundingClientRect();
+      const viewportH = isWindowScroll ? window.innerHeight : scrollParent.clientHeight;
+      const viewportTop = isWindowScroll ? 0 : scrollParent.getBoundingClientRect().top;
+
+      const relativeTop = secRect.top - viewportTop;
+      const maxScroll = secRect.height - viewportH;
+
+      if (maxScroll <= 0) return;
+
+      // Calculate scroll progress through Section 3: 0.0 (entry) to 1.0 (exit)
+      const scrollProgress = -relativeTop / maxScroll;
       const normalized = Math.min(1, Math.max(0, (scrollProgress - 0.05) / 0.9));
       const illuminatedCount = Math.round(normalized * totalWords);
 
       wordSpans.forEach((span, i) => {
         span.style.opacity = i < illuminatedCount ? '1' : '0.08';
       });
+
+      // Rock-solid stationary pinning guarantee:
+      // In all standard browsers, CSS position:sticky keeps the frame pinned at top: 0.
+      // If any ancestor container (e.g. editor phone chassis) interferes with sticky,
+      // fallback translation ensures the letter card stays completely stationary in viewport.
+      const frameRect = stickyFrame.getBoundingClientRect();
+      const frameRelTop = frameRect.top - viewportTop;
+
+      if (relativeTop <= 0 && relativeTop >= -maxScroll) {
+        // Section 3 is actively scrolling in the viewport
+        if (Math.abs(frameRelTop) > 4) {
+          // Sticky not holding natively -> apply JS compensation so letter card does NOT move
+          stickyFrame.style.transform = `translate3d(0, ${-relativeTop}px, 0)`;
+        } else {
+          stickyFrame.style.transform = '';
+        }
+      } else if (relativeTop < -maxScroll) {
+        // Passed section end -> scroll off with section
+        if (stickyFrame.style.transform) {
+          stickyFrame.style.transform = `translate3d(0, ${maxScroll}px, 0)`;
+        }
+      } else {
+        // Before section start
+        if (stickyFrame.style.transform) {
+          stickyFrame.style.transform = '';
+        }
+      }
     }
 
-    window.addEventListener('scroll', handleLetterScroll, { passive: true });
+    const scrollTarget = isWindowScroll ? window : scrollParent;
+    scrollTarget.addEventListener('scroll', handleLetterScroll, { passive: true });
+    if (!isWindowScroll) {
+      window.addEventListener('scroll', handleLetterScroll, { passive: true });
+    }
+
+    // Call once immediately to set initial state
     handleLetterScroll();
 
     // 3. Typewriter Effect (Od)
@@ -573,10 +651,18 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
 
       observer.observe(secEnding);
     }
+
+    cleanupRevealed = () => {
+      scrollTarget.removeEventListener('scroll', handleLetterScroll);
+      if (!isWindowScroll) {
+        window.removeEventListener('scroll', handleLetterScroll);
+      }
+    };
   }
 
   // Cleanup
   return () => {
     window.removeEventListener('keydown', handleKeyDown);
+    if (cleanupRevealed) cleanupRevealed();
   };
 }
