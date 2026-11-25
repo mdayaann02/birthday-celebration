@@ -5,7 +5,9 @@ import multer from 'multer';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
+import http from 'http';
 import { fileURLToPath } from 'url';
+import { WebSocketServer } from 'ws';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -338,6 +340,38 @@ app.get('/api/health', (req, res) => {
   res.json({ status: "healthy", timestamp: new Date().toISOString() });
 });
 
+// ============================================================================
+// MUSEUM REAL-TIME MULTIPLAYER SYSTEM (WebSocket + HTTP Fallback)
+// ============================================================================
+const museumRooms = new Map(); // roomId -> Set of ws clients
+const museumState = new Map(); // roomId -> Map(userId -> { user state, lastSeen })
+
+// HTTP polling fallback for clients unable to establish WebSockets
+app.post('/api/museum/sync', (req, res) => {
+  const { room = 'default', userId, state, action } = req.body;
+  if (!userId) return res.status(400).json({ error: "Missing userId" });
+
+  if (!museumState.has(room)) museumState.set(room, new Map());
+  const rMap = museumState.get(room);
+
+  if (state) {
+    rMap.set(userId, { ...state, userId, lastSeen: Date.now() });
+  }
+
+  // Purge peers inactive for > 8s
+  const now = Date.now();
+  for (const [uid, udata] of rMap.entries()) {
+    if (now - udata.lastSeen > 8000) rMap.delete(uid);
+  }
+
+  const peers = [];
+  for (const [uid, udata] of rMap.entries()) {
+    if (uid !== userId) peers.push(udata);
+  }
+
+  return res.json({ success: true, peers });
+});
+
 // Serve Vite Frontend
 const distDir = path.join(rootDir, 'dist');
 if (fs.existsSync(distDir)) {
@@ -347,6 +381,56 @@ if (fs.existsSync(distDir)) {
   });
 }
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Celebration Studio Server running at http://0.0.0.0:${PORT}`);
+const server = http.createServer(app);
+
+// Attach WebSocket Server
+const wss = new WebSocketServer({ server, path: '/ws' });
+
+wss.on('connection', (ws) => {
+  let userRoom = 'default';
+  let userId = null;
+
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+      if (data.type === 'join') {
+        userRoom = data.room || 'default';
+        userId = data.userId;
+        ws.userId = userId;
+        ws.userRoom = userRoom;
+        if (!museumRooms.has(userRoom)) museumRooms.set(userRoom, new Set());
+        museumRooms.get(userRoom).add(ws);
+        return;
+      }
+
+      // Broadcast to other peers in the room
+      const roomClients = museumRooms.get(userRoom);
+      if (roomClients) {
+        for (const client of roomClients) {
+          if (client !== ws && client.readyState === 1) { // 1 = OPEN
+            client.send(message.toString());
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('WS parse error:', e);
+    }
+  });
+
+  ws.on('close', () => {
+    if (userRoom && museumRooms.has(userRoom)) {
+      museumRooms.get(userRoom).delete(ws);
+      const roomClients = museumRooms.get(userRoom);
+      if (roomClients) {
+        const leaveMsg = JSON.stringify({ type: 'leave', userId });
+        for (const client of roomClients) {
+          if (client.readyState === 1) client.send(leaveMsg);
+        }
+      }
+    }
+  });
+});
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Celebration Studio Server & WebSocket running at http://0.0.0.0:${PORT}`);
 });

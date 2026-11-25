@@ -14,6 +14,8 @@ import gsap from 'gsap';
 import confetti from 'canvas-confetti';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
 import { soundFx } from '../audioSynth.js';
+import { create3DAvatar } from './museumAvatar.js';
+import { MuseumMultiplayer } from './museumMultiplayer.js';
 
 // Procedural Canvas Texture Generator for French Herringbone / Parquet Wood Floor
 function createParquetTexture() {
@@ -339,6 +341,63 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         </div>
       </header>
 
+      <!-- Visitor Onboarding Modal (Avatar & Name Selection) -->
+      <div class="museum-visitor-modal" id="visitorModal">
+        <div class="visitor-modal-backdrop"></div>
+        <div class="visitor-modal-card">
+          <div class="visitor-gold-crest">🏛️ ✨</div>
+          <span class="visitor-eyebrow">THE 3D VIRTUAL GALLERY</span>
+          <h2 class="visitor-modal-title">Enter Our Museum</h2>
+          <p class="visitor-modal-sub">
+            Dedicated to <strong>${recipientName}</strong>. Choose your avatar to step inside the 3D gallery together in third-person view.
+          </p>
+
+          <div class="visitor-form-group">
+            <label class="visitor-field-label" for="visitorNameInput">Your Name</label>
+            <div class="visitor-input-wrap">
+              <span class="visitor-input-icon">👤</span>
+              <input type="text" id="visitorNameInput" class="visitor-name-input" placeholder="Enter your name..." value="${recipientName}" maxlength="20" />
+            </div>
+          </div>
+
+          <div class="visitor-gender-selector">
+            <label class="visitor-field-label">Choose Avatar Attire</label>
+            <div class="gender-cards-grid">
+              <div class="gender-card male active" id="genderCardMale" data-gender="male">
+                <div class="gender-card-badge">👦 GENTLEMAN</div>
+                <div class="gender-card-preview blue">
+                  <div class="gender-avatar-icon">🤵</div>
+                  <span class="suit-swatch blue"></span>
+                </div>
+                <h4 class="gender-card-title">Royal Blue Suit</h4>
+                <p class="gender-card-sub">Blue suit & bowtie</p>
+                <div class="gender-radio-ring"><span class="ring-dot"></span></div>
+              </div>
+
+              <div class="gender-card female" id="genderCardFemale" data-gender="female">
+                <div class="gender-card-badge">👧 LADY</div>
+                <div class="gender-card-preview pink">
+                  <div class="gender-avatar-icon">👗</div>
+                  <span class="suit-swatch pink"></span>
+                </div>
+                <h4 class="gender-card-title">Rose Pink Gown</h4>
+                <p class="gender-card-sub">Pink designer dress</p>
+                <div class="gender-radio-ring"><span class="ring-dot"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="visitor-multiplayer-hint">
+            <span class="live-dot"></span>
+            <span>Real-time multiplayer active • Share link to meet inside!</span>
+          </div>
+
+          <button type="button" class="btn-enter-museum" id="btnEnterMuseum">
+            <span>Step Inside Gallery 🏛️✨</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Landscape & Fullscreen Orientation Prompt Overlay -->
       <div class="museum-rotate-overlay" id="museumRotateOverlay" style="display:none;">
         <div class="rotate-backdrop"></div>
@@ -435,6 +494,62 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         </div>
         <div class="museum-art-prompt-badge" id="artPromptBadge" style="display:none;">
           <span>🔍 Tap artwork to inspect</span>
+        </div>
+      </div>
+
+      <!-- Multiplayer Interaction Dock (Bottom Floating Bar) -->
+      <div class="museum-multiplayer-dock" id="multiplayerDock" style="display:none;">
+        <div class="multi-dock-left">
+          <div class="multiplayer-status-pill" id="multiStatusPill">
+            <span class="pulse-indicator"></span>
+            <span id="multiStatusText">Exploring Solo</span>
+            <span class="peer-count-badge" id="peerCountBadge" style="display:none;">1</span>
+          </div>
+        </div>
+
+        <div class="multi-dock-center">
+          <button type="button" class="btn-dock-action" id="btnDockWave" title="Wave to everyone">
+            <span class="action-emoji">👋</span>
+            <span class="action-text">Wave</span>
+          </button>
+          <button type="button" class="btn-dock-action" id="btnDockHeart" title="Send glowing hearts">
+            <span class="action-emoji">💖</span>
+            <span class="action-text">Hearts</span>
+          </button>
+          <button type="button" class="btn-dock-action" id="btnDockChat" title="Quick Chat & Reactions">
+            <span class="action-emoji">💬</span>
+            <span class="action-text">React</span>
+          </button>
+          <button type="button" class="btn-dock-action" id="btnDockSit" title="Sit Together on Gallery Bench">
+            <span class="action-emoji">🛋️</span>
+            <span class="action-text">Sit Together</span>
+          </button>
+        </div>
+
+        <div class="multi-dock-right">
+          <div class="multi-avatar-badge" id="multiAvatarBadge">
+            <span class="my-avatar-tag" id="myAvatarTag">👦 You</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Quick Reaction & Chat Tray -->
+      <div class="museum-chat-tray" id="museumChatTray" style="display:none;">
+        <div class="chat-tray-header">
+          <span>💬 Reaction or Floating Message</span>
+          <button type="button" class="btn-close-tray" id="btnCloseChatTray">✕</button>
+        </div>
+        <div class="chat-preset-chips">
+          <button type="button" class="chat-preset-chip" data-msg="❤️ I love you!">❤️ I love you!</button>
+          <button type="button" class="chat-preset-chip" data-msg="✨ Look at this masterpiece!">✨ Look at this!</button>
+          <button type="button" class="chat-preset-chip" data-msg="🥰 You look so gorgeous!">🥰 You look so gorgeous!</button>
+          <button type="button" class="chat-preset-chip" data-msg="💍 Forever & always!">💍 Forever & always!</button>
+          <button type="button" class="chat-preset-chip" data-msg="🚶 Follow me!">🚶 Follow me!</button>
+          <button type="button" class="chat-preset-chip" data-msg="🛋️ Let's sit together!">🛋️ Let's sit together!</button>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chatCustomInput" placeholder="Type a message to float over your avatar..." maxlength="30" />
+          <button type="button" id="btnSendCustomChat" class="btn-send-chat">Send ✉️</button>
         </div>
       </div>
 
@@ -1022,12 +1137,270 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   }
 
   // --------------------------------------------------------------------------
-  // FREE WALK CONTROLLER (WASD / Joystick + Look)
+  // VISITOR ONBOARDING & REAL-TIME MULTIPLAYER SYSTEM
+  // --------------------------------------------------------------------------
+  const visitorModal = container.querySelector('#visitorModal');
+  const visitorNameInput = container.querySelector('#visitorNameInput');
+  const genderCardMale = container.querySelector('#genderCardMale');
+  const genderCardFemale = container.querySelector('#genderCardFemale');
+  const btnEnterMuseum = container.querySelector('#btnEnterMuseum');
+
+  const multiplayerDock = container.querySelector('#multiplayerDock');
+  const multiStatusText = container.querySelector('#multiStatusText');
+  const peerCountBadge = container.querySelector('#peerCountBadge');
+  const btnDockWave = container.querySelector('#btnDockWave');
+  const btnDockHeart = container.querySelector('#btnDockHeart');
+  const btnDockChat = container.querySelector('#btnDockChat');
+  const btnDockSit = container.querySelector('#btnDockSit');
+  const myAvatarTag = container.querySelector('#myAvatarTag');
+
+  const museumChatTray = container.querySelector('#museumChatTray');
+  const btnCloseChatTray = container.querySelector('#btnCloseChatTray');
+  const chatCustomInput = container.querySelector('#chatCustomInput');
+  const btnSendCustomChat = container.querySelector('#btnSendCustomChat');
+
+  let selectedGender = 'male';
+  let userProfile = {
+    name: recipientName || 'Visitor',
+    gender: 'male'
+  };
+
+  let localAvatar = null;
+  let multiplayer = null;
+  const peerAvatarsMap = new Map(); // userId -> { avatar, targetPos, targetRotY, isWalking }
+  let hasEnteredMuseum = false;
+  let lastTime = performance.now();
+  let lastMoveBroadcastTime = 0;
+
+  // Gender Selection
+  genderCardMale?.addEventListener('click', () => {
+    soundFx.pop(460);
+    selectedGender = 'male';
+    genderCardMale.classList.add('active');
+    genderCardFemale.classList.remove('active');
+  });
+
+  genderCardFemale?.addEventListener('click', () => {
+    soundFx.pop(540);
+    selectedGender = 'female';
+    genderCardFemale.classList.add('active');
+    genderCardMale.classList.remove('active');
+  });
+
+  // Multiplayer Peer Callbacks
+  function onPeerUpdate(peers) {
+    const peerCount = peers.size;
+    if (peerCountBadge) {
+      peerCountBadge.textContent = String(peerCount + 1);
+      peerCountBadge.style.display = peerCount > 0 ? 'inline-flex' : 'none';
+    }
+    if (multiStatusText) {
+      if (peerCount === 0) {
+        multiStatusText.textContent = 'Exploring Solo';
+      } else if (peerCount === 1) {
+        const first = Array.from(peers.values())[0];
+        multiStatusText.textContent = `With ${first.name || 'Friend'} ✨`;
+      } else {
+        multiStatusText.textContent = `${peerCount + 1} Exploring Together ✨`;
+      }
+    }
+
+    // Sync peer 3D avatars
+    peers.forEach((peer, userId) => {
+      if (!peerAvatarsMap.has(userId)) {
+        const pAvatar = create3DAvatar(peer.name, peer.gender, false);
+        pAvatar.group.position.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
+        pAvatar.group.rotation.y = peer.rotY || Math.PI;
+        scene.add(pAvatar.group);
+        peerAvatarsMap.set(userId, {
+          avatar: pAvatar,
+          targetPos: new THREE.Vector3(peer.x || 0, peer.y || 0, peer.z || 3.2),
+          targetRotY: peer.rotY || Math.PI,
+          isWalking: Boolean(peer.isWalking)
+        });
+        soundFx.sparkle();
+      } else {
+        const rec = peerAvatarsMap.get(userId);
+        rec.targetPos.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
+        rec.targetRotY = peer.rotY || 0;
+        rec.isWalking = Boolean(peer.isWalking);
+      }
+    });
+
+    // Remove left peers
+    peerAvatarsMap.forEach((val, userId) => {
+      if (!peers.has(userId)) {
+        scene.remove(val.avatar.group);
+        val.avatar.dispose();
+        peerAvatarsMap.delete(userId);
+      }
+    });
+  }
+
+  function onPeerAction(data) {
+    const rec = peerAvatarsMap.get(data.userId);
+    if (!rec) return;
+
+    if (data.action === 'wave') {
+      rec.avatar.playGesture('wave');
+      soundFx.sparkle();
+    } else if (data.action === 'heart') {
+      const targetPos = localAvatar ? localAvatar.group.position : null;
+      rec.avatar.burstHearts(scene, targetPos);
+      soundFx.sparkle();
+    } else if (data.action === 'sit') {
+      const peerBenchX = data.gender === 'male' ? -0.55 : 0.55;
+      rec.targetPos.set(peerBenchX, 0, rotundaZ + 5.8);
+      rec.avatar.group.position.set(peerBenchX, 0, rotundaZ + 5.8);
+      rec.avatar.group.rotation.y = Math.PI;
+      rec.avatar.setSeated(true);
+    } else if (data.action === 'stand') {
+      rec.avatar.setSeated(false);
+      rec.avatar.group.position.set(0, 0, rotundaZ + 7.2);
+    }
+  }
+
+  function onPeerChat(data) {
+    const rec = peerAvatarsMap.get(data.userId);
+    if (rec && data.text) {
+      rec.avatar.showChatBubble(data.text);
+      soundFx.pop(580);
+    }
+  }
+
+  // Enter Museum Action
+  function enterMuseum() {
+    if (hasEnteredMuseum) return;
+    hasEnteredMuseum = true;
+
+    const nameVal = (visitorNameInput ? visitorNameInput.value.trim() : '') || recipientName || 'Visitor';
+    userProfile.name = nameVal;
+    userProfile.gender = selectedGender;
+
+    soundFx.sparkle();
+
+    if (visitorModal) {
+      gsap.to(visitorModal, {
+        opacity: 0,
+        duration: 0.45,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          visitorModal.style.display = 'none';
+        }
+      });
+    }
+
+    // Spawn 3D local avatar
+    localAvatar = create3DAvatar(userProfile.name, userProfile.gender, true);
+    localAvatar.group.position.set(0, 0, 3.2);
+    localAvatar.group.rotation.y = Math.PI; // Face forward down the grand hall (-Z)
+    scene.add(localAvatar.group);
+
+    // Update HUD
+    if (myAvatarTag) {
+      myAvatarTag.textContent = `${userProfile.gender === 'male' ? '👦' : '👧'} ${userProfile.name}`;
+    }
+    if (multiplayerDock) {
+      multiplayerDock.style.display = 'flex';
+    }
+
+    // Connect real-time multiplayer
+    const roomName = (data.passcode || data.slug || data.id || 'our_museum')
+      .toString().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+    multiplayer = new MuseumMultiplayer(
+      roomName,
+      userProfile,
+      onPeerUpdate,
+      onPeerAction,
+      onPeerChat
+    );
+
+    // Switch to Walk mode (TPP View)
+    setMode('walk');
+
+    // Auto-play soundtrack if provided
+    const audioElem = musicMount?.querySelector('audio');
+    if (audioElem && !isMuted) {
+      audioElem.play().catch(() => {});
+    }
+  }
+
+  btnEnterMuseum?.addEventListener('click', enterMuseum);
+
+  // Multiplayer Dock Buttons
+  btnDockWave?.addEventListener('click', () => {
+    soundFx.sparkle();
+    if (localAvatar) localAvatar.playGesture('wave');
+    if (multiplayer) multiplayer.sendAction('wave');
+  });
+
+  btnDockHeart?.addEventListener('click', () => {
+    soundFx.sparkle();
+    let targetPos = null;
+    if (peerAvatarsMap.size > 0) {
+      const first = Array.from(peerAvatarsMap.values())[0];
+      targetPos = first.avatar.group.position;
+    }
+    if (localAvatar) localAvatar.burstHearts(scene, targetPos);
+    if (multiplayer) multiplayer.sendAction('heart');
+  });
+
+  btnDockChat?.addEventListener('click', () => {
+    if (museumChatTray) {
+      const isVisible = museumChatTray.style.display === 'block';
+      museumChatTray.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible && chatCustomInput) {
+        setTimeout(() => chatCustomInput.focus(), 100);
+      }
+    }
+  });
+
+  btnCloseChatTray?.addEventListener('click', () => {
+    if (museumChatTray) museumChatTray.style.display = 'none';
+  });
+
+  container.querySelectorAll('.chat-preset-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const msg = chip.getAttribute('data-msg');
+      sendChat(msg);
+    });
+  });
+
+  function sendChat(text) {
+    if (!text || !text.trim()) return;
+    const clean = text.trim();
+    if (localAvatar) localAvatar.showChatBubble(clean);
+    if (multiplayer) multiplayer.sendChat(clean);
+    soundFx.pop(640);
+    if (museumChatTray) museumChatTray.style.display = 'none';
+    if (chatCustomInput) chatCustomInput.value = '';
+  }
+
+  btnSendCustomChat?.addEventListener('click', () => {
+    sendChat(chatCustomInput?.value);
+  });
+
+  chatCustomInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      sendChat(chatCustomInput.value);
+    }
+  });
+
+  btnDockSit?.addEventListener('click', () => {
+    if (isSeatedOnBench) {
+      standUpFromBench();
+    } else {
+      sitOnBench();
+    }
+  });
+
+  // --------------------------------------------------------------------------
+  // FREE WALK CONTROLLER (TPP with WASD / Joystick + Camera Orbit)
   // --------------------------------------------------------------------------
   const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-  let walkYaw = 0;
-  let walkPitch = 0;
+  let walkYaw = Math.PI; // Face forward towards gallery hall (-Z)
+  let walkPitch = 0.05;
   const moveDirection = { forward: 0, right: 0 };
   const keysDown = {};
 
@@ -1046,28 +1419,38 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     if (benchPrompt) benchPrompt.style.display = 'none';
     if (standPrompt) standPrompt.style.display = 'block';
 
+    const myBenchX = (userProfile.gender === 'male') ? -0.55 : 0.55;
+    if (localAvatar) {
+      localAvatar.group.position.set(myBenchX, 0, rotundaZ + 5.8);
+      localAvatar.group.rotation.y = Math.PI; // Face cinema screen
+      localAvatar.setSeated(true);
+    }
+    if (multiplayer) {
+      multiplayer.sendAction('sit');
+    }
+
     // Cinematic mood lighting (dim ambient spotlights)
     gsap.to(ambientLight, { intensity: 0.22, duration: 1.4 });
     gsap.to(hemiLight, { intensity: 0.15, duration: 1.4 });
     gsap.to(cpSpot, { intensity: 5.5, duration: 1.4 });
 
-    // Smoothly drop camera to seated height on the leather bench facing the screen
+    // Smoothly drop camera to romantic seated height facing the screen
     gsap.to(camera.position, {
       x: 0,
-      y: 1.35,
-      z: rotundaZ + 5.8,
+      y: 1.8,
+      z: rotundaZ + 8.4,
       duration: 1.8,
       ease: 'power2.inOut'
     });
     gsap.to(currentLookAtTarget, {
       x: 0,
-      y: 2.8,
+      y: 2.6,
       z: rotundaZ + 0.18,
       duration: 1.8,
       ease: 'power2.inOut',
       onUpdate: () => camera.lookAt(currentLookAtTarget),
       onComplete: () => {
-        setTimeout(showProposalModal, 500);
+        setTimeout(showProposalModal, 600);
       }
     });
   }
@@ -1077,24 +1460,22 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     isSeatedOnBench = false;
     if (standPrompt) standPrompt.style.display = 'none';
 
+    if (localAvatar) {
+      localAvatar.setSeated(false);
+      localAvatar.group.position.set(0, 0, rotundaZ + 7.4);
+      localAvatar.group.rotation.y = Math.PI;
+    }
+    if (multiplayer) {
+      multiplayer.sendAction('stand');
+    }
+
     // Restore museum lighting
     gsap.to(ambientLight, { intensity: 0.75, duration: 1.2 });
     gsap.to(hemiLight, { intensity: 0.45, duration: 1.2 });
     gsap.to(cpSpot, { intensity: 4.5, duration: 1.2 });
 
-    gsap.to(camera.position, {
-      x: 0,
-      y: 1.7,
-      z: rotundaZ + 7.5,
-      duration: 1.2,
-      ease: 'power2.out',
-      onComplete: () => {
-        const camDir = new THREE.Vector3();
-        camera.getWorldDirection(camDir);
-        walkYaw = Math.atan2(camDir.x, camDir.z);
-        walkPitch = 0;
-      }
-    });
+    walkYaw = Math.PI;
+    walkPitch = 0.05;
   }
 
   btnSitBench?.addEventListener('click', sitOnBench);
@@ -1126,11 +1507,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         desktopHint.style.display = 'block';
       }
       isTourPlaying = false;
-      // Initialize walk orientation accurately from current camera world direction
-      const camDir = new THREE.Vector3();
-      camera.getWorldDirection(camDir);
-      walkYaw = Math.atan2(camDir.x, camDir.z);
-      walkPitch = Math.asin(Math.max(-0.95, Math.min(0.95, camDir.y)));
+      walkYaw = Math.PI;
+      walkPitch = 0.05;
     }
   }
 
@@ -1499,71 +1877,117 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   // ANIMATION & RENDER LOOP
   // --------------------------------------------------------------------------
   let animationFrameId = null;
-  const walkSpeed = 0.085;
+  const walkSpeed = 0.09;
   let footstepTimer = 0;
 
   function animate() {
     animationFrameId = requestAnimationFrame(animate);
 
-    // If in Free Walk Mode, process movement
-    if (currentMode === 'walk' && !isSeatedOnBench) {
-      let forwardDelta = 0;
-      let strafeDelta = 0;
+    const now = performance.now();
+    const delta = Math.min((now - lastTime) / 1000, 0.1);
+    lastTime = now;
 
-      // Keyboard input
-      if (keysDown['w'] || keysDown['arrowup']) forwardDelta += 1;
-      if (keysDown['s'] || keysDown['arrowdown']) forwardDelta -= 1;
-      if (keysDown['a'] || keysDown['arrowleft']) strafeDelta -= 1;
-      if (keysDown['d'] || keysDown['arrowright']) strafeDelta += 1;
+    // Process Walk Mode (Third-Person Perspective TPP)
+    if (currentMode === 'walk') {
+      if (localAvatar && !isSeatedOnBench) {
+        let forwardDelta = 0;
+        let strafeDelta = 0;
 
-      // Add mobile joystick input
-      forwardDelta += moveDirection.forward;
-      strafeDelta += moveDirection.right;
+        // Keyboard input
+        if (keysDown['w'] || keysDown['arrowup']) forwardDelta += 1;
+        if (keysDown['s'] || keysDown['arrowdown']) forwardDelta -= 1;
+        if (keysDown['a'] || keysDown['arrowleft']) strafeDelta -= 1;
+        if (keysDown['d'] || keysDown['arrowright']) strafeDelta += 1;
 
-      // Normalize if diagonal
-      const mag = Math.hypot(forwardDelta, strafeDelta);
-      if (mag > 0.05) {
-        const normFwd = (forwardDelta / Math.max(1, mag)) * walkSpeed;
-        const normStf = (strafeDelta / Math.max(1, mag)) * walkSpeed;
+        // Mobile joystick input
+        forwardDelta += moveDirection.forward;
+        strafeDelta += moveDirection.right;
 
-        // Obtain camera forward vector projected on horizontal floor (Y = 0)
-        const forwardVec = new THREE.Vector3();
-        camera.getWorldDirection(forwardVec);
-        forwardVec.y = 0;
-        forwardVec.normalize();
+        const mag = Math.hypot(forwardDelta, strafeDelta);
+        const isWalking = mag > 0.08;
 
-        // Right horizontal vector is forward cross UP (0, 1, 0)
-        const rightVec = new THREE.Vector3().crossVectors(forwardVec, new THREE.Vector3(0, 1, 0)).normalize();
+        if (isWalking) {
+          const normFwd = (forwardDelta / Math.max(1, mag)) * walkSpeed;
+          const normStf = (strafeDelta / Math.max(1, mag)) * walkSpeed;
 
-        camera.position.addScaledVector(forwardVec, normFwd);
-        camera.position.addScaledVector(rightVec, normStf);
+          // Camera horizontal forward direction (XZ plane)
+          const camFwd = new THREE.Vector3(Math.sin(walkYaw), 0, Math.cos(walkYaw)).normalize();
+          const camRight = new THREE.Vector3().crossVectors(camFwd, new THREE.Vector3(0, 1, 0)).normalize();
 
-        // Collision bounds (keep inside gallery hall)
-        camera.position.x = Math.max(-hallWidth / 2 + 1.2, Math.min(hallWidth / 2 - 1.2, camera.position.x));
-        camera.position.z = Math.max(rotundaZ + 2.0, Math.min(6.2, camera.position.z));
-        camera.position.y = 1.7; // Human eye-level
+          const moveVec = new THREE.Vector3()
+            .addScaledVector(camFwd, normFwd)
+            .addScaledVector(camRight, normStf);
 
-        // Gentle footstep sounds
-        footstepTimer += 1;
-        if (footstepTimer % 24 === 0) {
-          soundFx.pop(220);
+          localAvatar.group.position.add(moveVec);
+
+          // Smoothly turn avatar towards movement direction
+          const targetAngle = Math.atan2(moveVec.x, moveVec.z);
+          let diffAngle = targetAngle - localAvatar.group.rotation.y;
+          while (diffAngle < -Math.PI) diffAngle += Math.PI * 2;
+          while (diffAngle > Math.PI) diffAngle -= Math.PI * 2;
+          localAvatar.group.rotation.y += diffAngle * 0.22;
+
+          footstepTimer += 1;
+          if (footstepTimer % 22 === 0) {
+            soundFx.pop(220);
+          }
         }
-      }
 
-      // Update camera lookAt vector based on walkYaw and walkPitch
-      const lookDist = 5;
-      currentLookAtTarget.set(
-        camera.position.x + Math.sin(walkYaw) * Math.cos(walkPitch) * lookDist,
-        camera.position.y + Math.sin(walkPitch) * lookDist,
-        camera.position.z + Math.cos(walkYaw) * Math.cos(walkPitch) * lookDist
-      );
-      camera.lookAt(currentLookAtTarget);
+        // Keep inside museum bounds
+        localAvatar.group.position.x = Math.max(-hallWidth / 2 + 1.2, Math.min(hallWidth / 2 - 1.2, localAvatar.group.position.x));
+        localAvatar.group.position.z = Math.max(rotundaZ + 2.0, Math.min(6.2, localAvatar.group.position.z));
+        localAvatar.group.position.y = 0;
+
+        // Animate local avatar limbs
+        localAvatar.update(delta, isWalking, 1.0);
+
+        // Sync movement to multiplayer peers
+        if (multiplayer && (isWalking || now - lastMoveBroadcastTime > 200)) {
+          lastMoveBroadcastTime = now;
+          multiplayer.sendMove(
+            localAvatar.group.position.x,
+            localAvatar.group.position.y,
+            localAvatar.group.position.z,
+            localAvatar.group.rotation.y,
+            isWalking
+          );
+        }
+
+        // TPP Chase Camera Positioning
+        const camDist = 3.8;
+        const camHeight = 2.1;
+        const desiredCamX = localAvatar.group.position.x - Math.sin(walkYaw) * Math.cos(walkPitch) * camDist;
+        const desiredCamY = localAvatar.group.position.y + camHeight + Math.sin(walkPitch) * camDist;
+        const desiredCamZ = localAvatar.group.position.z - Math.cos(walkYaw) * Math.cos(walkPitch) * camDist;
+
+        camera.position.lerp(new THREE.Vector3(desiredCamX, desiredCamY, desiredCamZ), 0.16);
+
+        currentLookAtTarget.set(
+          localAvatar.group.position.x,
+          localAvatar.group.position.y + 1.35,
+          localAvatar.group.position.z
+        );
+        camera.lookAt(currentLookAtTarget);
+      } else if (localAvatar && isSeatedOnBench) {
+        localAvatar.update(delta, false, 0);
+      }
     }
+
+    // Update remote peer avatars
+    peerAvatarsMap.forEach((val) => {
+      val.avatar.group.position.lerp(val.targetPos, 0.22);
+      let dRot = val.targetRotY - val.avatar.group.rotation.y;
+      while (dRot < -Math.PI) dRot += Math.PI * 2;
+      while (dRot > Math.PI) dRot -= Math.PI * 2;
+      val.avatar.group.rotation.y += dRot * 0.22;
+      val.avatar.update(delta, val.isWalking, 1.0);
+    });
 
     // Proximity checks when in walk mode
     if (currentMode === 'walk') {
       const benchPos = new THREE.Vector3(0, 1.7, rotundaZ + 5.8);
-      const distToBench = camera.position.distanceTo(benchPos);
+      const currentPos = localAvatar ? localAvatar.group.position : camera.position;
+      const distToBench = currentPos.distanceTo(benchPos);
       if (distToBench < 4.5 && !isSeatedOnBench) {
         if (benchPrompt) benchPrompt.style.display = 'block';
       } else {
@@ -1573,7 +1997,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       // Nearby artwork hint badge
       let nearArt = null;
       for (const art of interactiveArtworks) {
-        const d = camera.position.distanceTo(art.targetLookAt);
+        const d = currentPos.distanceTo(art.targetLookAt);
         if (d < 3.8) {
           nearArt = art;
           break;
@@ -1731,6 +2155,22 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     window.removeEventListener('resize', onWindowResize);
     document.removeEventListener('fullscreenchange', updateFullscreenIcon);
     document.removeEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+    if (multiplayer) {
+      multiplayer.destroy();
+      multiplayer = null;
+    }
+    if (localAvatar) {
+      scene.remove(localAvatar.group);
+      localAvatar.dispose();
+      localAvatar = null;
+    }
+    peerAvatarsMap.forEach((val) => {
+      scene.remove(val.avatar.group);
+      val.avatar.dispose();
+    });
+    peerAvatarsMap.clear();
+
     renderer.dispose();
   };
 }
