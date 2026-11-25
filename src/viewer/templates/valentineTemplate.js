@@ -337,6 +337,16 @@ Happy Valentine's Day, my forever love.`}
   let currentValChapter = 1;
   const totalValChapters = 5;
 
+  function scrollToActiveTop() {
+    const chassis = container?.closest ? (container.closest('.preview-frame-container') || container.closest('#previewContainer')) : null;
+    if (chassis) {
+      chassis.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+
   function goToValChapter(ch) {
     const targetCh = Math.max(1, Math.min(totalValChapters, ch));
     const cards = container.querySelectorAll('.val-story-card');
@@ -359,7 +369,7 @@ Happy Valentine's Day, my forever love.`}
           targetCard.style.display = 'block';
           targetCard.style.opacity = '0';
           targetCard.classList.add('active');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          scrollToActiveTop();
 
           gsap.fromTo(targetCard,
             { opacity: 0, y: 20, scale: 0.98 },
@@ -380,7 +390,7 @@ Happy Valentine's Day, my forever love.`}
         }
       });
       currentValChapter = targetCh;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToActiveTop();
     }
     if (navigator.vibrate) navigator.vibrate(15);
   }

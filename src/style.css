@@ -31,7 +31,6 @@
 html {
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
-  overscroll-behavior-y: none;
 }
 
 html, body {
@@ -3349,12 +3348,12 @@ select option {
   flex: 1;
   background: #000000;
   border-radius: 18px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
   position: relative;
   transition: max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s;
-  transform: translateZ(0);
-  contain: paint layout;
   isolation: isolate;
 }
 
@@ -3397,8 +3396,10 @@ select option {
   border: 12px solid var(--neu-surface);
   box-shadow: var(--neu-shadow-lg), 0 25px 60px rgba(0, 0, 0, 0.45);
   position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
   background: #000000;
 }
 
@@ -3451,7 +3452,8 @@ select option {
   background: radial-gradient(circle at 50% 40%, #1e1329 0%, #0d0c14 70%, #050608 100%);
   text-align: center;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
 }
 
 /* Creator Background Photo Slideshow */
@@ -14469,6 +14471,17 @@ svg {
 /* ==========================================================================
    Focused Chapter Journey Experience (One Immersive Chapter at a Time)
    ========================================================================== */
+.fam-page-viewport,
+.bday-storybook-viewport,
+.fam-storybook-viewport,
+.anni-storybook-viewport,
+.val-storybook-viewport,
+.bff-storybook-viewport,
+.sorry-storybook-viewport {
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
 .bday-page-card,
 .fam-page-card,
 .anni-page-card,
@@ -14482,6 +14495,7 @@ svg {
   max-width: 540px;
   margin: 0 auto;
   box-sizing: border-box;
+  touch-action: pan-y !important;
 }
 
 .bday-page-card.active,
@@ -14494,6 +14508,7 @@ svg {
   display: block !important;
   opacity: 1 !important;
   animation: chapterCardIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  touch-action: pan-y !important;
 }
 
 @keyframes chapterCardIn {
@@ -15229,17 +15244,23 @@ select option {
   color: var(--primary-accent);
 }
 
-/* Interactive Preview Frame */
+/* Interactive Preview Frame - Unlocked Fluid Scrolling */
 .preview-frame-container {
-  border-radius: 0 0 16px 16px;
-  overflow: hidden;
-  background: #ffffff;
+  border-radius: 28px;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  background: #000000;
 }
 
 /* Mobile full-width experience */
 @media (max-width: 900px) {
   .preview-frame-container {
-    border-radius: 16px;
+    border-radius: 20px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 }
 
@@ -20100,15 +20121,21 @@ html, body {
   padding: 0 !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
   position: relative !important;
 }
 
-#app, #templateRoot {
+#app {
   width: 100% !important;
-  min-height: 100vh !important;
+  min-height: 100% !important;
   position: relative !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
+  box-sizing: border-box !important;
+}
+
+#templateRoot {
+  width: 100% !important;
+  min-height: 100% !important;
+  position: relative !important;
   box-sizing: border-box !important;
 }
 

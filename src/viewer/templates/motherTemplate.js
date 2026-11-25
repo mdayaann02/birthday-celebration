@@ -441,6 +441,16 @@ export function renderMotherTemplate(container, data) {
   const totalPages = momPageTitles.length;
   let currentPage = 1;
 
+  function scrollToActiveTop() {
+    const chassis = container?.closest ? (container.closest('.preview-frame-container') || container.closest('#previewContainer')) : null;
+    if (chassis) {
+      chassis.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+
   function goToPage(page) {
     const targetPage = Math.max(1, Math.min(totalPages, page));
     const cards = container.querySelectorAll('.fam-page-card');
@@ -463,7 +473,7 @@ export function renderMotherTemplate(container, data) {
           targetCard.style.display = 'block';
           targetCard.style.opacity = '0';
           targetCard.classList.add('active');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          scrollToActiveTop();
 
           gsap.fromTo(targetCard,
             { opacity: 0, y: 20, scale: 0.98 },
@@ -484,7 +494,7 @@ export function renderMotherTemplate(container, data) {
         }
       });
       currentPage = targetPage;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToActiveTop();
     }
     if (navigator.vibrate) navigator.vibrate(15);
   }

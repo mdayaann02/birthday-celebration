@@ -387,6 +387,16 @@ Forever and always, yours.`}
   let currentAnniChapter = 1;
   const totalAnniChapters = 5;
 
+  function scrollToActiveTop() {
+    const chassis = container?.closest ? (container.closest('.preview-frame-container') || container.closest('#previewContainer')) : null;
+    if (chassis) {
+      chassis.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+
   function goToAnniChapter(ch) {
     const targetCh = Math.max(1, Math.min(totalAnniChapters, ch));
     const cards = container.querySelectorAll('.anni-story-card');
@@ -409,7 +419,7 @@ Forever and always, yours.`}
           targetCard.style.display = 'block';
           targetCard.style.opacity = '0';
           targetCard.classList.add('active');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          scrollToActiveTop();
 
           gsap.fromTo(targetCard,
             { opacity: 0, y: 20, scale: 0.98 },
@@ -430,7 +440,7 @@ Forever and always, yours.`}
         }
       });
       currentAnniChapter = targetCh;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToActiveTop();
     }
     if (navigator.vibrate) navigator.vibrate(15);
   }

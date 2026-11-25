@@ -283,6 +283,16 @@ export function renderBirthdayTemplate(container, data) {
   let currentBdayChapter = 1;
   const totalBdayChapters = 6;
 
+  function scrollToActiveTop() {
+    const chassis = container?.closest ? (container.closest('.preview-frame-container') || container.closest('#previewContainer')) : null;
+    if (chassis) {
+      chassis.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+
   function goToBdayChapter(ch) {
     const targetCh = Math.max(1, Math.min(totalBdayChapters, ch));
     const cards = container.querySelectorAll('.bday-story-card');
@@ -305,7 +315,7 @@ export function renderBirthdayTemplate(container, data) {
           targetCard.style.display = 'block';
           targetCard.style.opacity = '0';
           targetCard.classList.add('active');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          scrollToActiveTop();
 
           gsap.fromTo(targetCard,
             { opacity: 0, y: 20, scale: 0.98 },
@@ -326,7 +336,7 @@ export function renderBirthdayTemplate(container, data) {
         }
       });
       currentBdayChapter = targetCh;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToActiveTop();
     }
     if (navigator.vibrate) navigator.vibrate(15);
   }

@@ -505,6 +505,16 @@ export function renderBrotherTemplate(container, data) {
   const totalPages = broPageTitles.length;
   let currentPage = 1;
 
+  function scrollToActiveTop() {
+    const chassis = container?.closest ? (container.closest('.preview-frame-container') || container.closest('#previewContainer')) : null;
+    if (chassis) {
+      chassis.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+
   function goToPage(page) {
     const targetPage = Math.max(1, Math.min(totalPages, page));
     const cards = container.querySelectorAll('.fam-page-card');
@@ -527,7 +537,7 @@ export function renderBrotherTemplate(container, data) {
           targetCard.style.display = 'block';
           targetCard.style.opacity = '0';
           targetCard.classList.add('active');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          scrollToActiveTop();
 
           gsap.fromTo(targetCard,
             { opacity: 0, y: 20, scale: 0.98 },
@@ -548,7 +558,7 @@ export function renderBrotherTemplate(container, data) {
         }
       });
       currentPage = targetPage;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToActiveTop();
     }
     if (navigator.vibrate) navigator.vibrate(15);
   }
@@ -664,6 +674,20 @@ export function renderBrotherTemplate(container, data) {
   }
 
   broGate?.addEventListener('click', openBroGate);
+  broGate?.addEventListener('wheel', (e) => {
+    if (e.deltaY > 15) openBroGate();
+  }, { passive: true });
+
+  let gateTouchY = 0;
+  broGate?.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches[0]) gateTouchY = e.touches[0].clientY;
+  }, { passive: true });
+  broGate?.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches[0]) {
+      const diffY = gateTouchY - e.touches[0].clientY;
+      if (diffY > 30) openBroGate();
+    }
+  }, { passive: true });
 
   // =========================================================================
   // 1. 60FPS KINETIC BROTHERHOOD CONSTELLATION & ENERGY MESH ENGINE
