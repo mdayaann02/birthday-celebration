@@ -3,9 +3,9 @@
 export function initMusicPlayer(container, config = {}) {
   if (!container) return;
   const general = config.general || config || {};
-  const audioTitle = general.audioTitle || config.audioTitle || "Romantic Track";
-  const audioSubtitle = general.audioSubtitle || config.audioSubtitle || "CELEBRATION";
-  const audioSrc = general.audioSrc || config.audioSrc || "/audio/alfaaz.mp3";
+  const audioTitle = general.audioTitle || config.audioTitle || config.title || "Romantic Track";
+  const audioSubtitle = general.audioSubtitle || config.audioSubtitle || config.subtitle || "CELEBRATION";
+  const audioSrc = general.audioSrc || config.audioSrc || config.src || "/audio/alfaaz.mp3";
   const coverUrl = config.photoRibbon?.[0]?.url || 
                    config.polaroids?.[0]?.image || 
                    config.photos?.[0] ||

@@ -766,6 +766,50 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         "Blessings, divine light and boundless love to you both."
       ]
     }
+  },
+  kitten_wish: {
+    id: "kitten_wish",
+    name: "Kitten Wish",
+    badge: "3D Plush Kitten 🐱💌",
+    icon: "🐱💌",
+    description: "An adorable 3D plush kitten walks in carrying an airmail letter, asks your custom question, reacts with tears if they say no, and celebrates with confetti when they say yes!",
+    defaultTheme: {
+      primary: "#8675f4",
+      bgGradient: "radial-gradient(circle at 50% 42%, #ffffff 0%, #fdf8ff 58%, #f8f0fc 100%)",
+      accent: "#f45b8c"
+    },
+    defaultData: {
+      recipientName: "Lily",
+      senderName: "Ethan",
+      letterTitle: "A little note before I ask you something",
+      letterText: "Lily, I have been trying to find the right moment for weeks, so I asked a very small, very serious kitten to help me.\n\nYou make ordinary days feel like a good song on repeat. I laugh more since I met you, I notice the sky more, and I catch myself smiling at my phone like an idiot.\n\nSo here is the thing I have been too nervous to say out loud.",
+      signOff: "With love",
+      question: "Will you go on a date with me?",
+      yesSubtitle: "Saturday at seven. I am already smiling."
+    }
+  },
+  ever_tide: {
+    id: "ever_tide",
+    name: "Ever Tide Island",
+    badge: "3D Sunset Multiplayer 🌅✈️",
+    icon: "🌅✈️",
+    description: "Explore a romantic 3D sunset beach island together in real-time multiplayer, fly a personalized sky airplane banner, write your names in the sand, hold hands, and propose.",
+    defaultTheme: {
+      primary: "#f43f5e",
+      bgGradient: "linear-gradient(135deg, #3b2458 0%, #d86c70 50%, #ffd480 100%)",
+      accent: "#fb923c"
+    },
+    defaultData: {
+      recipientName: "Sophie",
+      senderName: "Daniel",
+      planeMessage: "Sophie, will you marry me? ~ Daniel",
+      sandSender: "Daniel",
+      sandRecipient: "Sophie",
+      couplePhoto: "/images/sunset.jpg",
+      audioTitle: "Ever Tide Sunset",
+      audioSubtitle: "ISLAND SERENADE",
+      audioSrc: "/audio/alfaaz.mp3"
+    }
   }
 };
 

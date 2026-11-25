@@ -2829,8 +2829,13 @@ button, [role="button"], .btn {
   border: var(--neu-border);
   display: inline-flex;
   align-items: center;
-  max-width: 170px;
+  max-width: 220px;
+  min-width: 0;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.occ-active-badge strong {
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -5183,6 +5188,32 @@ select option {
   }
   .hide-mobile {
     display: none !important;
+  }
+  .studio-navbar-glass .badge-free-pill {
+    display: none !important;
+  }
+  .studio-brand-link {
+    min-width: 0 !important;
+    flex-shrink: 1 !important;
+  }
+  .studio-brand-meta {
+    min-width: 0 !important;
+  }
+  .brand-name {
+    font-size: 15px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+  }
+  .brand-subtext {
+    font-size: 10px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .navbar-actions-group {
+    flex-shrink: 0 !important;
   }
   .btn-nav-glass {
     padding: 6px 10px !important;
@@ -13373,6 +13404,8 @@ svg {
   border: var(--neu-border-inset);
   padding: 3px 9px;
   border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-guide-tour-chip {
@@ -13388,6 +13421,8 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.15s ease;
 }
 .btn-guide-tour-chip:hover {
@@ -13484,6 +13519,7 @@ svg {
   font-size: 10px;
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--neu-surface);
   box-shadow: var(--neu-shadow-sm);
@@ -13621,8 +13657,18 @@ svg {
 }
 
 @media (max-width: 600px) {
+  .guide-title-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
   .guide-stepper-bar {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
+    overflow-x: visible;
+  }
+  .guide-step-chip {
+    padding: 8px 10px;
+    justify-content: flex-start;
   }
   .guide-step-body {
     flex-direction: column;

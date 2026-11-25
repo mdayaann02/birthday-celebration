@@ -1766,6 +1766,58 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         </div>
       </div>
     `;
+  } else if (templateId === 'ever_tide') {
+    customEditorSection = `
+      <div style="background:rgba(251,146,60,0.08); border:1px solid rgba(251,146,60,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#ea580c; font-size:14px; font-weight:700; margin-bottom:10px;">🌅✈️ Ever Tide Sunset Island</h4>
+        <div class="form-group">
+          <label class="form-label">Sky Airplane Banner Message</label>
+          <input type="text" class="form-input" id="edEtPlaneMessage" value="${data.planeMessage || 'Sophie, will you marry me? ~ Daniel'}" />
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Sand Name 1</label>
+            <input type="text" class="form-input" id="edEtSandSender" value="${data.sandSender || data.senderName || 'Daniel'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sand Name 2</label>
+            <input type="text" class="form-input" id="edEtSandRecipient" value="${data.sandRecipient || data.recipientName || 'Sophie'}" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Couple Photo URL (on Airplane Banner)</label>
+          <input type="text" class="form-input" id="edEtCouplePhoto" value="${data.couplePhoto || '/images/sunset.jpg'}" />
+        </div>
+      </div>
+    `;
+  } else if (templateId === 'kitten_wish') {
+    customEditorSection = `
+      <div style="background:rgba(134,117,244,0.08); border:1px solid rgba(134,117,244,0.28); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#6d5be6; font-size:14px; font-weight:700; margin-bottom:10px;">🐱💌 Kitten Wish Letter &amp; Question</h4>
+        <div class="form-group">
+          <label class="form-label">Letter Title</label>
+          <input type="text" class="form-input" id="edKwLetterTitle" value="${data.letterTitle || 'A little note before I ask you something'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Letter Paragraphs (blank line = new paragraph)</label>
+          <textarea rows="5" class="form-textarea" id="edKwLetterText">${data.letterText || ''}</textarea>
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Sign-off</label>
+            <input type="text" class="form-input" id="edKwSignOff" value="${data.signOff || 'With love'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">The Question (Yes / No)</label>
+            <input type="text" class="form-input" id="edKwQuestion" value="${data.question || 'Will you go on a date with me?'}" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Celebration Note (when they click Yes)</label>
+          <input type="text" class="form-input" id="edKwYesSubtitle" value="${data.yesSubtitle || 'Saturday at seven. I am already smiling.'}" />
+        </div>
+      </div>
+    `;
   } else if (templateId === 'wedding_invite' || templateId === 'wedding' || templateId === 'shubh_weds') {
     const fns = (data.functions && data.functions.length > 0) ? data.functions : [
       { id: 'haldi', name: 'Haldi', subtitle: 'Mangal Snanam', time: '10:00 AM - 1:00 PM', date: 'Friday, 19th February 2027', venueName: 'Poolside Courtyard', venueAddress: 'The Palace Lawns, Udaipur', mapUrl: 'https://maps.google.com/?q=The+Palace+Lawns+Udaipur', dressCode: 'Shades of Yellow', accent: '#E8B85C', image: 'https://media.shubhweds.in/template-6/function-haldi.webp' },
@@ -2917,6 +2969,28 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           note: p.note
         }));
       }
+    }
+    else if (templateId === 'ever_tide') {
+      const elPlane = container.querySelector('#edEtPlaneMessage');
+      const elSand1 = container.querySelector('#edEtSandSender');
+      const elSand2 = container.querySelector('#edEtSandRecipient');
+      const elPhoto = container.querySelector('#edEtCouplePhoto');
+      if (elPlane) updated.planeMessage = elPlane.value;
+      if (elSand1) updated.sandSender = elSand1.value;
+      if (elSand2) updated.sandRecipient = elSand2.value;
+      if (elPhoto) updated.couplePhoto = elPhoto.value;
+    }
+    else if (templateId === 'kitten_wish') {
+      const elKwTitle = container.querySelector('#edKwLetterTitle');
+      const elKwText = container.querySelector('#edKwLetterText');
+      const elKwSign = container.querySelector('#edKwSignOff');
+      const elKwQuestion = container.querySelector('#edKwQuestion');
+      const elKwYesSub = container.querySelector('#edKwYesSubtitle');
+      if (elKwTitle) updated.letterTitle = elKwTitle.value;
+      if (elKwText) updated.letterText = elKwText.value;
+      if (elKwSign) updated.signOff = elKwSign.value;
+      if (elKwQuestion) updated.question = elKwQuestion.value;
+      if (elKwYesSub) updated.yesSubtitle = elKwYesSub.value;
     }
     else if (templateId === 'wedding_invite' || templateId === 'wedding' || templateId === 'shubh_weds') {
       const elGroom = container.querySelector('#edWeddingGroom');
