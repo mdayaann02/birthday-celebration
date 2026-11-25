@@ -330,11 +330,41 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             <span class="mode-icon">🚶</span>
             <span class="mode-label">Free Walk</span>
           </button>
+          <button type="button" class="btn-museum-icon" id="btnFullscreenToggle" title="Toggle Fullscreen (Landscape)">
+            <span id="fullscreenIcon">⛶</span>
+          </button>
           <button type="button" class="btn-museum-icon" id="btnAudioToggle" title="Toggle Museum Soundtrack">
             <span id="audioIcon">🎵</span>
           </button>
         </div>
       </header>
+
+      <!-- Landscape & Fullscreen Orientation Prompt Overlay -->
+      <div class="museum-rotate-overlay" id="museumRotateOverlay" style="display:none;">
+        <div class="rotate-backdrop"></div>
+        <div class="rotate-card">
+          <div class="rotate-phone-anim">
+            <div class="phone-device">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">🏛️</div>
+            </div>
+            <div class="rotate-arrow">↻</div>
+          </div>
+          <span class="rotate-badge">CINEMATIC WIDESCREEN EXPERIENCE</span>
+          <h2 class="rotate-title">Please Rotate Your Device</h2>
+          <p class="rotate-sub">
+            <strong>${museumTitle}</strong> is built to be experienced in landscape mode. Rotate your phone horizontally and go fullscreen for the true 3D walk.
+          </p>
+          <div class="rotate-action-col">
+            <button type="button" class="btn-rotate-fullscreen" id="btnRotateFullscreen">
+              <span>⛶ Go Fullscreen & Rotate</span>
+            </button>
+            <button type="button" class="btn-rotate-dismiss" id="btnRotateDismiss">
+              <span>Continue in portrait anyway</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       <!-- Atmospheric Museum Sound & Audio Player Mount -->
       <div id="museumMusicPlayerMount" style="display:none;"></div>
@@ -1432,14 +1462,122 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    checkOrientationPrompt();
   }
   window.addEventListener('resize', onWindowResize);
+
+  // Landscape Mode & Fullscreen Handling
+  const rotateOverlay = container.querySelector('#museumRotateOverlay');
+  const btnRotateFullscreen = container.querySelector('#btnRotateFullscreen');
+  const btnRotateDismiss = container.querySelector('#btnRotateDismiss');
+  const btnFullscreenToggle = container.querySelector('#btnFullscreenToggle');
+  const fullscreenIcon = container.querySelector('#fullscreenIcon');
+
+  let userDismissedPortrait = false;
+
+  function isPortraitMode() {
+    return window.innerHeight > window.innerWidth;
+  }
+
+  function checkOrientationPrompt() {
+    if (!rotateOverlay) return;
+    const isPortrait = isPortraitMode();
+    // Only prompt if in portrait and user hasn't explicitly dismissed it for this session
+    if (isPortrait && !userDismissedPortrait) {
+      rotateOverlay.style.display = 'flex';
+      gsap.fromTo(rotateOverlay.querySelector('.rotate-card'),
+        { scale: 0.9, opacity: 0, y: 20 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
+      );
+    } else {
+      rotateOverlay.style.display = 'none';
+    }
+  }
+
+  // Request Fullscreen & Landscape Screen Lock
+  async function triggerFullscreenAndLandscape() {
+    soundFx.sparkle();
+    const docEl = document.documentElement;
+    try {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+        if (req) {
+          await req.call(docEl);
+        }
+      }
+    } catch (e) {
+      console.warn('Fullscreen request:', e);
+    }
+
+    try {
+      if (screen.orientation && screen.orientation.lock) {
+        await screen.orientation.lock('landscape').catch(() => {});
+      }
+    } catch (e) {
+      console.warn('Orientation lock:', e);
+    }
+
+    // Hide prompt
+    if (rotateOverlay) rotateOverlay.style.display = 'none';
+    userDismissedPortrait = true;
+  }
+
+  btnRotateFullscreen?.addEventListener('click', triggerFullscreenAndLandscape);
+
+  btnRotateDismiss?.addEventListener('click', () => {
+    soundFx.pop(400);
+    userDismissedPortrait = true;
+    if (rotateOverlay) rotateOverlay.style.display = 'none';
+  });
+
+  // Fullscreen header button
+  function toggleFullscreen() {
+    soundFx.pop(540);
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      const docEl = document.documentElement;
+      const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      if (req) req.call(docEl).catch(() => {});
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(() => {});
+        }
+      } catch (e) {}
+    } else {
+      const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+      if (exit) exit.call(document).catch(() => {});
+    }
+  }
+
+  btnFullscreenToggle?.addEventListener('click', toggleFullscreen);
+
+  function updateFullscreenIcon() {
+    const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+    if (fullscreenIcon) {
+      fullscreenIcon.textContent = isFs ? '✕' : '⛶';
+    }
+  }
+
+  document.addEventListener('fullscreenchange', updateFullscreenIcon);
+  document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+  // Check orientation on mount & orientation change
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      onWindowResize();
+      checkOrientationPrompt();
+    }, 200);
+  });
+
+  // Initial check
+  checkOrientationPrompt();
 
   // Cleanup handler when switching templates
   container._museumCleanup = () => {
     cancelAnimationFrame(animationFrameId);
     clearTimeout(tourAdvanceTimeout);
     window.removeEventListener('resize', onWindowResize);
+    document.removeEventListener('fullscreenchange', updateFullscreenIcon);
+    document.removeEventListener('webkitfullscreenchange', updateFullscreenIcon);
     renderer.dispose();
   };
 }

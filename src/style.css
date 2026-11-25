@@ -23105,3 +23105,178 @@ body:has(#bloomContainer) {
     flex-direction: column;
   }
 }
+
+
+/* ==========================================================================
+   LANDSCAPE ORIENTATION & FULLSCREEN ROTATE PROMPT
+   ========================================================================== */
+
+.museum-rotate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.rotate-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 8, 7, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.rotate-card {
+  position: relative;
+  max-width: 440px;
+  width: 100%;
+  background: radial-gradient(circle at 50% 12%, #221813 0%, #130e0b 60%, #0a0705 100%);
+  border: 2px solid #d4af37;
+  border-radius: 28px;
+  padding: 38px 28px;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.95), 0 0 45px rgba(212, 175, 55, 0.28);
+}
+
+.rotate-phone-anim {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-device {
+  width: 46px;
+  height: 78px;
+  border: 3.5px solid #d4af37;
+  border-radius: 12px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.1);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.45);
+  animation: rotatePhonePrompt 3.6s infinite ease-in-out;
+  transform-origin: center center;
+}
+
+.phone-notch {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 3.5px;
+  background: #d4af37;
+  border-radius: 2px;
+}
+
+.phone-screen {
+  font-size: 18px;
+  user-select: none;
+}
+
+.rotate-arrow {
+  position: absolute;
+  font-size: 52px;
+  color: #f5e6ca;
+  opacity: 0.35;
+  pointer-events: none;
+  animation: spinArrowPrompt 3.6s infinite linear;
+}
+
+@keyframes rotatePhonePrompt {
+  0%, 15% {
+    transform: rotate(0deg);
+  }
+  42%, 72% {
+    transform: rotate(-90deg);
+  }
+  92%, 100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes spinArrowPrompt {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #d4af37;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.rotate-title {
+  font-size: 23px;
+  font-weight: 800;
+  color: #f6ecdb;
+  margin: 0 0 10px;
+  font-family: "Cinzel", "Georgia", serif;
+  line-height: 1.25;
+}
+
+.rotate-sub {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #d0c5b7;
+  margin: 0 0 24px;
+}
+
+.rotate-action-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-rotate-fullscreen {
+  background: linear-gradient(135deg, #d4af37 0%, #ba912a 100%);
+  color: #171007;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 24px;
+  font-size: 14.5px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-rotate-fullscreen:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.65);
+}
+
+.btn-rotate-dismiss {
+  background: transparent;
+  border: none;
+  color: #9e9182;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 6px;
+  transition: color 0.2s ease;
+}
+
+.btn-rotate-dismiss:hover {
+  color: #e5ded5;
+}
