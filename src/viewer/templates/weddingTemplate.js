@@ -185,18 +185,18 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
         <div class="film" id="weddingFilm">
           <div class="film__scene">
             <video class="film__video" id="filmVideo"
+                   data-src="${videoSrc}"
                    poster="${posterSrc}"
                    muted playsinline preload="auto"
                    disablepictureinpicture disableremoteplayback
                    aria-hidden="true">
-              <source src="${videoSrc}" type="video/mp4">
             </video>
 
-            <img class="film__cover" id="filmCover" src="${posterSrc}" width="1080" height="1920" alt="" aria-hidden="true" fetchpriority="high" style="${isEditorMode ? 'display:none;' : ''}">
-            <img class="film__end" id="filmEnd" src="${endPosterSrc}" width="1080" height="1920" alt="" aria-hidden="true" style="${isEditorMode ? 'opacity:1;' : ''}">
+            <img class="film__cover" id="filmCover" src="${posterSrc}" width="1080" height="1920" alt="" aria-hidden="true" fetchpriority="high">
+            <img class="film__end" id="filmEnd" data-src="${endPosterSrc}" ${isEditorMode ? `src="${endPosterSrc}"` : ''} width="1080" height="1920" alt="" aria-hidden="true">
           </div>
 
-          <button class="film__play" id="filmPlayBtn" type="button" aria-label="Open the invitation" style="${isEditorMode ? 'display:none;' : ''}">
+          <button class="film__play" id="filmPlayBtn" type="button" aria-label="Open the invitation">
             <span class="seal" aria-hidden="true">
               <span class="seal__cta">Tap to open</span>
             </span>
@@ -220,7 +220,7 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
           </div>
         </div>
 
-        <button class="film__skip" id="filmSkipBtn" type="button" style="${isEditorMode ? 'display:none;' : ''}">Skip intro</button>
+        <button class="film__skip" id="filmSkipBtn" type="button">Skip intro</button>
 
         <a class="scroll-cue" id="scrollCueBtn" href="#invitation">
           <span>Scroll</span>
@@ -231,7 +231,7 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
       <!-- Background audio & toggle button -->
       <audio class="music" id="weddingMusic" src="${audioSrc}" loop preload="none"></audio>
 
-      <button class="music-toggle is-muted is-shown" id="musicToggleBtn" type="button" aria-pressed="false" aria-label="Turn music on">
+      <button class="music-toggle is-muted" id="musicToggleBtn" type="button" aria-pressed="false" aria-label="Turn music on">
         <span class="music-toggle__ring" aria-hidden="true"></span>
         <svg class="music-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M9 18V5l12-2v13" />
@@ -655,7 +655,20 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
   const filmSkipBtn = root.querySelector('#filmSkipBtn');
   const introEl = root.querySelector('#weddingIntro');
   const btnEditorDoorToggle = root.querySelector('#btnEditorDoorToggle');
+  const scrollRoot = container.closest('.preview-frame-container') || null;
   let isMusicPlaying = false;
+  let filmState = isEditorMode ? 'ended' : 'idle';
+
+  // Ensure root html has .js for album & wish sections
+  document.documentElement.classList.add('js');
+
+  // Fix viewport height unit --vh
+  function updateVh() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+  updateVh();
+  window.addEventListener('resize', updateVh);
 
   // 1. Audio Toggle
   function toggleMusic(forceState) {
@@ -667,7 +680,9 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
         musicToggleBtn.classList.remove('is-muted');
         musicToggleBtn.setAttribute('aria-pressed', 'true');
         musicToggleBtn.setAttribute('aria-label', 'Turn music off');
-      }).catch(() => {});
+      }).catch((e) => {
+        console.warn('Audio playback notice:', e);
+      });
     } else {
       musicAudio.pause();
       isMusicPlaying = false;
@@ -679,12 +694,82 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
 
   musicToggleBtn.addEventListener('click', () => toggleMusic());
 
-  // 2. Opening Film Animation
+  // 2. Opening Film & Animation State Machine
+  function onVideoPlaying() {
+    if (filmState !== 'opening') return;
+    filmState = 'playing';
+    introEl.classList.remove('is-waiting');
+    introEl.classList.add('is-playing');
+  }
+
+  function onFilmEnded() {
+    if (filmState === 'ended') return;
+    filmState = 'ended';
+
+    introEl.classList.remove('is-waiting');
+    introEl.classList.add('is-opening', 'is-playing', 'is-ended');
+
+    // Reveal music button
+    musicToggleBtn.classList.add('is-shown');
+
+    // Page ready: wallpaper & unlock scroll
+    root.classList.add('is-ready');
+    if (!isEditorMode) {
+      document.documentElement.classList.add('is-ready');
+      document.documentElement.classList.remove('is-locked');
+    }
+
+    if (filmPlayBtn) filmPlayBtn.style.display = 'none';
+    if (filmSkipBtn) filmSkipBtn.style.display = 'none';
+
+    // Decode and display filmEnd still image
+    if (filmEnd) {
+      if (!filmEnd.src && endPosterSrc) {
+        filmEnd.src = endPosterSrc;
+      }
+
+      const showStill = () => {
+        introEl.classList.add('is-still');
+        if (filmVideo) {
+          try {
+            filmVideo.pause();
+            filmVideo.removeAttribute('src');
+            filmVideo.load();
+          } catch (e) {}
+        }
+      };
+
+      if (filmEnd.complete && filmEnd.naturalWidth > 0) {
+        showStill();
+      } else if (filmEnd.decode) {
+        filmEnd.decode().then(showStill).catch(showStill);
+      } else {
+        filmEnd.onload = showStill;
+        filmEnd.onerror = showStill;
+        setTimeout(showStill, 400);
+      }
+    } else {
+      introEl.classList.add('is-still');
+    }
+
+    // Lazy load any remaining data-src
+    setTimeout(() => {
+      root.querySelectorAll('img[data-src]').forEach(img => {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+      });
+      root.querySelectorAll('source[data-srcset]').forEach(source => {
+        source.srcset = source.dataset.srcset;
+        source.removeAttribute('data-srcset');
+      });
+    }, 0);
+  }
+
   function openDoors() {
+    if (filmState !== 'idle') return;
+    filmState = 'opening';
     introEl.classList.remove('is-ended', 'is-still');
-    introEl.classList.add('is-opening', 'is-playing');
-    filmPlayBtn.style.pointerEvents = 'none';
-    filmPlayBtn.style.opacity = '0';
+    introEl.classList.add('is-opening', 'is-waiting');
     if (navigator.vibrate) navigator.vibrate(25);
 
     if (!isEditorMode) {
@@ -692,64 +777,87 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
     }
 
     if (filmVideo) {
+      if (!filmVideo.src || filmVideo.src === window.location.href) {
+        filmVideo.src = filmVideo.dataset.src || videoSrc;
+        filmVideo.load();
+      }
       filmVideo.currentTime = 0;
-      filmVideo.play().catch(() => {});
-      filmVideo.addEventListener('ended', onFilmFinished, { once: true });
+      const playP = filmVideo.play();
+      if (playP && playP.catch) {
+        playP.catch((err) => {
+          console.warn('Video playback notice:', err);
+        });
+      }
     }
 
-    // Fallback if video fails or ends
+    // Fallback if video stalls or cannot finish
     setTimeout(() => {
-      if (!introEl.classList.contains('is-ended')) {
-        onFilmFinished();
+      if (filmState !== 'ended') {
+        onFilmEnded();
       }
-    }, 6200);
+    }, 9500);
   }
 
-  function onFilmFinished() {
-    introEl.classList.add('is-opening', 'is-playing', 'is-ended', 'is-still');
-    root.classList.add('is-ready');
-    if (!isEditorMode) {
-      document.documentElement.classList.add('is-ready');
-      document.documentElement.classList.remove('is-locked');
+  if (filmVideo) {
+    filmVideo.addEventListener('playing', onVideoPlaying);
+    if ('requestVideoFrameCallback' in filmVideo) {
+      filmVideo.requestVideoFrameCallback(onVideoPlaying);
     }
-    if (filmCover) filmCover.style.display = 'none';
-    if (filmEnd) filmEnd.style.opacity = '1';
-    if (filmPlayBtn) filmPlayBtn.style.display = 'none';
-    if (filmSkipBtn) filmSkipBtn.style.display = 'none';
-
-    const hero = root.querySelector('#weddingHero');
-    if (hero) hero.classList.add('is-visible');
+    filmVideo.addEventListener('timeupdate', () => {
+      if (filmVideo.currentTime > 0.05 && filmState === 'opening') {
+        onVideoPlaying();
+      }
+      if (filmVideo.currentTime >= 3.0 && filmEnd && !filmEnd.src) {
+        filmEnd.src = endPosterSrc;
+        if (filmEnd.decode) filmEnd.decode().catch(() => {});
+      }
+    });
+    filmVideo.addEventListener('ended', onFilmEnded);
+    filmVideo.addEventListener('error', () => {
+      if (filmState === 'opening' || filmState === 'playing') {
+        onFilmEnded();
+      }
+    });
   }
 
   filmPlayBtn.addEventListener('click', openDoors);
-  filmCover.addEventListener('click', openDoors);
+  if (filmCover) filmCover.addEventListener('click', openDoors);
 
   filmSkipBtn.addEventListener('click', () => {
-    onFilmFinished();
-    if (!isEditorMode) toggleMusic(true);
+    onFilmEnded();
+    if (!isEditorMode && !isMusicPlaying) toggleMusic(true);
     const inv = root.querySelector('#invitation');
     if (inv) inv.scrollIntoView({ behavior: 'smooth' });
   });
 
   if (btnEditorDoorToggle) {
     btnEditorDoorToggle.addEventListener('click', () => {
-      if (introEl.classList.contains('is-ended')) {
-        introEl.classList.remove('is-ended', 'is-still', 'is-opening', 'is-playing');
-        if (filmCover) filmCover.style.display = 'block';
-        if (filmEnd) filmEnd.style.opacity = '0';
-        if (filmPlayBtn) {
-          filmPlayBtn.style.display = 'grid';
-          filmPlayBtn.style.opacity = '1';
-          filmPlayBtn.style.pointerEvents = 'auto';
+      if (filmState === 'ended' || introEl.classList.contains('is-ended')) {
+        filmState = 'idle';
+        introEl.classList.remove('is-ended', 'is-still', 'is-opening', 'is-playing', 'is-waiting');
+        if (filmCover) {
+          filmCover.style.display = '';
+          filmCover.style.opacity = '';
+          filmCover.style.visibility = '';
         }
-        if (filmSkipBtn) filmSkipBtn.style.display = 'block';
+        if (filmEnd) {
+          filmEnd.style.opacity = '';
+        }
+        if (filmPlayBtn) {
+          filmPlayBtn.style.display = '';
+          filmPlayBtn.style.opacity = '';
+          filmPlayBtn.style.pointerEvents = '';
+        }
+        if (filmSkipBtn) {
+          filmSkipBtn.style.display = '';
+        }
         if (filmVideo) {
           try {
             filmVideo.pause();
             filmVideo.currentTime = 0;
-          } catch {}
+          } catch (e) {}
         }
-        btnEditorDoorToggle.innerHTML = '<span>▶️</span> <span>Open Doors</span>';
+        btnEditorDoorToggle.innerHTML = '<span>▶️</span> <span>Play Doors</span>';
       } else {
         openDoors();
         btnEditorDoorToggle.innerHTML = '<span>🚪</span> <span>Replay Doors</span>';
@@ -757,12 +865,35 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
     });
   }
 
-  // In editor mode, start with doors open so user sees content immediately
+  // Initial setup per mode
   if (isEditorMode) {
-    onFilmFinished();
+    filmState = 'ended';
+    introEl.classList.add('is-opening', 'is-playing', 'is-ended', 'is-still');
+    root.classList.add('is-ready');
+    musicToggleBtn.classList.add('is-shown');
+    if (filmEnd && endPosterSrc && !filmEnd.src) {
+      filmEnd.src = endPosterSrc;
+    }
+    if (filmCover) filmCover.style.display = 'none';
+    if (filmPlayBtn) filmPlayBtn.style.display = 'none';
+    if (filmSkipBtn) filmSkipBtn.style.display = 'none';
   } else {
+    try {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    } catch (e) {}
     document.documentElement.classList.add('is-locked');
   }
+
+  // Offscreen observer for intro
+  const introObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      introEl.classList.toggle('is-offscreen', !entry.isIntersecting);
+    });
+  }, { root: scrollRoot, threshold: 0.05 });
+  introObserver.observe(introEl);
 
   // Responsive thanks garden framing
   function updateThanksHeight() {
@@ -1262,7 +1393,6 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
   });
 
   // 9. Scroll Reveal Observers
-  const scrollRoot = container.closest('.preview-frame-container') || null;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -1291,7 +1421,11 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
       musicAudio.src = '';
     }
     window.removeEventListener('resize', updateThanksHeight);
+    window.removeEventListener('resize', updateVh);
     document.documentElement.classList.remove('is-locked');
+    document.documentElement.classList.remove('is-ready');
+    document.documentElement.classList.remove('js');
     observer.disconnect();
+    introObserver.disconnect();
   };
 }

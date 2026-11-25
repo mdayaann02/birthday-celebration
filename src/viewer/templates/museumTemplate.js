@@ -74,135 +74,188 @@ function createParquetTexture() {
   return texture;
 }
 
-// Procedural Canvas Texture for Entrance Brass Plaque
-function createPlaqueTexture(title, subtitle, dedication, sender, date) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 768;
-  const ctx = canvas.getContext('2d');
+// Procedural Canvas Texture for Entrance Brass Plaque (High-Res 2048x1536)
+function drawPlaqueCanvas(canvas, ctx, title, subtitle, dedication, sender, date) {
+  const W = 2048;
+  const H = 1536;
+  canvas.width = W;
+  canvas.height = H;
 
-  // Brushed gold / brass gradient background
-  const grad = ctx.createLinearGradient(0, 0, 1024, 768);
-  grad.addColorStop(0, '#e8cf96');
-  grad.addColorStop(0.25, '#d4b368');
-  grad.addColorStop(0.5, '#edd9a8');
-  grad.addColorStop(0.75, '#b89445');
-  grad.addColorStop(1, '#dfc480');
+  // Rich metallic brushed brass gradient
+  const grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, '#f5dfa2');
+  grad.addColorStop(0.2, '#d4af37');
+  grad.addColorStop(0.4, '#fff4cb');
+  grad.addColorStop(0.65, '#c59a27');
+  grad.addColorStop(0.85, '#e8c25e');
+  grad.addColorStop(1, '#a67c1e');
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 1024, 768);
+  ctx.fillRect(0, 0, W, H);
 
-  // Brushed metal fine streaks
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-  ctx.lineWidth = 1;
-  for (let i = 0; i < 768; i += 2) {
+  // Fine brushed horizontal metal grain
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < H; i += 4) {
     ctx.beginPath();
     ctx.moveTo(0, i);
-    ctx.lineTo(1024, i);
+    ctx.lineTo(W, i);
     ctx.stroke();
   }
 
-  // Border engravings
-  ctx.strokeStyle = '#634b18';
-  ctx.lineWidth = 10;
-  ctx.strokeRect(28, 28, 1024 - 56, 768 - 56);
-
-  ctx.strokeStyle = '#fbf0d0';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(38, 38, 1024 - 76, 768 - 76);
-
-  ctx.strokeStyle = '#7c5f22';
+  // Deep engraved dark streaks for realistic brass depth
+  ctx.strokeStyle = 'rgba(70, 48, 8, 0.09)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(46, 46, 1024 - 92, 768 - 92);
+  for (let i = 2; i < H; i += 8) {
+    ctx.beginPath();
+    ctx.moveTo(0, i);
+    ctx.lineTo(W, i);
+    ctx.stroke();
+  }
 
-  // Brass bolts in corners
-  const boltRadius = 14;
+  // Triple architectural engraved borders
+  // Outer deep groove
+  ctx.strokeStyle = '#4a3309';
+  ctx.lineWidth = 18;
+  ctx.strokeRect(56, 56, W - 112, H - 112);
+
+  // Bevel highlight
+  ctx.strokeStyle = 'rgba(255, 248, 220, 0.85)';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(76, 76, W - 152, H - 152);
+
+  // Inner dark inset
+  ctx.strokeStyle = '#634b18';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(92, 92, W - 184, H - 184);
+
+  // 4 Heavy Brass Corner Bolts with specular highlights
+  const boltRadius = 26;
   const boltOffsets = [
-    [54, 54],
-    [1024 - 54, 54],
-    [54, 768 - 54],
-    [1024 - 54, 768 - 54]
+    [104, 104],
+    [W - 104, 104],
+    [104, H - 104],
+    [W - 104, H - 104]
   ];
   boltOffsets.forEach(([bx, by]) => {
-    ctx.fillStyle = '#4a370e';
+    ctx.fillStyle = '#2b1b05';
     ctx.beginPath();
     ctx.arc(bx, by, boltRadius, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#ffd97d';
+    ctx.fillStyle = '#fce49b';
     ctx.beginPath();
-    ctx.arc(bx - 3, by - 3, boltRadius * 0.5, 0, Math.PI * 2);
+    ctx.arc(bx - 5, by - 5, boltRadius * 0.55, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = '#2d2107';
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#1a1003';
+    ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.moveTo(bx - 8, by);
-    ctx.lineTo(bx + 8, by);
+    ctx.moveTo(bx - 14, by);
+    ctx.lineTo(bx + 14, by);
     ctx.stroke();
   });
 
-  // Typography
+  // Typography Settings
   ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
 
-  // Monogram / emblem
-  ctx.fillStyle = '#4a350e';
-  ctx.font = 'bold 36px "Cinzel", "Times New Roman", serif';
-  ctx.fillText('🏛️', 512, 130);
+  // 1. Classical Crest / Embellishment
+  ctx.fillStyle = '#3a2707';
+  ctx.font = 'bold 64px "Cinzel", "Times New Roman", serif';
+  ctx.fillText('🏛️', W / 2, 220);
 
-  // Top Museum Header
-  ctx.font = 'bold 30px "Cinzel", "Times New Roman", serif';
-  ctx.letterSpacing = '6px';
-  ctx.fillText('GALLERIA D’AMORE', 512, 180);
+  // 2. Museum Latin Header
+  ctx.font = 'bold 46px "Cinzel", "Times New Roman", serif';
+  ctx.fillStyle = '#3d2b09';
+  ctx.fillText('GALLERIA D’AMORE', W / 2, 310);
 
-  // Decorative divider
-  ctx.strokeStyle = '#7c5f22';
-  ctx.lineWidth = 2;
+  // Subtle engraved gold divider
+  ctx.strokeStyle = '#5a3f12';
+  ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.moveTo(350, 205);
-  ctx.lineTo(674, 205);
+  ctx.moveTo(W / 2 - 280, 355);
+  ctx.lineTo(W / 2 + 280, 355);
   ctx.stroke();
 
-  // Museum Title
-  ctx.fillStyle = '#2d2007';
-  ctx.font = 'bold 50px "Cinzel", "Georgia", serif';
-  ctx.fillText((title || 'THE MUSEUM OF US').toUpperCase(), 512, 275);
+  ctx.fillStyle = '#7a5a1e';
+  ctx.beginPath();
+  ctx.arc(W / 2, 355, 6, 0, Math.PI * 2);
+  ctx.fill();
 
-  // Subtitle
-  ctx.fillStyle = '#614815';
-  ctx.font = 'italic 26px "Playfair Display", "Georgia", serif';
-  ctx.fillText(subtitle || 'Dedicated to My One & Only', 512, 325);
+  // 3. Exhibition Title (Deep Engraved Chiseled Look)
+  ctx.fillStyle = '#221603';
+  ctx.font = 'bold 84px "Cinzel", "Playfair Display", "Georgia", serif';
+  const displayTitle = (title || 'THE MUSEUM OF US').toUpperCase();
+  ctx.fillText(displayTitle, W / 2, 470);
 
-  // Dedication Body Text (word wrapped)
-  ctx.fillStyle = '#3a2b0c';
-  ctx.font = '24px "Playfair Display", "Georgia", serif';
-  const text = dedication || 'A curated exhibition of our smiles, cherished memories, and an eternal love that words could never hold.';
+  // 4. Subtitle / Dedication Header
+  ctx.fillStyle = '#5c4212';
+  ctx.font = 'italic 50px "Playfair Display", "Georgia", serif';
+  ctx.fillText(subtitle || 'Dedicated to My Beloved', W / 2, 570);
+
+  // 5. Dedication Paragraph Text (Word-wrapped with elegant leading)
+  ctx.fillStyle = '#2b1d06';
+  ctx.font = '42px "Playfair Display", "Georgia", serif';
+  const text = dedication || 'A curated exhibition of our smiles, quiet nights, and an eternal love that words could never hold.';
   const words = text.split(' ');
-  let line = '';
-  let lineY = 405;
-  const maxW = 820;
+  let currentLine = '';
+  let lineY = 710;
+  const maxLineWidth = 1600;
+  const lineHeight = 68;
 
   for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' ';
+    const testLine = currentLine + words[n] + ' ';
     const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxW && n > 0) {
-      ctx.fillText(line, 512, lineY);
-      line = words[n] + ' ';
-      lineY += 40;
+    if (metrics.width > maxLineWidth && n > 0) {
+      ctx.fillText(currentLine.trim(), W / 2, lineY);
+      currentLine = words[n] + ' ';
+      lineY += lineHeight;
     } else {
-      line = testLine;
+      currentLine = testLine;
     }
   }
-  ctx.fillText(line, 512, lineY);
+  ctx.fillText(currentLine.trim(), W / 2, lineY);
 
-  // Bottom Curator & Date
-  ctx.fillStyle = '#5c4314';
-  ctx.font = 'bold 22px "Cinzel", "Georgia", serif';
-  ctx.fillText(`Curated with Endless Love by ${sender || 'Yours Always'}`, 512, 650);
+  // Divider above Curator Credits
+  ctx.strokeStyle = 'rgba(90, 63, 18, 0.4)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(W / 2 - 350, 1220);
+  ctx.lineTo(W / 2 + 350, 1220);
+  ctx.stroke();
 
-  ctx.font = 'italic 20px "Cinzel", "Times New Roman", serif';
-  ctx.fillText(date || 'Permanent Collection • Forever & Always', 512, 690);
+  // 6. Curator Tag & Author
+  ctx.fillStyle = '#422e0a';
+  ctx.font = 'bold 38px "Cinzel", "Georgia", serif';
+  ctx.fillText(`CURATED WITH ENDLESS LOVE BY ${(sender || 'YOURS ALWAYS').toUpperCase()}`, W / 2, 1280);
+
+  // 7. Establishment & Permanent Collection Tag
+  ctx.fillStyle = '#664c18';
+  ctx.font = 'italic 34px "Cinzel", "Times New Roman", serif';
+  ctx.fillText(`${date || 'Est. November 2026'} • PERMANENT ARCHIVAL EXHIBITION`, W / 2, 1345);
+}
+
+function createPlaqueTexture(title, subtitle, dedication, sender, date) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  drawPlaqueCanvas(canvas, ctx, title, subtitle, dedication, sender, date);
 
   const texture = new THREE.CanvasTexture(canvas);
+  if ('colorSpace' in texture && THREE.SRGBColorSpace) {
+    texture.colorSpace = THREE.SRGBColorSpace;
+  }
+  texture.generateMipmaps = true;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.needsUpdate = true;
+
+  if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      drawPlaqueCanvas(canvas, ctx, title, subtitle, dedication, sender, date);
+      texture.needsUpdate = true;
+    }).catch(() => {});
+  }
+
   return texture;
 }
 
@@ -855,6 +908,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const entranceWallGeo = new THREE.PlaneGeometry(hallWidth, hallHeight);
   const entranceBackWall = new THREE.Mesh(entranceWallGeo, wallMat);
   entranceBackWall.position.set(0, hallHeight / 2, 8.5);
+  entranceBackWall.rotation.y = Math.PI;
   scene.add(entranceBackWall);
 
   // 3D Architectural Pilasters between Artwork bays along Left & Right walls
@@ -917,22 +971,60 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     establishmentDate
   );
 
-  const plaqueGeo = new THREE.BoxGeometry(5.4, 4.0, 0.12);
+  const entrancePlaqueGroup = new THREE.Group();
+  entrancePlaqueGroup.position.set(0, 3.6, 4.2);
+  entrancePlaqueGroup.rotation.y = Math.PI; // Face towards camera at z = -1.2 (pointing down -Z)
+
+  // Outer Gilded Gold Frame (Mounting backplate)
+  const plaqueFrameGeo = new THREE.BoxGeometry(5.8, 4.4, 0.12);
+  const plaqueFrameMat = new THREE.MeshStandardMaterial({
+    color: 0xd4af37,
+    metalness: 0.82,
+    roughness: 0.28
+  });
+  const plaqueFrame = new THREE.Mesh(plaqueFrameGeo, plaqueFrameMat);
+  plaqueFrame.position.set(0, 0, -0.06); // Pushed back so it acts as back-frame!
+  entrancePlaqueGroup.add(plaqueFrame);
+
+  // Raised Inner Bevel Border
+  const innerBevelGeo = new THREE.BoxGeometry(5.5, 4.1, 0.08);
+  const innerBevelMat = new THREE.MeshStandardMaterial({
+    color: 0x8a6e27,
+    metalness: 0.75,
+    roughness: 0.35
+  });
+  const innerBevel = new THREE.Mesh(innerBevelGeo, innerBevelMat);
+  innerBevel.position.set(0, 0, -0.02);
+  entrancePlaqueGroup.add(innerBevel);
+
+  // Brushed Brass Dedication Plate with Engraved Typography
   const plaqueMat = new THREE.MeshStandardMaterial({
     map: entrancePlaqueTexture,
-    metalness: 0.68,
-    roughness: 0.32
+    metalness: 0.55,
+    roughness: 0.35,
+    side: THREE.FrontSide
   });
-  const entrancePlaque = new THREE.Mesh(plaqueGeo, plaqueMat);
-  entrancePlaque.position.set(0, 3.6, 4.2);
+  const plaquePlateGeo = new THREE.PlaneGeometry(5.3, 3.9);
+  const entrancePlaque = new THREE.Mesh(plaquePlateGeo, plaqueMat);
+  entrancePlaque.position.set(0, 0, 0.03); // In front of frame!
+  entrancePlaqueGroup.add(entrancePlaque);
 
-  // Outer Gold Gilded Molded Border
-  const plaqueBorder = new THREE.Mesh(
-    new THREE.BoxGeometry(5.8, 4.4, 0.16),
-    new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.82, roughness: 0.28 })
-  );
-  entrancePlaque.add(plaqueBorder);
-  scene.add(entrancePlaque);
+  // 4 Corner Architectural Brass Mounting Bolts (3D details)
+  const boltGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.08, 16);
+  boltGeo.rotateX(Math.PI / 2);
+  const boltMat = new THREE.MeshStandardMaterial({ color: 0x4a370e, metalness: 0.9, roughness: 0.2 });
+  [
+    [-2.45, 1.75],
+    [2.45, 1.75],
+    [-2.45, -1.75],
+    [2.45, -1.75]
+  ].forEach(([bx, by]) => {
+    const bolt = new THREE.Mesh(boltGeo, boltMat);
+    bolt.position.set(bx, by, 0.045);
+    entrancePlaqueGroup.add(bolt);
+  });
+
+  scene.add(entrancePlaqueGroup);
 
   // Dual Ceiling Museum Framing Spotlights aimed at Entrance Plaque
   const plaqueSpotTarget = new THREE.Object3D();
