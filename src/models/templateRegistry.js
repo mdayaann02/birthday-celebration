@@ -486,6 +486,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       establishmentDate: "Est. November 2026",
       centerpieceTitle: "The Masterpiece: You & Me",
       centerpieceImage: "/images/queen.jpg",
+      centerpieceVideo: "/video/couple_memories.mp4",
       proposalQuestion: "Will you walk through every chapter of life with me?",
       proposalSubtitle: "Every single day with you is my greatest adventure. Will you be mine forever?",
       proposalYesBtn: "Yes, Forever & Always! 💍💖",
@@ -624,6 +625,146 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       finaleLine: "Here’s to you — today, and every day after.",
       cakeHint: "Make a wish… then tap the candles to blow them out 🕯️",
       thankYouText: "I just opened my birthday surprise 🥹💕 Thank you, Rahul!"
+    }
+  },
+
+  wedding_invite: {
+    id: "wedding_invite",
+    name: "Royal Wedding Invitation",
+    badge: "Royal Wedding 🏰💍",
+    icon: "💍",
+    description: "The luxury Indian wedding card (ShubhWeds): Carved sage doors video opener, Sunehra royal shehnai score, sacred Ganesh Shloka, interactive scratch-to-reveal Save the Date, multi-event ceremony itinerary (Haldi, Mehendi, Sangeet, Vivah), live countdown clock, romantic portraits gallery, interactive RSVP, and blessing butterflies.",
+    defaultTheme: {
+      primary: "#a8485e",
+      bgGradient: "linear-gradient(180deg, #fbf7f0 0%, #f5eee2 100%)",
+      accent: "#a98450"
+    },
+    defaultData: {
+      recipientName: "Vihaan & Anaya",
+      senderName: "Kapoor & Shah Families",
+      groomName: "Vihaan",
+      groomParents: "S/O Shri Rajiv Kapoor & Smt. Meera Kapoor",
+      brideName: "Anaya",
+      brideParents: "D/O Shri Arvind Shah & Smt. Kavita Shah",
+      familiesLine: "the Kapoor and Shah families",
+      hashtag: "#VihaanWedsAnaya",
+      
+      eventDate: "2027-02-13T18:00",
+      weddingDateDisplay: "Saturday, 13th February 2027",
+      ceremonyTitle: "Shubh Vivah",
+      venueName: "The Oberoi Udaivilas",
+      venueCity: "Udaipur, Rajasthan",
+      venueAddress: "Haridas Ji Ki Magri, Mulla Talai, Udaipur, Rajasthan 313001",
+      mapUrl: "https://maps.google.com/?q=The+Oberoi+Udaivilas+Udaipur",
+      
+      invocation: "॥ श्री गणेशाय नमः ॥",
+      shlokaLine1: "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।",
+      shlokaLine2: "निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥",
+      blessingIntro: "With the blessings of Lord Ganesha",
+      invitationKicker: "we request the honour of your presence at the wedding celebration of",
+      
+      saveDateDay: "Saturday",
+      saveDateNum: "13",
+      saveDateMonth: "February",
+      saveDateYear: "2027",
+      
+      audioTitle: "Sunehra - Royal Wedding Shehnai",
+      audioSubtitle: "ROYAL WEDDING SCORE",
+      audioSrc: "https://media.shubhweds.in/videos/sunehra.mp3",
+      introVideoSrc: "https://media.shubhweds.in/template-6/template-6-intro-preview.mp4",
+      introPoster: "https://media.shubhweds.in/template-6/intro-poster.webp",
+      introEnd: "https://media.shubhweds.in/template-6/intro-end.webp",
+      
+      functions: [
+        {
+          id: "haldi",
+          name: "Haldi",
+          subtitle: "Mangal Snanam",
+          time: "10:00 AM - 1:00 PM",
+          date: "Friday, 19th February 2027",
+          venueName: "Poolside Courtyard",
+          venueAddress: "The Palace Lawns, Udaipur",
+          mapUrl: "https://maps.google.com/?q=The+Palace+Lawns+Udaipur",
+          dressCode: "Shades of Yellow",
+          accent: "#E8B85C",
+          image: "https://media.shubhweds.in/template-6/function-haldi.webp"
+        },
+        {
+          id: "mehendi",
+          name: "Mehendi",
+          subtitle: "Henna & Melodies",
+          time: "4:00 PM - 8:00 PM",
+          date: "Friday, 19th February 2027",
+          venueName: "Garden Terrace",
+          venueAddress: "The Palace Lawns, Udaipur",
+          mapUrl: "https://maps.google.com/?q=The+Palace+Lawns+Udaipur",
+          dressCode: "Greens & Pastels",
+          accent: "#9DAA80",
+          image: "https://media.shubhweds.in/template-6/function-mehendi.webp"
+        },
+        {
+          id: "sangeet",
+          name: "Sangeet",
+          subtitle: "Music, Dance & Celebration",
+          time: "7:30 PM - 11:30 PM",
+          date: "Saturday, 20th February 2027",
+          venueName: "Grand Ballroom",
+          venueAddress: "The Palace Lawns, Udaipur",
+          mapUrl: "https://maps.google.com/?q=The+Palace+Lawns+Udaipur",
+          dressCode: "Indo-Western Glam",
+          accent: "#C78A9A",
+          image: "https://media.shubhweds.in/template-6/function-sangeet.webp"
+        },
+        {
+          id: "wedding",
+          name: "Wedding",
+          subtitle: "Shubh Vivah",
+          time: "7:00 PM Onwards",
+          date: "Sunday, 21st February 2027",
+          venueName: "The Palace Lawns",
+          venueAddress: "Udaipur, Rajasthan",
+          mapUrl: "https://maps.google.com/?q=The+Palace+Lawns+Udaipur",
+          dressCode: "Traditional Ethnic",
+          accent: "#A8485E",
+          image: "https://media.shubhweds.in/template-6/function-wedding.webp"
+        }
+      ],
+      
+      gallery: [
+        {
+          src: "https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp",
+          caption: "Where our journey began",
+          note: "A serendipitous meeting that turned into a lifetime promise."
+        },
+        {
+          src: "https://shubhweds.in/demo/template-6/assets/media/gallery-photo-02.webp",
+          caption: "Hand in hand towards forever",
+          note: "Through every sunset, laughter, and adventure."
+        },
+        {
+          src: "https://shubhweds.in/demo/template-6/assets/media/gallery-photo-03.webp",
+          caption: "Our little world of joy",
+          note: "Every moment with you feels like home."
+        },
+        {
+          src: "https://shubhweds.in/demo/template-6/assets/media/gallery-photo-04.webp",
+          caption: "Forever begins here",
+          note: "Looking ahead to a lifetime of love and togetherness."
+        }
+      ],
+      
+      rsvpDeadline: "Kindly reply by 10 January 2027",
+      thanksMessage: "for your love and blessings. Our celebration will not be complete without you.",
+      blessings: [
+        "May you keep choosing each other, every single day.",
+        "Wishing you a lifetime of laughter, harmony and long talks.",
+        "May your home always bloom with peace and prosperity.",
+        "Two souls, two families, one eternal love story.",
+        "May every tomorrow be sweeter than today.",
+        "Here's to a blessed lifetime of joy, laughter and togetherness.",
+        "May Lord Ganesha shower your union with unending happiness.",
+        "Blessings, divine light and boundless love to you both."
+      ]
     }
   }
 };

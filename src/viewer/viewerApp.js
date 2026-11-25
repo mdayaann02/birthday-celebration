@@ -14,6 +14,7 @@ import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
 import { renderSorryTemplate } from './templates/sorryTemplate.js';
 import { renderMuseumTemplate } from './templates/museumTemplate.js';
 import { renderPaigaamTemplate } from './templates/paigaamTemplate.js';
+import { renderWeddingTemplate } from './templates/weddingTemplate.js';
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
   if (data?.primaryColor) {
@@ -36,6 +37,13 @@ export function renderViewerApp(container, templateId, data, isMakerReviewParam 
 }
 
 function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
+  if (templateId === 'wedding_invite' || templateId === 'wedding' || templateId === 'shubh_weds') {
+    container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
+    const root = container.querySelector('#templateRoot');
+    renderWeddingTemplate(root, data, isMakerReview);
+    return;
+  }
+
   if (templateId === 'birthday_paigaam' || templateId === 'paigaam') {
     container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
     const root = container.querySelector('#templateRoot');

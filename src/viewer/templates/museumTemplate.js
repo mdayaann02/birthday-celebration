@@ -483,14 +483,22 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             <span class="sit-label">Take a Seat on the Gallery Bench</span>
           </button>
         </div>
-        <div class="museum-stand-prompt" id="standPrompt" style="display:none;">
-          <button type="button" class="btn-stand-bench" id="btnStandBench" title="Stand up and continue walking">
-            <span class="stand-icon">🚶</span>
-            <span>Stand Up & Explore</span>
-          </button>
-          <button type="button" class="btn-open-proposal-bench" id="btnOpenProposalBench" title="Read The Masterpiece Proposal">
-            <span>💍 The Proposal</span>
-          </button>
+        <div class="museum-stand-prompt" id="standPrompt" style="display:none; flex-direction:column; align-items:center; gap:8px;">
+          <div class="bench-movie-hud" id="benchMovieHud" style="background:rgba(18,14,12,0.88); border:1.5px solid rgba(212,175,55,0.45); border-radius:16px; padding:8px 16px; font-size:12px; color:#f5e6ca; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); box-shadow:0 8px 24px rgba(0,0,0,0.6); display:none; align-items:center; gap:8px; max-width:100%; text-align:center;">
+            <span id="benchMovieHudIcon" style="font-size:15px;">🎬</span>
+            <span id="benchMovieHudText" style="font-weight:600; line-height:1.3;">Waiting for partner to sit beside you to start our movie...</span>
+            <button type="button" id="btnSoloMoviePreview" title="Preview movie now" style="display:none; background:rgba(212,175,55,0.25); border:1px solid #d4af37; color:#ffd700; border-radius:12px; padding:3px 10px; font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0;">▶️ Preview</button>
+            <button type="button" id="btnMovieUnmute" title="Unmute movie audio" style="display:none; background:rgba(212,35,92,0.3); border:1px solid #f472b6; color:#fff; border-radius:12px; padding:3px 10px; font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0;">🔊 Unmute</button>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; justify-content:center;">
+            <button type="button" class="btn-stand-bench" id="btnStandBench" title="Stand up and continue walking">
+              <span class="stand-icon">🚶</span>
+              <span>Stand Up & Explore</span>
+            </button>
+            <button type="button" class="btn-open-proposal-bench" id="btnOpenProposalBench" title="Read The Masterpiece Proposal">
+              <span>💍 The Proposal</span>
+            </button>
+          </div>
         </div>
         <div class="museum-art-prompt-badge" id="artPromptBadge" style="display:none;">
           <span>🔍 Tap artwork to inspect</span>
@@ -982,6 +990,33 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   cinemaCanvas.position.z = 0.08;
   cinemaScreenGroup.add(cinemaCanvas);
 
+  // Cinema Couple Video Element (Synchronized bench movie player)
+  const videoSrc = data.centerpieceVideo || '/video/couple_memories.mp4';
+  const cinemaVideoElem = document.createElement('video');
+  cinemaVideoElem.id = 'museumCinemaVideo';
+  cinemaVideoElem.src = videoSrc;
+  cinemaVideoElem.crossOrigin = 'anonymous';
+  cinemaVideoElem.playsInline = true;
+  cinemaVideoElem.webkitPlaysInline = true;
+  cinemaVideoElem.loop = true;
+  cinemaVideoElem.preload = 'auto';
+  cinemaVideoElem.style.display = 'none';
+  document.body.appendChild(cinemaVideoElem);
+
+  let cinemaVideoTexture = null;
+  function getCinemaVideoTexture() {
+    if (!cinemaVideoTexture) {
+      cinemaVideoTexture = new THREE.VideoTexture(cinemaVideoElem);
+      cinemaVideoTexture.minFilter = THREE.LinearFilter;
+      cinemaVideoTexture.magFilter = THREE.LinearFilter;
+      cinemaVideoTexture.format = THREE.RGBAFormat;
+      if ('colorSpace' in cinemaVideoTexture && THREE.SRGBColorSpace) {
+        cinemaVideoTexture.colorSpace = THREE.SRGBColorSpace;
+      }
+    }
+    return cinemaVideoTexture;
+  }
+
   // Centerpiece Placard
   const cpPlacardTex = createPlacardTexture(99, centerpieceTitle, 'Permanent Masterpiece');
   const cpPlacard = new THREE.Mesh(
@@ -1253,6 +1288,11 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   let localAvatar = null;
   let multiplayer = null;
   const peerAvatarsMap = new Map(); // userId -> { avatar, targetPos, targetRotY, isWalking }
+  const peerSeatedMap = new Map(); // userId -> boolean (whether seated on bench)
+  let isSoloPreviewMovie = false;
+  let isPlayingBenchMovie = false;
+  let bgMusicWasPlaying = false;
+  let savedBgMusicVol = 1.0;
   let hasEnteredMuseum = false;
   let lastTime = performance.now();
   let lastMoveBroadcastTime = 0;
@@ -1308,6 +1348,13 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             targetRotY: peer.rotY || Math.PI,
             isWalking: Boolean(peer.isWalking)
           });
+          if (peer.isSeated) {
+            peerSeatedMap.set(userId, true);
+            const peerBenchX = peer.gender === 'male' ? -0.55 : 0.55;
+            pAvatar.group.position.set(peerBenchX, 0, rotundaZ + 5.8);
+            pAvatar.group.rotation.y = Math.PI;
+            pAvatar.setSeated(true);
+          }
           soundFx.sparkle();
         } catch (err) {
           console.error('Failed to spawn peer avatar:', err);
@@ -1317,6 +1364,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         rec.targetPos.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
         rec.targetRotY = peer.rotY || 0;
         rec.isWalking = Boolean(peer.isWalking);
+        if (peer.isSeated) {
+          peerSeatedMap.set(userId, true);
+          rec.avatar.setSeated(true);
+        }
       }
     });
 
@@ -1326,8 +1377,13 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         scene.remove(val.avatar.group);
         val.avatar.dispose();
         peerAvatarsMap.delete(userId);
+        peerSeatedMap.delete(userId);
       }
     });
+
+    if (typeof checkBenchVideoPlayback === 'function') {
+      checkBenchVideoPlayback();
+    }
   }
 
   function onPeerAction(data) {
@@ -1342,14 +1398,24 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       rec.avatar.burstHearts(scene, targetPos);
       soundFx.sparkle();
     } else if (data.action === 'sit') {
+      peerSeatedMap.set(data.userId, true);
       const peerBenchX = data.gender === 'male' ? -0.55 : 0.55;
       rec.targetPos.set(peerBenchX, 0, rotundaZ + 5.8);
       rec.avatar.group.position.set(peerBenchX, 0, rotundaZ + 5.8);
       rec.avatar.group.rotation.y = Math.PI;
       rec.avatar.setSeated(true);
+      if (typeof checkBenchVideoPlayback === 'function') checkBenchVideoPlayback();
     } else if (data.action === 'stand') {
+      peerSeatedMap.delete(data.userId);
       rec.avatar.setSeated(false);
       rec.avatar.group.position.set(0, 0, rotundaZ + 7.2);
+      if (typeof checkBenchVideoPlayback === 'function') checkBenchVideoPlayback();
+    } else if (data.action === 'bench_video_sync') {
+      if (cinemaVideoElem && typeof data.currentTime === 'number') {
+        if (Math.abs(cinemaVideoElem.currentTime - data.currentTime) > 1.5) {
+          cinemaVideoElem.currentTime = data.currentTime;
+        }
+      }
     } else if (data.action === 'propose_kneel') {
       // 3D Romantic Real-Time Kneeling Proposal from peer
       rec.avatar.setKneeling(true);
@@ -1862,12 +1928,141 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   // Interactive Prompts (Bench & Artworks)
   const benchPrompt = container.querySelector('#benchPrompt');
   const standPrompt = container.querySelector('#standPrompt');
+  const benchMovieHud = container.querySelector('#benchMovieHud');
+  const benchMovieHudIcon = container.querySelector('#benchMovieHudIcon');
+  const benchMovieHudText = container.querySelector('#benchMovieHudText');
+  const btnSoloMoviePreview = container.querySelector('#btnSoloMoviePreview');
+  const btnMovieUnmute = container.querySelector('#btnMovieUnmute');
   const artPromptBadge = container.querySelector('#artPromptBadge');
   const btnSitBench = container.querySelector('#btnSitBench');
   const btnStandBench = container.querySelector('#btnStandBench');
   const btnOpenProposalBench = container.querySelector('#btnOpenProposalBench');
 
   let isSeatedOnBench = false;
+
+  btnSoloMoviePreview?.addEventListener('click', () => {
+    isSoloPreviewMovie = true;
+    soundFx.sparkle();
+    checkBenchVideoPlayback();
+  });
+
+  btnMovieUnmute?.addEventListener('click', () => {
+    if (cinemaVideoElem) {
+      cinemaVideoElem.muted = false;
+      cinemaVideoElem.volume = 1.0;
+    }
+    if (btnMovieUnmute) btnMovieUnmute.style.display = 'none';
+    soundFx.sparkle();
+  });
+
+  function startBenchMovie() {
+    if (isPlayingBenchMovie) return;
+    isPlayingBenchMovie = true;
+    const vTex = getCinemaVideoTexture();
+    if (cinemaCanvas && vTex) {
+      cinemaCanvas.material.map = vTex;
+      cinemaCanvas.material.needsUpdate = true;
+    }
+
+    // Theater ambiance: dim spotlights and gallery ambient light
+    gsap.to(ambientLight, { intensity: 0.12, duration: 1.2 });
+    gsap.to(hemiLight, { intensity: 0.08, duration: 1.2 });
+    gsap.to(cpSpot, { intensity: 6.0, duration: 1.2 });
+
+    // Duck background soundtrack so lovers can hear the movie clearly
+    const audioElem = musicMount?.querySelector('audio');
+    if (audioElem && !audioElem.paused) {
+      bgMusicWasPlaying = true;
+      savedBgMusicVol = (typeof audioElem.volume === 'number') ? audioElem.volume : 1.0;
+      gsap.to(audioElem, { volume: 0.1, duration: 0.8 });
+    }
+
+    // Play video with audio; fallback to muted if browser restricted
+    const playPromise = cinemaVideoElem.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn("Autoplay with sound restricted by browser; playing muted:", err);
+        cinemaVideoElem.muted = true;
+        if (btnMovieUnmute) btnMovieUnmute.style.display = 'inline-block';
+        cinemaVideoElem.play().catch(e => console.error("Movie play failed:", e));
+      });
+    }
+
+    if (multiplayer) {
+      multiplayer.sendAction('bench_video_sync', { currentTime: cinemaVideoElem.currentTime, isPlaying: true });
+    }
+  }
+
+  function pauseBenchMovie() {
+    if (!isPlayingBenchMovie) return;
+    isPlayingBenchMovie = false;
+    cinemaVideoElem.pause();
+
+    if (cinemaCanvas && centerpieceTex) {
+      cinemaCanvas.material.map = centerpieceTex;
+      cinemaCanvas.material.needsUpdate = true;
+    }
+
+    // Restore seated lighting
+    if (isSeatedOnBench) {
+      gsap.to(ambientLight, { intensity: 0.22, duration: 1.0 });
+      gsap.to(hemiLight, { intensity: 0.15, duration: 1.0 });
+      gsap.to(cpSpot, { intensity: 5.5, duration: 1.0 });
+    }
+
+    // Restore background soundtrack
+    const audioElem = musicMount?.querySelector('audio');
+    if (audioElem && bgMusicWasPlaying) {
+      gsap.to(audioElem, { volume: savedBgMusicVol, duration: 0.8 });
+      bgMusicWasPlaying = false;
+    }
+
+    if (multiplayer) {
+      multiplayer.sendAction('bench_video_sync', { currentTime: cinemaVideoElem.currentTime, isPlaying: false });
+    }
+  }
+
+  function checkBenchVideoPlayback() {
+    const hasPeers = peerAvatarsMap && peerAvatarsMap.size > 0;
+    const isPeerSitting = peerSeatedMap && peerSeatedMap.size > 0;
+
+    // RULE: Video plays ONLY IF both sit together on the bench (or solo preview is intentionally clicked)
+    const canPlay = isSeatedOnBench && (isPeerSitting || (!hasPeers && isSoloPreviewMovie));
+
+    if (benchMovieHud) {
+      if (isSeatedOnBench) {
+        benchMovieHud.style.display = 'flex';
+        if (canPlay) {
+          if (benchMovieHudIcon) benchMovieHudIcon.textContent = '🎬';
+          if (benchMovieHudText) {
+            benchMovieHudText.textContent = hasPeers
+              ? 'Movie Playing • Enjoying our memories together ✨'
+              : 'Movie Playing (Solo Preview) ✨';
+          }
+          if (btnSoloMoviePreview) btnSoloMoviePreview.style.display = 'none';
+          if (btnMovieUnmute) btnMovieUnmute.style.display = cinemaVideoElem.muted ? 'inline-block' : 'none';
+        } else {
+          if (benchMovieHudIcon) benchMovieHudIcon.textContent = '🛋️';
+          if (benchMovieHudText) {
+            benchMovieHudText.textContent = hasPeers
+              ? 'Seated on bench • Waiting for partner to sit beside you to start our movie 🎬✨'
+              : 'Waiting for your partner to join & sit beside you to start movie 🎬';
+          }
+          if (btnSoloMoviePreview) btnSoloMoviePreview.style.display = 'inline-block';
+          if (btnMovieUnmute) btnMovieUnmute.style.display = 'none';
+        }
+      } else {
+        benchMovieHud.style.display = 'none';
+        isSoloPreviewMovie = false;
+      }
+    }
+
+    if (canPlay && !isPlayingBenchMovie) {
+      startBenchMovie();
+    } else if (!canPlay && isPlayingBenchMovie) {
+      pauseBenchMovie();
+    }
+  }
 
   function sitOnBench() {
     soundFx.pop(480);
@@ -1892,6 +2087,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     }
     if (multiplayer) {
       multiplayer.sendAction('sit');
+      multiplayer.sendMove(myBenchX, 0, rotundaZ + 5.8, Math.PI, false, true);
     }
 
     // Cinematic mood lighting (dim ambient spotlights)
@@ -1915,11 +2111,14 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       ease: 'power2.inOut',
       onUpdate: () => camera.lookAt(currentLookAtTarget)
     });
+
+    checkBenchVideoPlayback();
   }
 
   function standUpFromBench() {
     soundFx.pop(520);
     isSeatedOnBench = false;
+    isSoloPreviewMovie = false;
     if (standPrompt) standPrompt.style.display = 'none';
 
     // Reset Dock Button Label & Icon
@@ -1938,7 +2137,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     }
     if (multiplayer) {
       multiplayer.sendAction('stand');
+      multiplayer.sendMove(0, 0, rotundaZ + 7.4, Math.PI, false, false);
     }
+
+    checkBenchVideoPlayback();
 
     // Restore museum lighting
     gsap.to(ambientLight, { intensity: 0.75, duration: 1.2 });
@@ -2390,6 +2592,11 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     const delta = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
 
+    // Bench movie video texture render update
+    if (isPlayingBenchMovie && cinemaVideoTexture) {
+      cinemaVideoTexture.needsUpdate = true;
+    }
+
     // Process Walk Mode (Third-Person Perspective TPP)
     if (currentMode === 'walk') {
       if (localAvatar && !isSeatedOnBench) {
@@ -2457,7 +2664,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             localAvatar.group.position.y,
             localAvatar.group.position.z,
             localAvatar.group.rotation.y,
-            isWalking
+            isWalking,
+            isSeatedOnBench
           );
         }
 
@@ -2482,6 +2690,11 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         camera.lookAt(currentLookAtTarget);
       } else if (localAvatar && isSeatedOnBench) {
         localAvatar.update(delta, false, 0);
+        if (multiplayer && (now - lastMoveBroadcastTime > 1500)) {
+          lastMoveBroadcastTime = now;
+          const myBenchX = (userProfile.gender === 'male') ? -0.55 : 0.55;
+          multiplayer.sendMove(myBenchX, 0, rotundaZ + 5.8, Math.PI, false, true);
+        }
       }
     }
 
@@ -2682,6 +2895,17 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       val.avatar.dispose();
     });
     peerAvatarsMap.clear();
+    peerSeatedMap.clear();
+
+    if (cinemaVideoElem) {
+      cinemaVideoElem.pause();
+      cinemaVideoElem.src = '';
+      cinemaVideoElem.remove();
+    }
+    if (cinemaVideoTexture) {
+      cinemaVideoTexture.dispose();
+      cinemaVideoTexture = null;
+    }
 
     renderer.dispose();
   };

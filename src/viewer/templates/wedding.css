@@ -1,0 +1,3417 @@
+/* Google Fonts for Royal Indian Wedding Template */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Great+Vibes&family=Marcellus&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap');
+
+/* Template 6 — Vihaan & Anaya
+   ---------------------------------------------------------------------------
+   1. Tokens and base
+   2. Opening film     — the frame, its layers, the backdrop on wide screens
+   3. Tap to open      — initials and call to action in the doors' cartouche
+   4. The garden words — what appears above the fountain once the film ends
+   5. Gold motes
+   6. Skip and music
+   7. Reduced motion
+
+   Everything over the film is sized in --u, one hundredth of the film's
+   width, so the words keep their place on the painting at any screen size.
+   Only transform and opacity are animated, so every movement runs on the
+   compositor and stays smooth on a phone. */
+
+
+/* 1. Tokens and base ------------------------------------------------------ */
+
+:root {
+  --sage-900: #3f4a33;
+  --sage-700: #55653f;
+  --sage-500: #8e9c7b;
+  --gold: #a98450;
+  --gold-light: #cdb17e;
+  --ivory: #fbf4ea;
+  --ink: #5b4b3c;
+  --ink-soft: #8a7867;
+  --rose: #a8615f;
+  --paper: #fae6d2;
+  --line: rgba(205, 177, 126, .7);
+  --deva: "Tiro Devanagari Hindi", "Noto Serif Devanagari", serif;
+
+  --script: "Great Vibes", "Segoe Script", cursive;
+  --caps: "Marcellus", "Cormorant Garamond", Georgia, serif;
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+
+  /* The film is 9:16 and always exactly as tall as the screen. */
+  --vh: 1vh;
+  --u: calc(var(--vh) * .5625);
+
+  /* The thank-you page's height, which also sizes its words, its petals'
+     fall and the walkway under it. main.js fixes it in pixels when the page
+     opens and changes it only when the screen turns or changes width, so
+     a phone's address bar coming and going (scrolling back up from the
+     end) never resizes the page under the guest's finger. */
+  --thanks-h: max(calc(var(--vh) * 100), 600px);
+}
+
+@supports (height: 1svh) {
+  :root { --vh: 1svh; }
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html.is-locked,
+html.is-locked body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* The page from the invitation down sits on the leaf-and-pearl wallpaper.
+   It is only asked for once the film is over (main.js adds is-ready), so it
+   never competes with the film; until then the paper's own colour stands in. */
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper) 0 0 / 420px repeat;
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+html.is-ready body,
+.wedding-site { background-image: url("https://media.shubhweds.in/template-6/paper-vine.webp"); }
+
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+button { font: inherit; color: inherit; }
+
+
+/* 2. Opening film --------------------------------------------------------- */
+
+.intro {
+  position: relative;
+  height: 100vh;
+  height: calc(var(--vh) * 100);
+  overflow: hidden;
+  background: var(--sage-500);
+  isolation: isolate;
+}
+
+/* Narrower than 9:16 (most phones): the film is wider than the screen and
+   its edges are trimmed. Wider (tablets, laptops): it stands in the middle
+   with a soft, blurred copy of itself on either side. */
+.film {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: calc(var(--u) * 100);
+  height: 100%;
+  margin-left: calc(var(--u) * -50);
+  overflow: hidden;
+}
+
+.film__scene {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 58%;
+}
+
+.film__video,
+.film__cover,
+.film__end {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.film__video { background: var(--sage-500); }
+
+.film__cover {
+  z-index: 1;
+  transition: opacity .45s ease, visibility 0s linear .45s;
+}
+
+.intro.is-playing .film__cover {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.film__end {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+
+.film__end:not([src]) { visibility: hidden; }
+
+.intro.is-still .film__end { opacity: 1; }
+
+/* Once the garden is still, it keeps breathing: a slow push-in. */
+.intro.is-ended .film__scene {
+  transform: scale(1.06);
+  transition: transform 18s cubic-bezier(.22, .61, .36, 1);
+}
+
+/* The backdrop, only drawn where the film does not fill the screen. */
+.intro__backdrop { display: none; }
+
+@media (min-aspect-ratio: 9/16) {
+  .intro__backdrop {
+    position: absolute;
+    inset: 0;
+    display: block;
+    z-index: -1;
+  }
+
+  .intro__backdrop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(40, 46, 30, 0) 30%, rgba(40, 46, 30, .38) 100%);
+  }
+
+  .intro__bg {
+    position: absolute;
+    inset: -8%;
+    background: center / cover no-repeat;
+    filter: blur(34px) saturate(1.08);
+  }
+
+  .intro__bg--cover { background-image: url("https://media.shubhweds.in/template-6/intro-poster.webp"); }
+
+  .intro__bg--end {
+    background-image: url("https://media.shubhweds.in/template-6/intro-end.webp");
+    opacity: 0;
+    transition: opacity 3s ease 2.2s;
+  }
+
+  .intro.is-playing .intro__bg--end { opacity: 1; }
+
+  .film { box-shadow: 0 0 60px rgba(30, 34, 22, .35); }
+}
+
+/* Phones whose visible area is a little wider than 9:16 (browser toolbars
+   eat into the height): rather than leave bars at the sides, the film grows
+   to the full width and stays 9:16, a sliver trimmed from top and bottom.
+   --u follows it, so everything over the film keeps its place. */
+@media (max-aspect-ratio: 3/4) {
+  :root { --u: max(calc(var(--vh) * .5625), 1vw); }
+
+  .film {
+    top: 50%;
+    height: calc(var(--u) * 177.78);
+    margin-top: calc(var(--u) * -88.89);
+    box-shadow: none;
+  }
+
+  .intro__backdrop { display: none; }
+}
+
+
+/* 3. Tap to open ---------------------------------------------------------- */
+
+/* The whole picture is the button. */
+.film__play {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.film__play:focus-visible { outline: none; }
+.film__play:focus-visible .seal__cta { outline: 1px solid var(--gold); outline-offset: .6em; }
+
+.intro.is-opening .film__play { cursor: default; pointer-events: none; }
+.intro.is-playing .film__play { visibility: hidden; }
+
+/* The cartouche where the doors meet: centred at 47.6% of the film's height,
+   its cream inside about 55% of its width across. */
+.seal {
+  position: absolute;
+  top: 47.6%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--u) * 46);
+  height: calc(var(--u) * 46);
+  transform: translate(-50%, -50%);
+  color: var(--sage-700);
+  text-align: center;
+  transition: opacity .45s ease, transform .6s cubic-bezier(.2, .7, .2, 1);
+}
+
+/* a warm glow that breathes behind the words */
+.seal::before {
+  content: "";
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 246, 226, .85), rgba(255, 246, 226, 0));
+  opacity: .5;
+  animation: glow 2.8s ease-in-out infinite;
+}
+
+.seal > span { position: relative; }
+
+.intro.is-opening .seal {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.seal__cta {
+  padding-left: .22em;   /* balances the letter-spacing after the last letter */
+  font-family: "Cinzel", var(--caps);
+  font-weight: 700;
+  font-size: calc(var(--u) * 3.6);
+  line-height: 1.2;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--sage-900);
+  text-shadow: 0 1px 0 rgba(255, 250, 240, .8), 0 0 12px rgba(255, 246, 226, .9);
+  animation: rise 1s cubic-bezier(.2, .7, .2, 1) .25s both, cta-pulse 2.8s ease-in-out 1.25s infinite;
+}
+
+/* a gentle breath that never lets the words fade out of reach */
+@keyframes cta-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .72; }
+}
+
+/* If the film has not arrived when the guest taps, a small ring turns. */
+.film__spinner {
+  position: absolute;
+  top: 47.6%;
+  left: 50%;
+  width: calc(var(--u) * 7);
+  height: calc(var(--u) * 7);
+  margin: calc(var(--u) * -3.5) 0 0 calc(var(--u) * -3.5);
+  border: 1.5px solid rgba(85, 101, 63, .25);
+  border-top-color: var(--sage-700);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.intro.is-waiting .film__spinner {
+  opacity: 1;
+  animation: spin .9s linear infinite;
+}
+
+
+/* 4. The garden words ----------------------------------------------------- */
+
+/* The open sky between the curtains and above the trees runs from about 12%
+   to 65% of the film's height; the words are centred in it. */
+.hero {
+  position: absolute;
+  top: 12%;
+  bottom: 35%;
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(calc(var(--u) * 64), calc(100vw - 40px));
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+/* a soft ivory light behind the words, so they read on the blush wall */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -4% -12%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(255, 250, 242, .72), rgba(255, 250, 242, 0));
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+
+.hero > * { margin: 0; }
+
+.hero__lead {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: calc(var(--u) * 5);
+  line-height: 1.28;
+  color: var(--ink);
+  text-shadow: 0 1px 0 rgba(255, 250, 242, .6);
+}
+
+.hero__names {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* the script's capitals swash well above the line box, so the lead needs
+     real air above the first name */
+  margin: calc(var(--u) * 6) 0 calc(var(--u) * 1.5);
+  font-family: var(--script);
+  font-weight: 400;
+  line-height: .95;
+  color: var(--sage-700);
+}
+
+.hero__name {
+  display: block;
+  padding: 0 .12em;      /* room for the script's swashes inside the wipe */
+  font-size: calc(var(--u) * 17);
+  text-shadow: 0 2px 14px rgba(255, 248, 236, .9);
+}
+
+.hero__amp {
+  display: block;
+  margin: calc(var(--u) * 1.6) 0 calc(var(--u) * 3.4);
+  font-size: calc(var(--u) * 8.5);
+  color: var(--gold);
+}
+
+.hero__vine {
+  display: block;
+  width: calc(var(--u) * 40);
+  height: calc(var(--u) * 4.8);
+  margin: calc(var(--u) * 3.2) 0 calc(var(--u) * 2.4);
+  color: var(--gold);
+}
+
+/* "are getting married", in small spaced capitals under the vine */
+.hero__tag {
+  padding-left: .3em;
+  font-family: var(--caps);
+  font-size: calc(var(--u) * 3);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #8d6c3c;
+}
+
+/* Hidden while the film plays (only when scripted, so without a script the
+   words are simply there), then written in, line by line, each at its --d. */
+.js .hero__lead,
+.js .hero__tag,
+.js .hero__vine,
+.js .hero__name,
+.js .hero__amp { opacity: 0; }
+
+.intro.is-ended .hero::before { opacity: 1; }
+
+.intro.is-ended .hero__lead,
+.intro.is-ended .hero__tag {
+  animation: rise 1.1s cubic-bezier(.2, .7, .2, 1) var(--d) both;
+}
+
+.intro.is-ended .hero__vine { animation: unfurl 1.3s cubic-bezier(.3, .7, .2, 1) var(--d) both; }
+.intro.is-ended .hero__name { animation: write 1.25s cubic-bezier(.45, .05, .25, 1) var(--d) both; }
+.intro.is-ended .hero__amp { animation: bloom .9s cubic-bezier(.2, .8, .3, 1.2) var(--d) both; }
+
+
+/* 5. Gold motes ----------------------------------------------------------- */
+
+.motes {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motes i {
+  position: absolute;
+  bottom: -2%;
+  left: var(--x);
+  width: calc(var(--u) * var(--s));
+  height: calc(var(--u) * var(--s));
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 247, 222, 1) 0%, rgba(232, 202, 140, .75) 40%, rgba(232, 202, 140, 0) 70%);
+  opacity: 0;
+  animation: drift var(--t) linear var(--w) infinite;
+  animation-play-state: paused;
+}
+
+.intro.is-ended .motes i { animation-play-state: running; }
+
+.motes i:nth-child(1)  { --x: 14%; --s: 1.6; --t: 13s; --w: 1.5s; }
+.motes i:nth-child(2)  { --x: 27%; --s: 1.1; --t: 11s; --w: 4s; }
+.motes i:nth-child(3)  { --x: 38%; --s: 1.9; --t: 15s; --w: 2.4s; }
+.motes i:nth-child(4)  { --x: 49%; --s: 1.2; --t: 12s; --w: 6s; }
+.motes i:nth-child(5)  { --x: 58%; --s: 1.7; --t: 14s; --w: 3.2s; }
+.motes i:nth-child(6)  { --x: 67%; --s: 1;   --t: 10s; --w: 5.2s; }
+.motes i:nth-child(7)  { --x: 76%; --s: 1.8; --t: 16s; --w: 1.9s; }
+.motes i:nth-child(8)  { --x: 86%; --s: 1.3; --t: 12.5s; --w: 7s; }
+.motes i:nth-child(9)  { --x: 21%; --s: 1;   --t: 11.5s; --w: 8.5s; }
+.motes i:nth-child(10) { --x: 81%; --s: 1.1; --t: 13.5s; --w: 9.5s; }
+
+
+/* 6. Skip and music ------------------------------------------------------- */
+
+.film__skip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(22px + env(safe-area-inset-bottom));
+  z-index: 6;
+  padding: .7em 1.5em .65em 1.7em;
+  border: 1px solid rgba(205, 177, 126, .7);
+  border-radius: 999px;
+  font-family: var(--caps);
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--sage-900);
+  background: rgba(251, 244, 234, .82);
+  box-shadow: 0 4px 16px rgba(40, 46, 30, .18);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity .5s ease, transform .5s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* shown a moment into the film, or while a slow line keeps it waiting */
+.intro.is-playing .film__skip,
+.intro.is-waiting .film__skip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  transition-delay: 1.2s;
+}
+
+.intro.is-waiting .film__skip { transition-delay: 3s; }
+
+.intro.is-ended .film__skip {
+  opacity: 0;
+  pointer-events: none;
+  transition-delay: 0s;
+}
+
+.film__skip:focus-visible,
+.music-toggle:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.music-toggle {
+  position: fixed;
+  right: 1.25rem;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 1px solid var(--gold-light);
+  border-radius: 50%;
+  color: var(--sage-900);
+  background: rgba(251, 244, 234, .92);
+  box-shadow: 0 4px 14px rgba(40, 46, 30, .16);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .6s ease, transform .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.music-toggle.is-shown {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.music-toggle:active { transform: scale(.94); }
+
+.music-toggle svg {
+  grid-area: 1 / 1;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.music-toggle__slash {
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.music-toggle.is-muted { color: var(--ink-soft); }
+.music-toggle.is-muted .music-toggle__slash { opacity: 1; }
+
+/* a slow ring while the song is actually playing */
+.music-toggle__ring {
+  position: absolute;
+  inset: -7px;
+  border: 1px solid var(--gold-light);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.music-toggle:not(.is-muted) .music-toggle__ring { animation: ring 2.6s ease-out infinite; }
+
+@media (min-width: 640px) {
+  .music-toggle { right: 1.75rem; bottom: 1.75rem; }
+}
+
+
+/* The Scroll cue, at the foot of the garden once its words are written. */
+.scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: .6em 1.3em .5em 1.5em;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--caps);
+  font-size: 11px;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--sage-900);
+  background: rgba(251, 244, 234, .82);
+  box-shadow: 0 4px 16px rgba(40, 46, 30, .14);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 10px);
+  transition: opacity .8s ease, transform .8s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.intro.is-ended .scroll-cue {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  transition-delay: 3.4s;
+}
+
+.scroll-cue i {
+  width: 8px;
+  height: 8px;
+  margin-left: -.26em;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  animation: cue 1.8s ease-in-out infinite;
+}
+
+.scroll-cue:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+html { scroll-behavior: smooth; }
+
+
+/* The garden's foot melts into the paper below it, so the film and the
+   invitation's stationery meet without a seam. */
+.intro::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  height: 7%;
+  background: linear-gradient(rgba(250, 230, 210, 0), var(--paper));
+  pointer-events: none;
+}
+
+
+/* 8. The invitation arch -------------------------------------------------- */
+
+/* As in template-4: the arch, and the jhumars in front of it, on the
+   page's wallpaper. clip, so the jhumars' chains are cut at the top. */
+.invitation {
+  position: relative;
+  overflow: clip;
+  padding: clamp(52px, 13vw, 88px) 6px clamp(28px, 7vw, 56px);
+  container-type: inline-size;
+}
+
+/* The arch and its jhumars share one box, so --a — one pixel of the arch's
+   source picture, invite-arch.webp (857 wide: the arch's own edges plus
+   room for its widest lobes) — places both. */
+.invitation__stage {
+  --w: min(100cqw, 560px);
+  --a: calc(var(--w) / 857);
+
+  position: relative;
+  width: var(--w);
+  margin-inline: auto;
+}
+
+/* The arch is one picture cut into nine pieces by border-image: the dome
+   (top 560px) and the base (bottom 327px) keep their shape, and the 112px
+   band between them — eight pearls down each side — repeats as often as
+   the words inside need. The frame is drawn by ::before, on its own layer
+   with its shadow, so the words can fade in without redrawing it. */
+.arch {
+  position: relative;
+  z-index: 1;
+  padding: 0 calc(24 * var(--a));
+  border: solid transparent;
+  border-width: calc(560 * var(--a)) calc(85 * var(--a)) calc(327 * var(--a));
+  text-align: center;
+  text-wrap: balance;
+}
+
+.arch::before {
+  content: "";
+  position: absolute;
+  inset: calc(-560 * var(--a)) calc(-85 * var(--a)) calc(-327 * var(--a));
+  z-index: -1;
+  border: solid transparent;
+  border-width: calc(560 * var(--a)) calc(85 * var(--a)) calc(327 * var(--a));
+  border-image-slice: 560 85 327 fill;
+  border-image-repeat: stretch round;
+  filter: drop-shadow(0 22px 34px rgba(120, 80, 60, .18));
+}
+
+.arch::before,
+.is-ready .arch::before,
+.wedding-site .arch::before,
+.is-editor-mode .arch::before,
+.preview-frame-container .arch::before {
+  border-image-source: url("https://media.shubhweds.in/template-6/invite-arch.webp") !important;
+}
+
+/* The first line sits up in the dome where it has opened wide enough
+   (y = 280); the venue ends in the straight part, just above the base, so
+   the base keeps an open margin below the words. */
+.arch > :first-child { margin-top: calc(-280 * var(--a)); }
+.arch > :last-child { margin-bottom: calc(-115 * var(--a)); }
+
+/* The jhumars hang in front of the arch's shoulders on chains that run off
+   the top of the section. --x and --y place the dome of each, --s is its
+   width, all in --a; the dome sits 64.2% of the way down the picture, and
+   each sways to its own rhythm, pivoting from the top of its chain. */
+.jhumar {
+  position: absolute;
+  z-index: 2;
+  left: calc((var(--x) - var(--s) / 2) * var(--a));
+  top: calc((var(--y) - var(--s) * 2.568) * var(--a));
+  width: calc(var(--s) * var(--a));
+  height: auto;
+  transform-origin: 50% 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+  animation: jhumar-sway var(--t) ease-in-out var(--d) infinite alternate;
+}
+
+.jhumar[src] { opacity: 1; }
+
+/* nothing sways or drifts while its section is off screen (main.js) */
+.is-offscreen .jhumar,
+.intro.is-offscreen .motes i,
+.is-offscreen .seal::before { animation-play-state: paused; }
+
+.jhumar--1 { --x: 92;  --y: 40;  --s: 165; --t: 2.8s; --d: -1s; }
+.jhumar--2 { --x: 636; --y: -20; --s: 110; --t: 2.2s; --d: -.4s; }
+.jhumar--3 { --x: 768; --y: 70;  --s: 165; --t: 3s;   --d: -2s; }
+
+/* The words, top to bottom, as on a printed Hindu wedding card. Sizes are in
+   --a so they keep to the arch, with a floor in px so a phone still reads
+   them comfortably. */
+.invocation {
+  margin: 0;
+  font: 400 max(22px, calc(44 * var(--a)))/1.5 var(--deva);
+  color: var(--gold);
+  text-shadow: 0 1px 8px rgba(255, 236, 200, .9);
+}
+
+.shloka {
+  margin: calc(34 * var(--a)) 0 0;
+  font: 500 max(14.5px, calc(28 * var(--a)))/1.75 var(--deva);
+  color: var(--ink);
+}
+
+.shloka span { display: block; }
+
+.blessing {
+  margin: calc(56 * var(--a)) 0 0;
+  font: italic 400 max(19px, calc(38 * var(--a)))/1.3 var(--serif);
+  color: var(--ink);
+}
+
+.kicker {
+  margin: calc(18 * var(--a)) 0 0;
+  font: 600 max(16.5px, calc(32 * var(--a)))/1.4 var(--serif);
+  color: var(--ink);
+}
+
+/* the pearl-and-rose divider, divider-pearl-rose.webp (1000 × 132) */
+.arch__divider {
+  display: block;
+  width: min(100%, max(240px, calc(560 * var(--a))));
+  height: auto;
+  margin: calc(50 * var(--a)) auto;
+}
+
+.couple {
+  margin: 0;
+  font-weight: 400;
+}
+
+.person { display: block; }
+
+.person__name {
+  display: block;
+  padding: 0 .1em;
+  font: 400 max(46px, calc(118 * var(--a)))/1.05 var(--script);
+  color: var(--sage-700);
+}
+
+.person__parents {
+  display: block;
+  margin-top: calc(12 * var(--a));
+  font: italic 400 max(16.5px, calc(33 * var(--a)))/1.35 var(--serif);
+  color: var(--ink);
+}
+
+.couple__and {
+  display: block;
+  margin: calc(30 * var(--a)) 0 calc(14 * var(--a));
+  font: 400 max(30px, calc(70 * var(--a)))/1 var(--script);
+  color: var(--gold);
+}
+
+.details > * { margin: 0; }
+
+.details__date {
+  font: 400 max(17px, calc(33 * var(--a)))/1.4 var(--caps);
+  letter-spacing: .06em;
+  color: var(--rose);
+}
+
+.details__date sup {
+  font-size: .6em;
+  line-height: 0;
+  letter-spacing: .04em;
+}
+
+.details__ceremony {
+  margin-top: calc(18 * var(--a));
+  font: 400 max(13.5px, calc(25 * var(--a)))/1.3 var(--caps);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.details__venue {
+  margin-top: calc(14 * var(--a));
+  font: italic 400 max(18px, calc(35 * var(--a)))/1.35 var(--serif);
+  color: var(--ink);
+}
+
+/* Scroll reveals: the arch rises in, then its lines follow one by one
+   (main.js numbers them into --i). Only once main.js has run, so the page
+   reads fine without it. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 1.1s ease, transform 1.1s cubic-bezier(.2, .7, .2, 1);
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.js .arch > * {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
+  transition-delay: calc(.3s + var(--i, 0) * .11s);
+}
+
+.js .arch.is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* 9. Scratch to reveal ---------------------------------------------------- */
+
+.save-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(24px, 6vw, 48px) 20px clamp(36px, 8vw, 60px);
+  text-align: center;
+}
+
+.save-date__head > * { margin: 0; }
+
+.save-date__kicker {
+  padding-left: .32em;
+  font: 400 12px/1.4 var(--caps);
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.save-date__title {
+  margin-top: 6px;
+  font: 400 clamp(46px, 13vw, 66px)/1.1 var(--script);
+  color: var(--sage-700);
+}
+
+.save-date__vine {
+  display: block;
+  width: 190px;
+  height: 22px;
+  margin: 10px auto 0;
+  color: var(--gold);
+}
+
+/* The heart is its own size container: everything in it is in cqw, so the
+   date keeps its place inside the heart at any width. */
+.heart {
+  position: relative;
+  width: min(84vw, 360px);
+  aspect-ratio: 100 / 90;
+  margin-top: clamp(26px, 7vw, 40px);
+  container-type: inline-size;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.heart:focus-visible .heart__edge { filter: drop-shadow(0 0 6px rgba(169, 132, 80, .9)); }
+
+.heart__ground,
+.heart__face,
+.heart__edge {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Ivory underneath, and the heart's shadow — drawn once, never redrawn
+   while the glitter is scratched away above it. */
+.heart__ground {
+  fill: #fdf6ec;
+  filter: drop-shadow(0 18px 26px rgba(85, 101, 63, .28));
+}
+
+/* The date and the glitter over it, cut to the heart. */
+.heart__face {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 90' preserveAspectRatio='none'%3E%3Cpath d='M50 87C22 67 2 50 2 27 2 12 13 2 26 2c11 0 19 6 24 15C55 8 63 2 74 2c13 0 24 10 24 25 0 23-20 40-48 60Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 90' preserveAspectRatio='none'%3E%3Cpath d='M50 87C22 67 2 50 2 27 2 12 13 2 26 2c11 0 19 6 24 15C55 8 63 2 74 2c13 0 24 10 24 25 0 23-20 40-48 60Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  background: radial-gradient(ellipse at 50% 38%, #fffaf2 0%, #fbeee2 55%, #f3dccb 100%);
+}
+
+/* The date, set where the heart is widest: the block is about 40% of the
+   heart's height, centred at 48%, so it runs from just under the dip
+   between the lobes (y = 19%) to where the sides start closing in (70%). */
+.heart__prize {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+.heart__day {
+  padding-left: .3em;
+  margin-bottom: .8cqw;
+  font: 400 4cqw/1.2 var(--caps);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.heart__num {
+  font: 500 21cqw/.95 var(--serif);
+  color: var(--sage-700);
+  font-variant-numeric: lining-nums;
+}
+
+.heart__month {
+  margin-top: -.6cqw;
+  font: 400 10cqw/1.05 var(--script);
+  color: var(--rose);
+}
+
+.heart__year {
+  margin-top: 1.4cqw;
+  padding-left: .34em;
+  font: 400 4.4cqw/1.2 var(--caps);
+  letter-spacing: .34em;
+  color: var(--ink);
+}
+
+/* The glitter, painted by main.js. touch-action none so a finger scratches
+   instead of scrolling the page; the heart is small enough to scroll past. */
+.heart__foil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+  transition: opacity .9s ease;
+}
+
+.heart__foil:active { cursor: grabbing; }
+
+.heart.is-revealed .heart__foil {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* A double gold edge over everything. */
+.heart__edge {
+  fill: none;
+  stroke: #c3a165;
+  stroke-width: 2.4px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.heart__edge-inner {
+  stroke: #e2cc9c;
+  stroke-width: 1px;
+  stroke-dasharray: 1 5;
+  stroke-linecap: round;
+}
+
+/* The finger that shows how: it sweeps back and forth across the heart. */
+.heart__hand {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 14cqw;
+  height: 14cqw;
+  margin: -7cqw 0 0 -7cqw;
+  fill: none;
+  stroke: #fff8ee;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 3px rgba(30, 36, 20, .5));
+  pointer-events: none;
+  animation: hand-sweep 2.4s ease-in-out infinite;
+}
+
+.heart__hand[hidden] { display: none; }
+
+/* Small hearts that burst out when the date is revealed (main.js makes them). */
+.heart__burst {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  pointer-events: none;
+}
+
+.heart__burst svg {
+  position: absolute;
+  width: var(--s);
+  height: var(--s);
+  margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+  fill: var(--c);
+  opacity: 0;
+  animation: burst 1.5s cubic-bezier(.15, .7, .3, 1) var(--w) forwards;
+}
+
+/* One heartbeat — two quick swells — once the date is out. */
+.heart.is-revealed { animation: heartbeat 1.1s ease .15s; }
+
+.save-date__hint {
+  min-height: 1.4em;
+  margin: 22px 0 0;
+  font: italic 400 18px/1.4 var(--serif);
+  color: var(--ink-soft);
+  transition: opacity .4s ease;
+}
+
+.save-date__hint.is-changing { opacity: 0; }
+
+/* Save the date: waits, invisible but in its place (so nothing jumps), until
+   the date is revealed. */
+.save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .7em;
+  margin-top: 18px;
+  padding: .95em 1.9em .9em 1.7em;
+  border-radius: 999px;
+  font: 400 12.5px/1 var(--caps);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ivory);
+  background: linear-gradient(135deg, #67774f, var(--sage-900));
+  box-shadow: 0 10px 24px rgba(63, 74, 51, .3), inset 0 1px 0 rgba(255, 255, 255, .15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity .7s ease .5s, transform .7s cubic-bezier(.2, .7, .2, 1) .5s, visibility 0s linear .5s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.save-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--gold-light);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.save-date.is-revealed .save-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.save-btn:active { transform: scale(.97); transition-delay: 0s; }
+
+.save-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.is-offscreen .heart__hand { animation-play-state: paused; }
+
+
+/* 10. The celebrations ---------------------------------------------------- */
+
+/* Its own palette, scoped here so no other section changes. --gold is for
+   lines, rings and icons; small gold words use --gold-text, a deeper gold
+   that still reads on ivory. */
+.functions {
+  --ivory: #fbf5ee;
+  --sage: #a8b293;
+  --gold: #c9a96e;
+  --gold-text: #8f6f3c;
+  --rose: #8a4b5a;
+  --text: #54443f;
+  --pearl: #fffdf8;
+  --pearl-shade: #e9dccb;
+
+  /* The card frame, functions-frame.webp (763 × 535, cropped to the frame's own
+     edges): its arch (top 368px) and its base (bottom 86px) keep their
+     shape; the 81px band between them — seven pearls down each side —
+     repeats as the words need. The sides are 35px. */
+  --fn-frame-w: 763;
+  --fn-slice-top: 368;
+  --fn-slice-side: 35;
+  --fn-slice-bottom: 86;
+  --fn-pad-x: 12px;
+  --fn-pad-bottom: 10px;
+
+  /* Where each card's butterfly comes to rest, in pixels of the frame
+     picture (so it holds its place at any card width): the centre of its
+     body, and its tilt along the arch. Odd cards (1st, 3rd…) land on the
+     left shoulder, even cards on the right. The shoulder's outer edge runs
+     through (80, 222) at about -19°; the body sits 12px above it, so the
+     lower wings rest on the pearls. */
+  --bf-left-x: 80;
+  --bf-left-y: 210;
+  --bf-left-r: -18deg;
+  --bf-right-x: 683;
+  --bf-right-y: 210;
+  --bf-right-r: 18deg;
+  --bf-w: 56px;
+
+  /* card width, and one pixel of the frame picture at that width */
+  --cw: min(88vw, 380px);
+  --fp: calc(var(--cw) / var(--fn-frame-w));
+
+  padding: clamp(16px, 4vw, 32px) 16px clamp(90px, 18vw, 140px);
+  overflow-x: clip;
+  color: var(--text);
+}
+
+.functions__head {
+  text-align: center;
+}
+
+.functions__head > * { margin: 0; }
+
+.functions__kicker {
+  padding-left: .3em;
+  font: 500 12px/1.4 var(--serif);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.functions__title {
+  margin-top: 4px;
+  font: 400 clamp(40px, 11.5vw, 52px)/1.15 var(--script);
+  color: var(--rose);
+}
+
+/* a thin gold line with three pearls in the middle */
+.functions__divider {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  width: 170px;
+  margin: 12px auto 0;
+}
+
+.functions__divider::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+}
+
+.functions__divider i {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0, var(--pearl) 35%, var(--pearl-shade) 100%);
+  box-shadow: 0 1px 2px rgba(107, 90, 85, .3);
+}
+
+.functions__divider i:nth-child(2) { width: 9px; height: 9px; margin-top: -1px; }
+
+/* The cards, in one column down a string of pearls. The list starts a
+   little low, so the first card's ring hangs clear of the heading. */
+.functions__list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-top: 36px;
+}
+
+/* The pearl string: pearls ~10px across every 14px, drawn as the guest
+   scrolls (main.js sets --p from 0 to 1). It is revealed by clip-path rather
+   than scaleY, so the pearls never squash while it draws. */
+.functions__string {
+  position: absolute;
+  top: 0;
+  bottom: 40px;
+  left: 50%;
+  width: 12px;
+  margin-left: -6px;
+  background:
+    radial-gradient(circle at 40% 35%, #fff 0, var(--pearl) 1.5px, #f1e7da 3.5px, var(--pearl-shade) 4.6px, rgba(201, 169, 110, .55) 5px, transparent 5.6px)
+    50% 0 / 12px 14px repeat-y;
+  filter: drop-shadow(0 1px 1.5px rgba(107, 90, 85, .25));
+  clip-path: inset(0 0 calc((1 - var(--p, 0)) * 100%) 0);
+  pointer-events: none;
+}
+
+.fn-card {
+  position: relative;
+  z-index: 1;
+  width: var(--cw);
+  margin-top: 64px;
+}
+
+.fn-card:first-of-type { margin-top: 0; }
+
+/* the soft-gold ring the card hangs from, on the string */
+.fn-card__ring {
+  position: absolute;
+  z-index: 3;
+  top: -18px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border: 2.5px solid var(--gold);
+  border-radius: 50%;
+  background: var(--ivory);
+  box-shadow: 0 1px 3px rgba(107, 90, 85, .3), inset 0 0 0 1.5px rgba(255, 253, 248, .8);
+}
+
+/* The picture sits inside the arch: a square 320px of the frame across
+   (42% of the card), its top 135px down, inside the dome. Each
+   picture is cut so its tray rests on the square's foot, and its tallest,
+   narrowest part (a finial, a rose) rises into the dome. */
+.fn-card__art {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--fp) * 135);
+  left: 50%;
+  width: calc(var(--fp) * 320);
+  margin-left: calc(var(--fp) * -160);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.fn-card__art::before {
+  content: "";
+  position: absolute;
+  inset: 4% -8% 10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--accent), transparent);
+  opacity: .25;
+}
+
+.fn-card__art img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 10px 14px rgba(107, 90, 85, .22));
+  animation: fn-float 4s ease-in-out infinite alternate;
+}
+
+/* The arched panel: functions-frame.webp cut into nine by border-image. */
+.fn-card__body {
+  position: relative;
+  border: solid transparent;
+  border-width:
+    calc(var(--fn-slice-top) * var(--fp))
+    calc(var(--fn-slice-side) * var(--fp))
+    calc(var(--fn-slice-bottom) * var(--fp));
+  border-image-source: url("https://media.shubhweds.in/template-6/functions-frame.webp");
+  border-image-slice: var(--fn-slice-top) var(--fn-slice-side) var(--fn-slice-bottom) fill;
+  border-image-repeat: stretch round;
+  padding: 0 var(--fn-pad-x) var(--fn-pad-bottom);
+  text-align: center;
+  filter: drop-shadow(0 16px 26px rgba(107, 90, 85, .16));
+}
+
+.fn-card__body > * { margin: 0; }
+
+/* the name starts just under the picture (135 + 320 - the 368px arch) */
+.fn-card__name {
+  margin-top: calc(var(--fp) * 92);
+  font: 400 42px/1.15 var(--script);
+  color: var(--rose);
+}
+
+.fn-card__subtitle {
+  font: 700 15px/1.3 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .14em;
+  color: var(--gold-text);
+}
+
+/* a thin 48px gold line with the function's colour in the middle */
+.fn-card__divider {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 8px;
+  margin: 10px auto 12px;
+}
+
+.fn-card__divider::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--gold);
+}
+
+.fn-card__divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--ivory);
+}
+
+.fn-card__line {
+  text-wrap: balance;
+}
+
+/* the icon rides at the start of the line, so a line that wraps still
+   centres as one block */
+.fn-card__line .fn-icon {
+  display: inline-block;
+  margin: 0 6px 0 -2px;
+  vertical-align: -2px;
+}
+
+.fn-icon {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: #b08d55;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fn-card__date {
+  font: 700 clamp(14px, 4.1vw, 16px)/1.5 "Cinzel", Georgia, serif;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #74394a;
+}
+
+.fn-card__date time { display: block; }
+
+/* the weekday, smaller and spaced, on the line above the date */
+.fn-card__weekday {
+  display: block;
+  margin-bottom: 1px;
+  padding-left: .3em;
+  font-size: .82em;
+  font-weight: 600;
+  letter-spacing: .3em;
+  color: var(--gold-text);
+}
+
+.fn-card__time {
+  margin-top: 4px;
+  font: 600 19.5px/1.4 var(--serif);
+}
+
+.fn-card__venue { margin-top: 14px; }
+
+.fn-card__venue-name {
+  font: 700 21px/1.3 var(--serif);
+  color: #74394a;
+}
+
+.fn-card__address {
+  margin-top: 2px;
+  font: 600 18px/1.35 var(--serif);
+}
+
+.fn-card__dress { margin-top: 14px; }
+
+.fn-card__label {
+  font: 700 17px/1.3 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .12em;
+  color: var(--gold-text);
+}
+
+.fn-card__dress-text {
+  margin-top: 2px;
+  font: 600 19.5px/1.35 var(--serif);
+}
+
+.fn-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.fn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  font: 700 15px/1 var(--serif);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  color: var(--rose);
+  background: var(--ivory);
+  transition: background-color .25s ease, color .25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fn-btn .fn-icon { width: 16px; height: 16px; }
+
+.fn-btn:hover,
+.fn-btn:active { background: #f1e2c6; }
+
+.fn-btn:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+/* Reveal: the card rises in, then its lines follow 80ms apart (--k). */
+.js .fn-card {
+  opacity: 0;
+  transform: translateY(40px) scale(.96);
+  transition: opacity .8s cubic-bezier(.22, 1, .36, 1), transform .8s cubic-bezier(.22, 1, .36, 1);
+}
+
+.js .fn-card.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.js .fn-card__body > * {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1);
+  transition-delay: calc(.2s + var(--k, 0) * 80ms);
+}
+
+.js .fn-card.is-in .fn-card__body > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Petals in the function's colour that drift down the card as it arrives
+   (main.js adds 7, and takes them away again). */
+.fn-petal {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: var(--x);
+  width: 9px;
+  height: 11px;
+  border-radius: 80% 0 80% 0;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #fff));
+  opacity: 0;
+  pointer-events: none;
+  animation: fn-petal var(--t) ease-in var(--w) forwards;
+}
+
+.is-offscreen .fn-card__art img { animation-play-state: paused; }
+
+/* The butterfly that flies in and perches on a shoulder of the arch.
+   main.js builds it and drives it. Three pictures the same size stack
+   exactly: the left wing, the right wing and, on top, a centred strip with
+   the body (tools/split-butterfly.js makes them). Each kind of movement
+   lives on its own element or its own property, so none overrides another:
+     .bf-flight   where it rests (left/top, the --bf-* variables above);
+                  the flight path and the landing bounce (translate)
+     .bf-tilt     leaning into the flight and the angle of the arch
+                  (rotate); the bob (translate)
+     .bf-wings    the 3D stage: perspective, preserve-3d
+       .bf-wing   hinged on the body axis, folding up towards the viewer
+                  (transform: rotateY)
+       .bf-body   never turns; a slight breath while flapping (scale)
+   Only transform properties and opacity ever move. */
+.bf-flight {
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--bf-y) * var(--fp));
+  left: calc(var(--bf-x) * var(--fp));
+  width: var(--bf-w);
+  aspect-ratio: 240 / 157;
+  margin: calc(var(--bf-w) * -157 / 480) 0 0 calc(var(--bf-w) / -2);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bf-flight--left  { --bf-x: var(--bf-left-x);  --bf-y: var(--bf-left-y);  --bf-r: var(--bf-left-r); }
+.bf-flight--right { --bf-x: var(--bf-right-x); --bf-y: var(--bf-right-y); --bf-r: var(--bf-right-r); }
+
+.bf-flight.is-flying,
+.bf-flight.is-perched { opacity: 1; }
+
+.bf-tilt,
+.bf-wings {
+  position: absolute;
+  inset: 0;
+}
+
+/* The shadow is cast here, outside the 3D stage: a filter on the turning
+   pictures themselves makes the browser draw them blurred. */
+.bf-tilt {
+  rotate: var(--bf-r);
+  filter: drop-shadow(0 4px 6px rgba(138, 75, 90, .18));
+}
+
+.bf-wings {
+  perspective: 500px;
+  transform-style: preserve-3d;
+}
+
+.bf-wings img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Both wing pictures fill the whole canvas, so their centre is the body's
+   axis. Turning about it, the wings fold up towards the viewer — the left
+   one by +rotateY, the right by -rotateY — and never pass 65°, so they
+   never vanish edge-on. At rest they stay a little raised. */
+.bf-wing {
+  transform-origin: 50% 50%;
+  backface-visibility: visible;
+  transform: rotateY(calc(var(--s) * 15deg));
+  will-change: transform;
+}
+
+.bf-wing--left  { --s: 1; }
+.bf-wing--right { --s: -1; }
+
+/* In the 3D stage the raised wings come forward of the page, so the body
+   is nudged 6px forward to stay on top — and scaled by (500 - 6) / 500, so
+   through the 500px perspective it is drawn at exactly its own size. */
+.bf-body { transform: translateZ(6px) scale(.988); }
+
+/* one stroke, played alternate: up, then down */
+@keyframes bf-stroke {
+  from { transform: rotateY(calc(var(--s) * var(--w0))); }
+  to   { transform: rotateY(calc(var(--s) * var(--w1))); }
+}
+
+/* one whole beat: up and back down */
+@keyframes bf-beat {
+  0%, 100% { transform: rotateY(calc(var(--s) * var(--w0))); }
+  50%      { transform: rotateY(calc(var(--s) * var(--w1))); }
+}
+
+@keyframes bf-bob {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 var(--bob); }
+}
+
+@keyframes bf-breathe {
+  0%, 100% { scale: 1 1; }
+  50%      { scale: 1 1.03; }
+}
+
+/* in flight: fast strokes, slowing as it comes in to land */
+.bf-flight.is-flying .bf-wing {
+  --w0: 0deg;
+  --w1: 65deg;
+  animation: bf-stroke .16s ease-in-out infinite alternate;
+}
+
+.bf-flight.is-flying .bf-tilt {
+  --bob: -2px;
+  animation: bf-bob .32s ease-in-out infinite;
+}
+
+.bf-flight.is-flying .bf-body { animation: bf-breathe .32s ease-in-out infinite; }
+
+.bf-flight.is-flying.is-slowing .bf-wing { animation-duration: .28s; }
+.bf-flight.is-flying.is-slowing .bf-tilt,
+.bf-flight.is-flying.is-slowing .bf-body { animation-duration: .56s; }
+
+/* touching down: two slow beats */
+.bf-flight.is-landing .bf-wing {
+  --w0: 15deg;
+  --w1: 60deg;
+  animation: bf-beat .6s ease-in-out 2;
+}
+
+.bf-flight.is-landing .bf-body { animation: bf-breathe .6s ease-in-out 2; }
+
+/* perched: two gentle beats and a tiny bob, then a pause of 3-5s that
+   main.js picks afresh for each card each time (.is-flutter) */
+.bf-flight.is-flutter .bf-wing {
+  --w0: 15deg;
+  --w1: 58deg;
+  animation: bf-beat .9s ease-in-out 2;
+}
+
+.bf-flight.is-flutter .bf-tilt {
+  --bob: -1.5px;
+  animation: bf-bob .9s ease-in-out 2;
+}
+
+.bf-flight.is-flutter .bf-body { animation: bf-breathe .9s ease-in-out 2; }
+
+.is-offscreen .bf-flight * { animation-play-state: paused; }
+
+/* Phones: one column of cards with no pearl string or rings between them. */
+@media (max-width: 767px) {
+  .functions__string,
+  .fn-card__ring { display: none; }
+
+  .functions__list { padding-top: 20px; }
+}
+
+/* 768px and up: the cards alternate either side of the string, each tied
+   to it by a short gold thread at its shoulders; they overlap in height so
+   the zig-zag stays close. */
+@media (min-width: 768px) {
+  .functions {
+    --gap: 44px;
+    --cw: min(380px, calc((100vw - 32px) / 2 - var(--gap)));
+    --bf-w: 68px;
+  }
+
+  .fn-card { margin-top: -220px; }
+  .fn-card:first-of-type { margin-top: 0; }
+
+  .fn-card:nth-of-type(odd)  { align-self: flex-start; margin-left: calc(50% - var(--cw) - var(--gap)); }
+  .fn-card:nth-of-type(even) { align-self: flex-start; margin-left: calc(50% + var(--gap)); }
+
+  .fn-card__ring { top: calc(var(--fn-slice-top) * var(--fp) * .78); margin-left: -8px; }
+  .fn-card:nth-of-type(odd) .fn-card__ring  { left: calc(100% + var(--gap)); }
+  .fn-card:nth-of-type(even) .fn-card__ring { left: calc(-1 * var(--gap)); }
+
+  .fn-card::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--fn-slice-top) * var(--fp) * .78 + 7px);
+    width: calc(var(--gap) - 8px);
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--gold), #e6d3a8);
+  }
+
+  .fn-card:nth-of-type(odd)::after  { left: 100%; }
+  .fn-card:nth-of-type(even)::after { right: 100%; transform: scaleX(-1); }
+
+  .functions__list { padding-top: 36px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fn-card__art img { animation: none; }
+  .functions__string { clip-path: none; }
+  .fn-petal { display: none; }
+  .bf-flight { opacity: 1; }
+  .bf-flight * { animation: none !important; }
+  .js .fn-card,
+  .js .fn-card__body > * { transform: none; transition: opacity .6s ease; transition-delay: 0s; }
+}
+
+
+/* 11. Counting down ------------------------------------------------------ */
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(20px, 6vw, 48px) 0 clamp(90px, 18vw, 140px);
+  overflow-x: clip;
+  text-align: center;
+}
+
+/* the functions section has its own large foot padding; this one follows it */
+.functions { padding-bottom: clamp(40px, 10vw, 80px); }
+
+.countdown__head > * { margin: 0; }
+
+.countdown__kicker {
+  padding-left: .3em;
+  font: 600 13px/1.4 var(--serif);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #8f6f3c;
+}
+
+.countdown__title {
+  margin-top: 2px;
+  font: 400 clamp(44px, 12.5vw, 58px)/1.15 var(--script);
+  color: #8a4b5a;
+}
+
+/* The plaque is its own size container: the numbers are placed and sized in
+   cqw, so they stay inside the windows at any width. Measured off the
+   picture (1200 × 648): the windows' insides are centred at 17.3%, 39.1%,
+   60.9% and 82.7% across, each 15.6% wide, and run from 47.7% to 76.1% of
+   the height (their arched tops start higher, at the centre). */
+.plaque {
+  position: relative;
+  width: min(100vw - 8px, 760px);
+  aspect-ratio: 1200 / 648;
+  margin-top: clamp(14px, 4vw, 26px);
+  container-type: inline-size;
+}
+
+.plaque__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 14px 22px rgba(107, 90, 85, .18));
+}
+
+.plaque__windows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plaque__window {
+  position: absolute;
+  top: 49%;
+  height: 26%;
+  width: 15.6%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-50%);
+}
+
+.plaque__window:nth-child(1) { left: 17.33%; }
+.plaque__window:nth-child(2) { left: 39.13%; }
+.plaque__window:nth-child(3) { left: 60.87%; }
+.plaque__window:nth-child(4) { left: 82.67%; }
+
+.plaque__num {
+  display: block;
+  font: 600 max(22px, 7.4cqw)/1 var(--serif);
+  color: #55653f;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.plaque__num.is-tick { animation: tick .5s cubic-bezier(.2, .7, .2, 1); }
+
+.plaque__label {
+  display: block;
+  margin-top: .5cqw;
+  font: 700 max(8.5px, 1.75cqw)/1.2 var(--serif);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #8f6f3c;
+}
+
+.countdown__note {
+  margin: clamp(10px, 3vw, 18px) 0 0;
+  padding: 0 20px;
+  font: italic 500 19px/1.4 var(--serif);
+  color: #54443f;
+}
+
+@keyframes tick {
+  from { opacity: .2; transform: translateY(-.25em); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plaque__num.is-tick { animation: none; }
+}
+
+
+/* Keyframes --------------------------------------------------------------- */
+
+@keyframes fn-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-4px); }
+}
+
+@keyframes fn-petal {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+  15%  { opacity: .9; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--r)); }
+}
+
+@keyframes hand-sweep {
+  0%   { transform: translate(-20cqw, -4cqw) rotate(-12deg); opacity: 0; }
+  12%  { opacity: 1; }
+  50%  { transform: translate(18cqw, 6cqw) rotate(8deg); }
+  88%  { opacity: 1; }
+  100% { transform: translate(-20cqw, -4cqw) rotate(-12deg); opacity: 0; }
+}
+
+@keyframes burst {
+  0%   { opacity: 0; transform: translate(0, 0) scale(.3) rotate(0deg); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1) rotate(var(--r)); }
+}
+
+@keyframes heartbeat {
+  0%, 100% { scale: 1; }
+  20%      { scale: 1.06; }
+  40%      { scale: .99; }
+  60%      { scale: 1.04; }
+}
+
+@keyframes jhumar-sway {
+  from { transform: rotate(-1.4deg); }
+  to   { transform: rotate(1.4deg); }
+}
+
+@keyframes cue {
+  0%, 100% { transform: translateY(-2px) rotate(45deg); opacity: .5; }
+  50%      { transform: translateY(2px) rotate(45deg); opacity: 1; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(.9em); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* the names are drawn left to right, as if by pen */
+@keyframes write {
+  from { opacity: 0; clip-path: inset(-25% 100% -25% 0); transform: translateY(.06em); }
+  20%  { opacity: 1; }
+  to   { opacity: 1; clip-path: inset(-25% -5% -25% -5%); transform: none; }
+}
+
+@keyframes unfurl {
+  from { opacity: 0; transform: scaleX(.15); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes bloom {
+  from { opacity: 0; transform: scale(.4) rotate(-12deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes glow {
+  0%, 100% { opacity: .35; transform: scale(.94); }
+  50%      { opacity: .8;  transform: scale(1.04); }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes ring {
+  0%   { transform: scale(.85); opacity: .6; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+@keyframes drift {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0); }
+  12%  { opacity: .9; }
+  50%  { transform: translate3d(calc(var(--u) * 3), calc(var(--u) * -80), 0); }
+  85%  { opacity: .7; }
+  100% { opacity: 0; transform: translate3d(calc(var(--u) * -2), calc(var(--u) * -165), 0); }
+}
+
+
+/* 7. Reduced motion ------------------------------------------------------- */
+
+/* The film is skipped (main.js goes straight to the garden), and the words
+   simply fade in. Nothing drifts, pulses or zooms. */
+@media (prefers-reduced-motion: reduce) {
+  .seal::before,
+  .seal__cta,
+  .motes { animation: none !important; }
+  .motes { display: none; }
+
+  .intro.is-ended .film__scene { transform: none; transition: none; }
+
+  .intro.is-ended .hero__lead,
+  .intro.is-ended .hero__tag,
+  .intro.is-ended .hero__vine,
+  .intro.is-ended .hero__name,
+  .intro.is-ended .hero__amp {
+    animation: fade .8s ease calc(var(--d) * .4) both;
+  }
+
+  .music-toggle__ring { animation: none !important; }
+
+  html { scroll-behavior: auto; }
+  .jhumar,
+  .scroll-cue i,
+  .heart.is-revealed { animation: none; }
+  .heart__hand { animation: none; opacity: .9; }
+  .heart__burst { display: none; }
+  .js .reveal,
+  .js .arch > * { transform: none; transition: opacity .8s ease; transition-delay: 0s; }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* 12. Our moments --------------------------------------------------------- */
+
+/* As in template-4's gallery: one photo at a time in a frame, with arrows,
+   its caption, dots and a row of framed thumbnails. main.js builds it all
+   from the gallery-config JSON. The big photo sits in
+   gallery-frame-rect.webp (the scalloped sage-and-pearl frame, 900 × 1180)
+   and each thumbnail in gallery-frame-arch.webp (the sage arch, 270 × 381).
+   Both had their ivory panel cut out, so the photo shows through from
+   behind. Each photo sits in its frame's window, measured off the picture
+   (top, right, bottom, left), and is cut to the window's shape by a mask
+   (gallery-window-rect.png / -arch.png: their opaque part is the window,
+   a few pixels larger so it runs under the gold rim). A new photo grows
+   in from the middle like paint soaking into paper (--mask-bleed, the same
+   watercolour blob as template-4). */
+.gallery {
+  --gold: #c9a96e;
+  --gold-text: #8f6f3c;
+  --rose: #8a4b5a;
+  --text: #54443f;
+  --pearl: #fffdf8;
+  --pearl-shade: #e9dccb;
+  --mat: #f8ebdf;
+
+  --fw: min(86vw, 420px);
+  --window-main: 12.6% 8.82% 11.27% 8.82%;
+  --window: 13.63% 10.39% 9.37% 10.07%;
+  --mask-window-main: url("data:image/png;base64,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");
+  --mask-window: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGsAAACTCAYAAACJfud4AAAFjklEQVR4AeyaPa9NQRSGD4VWohSJWkhUQvwCrcZHRCOR0NKJhBAdNQWNCAmNzi8QopIQtRClRKvBeu+x2Xffs+fMno81a+37ysyZ2Xtm1lrzPI5I7t25mOef33Ktw9Jn1eYm64nYgSgZFu8Xi8U76bNpc5IFSecGZo7I82vps2hzkQVRY0KOy0JoXZZ9NO+yjgnmWBGx+ySkzeZZFuC/mYgVZz5MPGNmu0dZAI6eCvGQHMT5CzK6al5kHRWqAIwu0yLtkURBPHSZ2m/WZf0ShID5VsaaDTnQf9ZMkhvboqzzcimAQ98h80ItKswu2YW86DK11SzJuiloAOmxjBYaakG3UMtGDVZkAcqNjYrsfaC2MxbKsiALMCywCNXwTBab19laVnMAImFKa1pvS1lNLz7F0GBvs7pbyWp24QH41Mcm9beQ1eSiqVYC59Tv0UJW4P5cChHQlqX+tzF0+QJrZwvEiA4RLSs64vba+FTzupSlSTszF2VlAtQ8rinrk+bFFHPd1cpVW9YluQj+U4F+QOZzbFflUrgfOu4rj3VaaVkHpUwU3fX78rydGu7b3R1j0buXkvVdqkJxH2Vk+08ATND/v8mY5cr6IblRzB4Z2cYJgBH6+I6IlVRZeyU2ku+WkS2eAJihx5/o7UyRhWTfejHmNtW4Dxjem5poqiwkmZqD+1cTuCKvJ/GcImtSYCmELY5ANNdYWdEB4+rjrgGBKL4xsqICDZLzcTqBtZzXyVobYHpNPBEgEOQdkhU8GEjIpTwCd8aOj8miqDFi9d9fG0uxShZ+hXhsP9/rEFj5ZVkly/Qv5+uwMpFli7ChrM/ZZTJASQIn+sGGsvb3FzlvTuBVv4K+rC1fu/5GzpsRuN5l7svq3nG0ReB2Vw5ldSQcjJ0s/hNoW9ZXlNfJwpzdLoF9KI2yQMFJpywnolAmZPFH9CCR0JWPfIMs/PKLcl6mSyCwF7ISzvFICwKU1YJ6Yk7KSgTX4hhltaCemJOyEsG1OEZZLagn5qSsRHAtjlFWC+qJORvKSqx4Gx+jLEfyKYuyHBFwVCq/WZTliICjUvnNoixHBByVym8WZTkioFFqoRz8ZhUCqRGGsjQoF8pBWYVAaoShLA3KhXJQViGQGmEoS4NyoRyUVQikRhjK0qBcKAdlFQKpEcaDLA0OLnJQlgtNyyIpa8nBxSdludC0LJKylhxcfFKWC03LIilrycHFJ2W50LQskrKWHFx8UpYpTeFiKCvMx9QqZZnSES6GssJ8TK1Slikd4WIoK8zH1CplmdIRLoaywnxMrVKWKR3hYigrzMfU6qxkmSJboRjKqgC1VkjKqkW2QlzKqgC1VkjKqkW2QlzKqgC1VkjKqkW2QlzKqgC1VkjKqkW2QlzKqgC1VsierFopGLcUAcoqRVIhDmUpQC6VgrJKkVSIQ1kKkEuloKxSJBXiUJYC5FIpKKsUSYU4lKUAuVSK7SmrFD3lOJSlDDwnHWXl0FM+S1nKwHPSUVYOPeWzlKUMPCcdZeXQUz5LWcrAc9JRVg495bOUpQw8J12KrJx8PJtBgLIy4GkfpSxt4hn5KCsDnvZRytImnpGPsjLgaR+lLG3iGfkoKwOe9lHK0iaekY+ygvBsLVKWLR/BaigriMfWImXZ8hGsBrKeB3dw0QqB55B12ko1rCNI4DRkBXc4XdzhtO5g2Z2sOV2uu0s3BgE4Wdy4SyfLSc1ry9y4VG/X8Lm35G/al+X9YmP1j733Yutf/X1ZKP7fAh5yu6HzJw3VMqWUTT6GshBo0wa8MNgvD2paV/PL3v4XMsf5GzJablvutEoWLoCN6Jhb6g+lGNT14O+IObo8rm3Yh35KduL8LRnxLIOphprQtxQ1JqvbiEPoX7oXjceLjfPXSg++4Iw+muMPAAAA///tdK+zAAAABklEQVQDANC5dadAQ6yQAAAAAElFTkSuQmCC");
+  --mask-bleed: mask-bleed: url("data:image/webp;base64,UklGRnQrAABXRUJQVlA4WAoAAAAQAAAA/wEA/wEAQUxQSFEpAAANL7D9EREBhUHbRpLS8Gd97d5HICImgLv5K/ssm35DZVC4h8MLuDAJsEyXxmNIdUiqjlSgsWxS9SCVla5cXSlyyxyIwgEq5Bh5O//1Xtu2brttteVgMAHtMRUAR+0IwLNPJSAo/2hIXxE+Mn7eiP4rDEC2MaLqE98BJVmSJEkWDmEFQIWQBABGhxyAFpJAoL3whyb/0lj73RHRf4QBk4ShRH5iKYAjQZIkDNc1BMoVC6BkKgAT8iYw3fzR9Dzn3hH9N+A2Bu7O+IlfPf/4D3/81x//9cd//febYn/1Zn7l6IWhsL9gnJC9W2J+wSowobIzv94sQFLz61UXpLRds7t+xaxUIp9fsjZVSWTy+YxfrFY3vkvFj53Zzy9Y0go5736+2c8vFFMTknSrlfv5NvOLDdIQNn9Pdv9r5leKiYjH0vZkfv99f6Ex6ZVymFyv5rfPL7Ve3q3eGXOal939fX6te6LGWJr0M7/WQVpYe7fyxnz6K60VZc6uiVR2f6WmN13WDL2e2eOXytyT6cy6Vwq/1mNTxphDJfNrzYFgxxUhv9QzLGW7Jqr4pcbMn8R23qV1f6VxP2OiBr2nTefnzwE9eN0PTkAqDb//bBeMn9o7uxsKTSv9nJ9bUyL02M+ZmVVE+J7U/e/9aSragvzc3vlY1UvSNs6Mn6JCyVfxsp/XsX+a4aR3XvNu7OfMT0C0U5LCX8zDPnpZ7O6iguTlzfj462pbHS2CJFngR83DYOa3A7162zad2Z/w9Xz/exQwkSWhJ3XFWIxdMemeJE+6u/tXo33vhcmuoMfYMn4qFwMAkpo/alk4uZr0xOz+1Uj+8a8kk51dHPNl8JL0TMqEOwColp0Ba3WVVMqaOX8t/et9f621n2WlJwiv9UyqXnMYAH7U6X7AnDnmVFHF3nv/Wrz3r/eivs1nvXB+l/OWlx/Jp5kyWED+WO3qdtdAXCfMyV9d0vePvh9hv33eSyQJ6KX1SIdWh+sOC6TPye44mTlrCMf1U9gfr9/7vTn+9llrcXtBeNlP5AjXgbFQf09qsli7C3CY3vVXn9/zj74m/TafH8v0ko3kR1q9ZNM7Ye1SqaZdduzaC+52mRObv5T6mtdX92/f1lptGzjvpSf6PifdbEvHjuVVexOsz4w5gOno/lslWEBbLy/PN5/1E7illng/1pJJ6c4OvS3fK+bsrE8X5oDpxAIAwR5AKm1e2V0LICVeEs8TJVCpOfPbHEl4N5HdGZ/DtSyAyf9DUXPuAv4elXdixoZNC2LhB4oWoTeYuysV0uTa3b3/PR2GgbJdC0CEMQdEp+uJugaAIoSe6HC+F52gjKkE1c2e2Tmny1hMUYgQAgAouQcwBih0gL2lOqnl6N718TzRnihAV1SXE5lzl4Ux1gWFYP81EHoDd87FUMIgLqFpiznMOVm/P44q1YlFrvRGBts9vcNysnaMKaW9CNsgCiWGgwUEIsZG6TZ53WMZ5fN/T01VLoNJnog7WOZ0nVysndEJJwlIwgYovZhrUCi9Go0FeW//kTB2CbN+mmiqDmZytfnRPccu7nAojhk7ylnWAdkWAESAAMgl2M+RYZvPfz3ZnZlez378MFGP5E7s7iTv5by9O2PAVbmM3b3wddtUB+kBVsCAyHUh1dHMDC67n+8fWT67UpmPHmYlFcKcGfVeOx07wyBUsPvJ6D2bk/Ze2wM2CK7jQCH1fHhmaPL9/Y+KzwwVZvEszpNt6d39VJMkY8ZaqAh82MtZsjcFCY/AEg6OQkrE6ENj035+vtfh9xlNndF6lt5WRsKskTS9xtjl7kmkc7p2oW0b3udgybaFdVwcQlLGT40H2v3+IZ2ZvVcT7Cdx+09B2j3GRQR71weqpcYYx0mzbAkweDTYWIfcFhIxY48Nu8lz7AxJ29Vr6znmTwsR936O3o3MmDMHVKJrDJ3+7OwFS/JoDsaGhPSCJI+F2DaSnTXnSQvbT3GuJOfkausad03vXcZiJVJgsdXzTrIhPvc1sj1gqZBAqEeyEAQSzs6WV3l+DldesSHJxB1jzGG5y6mUMBOLpOx+9a7RkechWfp1gF4awNgCOwoXd++qNknQEg9glb50Fxrf9xx2rd3r7tB/Vp2yGFRT9p03wZb0GknimiqlAGZAcO8cjjEh8vqCl6QHUP7gObsqrWDWZ4ad08mceOl1hzsdctO232kAeeaXX/J9negUSkAxBiHw3rXTq+K93EhrTV//g0/2M9JNmpo1u//9mdOdbittjsMOXUKyezYtwtJrbE9MLy5FBCkYHUnDLkKf7+8reC2Nd9rXMmNdkSc1M/OZvTs1oT8ktXNGAdrkL7Ps+XxmLCdwKPfnRu2Xd3YCEe/9q0V6r+m1bZO4ez/2vHsrCbv7+VhG5ea8FnsXAN79YlMFnYdmZncAFABzAEmjGYt0672+m52fL6/h4w8rZnyUeC3d+TYz1lDpj0rHWATLaZMtAfyz59ouThc4HBCIkXfHVkXbH6+t+LnO8PrS6hrmLqm2NefuZ824aM/3VIxh4xy4lKQUwJ45awB7cIAag/26r7ErPdlI/tGbnLU0fD3vxBxrzEjVkzBrdqxJ6sm72MmSexf4pJcFcIc9E8aEPb0GjpAYiZkVKeL1tWxp+Hda5e4c7I4k8hTD7OwpSd9NGGty7zmHjesECgADuAviUF/7+jUgO5FO9NZLLtiLya6EMYe7fjt3U0lbR+/aHW69NIKx3XN6d4SZXugJ0FVdugbANbL0kBGmIt2g6aVGnnypYrDuwLqenuf9c3POzFhpW4/aBc4ZHglB6IWcdCSwcK0IC49HAKpOCEkCQgx2hBnrTzbmqdfKd707H6ZJmsqED6f37h88f00I6WlvwWJA6Nia0TXwVK/eTfdBQJN7hF07uYvtmk5SL8+LM+Ojk7xWZAfAftPYNqLQ9o9GFBgLP28aWyq36YnTK3uqAJy52erOb3YxwJhWmuT1Ydfuuz8kgWtHnWM/noeELwopea3SzeTThTG2RzOg5FWpcwTEAWWqy5t87mcXGAL7Y5/3o0m6PiY3aZQFivk2j7kj6bj0nm2TnAIGjCRG42uXpOlFAYgL3lP/Wma+mWMBajfnaV7awKebNmrZTFB29uWRhYVJk+T1IttlDmBj+TX6aSehFAYTetyZETknO3f3DpMt4F55f5AYdyopY/doL2L8TRr0881Jmx+SORkyAB8sPSTm9E+97glRhsBhTy2V3rs7x9iTzSjOSKV5TTHHSYWPD3JSunY0vLCFlUtSj7LodQUg9BJz3PMqEDkYYVo0dQrumMNdit618uSHJ+C2svl85nMkLdnOMRbWX1jaqAEF4DqyLAxtu7kbadn1ovqVoT7Va+Jy1yABO9r0vAqIdP6+n89nt20ie3QJiyvJWLlpGUYJMWDcnZFygk7uTQqSJdp6pqtzYpNrsuOkwphxvjd13krxru5/fZv/On9EjElqqVZs+cGl0mH3qAaItYclFO41JVnGa8EliIHnbqZuSTrj3iuF3bttqiCtkzN/SHhN1mpPMGSQh9FJyv1YUsmFDrEg+OjoZJvgWTYpwTO/OiWRMHPUkxkDiRP3atuOz7fPZ5c/fo+t9+MCGCG/7DonPj5HnCenUEABfF+QbkGjZdoyMiagbaM7SL09PqBhUS+H+fzJKvRDXhYglpiHRHTM3P++WlGESmyBsHD5y35KcFusibGcnJfXDruVpDtjjlbWUmnt3/b3WaCA9iWAuLZsQ1i/f04kfzI5r3cE7ghBm600623Iry+w58Xiat6T+hzq3dPfra50zgcniZn9DIACbXYBS8BYBD5jNa2O3vJDTgcQkqFs4h/g9LvRYmDMlPxoUrqo08mCO9n7cVrO/a8Z/wbzNjmMTc0AdWdniKQQmsfpdoFt4SbleJbE6c1BA8/DRPJanE42erKYmK4PwNyPf4ftbiQNnAOGOPObpSW6oW3LZMB4EGfbe8fLC/LVzRlYrKttNXTLRveo250xYwr/5guv2zsjKAh2s+zoH7Um8hK9d1mjIwEkiJFt7vlViYHMIZUQJ4BcZI7ZHWD822yykqEAhOAuKrpzum1fzTkWJIS5FKSzJF1SzEhWJcrNFZtFiq7fZ62/yr3BBiiF9AJE5tg5eU/E7hjA14heg2wbAgB75FOkSyRYkAQfv4+/zhYMAKRFcomr+HDXy9M1YyAQGBQJsaAcK5254p+ApNgdbapjZtZPYAAAoEnDSRHYmWn7g9MPuwSAEQz4GldoQ+7I490Uq73pmrnbNj3d/ayfSdMsEelJOfEZu3xPde/OWEAxMFhGm4D5N7cZGeOkY6QtMzOS1/Rzdn8qDNn8pTbC2s+YJ96cMWYwvQhJDKoJkvbcUQySxMwOL3nXfsbP5I73nmo1+j90XUKoawsLgIqXZaFvim0Y+o0AevOM3d3mJefMrJ/IOZPXH1WStr1du/tSgMARxhiRqC/GtrsvSDiEofwehrbR3c/yfvy43Z98ZrQvT7S3IidzfGQwBRBCcIFYGsmk2RspHpowFiRPx2dGmu/hZ/e7+Z7XXiQ9T5cxGKH8NWCVVJJHakvBeOzbholKetjfl3xPjp/b7W/pj1ZIpfe8yV2DpetriIIxVynID/uSJBgwU9ldJK3IZ2Z621e7P3fJvc2Ti/NucnXjLnhGKpAaY3oJjMcnTYEKNPVjvplKkmJmVtvGjJ/MSJKRP9aamNMrjYZpW8ACCLmj4ZZv6lB7qmV39ccfc2cWSeQnd+S1GL0iB9NNsGZGJFuQBXsLGuuk+54QIYw1s3yjeSmdHTa33q6fy2orWLRqx0TC0zOmmwTJlACM4KT8SmAjaaZn/niSmjkGJ+Vn97Q5qWE5qbFLyuFjBtrdP8ISLRxsl3JPqwJewgOPM0Ob5GRYSzsZPzd609bAUGJ3t1KkmSG7G5ABUksnXMpXoQdjr5Gxu5XXcNe9c0J3fvY5T6p2jtMpa6AEzaDNdwJzrgk6AEDuCVUiSUvMjOTdtMse4Fg/mZXqAJzDLEpvPXLv7hcRlg7FUBPaABcBS0ODJwX2hLgfn/8Fic29kyxmACliILsJCIMFtwAhhQLHkv1iIKNNALkX5uebCPac9HaNBXACON2mgMUccTkJEKAbAHvpTKwk1RVbJzg+n59eFaCCHQBKITdJCUh4rLDQCxAOWFtmbSYS8q4QBFJAeom/ibQq1gJoW+k/eXcrNLYJNNQAGyFbzpk5XyVglP6Ms9abv48qBoAmrwXJqR4a+6cCBhD2etGTgT0tLbFVzrawl36av5GqAcB5L0kGXsGvD4mStkJ4g5eWlXsySAXQJEQH03Ip1s/33yoBANq+x86c125n/IHYPykSAvzSWgp32MTqzVKoZTfb9Gj9c/H3EhYAeT/Ct8H33cNj7sv03XPAxsJay+dmkFrIsiUHEIJNvtnrxzJ/MwEATWLcvb2bPfiDV5s3WBJCvN/rtHfSOy3A9l5hBGzvjv3zp/ks8q67i2a3PDzQ9Rr7LI6XXuYOGk1SSN0jrBrI9tv/eP0QH0YBhO2GGdgbHSSBJL2V20HKq78ncCJkXQNp8yv+ud58HAEo3907UsgFaQsbLyCTsk1aAdy5HkEp2+KfP/hkyuci0AHAxsIs+D6TMnmJt71Ifog5sL1JpfXmo8nXBoPhWmDO2j4qX6OynifnIGnGuCThwlr+bDV9J/fFCFwjYYDrWStNW2DPeHRollQs8eF0d0FjyzVgrJBJ35W2jQSsmbFvabZC/vCE7G6k0RjtCsQhZRCnkrzbtvbMjLjqNmFA0n5/Rp6nBgAEdNTQSvz9eTpn/JzxWZot/vyE3e9m5mNkoK73TolGRfqnN2nt10s/jHNpgj4/Ifu5OvMxNg66re/2P0e9lJPlCyK/f66l9JISDUj6tVs/Zkb0YioP6z/kUQVKWBLjtZYOJClMSNh+nsyMjMNkk9fs3cUzzIHekgS0lizKhc4Ykl3kGbDYtPnHnBma4QAiNCVC9uKQVhvMBLZf1K8RGOT9aM2MNePYi1FYLmAZQyl4xtB2+XVsTxa8l8fuskfEyZWu03KjjY16IFMSkmZt+a7Fj/teakZrTYhedG0gNwUQaIeDxBCy7Tn2LKNJXt4arTUgogMaQXqbAAiAOQnlk7U0xhWvP/4p1j/8HlCLJAZucr8JBWHAYxLSd8LsmJAmSVn+MaAWLD+Q0+/klgBCG02KfjVid0xaaQXWj9eEA8Ijxe985/JFBAKxmEOyxZ9Dr6ZOlOT3hKpj2Xbae3sbQNjoDFKbIItEpKj3+uHPD3HH2L3k9t6kGBtP+oZ8AbOkjRhx4n+slz//eudIgrR83dsSLFmjhhIETcLpgrDe/nQLyRggTXNvAthLZhS9CEle2TmUWGt9+rqfvTsQab97G7K27VnSAWhfU2Pvck/8Q5+/vo0llCQ3X62xpFEWFlReX9Ld/RBupR/69NidgVy0vd/9a5FfGTUj0nrvVeYztrfJ1hpw2A+9f5qTr2/Qltekbo9Mz/vR99qxnzG5bf1eA8LSDWhvuy9nSZo1nkubvH/1HTP7oW2+pLU+XWOZxEDS5IIYdZE0Yy157+U99jM7ldxmfX41bCcA5bbs2B6k0TwFbPvee+nOfqy2N9H6/MrQOxWEpD3erDlFmqfslveHyDk+M/OH/KY/tJhB9yjQQjhr0F3z8RhK6r3XV3Z2N7dJLnrbDOBkzj4idQiqGYNfz5eVkqcvr92ZGU7SW3hpQA26CLED9GiP6ubSIsmruDvXvXBLOB4Q7TUxxwiAMCfkj1EgVLUik7smQBomZE8OA8JHCuzrjOkzhr9qK3pxdF0I5Xy8q2qBJRmVFqZYM7hATpjgRLpnwKFlwD11Jgs6a7GqW9IxlweK3nBrsgtN5XMwUJLPzyf3LiTZ72PSlin2yxAgR3fG3bbCXYqrfPPpzhMG7KUl7ZIkQ8rskCtukfDoJG2R7JB4X3xsPXv441mLQ8mtZ3jn6oVTYGSbJAGtRb/3y+/PtSMcey1bo9auCpdTrNFA23O4n+mm6RfvbTdnAXgvSZC2Qy5j/f0xRxzwa2TIXhiL1+eLM2LjumDJ6ziUywzveC139VaSPmS3FJ8xab6+N7AnAHkhKN8eUoa8GMgFP/0UJgEPzfv6OiwhIGQpTnYYEUObZIc6kR7PGaDUMs1/QHd3qF4A1jF1plyWvB9dixZpPkbPE+B0b9vXfHGsueukvYDhFe+UwIA62bzmZCwJjJ/z5LcDqPGjyVeHb2ai/jT0GEoIE9h4eR07IuuZj5k5OHC1yWvZr4yxuypl2NUGQplC84SZajn+mKfG4N5I8m4c52vXsaMCAOpSAI14tk0YlwQ0zxkLRadJUtGvfdi1dAsch8AOQ4ikF0tbmMc8Bhsor4qsL84Zd3AwO6WEgmf4uecN8Kh5ajxHP0uAyZfXcecwKtzk9KCcCX+IU/bKWZDHgwGIAK6vzrHH/UjVbdvoF6ARF/RatCVCHobiQBfWfwIv1o9ucpvWe0qhIGLSW2VnF3pdA2OM0FO43Hw15GAzBxHOf6muMShGm0l4/F7s25uvFqwMmsslJc7JulfFDvaUW0Ga0eLfz9f9/iYwaAnD2VvkkjmnJzWWNUUpnpll76/v/s4FpDFpIZJSit6qc/LhB1OiQaMP2adfNzepLAwdkRIpgeypnFQKy2uIWmI/ZwnyfZuL4KwxB18XApC2J6Ks9R5Sc948NF6GJvcqHdTBCq2iPW01RaHXa0jN11XGYyv0m/YIQAx5HkxS81Fpm+sSS15jOpYk9cC+zKKqy4mO7EmbOAC2R6zeHEAY7XIMmx6gnmFOKNi7KkkMTCztCToLNQDnYGlvgJ1qSMlSsDxW83B3u9hDLqUitIBYwseQdkztV4PkWattzYwR6szwSaEkgaUlGwhhCPnKFmvGZ+RJdz+DkiF5gfLO90Faei9MuEyhfL7/q/yhz4zme3e/za5yh5gTSLtks/ReL0E7JmG7G2bm2+zN65nz+36G3HSGSvFul9rzodcAyz+EuxtrZi3ozeG9XjZth0RUaJvkHL38lA39d4B2t1gfy95pt6T1Qm3vkFJRsl2wH/JrRPMvYbKJ7J/mkNRr+f3qvrd3hlKdhC+9kTySB/L+h6ptgz4khcKWf+pw8jVkWtV7lV6MLA+mW+ZQtsjLxyWxXy9Dbmf0EKgPABhGWC0ZFJSNxwtS0F4L2jJDbdGJGTCHUwlDOylIQMtOKXiZ0wwZkpNaZ44FtxfQNSyjojA2JQhbJGXInS2Kh5c9JAvHOipfo6IRSxAACTplaEtrz0ijtE2vGJPvUUGQECQW4C+mcJJFR54Z4byTnNp+7bTAGKg3hjKGtlB7PDO3bba1NOq0AP7qY86Z5CQgyc+xz3Y3HEnyTcYJEQRABkWI+AFz2t2kMPJw76hKEGCKRg29UOOZB7/L57boMHabSbUAHAOKiAc5oFgP2cp2G2pbZlZpMaiCmonMzizvNTXGOnTU9RQUISB4THQM3WPX9CZ5E2P8pzEPCKMAMKiMO6cY1JO6ywCNUgvHGKVHczTdmV7FRnrLOab/adYk3ohzHNCgtTuTKL0nRO+9dwrbg8YTEBYhLM3pv417RUqEO+ecVMUatfqdjbWPSljM8f6+RB4pcK8rYQ1K+hqMLUhgzakfu/nnjae6hjnVHCZ15PsFe2Eu0ZzDnhlOmkjHGDh5XZo1bYtkmzYsxvh+JtNKi7Hc1dSelfJK5CXggueUcddJrycfa4e2NWy0CXgtTtMtMYYFJFkzc5aTF+OcG6Ql094jBnlinbR37Oza3rYRs7jNxfJ7sW++sBlGnWNnZvZI8v7DXstr6/WS1dt0TZlTFqJrdj9r4zXpIA17XhNpLdHzu8DnRhdAdThsYexnZ2j7/pNsh9v7V9l83eaDL8UCTpS7ABh5LEjeTQbl8ZB8f3z2b6Pt+8p/kR1AFCwoZuaO4ev2vZrztAfavvp8G6tN8mV7b/iTosqYY9Tn5xlOtv/QWYwE+xLzmckkX/mc5MyxSC/B3oXAGh3T27KTil8vln/0nLHLefKVl+J3pJTM/BaDjqUjo4S0g7o05/q7Py57d9L94t+1RkSAHb2L8WCdQsjJnPDIwMu7d0bv5na+6rNLNiOqwGK5ljAGSmk9xpKkkIhcC/qVn5fS6J1jsUx0jAWmAcqggwdfNCJgvi7mmJNKezthrGW6gLEo/FQZg+6gLq9VdsjX/f30ksb3ecuONczJnQgAqEgYhCxBpQ/W/bp97PZV4805xo51rU9dU6U6AHvKI9d40Dh5L8nOzFfed85p6hV3zRhjcYFAgSsgTGIkbvNejf2c+rKcUUlF91g+7GAgJFQVoswhwvaSH69hd/fEl+VdWr2dGDvd3fvNcdO2AEL/DkN6B49N85LMzHzlwXCqnPauvR8zg6HZtj/lnkHrIHuP5L1Mdnd8bd4JuTBZH7s7EDbvJBjPPXNqiXicoc3r3Rn3i0v1OSnAtYRHmNzl86sBPFIGFYgZ2/ujcc7as188BHCACDxCBv/X3fd7QfJvH+a4BN8P9QRrfXEZ1wSILUkWzc3ubiJGIzKnpg5ak3gXdnz1iuASrg7y6Bc5Sfn+bsAemYY5LLBLM+k1x9xPDxsFUkmyb+8X8NX3Z5FGAxlWGRclmP3yg+TeC72y5ZNNMd9fW/GSR+2YIhKirCF61f189UGMdM7CwTZtGh3ymeCHbNM7RYbmdAfUCXz2h4dtX6cgDNkC3HRPxx6smyFFXNIrbGyimK99/sIpgVpsC+C01IxHkDukWvQSWDjpxDF8Op5f+BKA/BRQQPzItkPCBnqxJyvXidyvb8RIwOqEBIByDmaEdU9/z1g6Eucc6q7S23t18ukV35EIkAWAEvPAkrjm9veQYgsuJxNk4uTIhLAwlBYAyGr0kEA6ye+OCGOb31wiQ+X21scniDuCswUAtmj8GiGgvXfI94hB0UuQjacMQBjTGwBIEr+eH7oCSPuVEZZGFjipYiOSMABhcAJA25U+nn4Zk7r33hFLzMu+7tVuIPL+yQjGKiD9DPO/54dEexXuzYSDkMcD7JCacmgbZjA2QLuNPuZ/tuGkTocsRg/ZnDrssKHcXIYwAM3n9vX833yIUpT2TkgQ42HOptAD7H17N9PId996fMy8DKsAydeMJdmDAQJxTsllGrWf8DHPESQApGSAajySENSpA+Q383i7zMxjoKUOwIxSWzoM1oYE6PfASRbkpw3bC0EchRGoZlgCSo/TDFRLLEncphTQomfCzwnBHllA2CET5WHha5KeJNj2lAix/LZdCnSkurEElKUJ7LUYwk2Q5GUFQtuJMxlxfZImKesla0ZetkijhU+gJxOla1m5Tdi2wixPWIK2xbO0gEBmXpDnOtv2J3ihEWOyIfKyLVpGds7YdklCkmDOUj9fttImoLWEKR2bGinbUiigvfn8bzFit0HySwg6tpsxbYGCSzgrnx6SZHYXuMtvg3Lv0PEMJOcEBJyH62tLYqa3+y6MJEE79BJrxCW9V5ZoEyRfe7XHavYrINmLcsd2yaYXDmM7mwb9yjIzwmyzNV77HMLUziAdTmPPmO6PIl95FiP/NvDOAsLaydgRxqjAzAzZ79+jV33Zp+V5HKAti/jrfe5gENB5jId+/6hO5MvKjOzXIYdtIkyYK+QgxDnyc9Ty3mP7ZSWJkbmXQhJAacaOATBgz0PmfDbJIGm/opHsO+g00LKmpwzGANfI44H2tdZE3lc89v1tCXFpgJAe5iYYwIosySbJG9Zt068n49Ex4EMptIWU6VxbwsCtdHdMm/flqiTBBCYXCr3kQpiOhABBiDE+5F/el0vZUq+ogXAOuQ+QCHMvFC7W2KW+5yvVv1JcAFC41KfNZT7idUJSH8zaz6H94YtVywOgADUAhdv5C4tLt8R8xs7YSL5Y0fEgoFcBnwOBNmE+A22bMrvzsauar1Y8+OqcE+AcDJCkzLcwSd4Bz+czC2n5Wtr90Ou6ABaQkgdYYMFuE+kzn50ulX4xm/t7llAVY+O0fYAEhNvNCu3v+zFFtF9smMmWCxVY1mkTUh4AQ7ZnPd9mZgikX0trVwiggwZDNs8wCNqtf7GfTxe6vK82QACu7RGQbfcz2LQh1mcXdNyb96V6FikH4YckLu29PACgo/NukHZ3cnvHqq+mSSVXlmzb0N5cPcSCFPszh2BG+tUqaTliRrKVktvyAIBwijIzODn2rvR9LVRLsTQziEv+fxQ2J9hrtTKf35zXfqnKkwAz4xE6W5rkIYR7hXdpc3fup/v95UtFpO0dzYzNhSTJU1RdB2lGvZj9zXqvXwddJDnnzHhsh1IuD7HQxOC9JB12Rt/rVzrbSrFnRkDdknueotoHa462YD/x3v/+GQJzoBTLYysQWp7iWzy4xpYnZcc2+V8fBgU7GThkZMH9eS73KYotxBCRmrFp/7chd6WMsUYN11ick7akPARmjLHaquz9Pdv2ZwwL/XdtkRKQLSzgaO8cTg9JH2NgJCFKKtk59uT567GGkn8Dxnb/sMDLsiTXu5RdSPIgCRpjO0S+Z7L27M+oO+duaQEAADBiBNsUa2yPEKXcktKS/RzDyMpS1Xcnmx1e//K6a8RTAAACsAaTZIlnrGFeQPKVv7iEB8EegQs/qmp3J+1fjBn76XiSAADG6IgRIe8GjcYae9Hb29y2lCdBsg1Gk0rM2Cvvr/Zvc5C0BQBhhDVcaL9YS0/j8RL0d++/+OrmYRgZA8nJk53dTf5aTD67O+o1CkBIYsS10pAFRiN7lpXf/X3zm1/hYZBtnSyttjE7H23/2jz2w+J7ewII27JtFdLeBPHSSIOhv+/v28vTICTujk16m5T57Gr+Zw0CgN0xkJv0grmen+KUHBIiHcn2W/R+33t/PY9ghNzJJfJkfGY2SQIwRgXAzhyGOpEDWJL0OLpcSgGA4pFkmn993/tEY6zjQ7hpovOZddsIYPf6nzXj2uJeAR1JeHghTlIfAAjINnDz+97yQBiZxcT31jGfGV4rYHdW2gLGTnTI5F7X2LbwxHCBXJvDtsISpffehCdCaOZgpW37sbP7RxU78xkvT4Ed95a49piDbWMJHYBeI0HZ5UhA+FefKQFrGEOb8yb3s5+Z+P7uCfOZ/bQvSWDsxkk57CA9sGKMgfogYdrNIuDQ3D5Txnjv2qWnTfe3fOYzU+9VPjOfT6XvpbBjpVGMmf15A+yogLGNs90tBrh9qL+AvL9lZ8lN6f3Yz/6uXhOfz8c8r+8HMJve3sgy+98fDeIawJxzYuGht7vvREDJfaQpHOFrSfRCCupn5jMfr69rP8x6ee9PFEB4E0WSHnxmzYGt/eM+Pr73/etH1N65PU+V2Aj7+hA4hTnz+exwXjPWddg2TQVA2VvQtcczZmxhdDk7O/S9vn8hWp6JwpGUa+lXDOUCdmc/VqWWW+CHqGqWknDnFx5pl830DiZz/iC8917fAOWZeqhtQLrX4qJDGHZ3rYQjnAA3bQFSEirhHzLYYuji7u7Ky3tpBOl+qJEEHCMkMBe4Ox0DpEKNUEpSepNQIXns6+2IgQHMzNG+l6SGXD9VsRXARjYCzORyAlTIwTZXyZKmpQI/NcIKAdY1tcdA+9qKn+q7CHxrBLKEGESvtJe4JImlkSBpmiYVjDRjQxXOYU3JuIskkZbwUBwEgOFY2L+HAZ68BCoteGbs/vnTJtuCLb+eekA1hcGi7hx0EpWkPBZSQQDCesiDkfa9tiCPMDNPmyS7TQLMzGh+myRPuXftKOLabi/n6X2u17kmWBTBzEgWrffe68nwKpWeH4/5labbTXIYeeY5CrzXwpyBwjkdyN3kPla5FtS4uB6NRrpO84+X7wnEK8zj9RzDZndb0A8b2+xrkj95iG56h+nFvXkqWfQiDPw0eSz8/V99/+or3B8t9vNjxpTN5h3QL/1A0e2ryN41EMpijuN7HqsIAOYUC/RgNILefP9HXsJWkkh6zkhn291SbM+Mh9vkJcJYlggnO6z2n+1jfRsq1UIg+8EgRV5f8h0meYUZjYfe7NlWZOSxbdIfksAOkFvWGldew2NhBILBWPy2DU7b14o5vZXAaB5cZVMS8H1JEqbNK2DtOadiGHb05fJsGMTwQpYuF8S7CZZ6vSDx2yKUhSBhYYAkqgsLwLKuvISHY2COJAtzlV4K9GJQepNzaoFxzrrKDmyCyJ0MuPeKCm8Em+dLYDzYtiAEAIxVQ1P2Uh+4AjjF4To50ZWVBQDCHBdIn3AQRjaDSjnFg2RAIW1bAMDXoKg0hcFlBQYwhk1byhMisKS8oJeKB/YIUYf86BYkJsKRnry0GMugF2BtAEgJD4kRGItw0J2R7WsgafvVBfAILlf19UfljDWMOsI12Hun8JwDAqSDycUPzchSHG7JezeLJNlAJe8l0fGZO70oJkblAOFh8c+FWJ4ZD/hAaPu5G/DYZtC2P/IeZ+wOigACKI+MsQDNaITFFXB29/urtTwecNImL3nuzux2oiDgKDw1NkZiPCNQjCnf+/4MZ2QJkyt5bRt2dhCCEG2eG2GmHkm2wCBo9nPzH3o9MBfRP7p/cu+fVGAeHDHI2LYw2Ijm+2sXWR4cQpITMT6QSLe9/s+n8WAGYZBkhc37M7XGgm2vaK7uWKuVipPk/3xIWAKsg7Bl6H5lwR6LE6lwzjCWek3R+r+fFsYYEJZspfeziyQJV6sXd3eGqfck9BeQPwcB10hI2CSfxJYwKjmHHbs7Kq/pifcrSPgpccCIa8vtVsi2SlKs+fabuUi+v/IavwYO02Ez3cGW04TxqEpKnJlZnzuStkm8+HVwuUsXHQ2XFo8NRdqd2fkcvVrntc0vReNwAezxCfEIF+pkd9aepOj18uqXwgVgNLrUwnNOoF27tpU41vMSvyhKsoOQMIsodto2ujPnvB/1y6LHKn9poGp6vb7bsXtv49dF6QFgkPjcrRO5mnwPjFG/MmoMgOPZ4V6R5j0wbPdXdrDtAwRp/3b2RL3kFbB+dRwJKGU+s2Pr5f0oAPNrg87op9DMx++Z1+Z7/DJpv8x/XWA/nzn3ynv166RnYFOwndmhr7/QRJr5uhtg+O9d+ks1kq33ArDGiF8qGLt/CoDxC+Z+OxLg1/wYS/zKufuLt/Gr5//3n/zxX3/81x//9f+LCwBWUDgg/AEAAFA6AJ0BKgACAAI/zebxc7+4M6ygCAPwOYlpbuF3YRtACewD32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHrAAA/v+VAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
+
+  /* no top padding: the countdown's foot padding is the gap above */
+  padding: 0 0 clamp(28px, 6vw, 44px);
+  overflow-x: clip;
+  color: var(--text);
+}
+
+/* Everything but the heading is built by main.js. */
+html:not(.js) .album { display: none; }
+
+.gallery__head { padding: 0 16px; text-align: center; }
+.gallery__head > * { margin: 0; }
+.gallery__head .functions__divider { margin: 12px auto 0; }
+
+.gallery__kicker {
+  padding-left: .3em;
+  font: 600 13px/1.4 var(--serif);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.gallery__title {
+  margin-top: 2px;
+  font: 400 clamp(44px, 12.5vw, 58px)/1.15 var(--script);
+  color: var(--rose);
+}
+
+.album {
+  margin-top: clamp(30px, 6vw, 44px);
+  text-align: center;
+}
+
+/* Pictures here are never dragged out, so a swipe stays a swipe. */
+.album img { -webkit-user-drag: none; }
+
+/* The frame, with its arrows either side. */
+.album__viewer {
+  position: relative;
+  width: var(--fw);
+  margin: 0 auto;
+}
+
+.js .album__viewer.reveal { transform: scale(.95); }
+.js .album__viewer.reveal.is-visible { transform: none; }
+
+.album__stage {
+  position: relative;
+  aspect-ratio: 900 / 1180;
+  cursor: zoom-in;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  filter: drop-shadow(0 18px 26px rgba(85, 101, 63, .26));
+}
+
+.album__stage:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
+
+.album__window,
+.thumb__window {
+  position: absolute;
+  inset: var(--window);
+  overflow: hidden;
+  background: var(--mat);
+  -webkit-mask: var(--mask-window) 0 0 / 100% 100% no-repeat;
+  mask: var(--mask-window) 0 0 / 100% 100% no-repeat;
+}
+
+.album__window {
+  inset: var(--window-main);
+  -webkit-mask-image: var(--mask-window-main);
+  mask-image: var(--mask-window-main);
+}
+
+.album__art,
+.thumb__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.album__photo,
+.thumb__window img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* The next photo waits, hidden, until it has loaded; then it bleeds in
+   from the middle like paint soaking into paper, over the one before. */
+.album__photo.is-entering { opacity: 0; }
+
+.album__photo.is-bleeding {
+  opacity: 1;
+  -webkit-mask: var(--mask-bleed) 50% 50% / 0% auto no-repeat;
+  mask: var(--mask-bleed) 50% 50% / 0% auto no-repeat;
+  animation: album-bleed .9s cubic-bezier(.45, 0, .55, 1) forwards;
+}
+
+.album__photo.is-fading {
+  opacity: 1;
+  animation: fade .3s ease forwards;
+}
+
+@keyframes album-bleed {
+  from { -webkit-mask-size: 0% auto; mask-size: 0% auto; }
+  to   { -webkit-mask-size: 470% auto; mask-size: 470% auto; }
+}
+
+/* Round ivory arrows on either side, over the edge of the frame. */
+.album__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  padding: 0;
+  border: 1px solid rgba(201, 169, 110, .7);
+  border-radius: 50%;
+  background: #fffaf1;
+  box-shadow: 0 6px 16px -6px rgba(85, 101, 63, .5);
+  color: var(--gold-text);
+  cursor: pointer;
+  transition: background .25s ease, color .25s ease;
+}
+
+.album__arrow--prev { left: -14px; }
+.album__arrow--next { right: -14px; }
+
+.album__arrow:hover,
+.album__arrow:focus-visible { color: #fff; background: var(--sage-500); }
+.album__arrow:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+.album__arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Two lines share one place, so the old caption fades out as the new one
+   fades in. */
+.album__caption {
+  display: grid;
+  margin: 18px 20px 0;
+  font: italic 500 clamp(1.2rem, 4.6vw, 1.45rem)/1.3 var(--serif);
+  color: var(--text);
+}
+
+.album__caption span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+
+.album__caption span.is-on { opacity: 1; }
+
+/* The dots: the current one is a wider gold pill, with a thin line under
+   it that fills while autoplay counts down to the next photo. */
+.album__dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.album__dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: width .45s ease;
+}
+
+.album__dot::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(85, 101, 63, .3);
+  transition: width .45s ease, background .45s ease;
+}
+
+.album__dot.is-on { width: 40px; }
+.album__dot.is-on::before { width: 26px; background: var(--gold); }
+
+.album__dot:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; border-radius: 8px; }
+
+.album__dot i {
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 5px;
+  height: 1.5px;
+  background: var(--sage-500);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.gallery.is-playing .album__dot.is-on i { animation: album-count 5s linear forwards; }
+
+@keyframes album-count {
+  to { transform: scaleX(1); }
+}
+
+/* The thumbnails, each a little arched copy. The row scrolls sideways when
+   it is wider than the screen; the empty ends centre it when it is not. */
+.album__thumbs {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  max-width: 100%;
+  margin-top: 12px;
+  padding: 10px 16px 14px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.album__thumbs::-webkit-scrollbar { display: none; }
+
+.album__thumbs::before,
+.album__thumbs::after {
+  content: "";
+  margin: auto;
+}
+
+.thumb {
+  position: relative;
+  flex: none;
+  width: 62px;
+  aspect-ratio: 270 / 381;
+  padding: 0;
+  border: 0;
+  background: none;
+  opacity: .6;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transition: opacity .35s ease, transform .35s ease;
+}
+
+.thumb.is-on { opacity: 1; transform: translateY(-5px); }
+.thumb:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+/* wider screens: the arrows step out beside the frame, clear of its studs */
+@media (min-width: 560px) {
+  .album__arrow--prev { left: -62px; }
+  .album__arrow--next { right: -62px; }
+  .thumb { width: 70px; }
+}
+
+/* 12a. The full-screen viewer (outside the section, on <body>) */
+html.is-viewing,
+html.is-viewing body { overflow: hidden; }
+
+.viewer {
+  --gold: #c9a96e;
+  --gold-text: #8f6f3c;
+  --text: #54443f;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  background: #fbf5ee;
+  color: var(--text);
+  opacity: 0;
+  transition: opacity .3s ease;
+  touch-action: none;
+  overscroll-behavior: contain;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.viewer[hidden] { display: none; }
+.viewer.is-open { opacity: 1; }
+
+.viewer__count {
+  position: absolute;
+  z-index: 2;
+  top: max(18px, env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  font: 400 12px/1 "Cinzel", Georgia, serif;
+  letter-spacing: .18em;
+  color: var(--gold-text);
+  pointer-events: none;
+}
+
+.viewer__close,
+.viewer__nav {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba(201, 169, 110, .6);
+  border-radius: 50%;
+  background: rgba(255, 250, 241, .9);
+  color: var(--gold-text);
+  cursor: pointer;
+}
+
+.viewer__close { top: max(8px, env(safe-area-inset-top)); right: 10px; }
+.viewer__nav { top: 50%; margin-top: -22px; }
+.viewer__nav--prev { left: 10px; }
+.viewer__nav--next { right: 10px; }
+.viewer__nav:disabled { opacity: 0; pointer-events: none; }
+
+.viewer__close svg,
+.viewer__nav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.viewer__close:focus-visible,
+.viewer__nav:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* the photos, side by side; the guest swipes between them */
+.viewer__stage {
+  flex: 1;
+  overflow: hidden;
+  transform: scale(.94);
+  transition: transform .3s cubic-bezier(.2, .7, .2, 1);
+}
+
+.viewer.is-open .viewer__stage { transform: none; }
+
+.viewer__track {
+  display: flex;
+  height: 100%;
+  transition: transform .35s cubic-bezier(.2, .7, .2, 1);
+}
+
+.viewer__slide {
+  display: flex;
+  flex: 0 0 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-width: 0;
+  margin: 0;
+  padding: 60px 16px 28px;
+}
+
+.viewer__img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 150px);
+  max-height: calc(100svh - 150px);
+  padding: 6px;
+  border: 1px solid var(--gold);
+  background: #fffaf1;
+  box-shadow: 0 14px 34px rgba(138, 75, 90, .16);
+  transition: transform .25s ease;
+  -webkit-user-drag: none;
+}
+
+.viewer__img.is-held { transition: none; }
+
+.viewer__caption {
+  font: italic 400 17px/1.3 var(--serif);
+  color: var(--text);
+}
+
+@media (max-width: 767px) {
+  .viewer__nav { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewer,
+  .viewer__stage,
+  .viewer__track,
+  .viewer__img,
+  .thumb,
+  .album__caption span { transition: none; }
+  .js .album__viewer.reveal { transform: none; }
+  .viewer__stage { transform: none; }
+}
+
+
+/* 13. RSVP ---------------------------------------------------------------- */
+
+/* The reply card: a soft blush (#fcede4) arch with a gold hairline just inside its edge,
+   on the wallpaper, holding the form; and, once sent, one of two small
+   panels in its place (rsvp.js). Field names match the other samples'
+   reply object: fullName, phoneNumber, attendingStatus, numberOfGuests,
+   message. */
+.rsvp {
+  --gold: #c9a96e;
+  --gold-text: #8f6f3c;
+  --rose: #8a4b5a;
+  --text: #54443f;
+  --pearl: #fffdf8;
+  --pearl-shade: #e9dccb;
+  --field: rgba(255, 249, 242, .7);
+  --field-line: rgba(169, 132, 80, .42);
+
+  /* above the thank-you page, whose clear top tucks up under this foot */
+  position: relative;
+  z-index: 1;
+  padding: clamp(24px, 5vw, 36px) 16px clamp(16px, 4vw, 28px);
+  color: var(--text);
+  /* no fill of its own: the page's leaf-and-pearl wallpaper shows through */
+  background: none;
+}
+
+.rsvp__head { text-align: center; }
+.rsvp__head > * { margin: 0; }
+.rsvp__head .functions__divider { margin: 12px auto 0; }
+
+.rsvp__kicker {
+  padding-left: .3em;
+  font: 600 13px/1.4 var(--serif);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.rsvp__title {
+  margin-top: 2px;
+  font: 400 clamp(36px, 10vw, 58px)/1.15 var(--script);
+  color: var(--rose);
+  white-space: nowrap;
+}
+
+.rsvp__card {
+  position: relative;
+  width: min(100%, 460px);
+  margin: clamp(28px, 6vw, 40px) auto 0;
+  padding: clamp(58px, 14vw, 72px) clamp(22px, 6vw, 40px) clamp(30px, 7vw, 40px);
+  border-radius: 230px 230px 22px 22px;
+  /* a plain soft blush, the client's colour */
+  background: #fcede4;
+  box-shadow:
+    0 0 0 1.5px rgba(201, 169, 110, .65),
+    0 24px 50px -18px rgba(138, 75, 90, .26),
+    0 4px 14px rgba(120, 80, 60, .08);
+}
+
+/* the gold hairline, a little inside the edge, following the arch */
+.rsvp__card::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgba(201, 169, 110, .7);
+  border-radius: 221px 221px 15px 15px;
+  pointer-events: none;
+}
+
+/* a pearl at the crown of the arch */
+.rsvp__card::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0, var(--pearl) 35%, var(--pearl-shade) 100%);
+  box-shadow: 0 1px 3px rgba(107, 90, 85, .35);
+}
+
+.rsvp__form[hidden],
+.rsvp__done[hidden],
+.rsvp__field[hidden] { display: none; }
+
+.rsvp__intro {
+  max-width: 23ch;
+  margin: 0 auto 26px;
+  text-wrap: balance;
+  font: italic 400 18px/1.4 var(--serif);
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.rsvp__field {
+  min-width: 0;
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+}
+
+.rsvp__label {
+  display: block;
+  margin: 0 0 7px;
+  padding: 0;
+  font: 600 12px/1.4 var(--serif);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.rsvp__label span {
+  letter-spacing: .05em;
+  text-transform: none;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.rsvp__input {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--field-line);
+  border-radius: 12px;
+  background: var(--field);
+  font: 400 17px/1.35 var(--serif);
+  font-variant-numeric: lining-nums;
+  color: var(--text);
+  transition: border-color .2s ease, box-shadow .2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.rsvp__input::placeholder { color: #b09682; }
+
+.rsvp__input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, .22);
+}
+
+textarea.rsvp__input { min-height: 92px; resize: vertical; }
+
+/* the two answers, side by side; the one chosen is filled in sage */
+.rsvp__choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.rsvp__choice {
+  min-height: 48px;
+  padding: 10px 8px;
+  border: 1px solid var(--field-line);
+  border-radius: 999px;
+  background: var(--field);
+  font: 600 15px/1.2 var(--serif);
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+
+.rsvp__choice[aria-pressed="true"] {
+  border-color: var(--sage-700);
+  background: var(--sage-700);
+  color: var(--ivory);
+}
+
+.rsvp__choice:focus-visible,
+.rsvp__step:focus-visible,
+.rsvp__send:focus-visible,
+.rsvp__again:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.rsvp__stepper {
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  gap: 8px;
+  align-items: center;
+}
+
+.rsvp__step {
+  height: 48px;
+  border: 1px solid var(--field-line);
+  border-radius: 50%;
+  background: var(--field);
+  font: 400 24px/1 var(--serif);
+  color: var(--gold-text);
+  cursor: pointer;
+}
+
+.rsvp__count {
+  text-align: center;
+  font-size: 20px;
+  -moz-appearance: textfield;
+}
+
+.rsvp__count::-webkit-outer-spin-button,
+.rsvp__count::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.rsvp__send {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 26px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #6b7d52, var(--sage-700));
+  box-shadow: 0 10px 22px -10px rgba(63, 74, 51, .7), inset 0 1px 0 rgba(255, 255, 255, .18);
+  font: 600 14px/1 var(--serif);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  cursor: pointer;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.rsvp__send:active { transform: scale(.98); }
+.rsvp__send:disabled { opacity: .7; cursor: default; }
+
+/* after sending: a heart, the guest's name and a way back */
+.rsvp__done {
+  padding: 6px 0 4px;
+  text-align: center;
+  outline: none;
+}
+
+.rsvp__heart {
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 10px;
+  fill: #e7b7b0;
+  stroke: var(--rose);
+  stroke-width: 1;
+}
+
+.rsvp__done-title {
+  margin: 0;
+  font: 400 clamp(34px, 9vw, 42px)/1.15 var(--script);
+  color: var(--rose);
+}
+
+.rsvp__done-note {
+  margin: 10px auto 0;
+  max-width: 30ch;
+  font: italic 400 18px/1.45 var(--serif);
+  color: var(--text);
+}
+
+.rsvp__again {
+  margin-top: 20px;
+  padding: 6px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--gold);
+  background: none;
+  font: 600 13px/1.4 var(--serif);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+  cursor: pointer;
+}
+
+.rsvp__done:not([hidden]) { animation: fade .6s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rsvp__done:not([hidden]) { animation: none; }
+  .rsvp__send { transition: none; }
+}
+
+
+/* 14. Thank you ----------------------------------------------------------- */
+
+/* The last page: the rose terrace (thanks-garden.webp, 941 × 1672), always
+   a screen tall and standing on the section's floor, so the fountain and the
+   petal path are never cut. On a phone it is wider than the screen and its
+   edges are trimmed; on a wide screen its edges melt into a wash of its
+   own peach sky. The top fades into the wallpaper, so the page runs on into the
+   terrace's peach sky without a seam. The words sit in that sky, between
+   the cypresses and above the fountain (the open part, about 10% to 64% of
+   the picture's height). */
+.thanks {
+  --gold: #c9a96e;
+  --gold-text: #8f6f3c;
+  --rose: #8a4b5a;
+  --text: #54443f;
+  --pearl: #fffdf8;
+  --pearl-shade: #e9dccb;
+
+  position: relative;
+  height: max(100vh, 600px);
+  height: var(--thanks-h);
+  /* tuck the clear, wallpaper-coloured top up under the RSVP's foot, so the
+     two sections share one ground and the words follow on closely */
+  margin-top: -6vh;
+  margin-top: calc(var(--thanks-h) * -.06);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--text);
+}
+
+/* Behind the picture (seen either side of it on a wide screen): the
+   terrace's own peach sky, warming a little towards the floor, and clear at
+   the top so the wallpaper shows through. */
+.thanks__scene {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(rgba(253, 233, 217, 0), rgba(253, 233, 217, .55) 12%, #fde9d9 26%, #fdebdd 55%, #fce8d8);
+}
+
+.thanks__art {
+  /* the top melts into the wallpaper above; the floor runs on into the
+     walkway (the footer), which lays its own fading top over it */
+  --fade-ends: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, .35) 10%, #000 26%);
+
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  display: block;
+  width: auto;
+  max-width: none;
+  height: 100%;
+  aspect-ratio: 941 / 1672;
+  transform: translateX(-50%);
+  -webkit-mask-image: var(--fade-ends);
+  mask-image: var(--fade-ends);
+}
+
+/* wider than the picture: its edges melt into the peach either side too.
+   main.js decides this from the fixed height (thanks-framed on <html>), so
+   it never flips on and off with the address bar; without main.js the
+   screen's shape decides. */
+.thanks-framed .thanks__art {
+  --fade-sides: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+
+  -webkit-mask-image: var(--fade-ends), var(--fade-sides);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--fade-ends), var(--fade-sides);
+  mask-composite: intersect;
+}
+
+@media (min-aspect-ratio: 941 / 1672) and (max-aspect-ratio: 999 / 1000) {
+  html:not(.js) .thanks__art {
+    --fade-sides: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+
+    -webkit-mask-image: var(--fade-ends), var(--fade-sides);
+    -webkit-mask-composite: source-in;
+    mask-image: var(--fade-ends), var(--fade-sides);
+    mask-composite: intersect;
+  }
+}
+
+/* Wider than tall (a laptop): the wide terrace (1671 × 941) fills the whole
+   page, standing on its floor, so a very wide screen trims sky, never the
+   fountain. Its own sky runs to the edges, so no side fades. */
+@media (min-aspect-ratio: 1 / 1) {
+  .thanks__art {
+    left: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    transform: none;
+    object-fit: cover;
+    object-position: 50% 100%;
+    -webkit-mask-image: var(--fade-ends);
+    -webkit-mask-composite: source-over;
+    mask-image: var(--fade-ends);
+    mask-composite: add;
+  }
+}
+
+/* On a phone the open sky runs from the top down to the fountain's top
+   (about 54% down); the cypresses close in from about 42%. The words stay
+   inside 8.5%–51%, and their sizes follow the screen's height as well as
+   its width, so a short phone gets them a little smaller rather than
+   spilling onto the trees and the fountain. */
+.thanks__words {
+  position: absolute;
+  top: 8.5%;
+  bottom: 49%;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(100vw - 40px, 440px);
+  margin-left: calc(min(100vw - 40px, 440px) / -2);
+  text-align: center;
+}
+
+/* a soft ivory light behind the words */
+.thanks__words::before {
+  content: "";
+  position: absolute;
+  inset: -6% -14%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(255, 250, 242, .62), rgba(255, 250, 242, 0));
+}
+
+.thanks__words > * { margin: 0; }
+
+.thanks__kicker {
+  padding-left: .3em;
+  font: 600 13px/1.4 var(--serif);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.thanks__title {
+  margin-top: 6px;
+  font: 400 clamp(40px, min(13vw, calc(var(--thanks-h) * .082)), 64px)/1.1 var(--script);
+  color: var(--rose);
+  text-shadow: 0 2px 14px rgba(255, 248, 236, .9);
+}
+
+.thanks__words .functions__divider { margin: clamp(8px, calc(var(--thanks-h) * .014), 14px) auto 0; }
+
+.thanks__message {
+  max-width: 36ch;
+  margin-top: clamp(10px, calc(var(--thanks-h) * .018), 20px);
+  font: 500 clamp(15px, 4vw, 16px)/1.55 var(--serif);
+  letter-spacing: .01em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.thanks__sign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(12px, calc(var(--thanks-h) * .024), 28px);
+}
+
+.thanks__with {
+  font: italic 400 16px/1.3 var(--serif);
+  color: var(--ink-soft);
+}
+
+.thanks__names {
+  margin-top: 6px;
+  padding: 0 .1em;
+  font: 400 clamp(30px, min(9.5vw, calc(var(--thanks-h) * .054)), 42px)/1.15 var(--script);
+  color: var(--sage-700);
+  text-shadow: 0 2px 12px rgba(255, 248, 236, .9);
+}
+
+.thanks__families {
+  margin-top: 6px;
+  font: 500 15px/1.4 var(--serif);
+  color: var(--ink-soft);
+}
+
+.thanks__tag {
+  margin-top: 22px;
+  padding-left: .25em;
+  font: 400 12px/1.4 var(--caps);
+  letter-spacing: .25em;
+  color: var(--gold-text);
+}
+
+/* a phone keeps the words clear of the trees by leaving out the tag; a tall
+   tablet has room for it */
+@media (max-aspect-ratio: 1 / 1) and (max-height: 900px) {
+  .thanks__tag { display: none; }
+}
+
+/* On the wide terrace the fountain rises into the middle of the sky (its
+   top about 55% down), so the words sit higher and the message runs wider
+   and shorter, ending above the fountain. */
+@media (min-aspect-ratio: 1 / 1) {
+  .thanks__words {
+    top: 4%;
+    bottom: 52%;
+    width: min(100vw - 48px, 640px);
+    margin-left: calc(min(100vw - 48px, 640px) / -2);
+  }
+
+  .thanks__title { margin-top: 6px; font-size: clamp(48px, 7.5vh, 66px); }
+  .thanks__message { max-width: 44ch; margin-top: 16px; }
+  .thanks__sign { margin-top: 18px; }
+  .thanks__names { font-size: clamp(32px, 5vh, 42px); }
+  .thanks__tag { margin-top: 14px; }
+}
+
+@media (min-aspect-ratio: 1 / 1) and (max-height: 860px) {
+  .thanks__tag { display: none; }
+}
+
+/* the gold motes of the opening, drifting up over the terrace while it is
+   on screen (main.js) */
+.thanks .motes { z-index: 1; }
+.thanks:not(.is-offscreen) .motes i { animation-play-state: running; }
+
+/* The words arrive one line after another (main.js numbers them into --i),
+   as the invitation's arch does. */
+.js .thanks__words > * {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
+  transition-delay: calc(.25s + var(--i, 0) * .14s);
+}
+
+.js .thanks__words.is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Rose petals falling over the terrace, each on its own drift, sway and
+   spin. Running only while the section is on screen. */
+.thanks__petals {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.thanks__petals i {
+  position: absolute;
+  top: -3%;
+  left: var(--x);
+  width: var(--w);
+  height: calc(var(--w) * 1.2);
+  border-radius: 80% 0 80% 0;
+  background: linear-gradient(135deg, #f1a9b4, #fbdcdc 70%);
+  box-shadow: inset -1px -1px 2px rgba(201, 110, 130, .25);
+  opacity: 0;
+  animation: petal-fall var(--t) linear var(--d) infinite;
+  animation-play-state: paused;
+}
+
+.thanks:not(.is-offscreen) .thanks__petals i { animation-play-state: running; }
+
+.thanks__petals i:nth-child(1)  { --x: 8%;  --w: 9px;  --t: 13s; --d: 0s;    --sway: 26px;  --r: 320deg; }
+.thanks__petals i:nth-child(2)  { --x: 22%; --w: 7px;  --t: 16s; --d: 3.5s;  --sway: -22px; --r: -280deg; }
+.thanks__petals i:nth-child(3)  { --x: 35%; --w: 10px; --t: 12s; --d: 7s;    --sway: 30px;  --r: 400deg; }
+.thanks__petals i:nth-child(4)  { --x: 47%; --w: 8px;  --t: 15s; --d: 1.8s;  --sway: -28px; --r: -360deg; }
+.thanks__petals i:nth-child(5)  { --x: 59%; --w: 11px; --t: 14s; --d: 9.5s;  --sway: 24px;  --r: 300deg; }
+.thanks__petals i:nth-child(6)  { --x: 71%; --w: 7px;  --t: 17s; --d: 5s;    --sway: -20px; --r: -420deg; }
+.thanks__petals i:nth-child(7)  { --x: 83%; --w: 9px;  --t: 13.5s; --d: 2.6s; --sway: 26px; --r: 340deg; }
+.thanks__petals i:nth-child(8)  { --x: 93%; --w: 8px;  --t: 15.5s; --d: 11s; --sway: -24px; --r: -300deg; }
+.thanks__petals i:nth-child(9)  { --x: 15%; --w: 8px;  --t: 14.5s; --d: 12.5s; --sway: 22px; --r: 380deg; }
+.thanks__petals i:nth-child(10) { --x: 52%; --w: 10px; --t: 16.5s; --d: 14s; --sway: -30px; --r: -340deg; }
+.thanks__petals i:nth-child(11) { --x: 77%; --w: 7px;  --t: 12.5s; --d: 6.2s; --sway: 20px;  --r: 360deg; }
+.thanks__petals i:nth-child(12) { --x: 40%; --w: 9px;  --t: 18s; --d: 15.5s; --sway: -26px; --r: -380deg; }
+
+@keyframes petal-fall {
+  0%   { opacity: 0;   transform: translate3d(0, 0, 0) rotate(0deg); }
+  8%   { opacity: .9; }
+  25%  { transform: translate3d(var(--sway), calc(var(--thanks-h) * .26), 0) rotate(calc(var(--r) * .25)); }
+  50%  { transform: translate3d(calc(var(--sway) * -.6), calc(var(--thanks-h) * .52), 0) rotate(calc(var(--r) * .5)); }
+  75%  { transform: translate3d(var(--sway), calc(var(--thanks-h) * .78), 0) rotate(calc(var(--r) * .75)); }
+  90%  { opacity: .8; }
+  100% { opacity: 0;   transform: translate3d(0, calc(var(--thanks-h) * 1.04), 0) rotate(var(--r)); }
+}
+
+/* The butterflies (main.js): the celebration cards' three-layer butterfly,
+   set loose. Its place is the flight's translate, measured to the
+   butterfly's centre from the top left corner of its layer: the section
+   for the two round the fountain, the screen for those carrying
+   blessings (.foot__flight). */
+.thanks__sky {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bf-flight.bf-free {
+  --bf-r: 0deg;
+  top: 0;
+  left: 0;
+  opacity: 1;
+}
+
+.thanks.is-offscreen .bf-free * { animation-play-state: paused; }
+
+/* The foot of the page: the walkway running on from the terrace's floor
+   (thanks-walk.webp), at least as tall as the picture is at full width,
+   with "Send a blessing", the date, place and credit standing on its path
+   and room left at the bottom for the music button. It overlaps the
+   terrace by 28px, where its top fades in over the terrace's floor. */
+.foot {
+  --gold-text: #8f6f3c;
+  --rose: #8a4b5a;
+  --text: #54443f;
+  --pearl: #fffdf8;
+  --pearl-shade: #e9dccb;
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vw * 521 / 1671);
+  margin-top: -28px;
+  padding: 72px 24px calc(92px + env(safe-area-inset-bottom));
+  overflow: hidden;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+/* the walkway: filling the footer, its top edge always shown (where it
+   meets the terrace), the sides and the bottom trimmed as needed */
+.foot__art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+  -webkit-mask-image: linear-gradient(transparent, #000 28px);
+  mask-image: linear-gradient(transparent, #000 28px);
+}
+
+/* Taller than wide (a phone, a tablet held upright): the terrace above is
+   the tall picture, a screen high, so the walkway must be drawn at that
+   same scale or its tiles and petals jump to twice the size at the seam.
+   At the terrace's scale the walkway is as wide as the terrace is tall
+   (1671 px against 1672), so it is laid at that width, centred, its top
+   fading in over the terrace's floor and its foot fading into the warm
+   floor colour, on which the rest of the footer stands. Where the terrace
+   melts into peach at its sides (a screen wider than the tall picture),
+   the walkway does the same. */
+@media not all and (min-aspect-ratio: 1 / 1) {
+  .foot {
+    --art-w: calc(var(--thanks-h) * 941 / 1672);
+
+    padding-top: 60px;
+    background:
+      linear-gradient(90deg,
+        #fce8d8 calc(50% - var(--art-w) / 2),
+        #f9d6b8 calc(50% - var(--art-w) * .43),
+        #f9d6b8 calc(50% + var(--art-w) * .43),
+        #fce8d8 calc(50% + var(--art-w) / 2))
+      0 28px / 100% calc(100% - 28px) no-repeat;
+  }
+
+  .foot__art {
+    --fade-ends: linear-gradient(transparent, #000 28px, #000 60%, transparent);
+
+    top: 0;
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    width: calc(var(--thanks-h) * 1671 / 1672);
+    max-width: none;
+    height: auto;
+    object-fit: fill;
+    transform: translateX(-50%);
+    -webkit-mask-image: var(--fade-ends);
+    mask-image: var(--fade-ends);
+  }
+}
+
+/* the terrace's width is 56.28% of the walkway's; thanks-framed as on the
+   terrace above */
+.thanks-framed .foot__art {
+  --fade-sides: linear-gradient(90deg, transparent 21.86%, #000 25.8%, #000 74.2%, transparent 78.14%);
+
+  -webkit-mask-image: var(--fade-ends), var(--fade-sides);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--fade-ends), var(--fade-sides);
+  mask-composite: intersect;
+}
+
+@media (min-aspect-ratio: 941 / 1672) and (max-aspect-ratio: 999 / 1000) {
+  html:not(.js) .foot__art {
+    --fade-sides: linear-gradient(90deg, transparent 21.86%, #000 25.8%, #000 74.2%, transparent 78.14%);
+
+    -webkit-mask-image: var(--fade-ends), var(--fade-sides);
+    -webkit-mask-composite: source-in;
+    mask-image: var(--fade-ends), var(--fade-sides);
+    mask-composite: intersect;
+  }
+}
+
+/* a soft ivory light on the path behind the words */
+.foot::before {
+  content: "";
+  position: absolute;
+  top: 8%;
+  bottom: 4%;
+  left: 50%;
+  z-index: -1;
+  width: min(100%, 620px);
+  transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(255, 249, 241, .78), rgba(255, 249, 241, .4) 60%, rgba(255, 249, 241, 0));
+  pointer-events: none;
+}
+
+.foot__wish,
+.foot > p { text-shadow: 0 1px 10px rgba(255, 248, 238, .95); }
+
+:where(.foot) p { margin: 0; }
+
+/* the button needs main.js */
+html:not(.js) .foot__wish { display: none; }
+
+.foot__wish {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.foot__kicker {
+  padding-left: .3em;
+  font: 600 12px/1.4 var(--serif);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.foot__send {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  margin-top: 14px;
+  padding: 12px 26px 12px 20px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fffcf6, #fbeee0);
+  box-shadow:
+    0 12px 26px -12px rgba(138, 75, 90, .5),
+    inset 0 1px 0 #fff,
+    inset 0 0 0 3px rgba(255, 253, 248, .6);
+  font: 600 13px/1 var(--serif);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--sage-700);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s ease;
+}
+
+.foot__send svg {
+  width: 26px;
+  height: 20px;
+  fill: #f6c3c8;
+  stroke: var(--rose);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  overflow: visible;
+}
+
+/* a soft gold ring keeps spreading from the button, asking to be tapped */
+.foot__send::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--gold);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  animation: send-ring 2.8s ease-out infinite;
+}
+
+@keyframes send-ring {
+  0%        { opacity: .75; transform: scale(1); }
+  70%, 100% { opacity: 0; transform: scale(1.12, 1.45); }
+}
+
+.foot__send:active { transform: scale(.96); }
+
+.foot__send:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+/* under the button: what it does, then each blessing as it is sent;
+   two lines tall always, so nothing below moves */
+.foot__note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 30ch;
+  min-height: calc(2 * 1.45em);
+  margin-top: 14px;
+  font: italic 400 18px/1.45 var(--serif);
+  text-wrap: balance;
+  color: var(--text);
+  transition: opacity .3s ease;
+}
+
+.foot__note.is-hidden { opacity: 0; }
+.foot__note.is-blessing { color: var(--rose); }
+
+.foot .functions__divider { margin: 24px auto 20px; }
+
+.foot__when {
+  font: 500 16px/1.5 var(--serif);
+  letter-spacing: .03em;
+  color: var(--ink);
+}
+
+.foot__br { display: none; }
+
+@media (max-width: 480px) {
+  .foot__when span { display: none; }
+  .foot__br { display: inline; }
+}
+
+.foot__made {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font: 600 11px/1 var(--serif);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.foot__made svg {
+  width: 13px;
+  height: 13px;
+  fill: var(--rose);
+}
+
+.foot__credit {
+  margin-top: 10px;
+  font: 400 14px/1.5 var(--serif);
+}
+
+.foot__credit a {
+  font-weight: 600;
+  color: var(--sage-700);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.foot__credit a:hover { border-bottom-color: var(--sage-700); }
+
+/* The butterflies carrying blessings fly over the whole screen, under the
+   music button; a puff of petals leaves the button with each. */
+.foot__flight {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.foot__puff {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 10px;
+  margin: -5px 0 0 -4px;
+  border-radius: 80% 0 80% 0;
+  background: linear-gradient(135deg, #f1a9b4, #fde3e3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thanks__petals { display: none; }
+  .foot__send::after { animation: none; }
+  .js .thanks__words > * { transform: none; transition: opacity .8s ease; transition-delay: 0s; }
+}
+
+/* Scoped Wedding Site Container */
+.wedding-site {
+  color: var(--ink);
+  background: var(--paper) url("https://media.shubhweds.in/template-6/paper-vine.webp") 0 0 / 420px repeat;
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Lightbox Modal */
+.wedding-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(20, 16, 14, 0.94);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.wedding-lightbox.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.wedding-lightbox__close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.wedding-lightbox__close:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}
+.wedding-lightbox__img {
+  max-width: 90vw;
+  max-height: 75vh;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+  border: 2px solid var(--gold-light);
+  object-fit: contain;
+}
+.wedding-lightbox__caption {
+  margin-top: 16px;
+  color: var(--ivory);
+  font-family: var(--caps);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+.wedding-lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.wedding-lightbox__nav:hover {
+  background: rgba(255,255,255,0.3);
+}
+.wedding-lightbox__prev { left: 24px; }
+.wedding-lightbox__next { right: 24px; }
+
+/* Blessing Toast Notification */
+.blessing-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #fff8f0;
+  border: 1.5px solid var(--gold);
+  border-radius: 30px;
+  padding: 12px 24px;
+  box-shadow: 0 10px 30px rgba(84, 68, 63, 0.25);
+  color: var(--text);
+  font-family: var(--caps);
+  font-size: 14px;
+  text-align: center;
+  max-width: 90vw;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.blessing-toast.is-shown {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Confetti particle burst */
+.confetti-particle {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 2px;
+  z-index: 99;
+}
+
+/* Editor Mode & Preview Container Visibility Overrides */
+.is-editor-mode .reveal,
+.is-editor-mode .arch,
+.is-editor-mode .arch > *,
+.is-editor-mode .fn-card,
+.is-editor-mode .fn-card__body > *,
+.is-editor-mode .album__viewer,
+.preview-frame-container .reveal,
+.preview-frame-container .arch,
+.preview-frame-container .arch > *,
+.preview-frame-container .fn-card,
+.preview-frame-container .fn-card__body > *,
+.preview-frame-container .album__viewer {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.is-editor-mode .intro.is-ended .hero__lead,
+.is-editor-mode .intro.is-ended .hero__tag,
+.is-editor-mode .intro.is-ended .hero__vine,
+.is-editor-mode .intro.is-ended .hero__name,
+.is-editor-mode .intro.is-ended .hero__amp,
+.preview-frame-container .intro.is-ended .hero__lead,
+.preview-frame-container .intro.is-ended .hero__tag,
+.preview-frame-container .intro.is-ended .hero__vine,
+.preview-frame-container .intro.is-ended .hero__name,
+.preview-frame-container .intro.is-ended .hero__amp {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+/* Editor door preview pill button */
+.editor-door-toggle {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 100;
+  background: rgba(251, 244, 234, 0.92);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-family: var(--caps);
+  font-size: 11px;
+  color: var(--sage-900);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.editor-door-toggle:hover {
+  background: #fff;
+  color: var(--rose);
+}
+

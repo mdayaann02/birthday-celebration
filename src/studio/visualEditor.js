@@ -335,6 +335,23 @@ export function renderVisualEditor(container, templateId, data, onChange) {
 
   const specificBox = container.querySelector('#templateSpecificFields');
 
+  const isWedding = (templateId === 'wedding_invite' || templateId === 'wedding' || templateId === 'shubh_weds');
+  if (isWedding) {
+    const secBasic = container.querySelector('#secBasicDetails');
+    const secStyling = container.querySelector('#secStyling');
+    const secCountdown = container.querySelector('#secCountdown');
+    const secMusic = container.querySelector('#secMusic');
+    if (secBasic) secBasic.style.display = 'none';
+    if (secStyling) secStyling.style.display = 'none';
+    if (secCountdown) secCountdown.style.display = 'none';
+    if (secMusic) secMusic.style.display = 'none';
+
+    const wrap = container.querySelector('.visual-editor-wrap');
+    if (wrap && specificBox) {
+      wrap.insertBefore(specificBox, wrap.firstChild);
+    }
+  }
+
   if (templateId === 'tree') {
     const treePolaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
       { image: "/images/sunset.jpg", caption: "Our favourite sunset walk 🌅" },
@@ -1147,6 +1164,27 @@ export function renderVisualEditor(container, templateId, data, onChange) {
             </label>
           </div>
         </div>
+
+        <div class="form-group" style="margin-top:14px; margin-bottom:0; border-top:1px dashed rgba(212,175,55,0.3); padding-top:14px;">
+          <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>🎬 Cinema Memory Video (Plays when sitting together)</span>
+            <span style="font-size:11px; color:#f472b6; font-weight:700;">MP4 / WebM</span>
+          </label>
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+            <input type="text" class="form-input" id="edCenterpieceVideo" value="${data.centerpieceVideo || '/video/couple_memories.mp4'}" placeholder="/video/couple_memories.mp4 or direct MP4 URL" style="flex:1;" />
+            <label class="btn-file-upload-sm" title="Upload MP4 Video" style="cursor:pointer; background:linear-gradient(135deg, rgba(212,35,92,0.25), rgba(197,160,89,0.25)); border:1.5px solid #d4af37; color:#f5e6ca; border-radius:8px; padding:8px 12px; display:inline-flex; align-items:center; gap:6px; position:relative; flex-shrink:0; font-size:12px; font-weight:700;">
+              <i data-lucide="film"></i> Upload MP4
+              <input type="file" id="fileUploadMuseumVideo" accept="video/mp4,video/webm,video/*" style="display:none;" />
+            </label>
+          </div>
+          <div id="museumVideoPreviewBox" style="position:relative; width:100%; border-radius:8px; overflow:hidden; background:#0a0808; border:1px solid rgba(212,175,55,0.3);">
+            <video id="museumVideoPreview" src="${data.centerpieceVideo || '/video/couple_memories.mp4'}" controls style="width:100%; max-height:160px; display:block; object-fit:contain; background:#000;"></video>
+          </div>
+          <div style="font-size:11px; color:#94a3b8; margin-top:6px; display:flex; align-items:center; gap:4px;">
+            <i data-lucide="sparkles" style="width:12px; height:12px; color:#d4af37;"></i>
+            <span>This video screens on the grand cinema rotunda wall automatically when both lovers sit together on the gallery bench.</span>
+          </div>
+        </div>
       </div>
 
       <!-- 3. Curated Gallery Artworks -->
@@ -1217,6 +1255,33 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         if (cpThumb) cpThumb.src = res.url;
         emitChange();
       }
+    });
+
+    // Centerpiece couple video upload & change listeners
+    const videoUpload = specificBox.querySelector('#fileUploadMuseumVideo');
+    const edVideoInput = specificBox.querySelector('#edCenterpieceVideo');
+    const videoPreview = specificBox.querySelector('#museumVideoPreview');
+
+    videoUpload?.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const res = await uploadFile(file);
+      if (res.success && res.url) {
+        if (edVideoInput) edVideoInput.value = res.url;
+        if (videoPreview) {
+          videoPreview.src = res.url;
+          videoPreview.load();
+        }
+        emitChange();
+      }
+    });
+
+    edVideoInput?.addEventListener('input', () => {
+      if (videoPreview) {
+        videoPreview.src = edVideoInput.value;
+        videoPreview.load();
+      }
+      emitChange();
     });
 
     // Artworks list upload listeners
@@ -1665,6 +1730,387 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         </div>
       </div>
     `;
+  } else if (templateId === 'wedding_invite' || templateId === 'wedding' || templateId === 'shubh_weds') {
+    const fns = (data.functions && data.functions.length > 0) ? data.functions : [
+      { id: 'haldi', name: 'Haldi', subtitle: 'Mangal Snanam', time: '10:00 AM - 1:00 PM', date: 'Friday, 19th February 2027', venueName: 'Poolside Courtyard', venueAddress: 'The Palace Lawns, Udaipur', mapUrl: 'https://maps.google.com/?q=The+Palace+Lawns+Udaipur', dressCode: 'Shades of Yellow', accent: '#E8B85C', image: 'https://media.shubhweds.in/template-6/function-haldi.webp' },
+      { id: 'mehendi', name: 'Mehendi', subtitle: 'Henna & Melodies', time: '4:00 PM - 8:00 PM', date: 'Friday, 19th February 2027', venueName: 'Garden Terrace', venueAddress: 'The Palace Lawns, Udaipur', mapUrl: 'https://maps.google.com/?q=The+Palace+Lawns+Udaipur', dressCode: 'Greens & Pastels', accent: '#9DAA80', image: 'https://media.shubhweds.in/template-6/function-mehendi.webp' },
+      { id: 'sangeet', name: 'Sangeet', subtitle: 'Music, Dance & Celebration', time: '7:30 PM - 11:30 PM', date: 'Saturday, 20th February 2027', venueName: 'Grand Ballroom', venueAddress: 'The Palace Lawns, Udaipur', mapUrl: 'https://maps.google.com/?q=The+Palace+Lawns+Udaipur', dressCode: 'Indo-Western Glam', accent: '#C78A9A', image: 'https://media.shubhweds.in/template-6/function-sangeet.webp' },
+      { id: 'wedding', name: 'Wedding', subtitle: 'Shubh Vivah', time: '7:00 PM Onwards', date: 'Sunday, 21st February 2027', venueName: 'The Palace Lawns', venueAddress: 'Udaipur, Rajasthan', mapUrl: 'https://maps.google.com/?q=The+Palace+Lawns+Udaipur', dressCode: 'Traditional Ethnic', accent: '#A8485E', image: 'https://media.shubhweds.in/template-6/function-wedding.webp' }
+    ];
+
+    const gal = (data.gallery && data.gallery.length > 0) ? data.gallery : [
+      { src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp', caption: 'Where our journey began', note: 'A serendipitous meeting that turned into a lifetime promise.' },
+      { src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-02.webp', caption: 'Hand in hand towards forever', note: 'Through every sunset, laughter, and adventure.' },
+      { src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-03.webp', caption: 'Our little world of joy', note: 'Every moment with you feels like home.' },
+      { src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-04.webp', caption: 'Forever begins here', note: 'Looking ahead to a lifetime of love and togetherness.' }
+    ];
+
+    const blessingsList = (data.blessings && data.blessings.length > 0) ? data.blessings.join('\n') : [
+      'May you keep choosing each other, every single day.',
+      'Wishing you a lifetime of laughter, harmony and long talks.',
+      'May your home always bloom with peace and prosperity.',
+      'Two souls, two families, one eternal love story.',
+      'May every tomorrow be sweeter than today.',
+      'Here’s to a blessed lifetime of joy, laughter and togetherness.',
+      'May Lord Ganesha shower your union with unending happiness.',
+      'Blessings, divine light and boundless love to you both.'
+    ].join('\n');
+
+    let rsvpsCount = 0;
+    try {
+      const stored = JSON.parse(localStorage.getItem('shubh_wedding_rsvps') || '[]');
+      rsvpsCount = stored.length;
+    } catch (e) {}
+
+    specificBox.innerHTML = `
+      <div class="section-title">💍 Royal Wedding Invitation Settings (ShubhWeds)</div>
+
+      <!-- 1. Couple & Lineage -->
+      <div style="background:rgba(168,72,94,0.08); border:1px solid rgba(168,72,94,0.22); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#a8485e; font-size:14px; font-weight:700; margin-bottom:10px;">👑 Groom, Bride & Family Lineage</h4>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Groom's Name</label>
+            <input type="text" class="form-input" id="edWeddingGroom" value="${data.groomName || 'Vihaan'}" placeholder="Groom's Name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Groom's Parents (S/O)</label>
+            <input type="text" class="form-input" id="edWeddingGroomParents" value="${data.groomParents || 'S/O Shri Rajiv Kapoor & Smt. Meera Kapoor'}" placeholder="S/O Parents' Names" />
+          </div>
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Bride's Name</label>
+            <input type="text" class="form-input" id="edWeddingBride" value="${data.brideName || 'Anaya'}" placeholder="Bride's Name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bride's Parents (D/O)</label>
+            <input type="text" class="form-input" id="edWeddingBrideParents" value="${data.brideParents || 'D/O Shri Arvind Shah & Smt. Kavita Shah'}" placeholder="D/O Parents' Names" />
+          </div>
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Families Signoff Line</label>
+            <input type="text" class="form-input" id="edWeddingFamiliesLine" value="${data.familiesLine || 'the Kapoor and Shah families'}" placeholder="e.g. the Kapoor and Shah families" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Wedding Hashtag</label>
+            <input type="text" class="form-input" id="edWeddingHashtag" value="${data.hashtag || '#VihaanWedsAnaya'}" placeholder="#VihaanWedsAnaya" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Sacred Invocation & Shloka -->
+      <div style="background:rgba(201,169,110,0.1); border:1px solid rgba(201,169,110,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#8f6f3c; font-size:14px; font-weight:700; margin-bottom:10px;">🕉️ Sacred Ganesh Invocation & Shloka</h4>
+        <div class="form-group">
+          <label class="form-label">Invocation Line</label>
+          <input type="text" class="form-input" id="edWeddingInvocation" value="${data.invocation || '॥ श्री गणेशाय नमः ॥'}" />
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Sanskrit Shloka Line 1</label>
+            <input type="text" class="form-input" id="edWeddingShloka1" value="${data.shlokaLine1 || 'वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sanskrit Shloka Line 2</label>
+            <input type="text" class="form-input" id="edWeddingShloka2" value="${data.shlokaLine2 || 'निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥'}" />
+          </div>
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Blessing Intro</label>
+            <input type="text" class="form-input" id="edWeddingBlessingIntro" value="${data.blessingIntro || 'With the blessings of Lord Ganesha'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Invitation Kicker</label>
+            <input type="text" class="form-input" id="edWeddingInvitationKicker" value="${data.invitationKicker || 'we request the honour of your presence at the wedding celebration of'}" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Wedding Date, Venue & Save the Date -->
+      <div style="background:rgba(85,101,63,0.08); border:1px solid rgba(85,101,63,0.22); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#55653f; font-size:14px; font-weight:700; margin-bottom:10px;">📅 Wedding Muhurat, Venue & Scratch Card</h4>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Muhurat ISO Date & Time (for Countdown & .ics)</label>
+            <input type="datetime-local" class="form-input" id="edWeddingEventDate" value="${(data.eventDate || '2027-02-13T18:00').substring(0, 16)}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Wedding Display Date</label>
+            <input type="text" class="form-input" id="edWeddingDateDisplay" value="${data.weddingDateDisplay || 'Saturday, 13th February 2027'}" />
+          </div>
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Ceremony Title</label>
+            <input type="text" class="form-input" id="edWeddingCeremonyTitle" value="${data.ceremonyTitle || 'Shubh Vivah'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Venue Name</label>
+            <input type="text" class="form-input" id="edWeddingVenueName" value="${data.venueName || 'The Oberoi Udaivilas'}" />
+          </div>
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Venue City</label>
+            <input type="text" class="form-input" id="edWeddingVenueCity" value="${data.venueCity || 'Udaipur, Rajasthan'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Google Maps Directions URL</label>
+            <input type="text" class="form-input" id="edWeddingMapUrl" value="${data.mapUrl || 'https://maps.google.com/?q=The+Oberoi+Udaivilas+Udaipur'}" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Venue Full Address</label>
+          <input type="text" class="form-input" id="edWeddingVenueAddress" value="${data.venueAddress || 'Haridas Ji Ki Magri, Mulla Talai, Udaipur, Rajasthan 313001'}" />
+        </div>
+
+        <div style="font-size:12px; font-weight:700; color:#55653f; margin-top:12px; margin-bottom:6px;">Scratch Card Date Elements:</div>
+        <div class="editor-grid-4" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" style="font-size:10px;">Day</label>
+            <input type="text" class="form-input" id="edWeddingSaveDay" value="${data.saveDateDay || 'Saturday'}" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" style="font-size:10px;">Date Num</label>
+            <input type="text" class="form-input" id="edWeddingSaveNum" value="${data.saveDateNum || '13'}" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" style="font-size:10px;">Month</label>
+            <input type="text" class="form-input" id="edWeddingSaveMonth" value="${data.saveDateMonth || 'February'}" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" style="font-size:10px;">Year</label>
+            <input type="text" class="form-input" id="edWeddingSaveYear" value="${data.saveDateYear || '2027'}" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Wedding Functions & Itinerary -->
+      <div style="background:rgba(232,184,92,0.1); border:1px solid rgba(232,184,92,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <h4 style="color:#b45309; font-size:14px; font-weight:700; margin:0;">✨ Wedding Itinerary & Ceremonies (${fns.length})</h4>
+          <button type="button" id="btnAddWeddingFn" style="background:rgba(245,158,11,0.2); border:1px solid #f59e0b; color:#b45309; padding:4px 10px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer;">
+            + Add Ceremony
+          </button>
+        </div>
+
+        <div id="weddingFnsList">
+          ${fns.map((fn, i) => `
+            <div class="sub-card-editor wedding-fn-card" data-idx="${i}" style="margin-bottom:12px; background:rgba(255,255,255,0.7); border:1px solid rgba(205,177,126,0.5); border-radius:10px; padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:700; font-size:12px; color:var(--text);">Ceremony #${i+1}: ${fn.name}</span>
+                <button type="button" class="btn-del-wedding-fn" data-idx="${i}" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; border-radius:6px; padding:2px 8px; font-size:11px; cursor:pointer;">
+                  <i data-lucide="trash-2"></i> Delete
+                </button>
+              </div>
+
+              <div class="editor-grid-2">
+                <div class="form-group" style="margin-bottom:6px;">
+                  <label class="form-label" style="font-size:10px;">Event Name</label>
+                  <input type="text" class="form-input wfn-name" value="${fn.name}" placeholder="e.g. Haldi, Sangeet" />
+                </div>
+                <div class="form-group" style="margin-bottom:6px;">
+                  <label class="form-label" style="font-size:10px;">Subtitle</label>
+                  <input type="text" class="form-input wfn-sub" value="${fn.subtitle || ''}" placeholder="e.g. Mangal Snanam" />
+                </div>
+              </div>
+
+              <div class="editor-grid-2">
+                <div class="form-group" style="margin-bottom:6px;">
+                  <label class="form-label" style="font-size:10px;">Date</label>
+                  <input type="text" class="form-input wfn-date" value="${fn.date}" placeholder="Friday, 19th February 2027" />
+                </div>
+                <div class="form-group" style="margin-bottom:6px;">
+                  <label class="form-label" style="font-size:10px;">Time</label>
+                  <input type="text" class="form-input wfn-time" value="${fn.time}" placeholder="10:00 AM - 1:00 PM" />
+                </div>
+              </div>
+
+              <div class="editor-grid-2">
+                <div class="form-group" style="margin-bottom:6px;">
+                  <label class="form-label" style="font-size:10px;">Venue Name</label>
+                  <input type="text" class="form-input wfn-venue" value="${fn.venueName}" placeholder="Poolside Courtyard" />
+                </div>
+                <div class="form-group" style="margin-bottom:6px;">
+                  <label class="form-label" style="font-size:10px;">Dress Code</label>
+                  <input type="text" class="form-input wfn-dress" value="${fn.dressCode || ''}" placeholder="Shades of Yellow" />
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:6px;">
+                <label class="form-label" style="font-size:10px;">Venue Full Address</label>
+                <input type="text" class="form-input wfn-address" value="${fn.venueAddress || ''}" placeholder="The Palace Lawns, Udaipur" />
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" style="font-size:10px;">Ceremony Photo URL (or tap to upload)</label>
+                <div style="display:flex; gap:6px;">
+                  <input type="text" class="form-input wfn-img" value="${fn.image}" />
+                  <label class="btn-thumb-upload" title="Upload photo" style="cursor:pointer; padding:6px 10px; background:#fff; border:1px solid #ccc; border-radius:6px;">
+                    <i data-lucide="camera"></i>
+                    <input type="file" class="file-upload-wedding-fn" data-idx="${i}" accept="image/*" style="display:none;" />
+                  </label>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- 5. Couple Moments Gallery -->
+      <div style="background:rgba(205,177,126,0.12); border:1px solid rgba(205,177,126,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#8f6f3c; font-size:14px; font-weight:700; margin-bottom:10px;">📸 Romantic Moments Gallery (4 Photos)</h4>
+        <div id="weddingGalList">
+          ${gal.map((g, i) => `
+            <div class="sub-card-editor wedding-gal-card" data-idx="${i}" style="margin-bottom:10px; background:rgba(255,255,255,0.7); border:1px solid rgba(205,177,126,0.4); border-radius:8px; padding:10px;">
+              <div style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
+                <img src="${g.src}" style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid #cdb17e;" id="wgalThumb_${i}" onerror="this.src='https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp'\" />
+                <div style="flex:1;">
+                  <input type="text" class="form-input wgal-caption" value="${g.caption || ''}" placeholder="Caption (e.g. Where it all began)" style="font-size:12px; margin-bottom:4px;" />
+                  <input type="text" class="form-input wgal-src" value="${g.src}" placeholder="Image URL" style="font-size:11px;" />
+                </div>
+                <label class="btn-thumb-upload" title="Upload photo" style="cursor:pointer; padding:8px 10px; background:#fff; border:1px solid #ccc; border-radius:6px;">
+                  <i data-lucide="camera"></i>
+                  <input type="file" class="file-upload-wedding-gal" data-idx="${i}" accept="image/*" style="display:none;" />
+                </label>
+              </div>
+              <input type="text" class="form-input wgal-note" value="${g.note || ''}" placeholder="Romantic memory note (optional)" style="font-size:11px;" />
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- 6. RSVP, Blessings & Guest Responses -->
+      <div style="background:rgba(168,72,94,0.08); border:1px solid rgba(168,72,94,0.22); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#a8485e; font-size:14px; font-weight:700; margin-bottom:10px;">💌 RSVP & Wedding Blessings</h4>
+        <div class="form-group">
+          <label class="form-label">RSVP Reply-by Deadline</label>
+          <input type="text" class="form-input" id="edWeddingRsvpDeadline" value="${data.rsvpDeadline || 'Kindly reply by 10 January 2027'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Family Gratitude Message</label>
+          <textarea rows="2" class="form-textarea" id="edWeddingThanksMessage">${data.thanksMessage || 'for your love and blessings. Our celebration will not be complete without you.'}</textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Wedding Blessings (One quote per line for butterflies)</label>
+          <textarea rows="5" class="form-textarea" id="edWeddingBlessings">${blessingsList}</textarea>
+        </div>
+
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span style="font-weight:700; font-size:13px; color:var(--text);">Guest RSVPs Collected:</span>
+            <span style="margin-left:6px; font-size:13px; font-weight:800; color:#a8485e;">${rsvpsCount} response${rsvpsCount !== 1 ? 's' : ''}</span>
+          </div>
+          <button type="button" id="btnViewWeddingRsvps" style="background:rgba(168,72,94,0.12); border:1px solid #a8485e; color:#a8485e; border-radius:6px; padding:4px 12px; font-size:11px; font-weight:700; cursor:pointer;">
+            View Guest List
+          </button>
+        </div>
+      </div>
+
+      <!-- 7. Royal Wedding Soundtrack -->
+      <div style="background:rgba(201,169,110,0.1); border:1px solid rgba(201,169,110,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#8f6f3c; font-size:14px; font-weight:700; margin-bottom:10px;">🎵 Royal Shehnai Soundtrack</h4>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Audio Track URL (Sunehra Shehnai)</label>
+          <input type="text" class="form-input" id="edWeddingAudioSrc" value="${data.audioSrc || 'https://media.shubhweds.in/videos/sunehra.mp3'}" placeholder="https://media.shubhweds.in/videos/sunehra.mp3" />
+        </div>
+      </div>
+    `;
+
+    // View RSVPs Modal/Alert
+    container.querySelector('#btnViewWeddingRsvps')?.addEventListener('click', () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem('shubh_wedding_rsvps') || '[]');
+        if (stored.length === 0) {
+          alert('No guest RSVPs received yet! Once guests submit their RSVP on your wedding invitation, they will appear right here.');
+        } else {
+          const summary = stored.map((r, i) => `${i+1}. ${r.fullName} (${r.phone || 'No phone'}) - ${r.attending ? '✅ Attending with ' + r.guestsCount + ' guests' : '❌ Regrets'}${r.message ? ' | Wish: "' + r.message + '"' : ''}`).join('\n\n');
+          alert(`=== GUEST RSVPS (${stored.length}) ===\n\n${summary}`);
+        }
+      } catch (e) {
+        alert('Could not read guest RSVPs.');
+      }
+    });
+
+    // Add ceremony button
+    container.querySelector('#btnAddWeddingFn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const currentFns = extractWeddingFns();
+      currentFns.push({
+        id: 'fn_' + Date.now(),
+        name: 'Reception',
+        subtitle: 'Dinner & Celebrations',
+        date: 'Monday, 22nd February 2027',
+        time: '7:30 PM Onwards',
+        venueName: 'The Palace Gardens',
+        venueAddress: 'Udaipur, Rajasthan',
+        dressCode: 'Black Tie / Evening Glam',
+        accent: '#a8485e',
+        image: 'https://media.shubhweds.in/template-6/function-wedding.webp',
+        mapUrl: ''
+      });
+      data.functions = currentFns;
+      renderVisualEditor(container, templateId, data, onChange);
+      emitChange();
+    });
+
+    // Delete ceremony button
+    container.querySelectorAll('.btn-del-wedding-fn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        const currentFns = extractWeddingFns();
+        if (idx >= 0 && idx < currentFns.length) {
+          currentFns.splice(idx, 1);
+          data.functions = currentFns;
+          renderVisualEditor(container, templateId, data, onChange);
+          emitChange();
+        }
+      });
+    });
+
+    // Ceremony photo uploads
+    container.querySelectorAll('.file-upload-wedding-fn').forEach(inp => {
+      inp.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const idx = inp.getAttribute('data-idx');
+        const card = container.querySelector(`.wedding-fn-card[data-idx="${idx}"]`);
+        const textInput = card ? card.querySelector('.wfn-img') : null;
+        if (textInput) textInput.value = 'Uploading photo...';
+        const res = await uploadFile(file);
+        if (res.success && res.url) {
+          if (textInput) textInput.value = res.url;
+          emitChange();
+        } else {
+          alert(res.error || 'Upload failed.');
+        }
+      });
+    });
+
+    // Gallery photo uploads
+    container.querySelectorAll('.file-upload-wedding-gal').forEach(inp => {
+      inp.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const idx = inp.getAttribute('data-idx');
+        const card = container.querySelector(`.wedding-gal-card[data-idx="${idx}"]`);
+        const textInput = card ? card.querySelector('.wgal-src') : null;
+        const thumb = container.querySelector(`#wgalThumb_${idx}`);
+        if (textInput) textInput.value = 'Uploading photo...';
+        const res = await uploadFile(file);
+        if (res.success && res.url) {
+          if (textInput) textInput.value = res.url;
+          if (thumb) thumb.src = res.url;
+          emitChange();
+        } else {
+          alert(res.error || 'Upload failed.');
+        }
+      });
+    });
   }
 
   // Bind song preset buttons
@@ -2035,6 +2481,51 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     });
   });
 
+  
+  function extractWeddingFns() {
+    const cards = container.querySelectorAll('.wedding-fn-card');
+    if (cards.length === 0) return data.functions || [];
+    const origFns = data.functions || [];
+    const list = [];
+    cards.forEach((c, idx) => {
+      const orig = origFns[idx] || {};
+      const fullDate = c.querySelector('.wfn-date')?.value || orig.date || '';
+      let weekday = orig.weekday || '';
+      if (!weekday && fullDate.includes(',')) {
+        weekday = fullDate.split(',')[0].trim();
+      }
+      list.push({
+        id: orig.id || ('fn_' + (idx + 1)),
+        name: c.querySelector('.wfn-name')?.value || orig.name || 'Ceremony',
+        subtitle: c.querySelector('.wfn-sub')?.value || orig.subtitle || '',
+        weekday: weekday,
+        date: fullDate,
+        time: c.querySelector('.wfn-time')?.value || orig.time || '',
+        venueName: c.querySelector('.wfn-venue')?.value || orig.venueName || '',
+        venueAddress: c.querySelector('.wfn-address')?.value || orig.venueAddress || '',
+        dressCode: c.querySelector('.wfn-dress')?.value || orig.dressCode || '',
+        image: c.querySelector('.wfn-img')?.value || orig.image || 'https://media.shubhweds.in/template-6/function-wedding.webp',
+        accent: orig.accent || '#a8485e',
+        mapUrl: orig.mapUrl || ''
+      });
+    });
+    return list;
+  }
+
+  function extractWeddingGal() {
+    const cards = container.querySelectorAll('.wedding-gal-card');
+    if (cards.length === 0) return data.gallery || [];
+    const list = [];
+    cards.forEach(c => {
+      list.push({
+        src: c.querySelector('.wgal-src')?.value || 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp',
+        caption: c.querySelector('.wgal-caption')?.value || '',
+        note: c.querySelector('.wgal-note')?.value || ''
+      });
+    });
+    return list;
+  }
+
   // Bind text input listeners
   function emitChange() {
     const updated = { ...data };
@@ -2050,10 +2541,12 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     const elAudSrc = container.querySelector('#edAudioSrc');
     const elPrimaryColor = container.querySelector('#edPrimaryColor');
 
-    if (elRec) updated.recipientName = elRec.value;
-    if (elSend) updated.senderName = elSend.value;
-    if (elHeroT) updated.heroTitle = elHeroT.value;
-    if (elHeroS) updated.heroSubtitle = elHeroS.value;
+    if (!isWedding) {
+      if (elRec) updated.recipientName = elRec.value;
+      if (elSend) updated.senderName = elSend.value;
+      if (elHeroT) updated.heroTitle = elHeroT.value;
+      if (elHeroS) updated.heroSubtitle = elHeroS.value;
+    }
     if (elLock) updated.enableCountdownLock = elLock.checked;
     if (elDate) updated.eventDate = elDate.value;
     if (elPass) updated.passcode = elPass.value;
@@ -2242,6 +2735,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const elMYes = container.querySelector('#edMuseumYesBtn');
       const elCpTitle = container.querySelector('#edCenterpieceTitle');
       const elCpImg = container.querySelector('#edCenterpieceImage');
+      const elCpVideo = container.querySelector('#edCenterpieceVideo');
 
       if (elMTitle) updated.museumTitle = elMTitle.value;
       if (elMSub) updated.museumSubtitle = elMSub.value;
@@ -2252,6 +2746,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (elMYes) updated.proposalYesBtn = elMYes.value;
       if (elCpTitle) updated.centerpieceTitle = elCpTitle.value;
       if (elCpImg) updated.centerpieceImage = elCpImg.value;
+      if (elCpVideo) updated.centerpieceVideo = elCpVideo.value;
 
       const photoRows = container.querySelectorAll('.museum-photo-row');
       if (photoRows.length > 0) {
@@ -2386,6 +2881,69 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           note: p.note
         }));
       }
+    }
+    else if (templateId === 'wedding_invite' || templateId === 'wedding' || templateId === 'shubh_weds') {
+      const elGroom = container.querySelector('#edWeddingGroom');
+      const elGroomParents = container.querySelector('#edWeddingGroomParents');
+      const elBride = container.querySelector('#edWeddingBride');
+      const elBrideParents = container.querySelector('#edWeddingBrideParents');
+      const elFamiliesLine = container.querySelector('#edWeddingFamiliesLine');
+      const elHashtag = container.querySelector('#edWeddingHashtag');
+      const elEventDate = container.querySelector('#edWeddingEventDate');
+      const elDateDisplay = container.querySelector('#edWeddingDateDisplay');
+      const elCeremonyTitle = container.querySelector('#edWeddingCeremonyTitle');
+      const elVenueName = container.querySelector('#edWeddingVenueName');
+      const elVenueCity = container.querySelector('#edWeddingVenueCity');
+      const elVenueAddress = container.querySelector('#edWeddingVenueAddress');
+      const elMapUrl = container.querySelector('#edWeddingMapUrl');
+      const elInvocation = container.querySelector('#edWeddingInvocation');
+      const elShloka1 = container.querySelector('#edWeddingShloka1');
+      const elShloka2 = container.querySelector('#edWeddingShloka2');
+      const elBlessingIntro = container.querySelector('#edWeddingBlessingIntro');
+      const elInvitationKicker = container.querySelector('#edWeddingInvitationKicker');
+      const elSaveDay = container.querySelector('#edWeddingSaveDay');
+      const elSaveNum = container.querySelector('#edWeddingSaveNum');
+      const elSaveMonth = container.querySelector('#edWeddingSaveMonth');
+      const elSaveYear = container.querySelector('#edWeddingSaveYear');
+      const elRsvpDeadline = container.querySelector('#edWeddingRsvpDeadline');
+      const elThanksMessage = container.querySelector('#edWeddingThanksMessage');
+      const elBlessings = container.querySelector('#edWeddingBlessings');
+
+      if (elGroom) updated.groomName = elGroom.value;
+      if (elGroomParents) updated.groomParents = elGroomParents.value;
+      if (elBride) updated.brideName = elBride.value;
+      if (elBrideParents) updated.brideParents = elBrideParents.value;
+      if (elFamiliesLine) updated.familiesLine = elFamiliesLine.value;
+      if (elHashtag) updated.hashtag = elHashtag.value;
+      if (elEventDate) updated.eventDate = elEventDate.value;
+      if (elDateDisplay) updated.weddingDateDisplay = elDateDisplay.value;
+      if (elCeremonyTitle) updated.ceremonyTitle = elCeremonyTitle.value;
+      if (elVenueName) updated.venueName = elVenueName.value;
+      if (elVenueCity) updated.venueCity = elVenueCity.value;
+      if (elVenueAddress) updated.venueAddress = elVenueAddress.value;
+      if (elMapUrl) updated.mapUrl = elMapUrl.value;
+      if (elInvocation) updated.invocation = elInvocation.value;
+      if (elShloka1) updated.shlokaLine1 = elShloka1.value;
+      if (elShloka2) updated.shlokaLine2 = elShloka2.value;
+      if (elBlessingIntro) updated.blessingIntro = elBlessingIntro.value;
+      if (elInvitationKicker) updated.invitationKicker = elInvitationKicker.value;
+      if (elSaveDay) updated.saveDateDay = elSaveDay.value;
+      if (elSaveNum) updated.saveDateNum = elSaveNum.value;
+      if (elSaveMonth) updated.saveDateMonth = elSaveMonth.value;
+      if (elSaveYear) updated.saveDateYear = elSaveYear.value;
+      if (elRsvpDeadline) updated.rsvpDeadline = elRsvpDeadline.value;
+      if (elThanksMessage) updated.thanksMessage = elThanksMessage.value;
+      if (elBlessings) updated.blessings = elBlessings.value.split('\n').map(s => s.trim()).filter(Boolean);
+      const elWeddingAudio = container.querySelector('#edWeddingAudioSrc');
+      if (elWeddingAudio && elWeddingAudio.value.trim()) updated.audioSrc = elWeddingAudio.value.trim();
+
+      updated.recipientName = `${updated.groomName || 'Vihaan'} & ${updated.brideName || 'Anaya'}`;
+      updated.senderName = updated.familiesLine || 'the Kapoor and Shah families';
+
+      const fns = extractWeddingFns();
+      if (Array.isArray(fns) && fns.length > 0) updated.functions = fns;
+      const gal = extractWeddingGal();
+      if (Array.isArray(gal) && gal.length > 0) updated.gallery = gal;
     }
 
     onChange(updated);

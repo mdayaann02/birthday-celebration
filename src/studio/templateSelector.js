@@ -8,6 +8,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
 
   const categories = [
     { id: 'all', icon: 'sparkles', label: `All (${Object.keys(TEMPLATES).length})` },
+    { id: 'wedding', icon: 'gem', label: 'Wedding 💍' },
     { id: 'museum', icon: 'landmark', label: '3D Museum' },
     { id: 'romance', icon: 'heart', label: 'Romance' },
     { id: 'birthday', icon: 'calendar', label: 'Birthday' },
@@ -15,6 +16,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
   ];
 
   function getTemplateCategory(tid) {
+    if (['wedding_invite', 'wedding', 'shubh_weds'].includes(tid)) return 'wedding';
     if (['our_museum'].includes(tid)) return 'museum';
     if (['long_romance', 'tree', 'blossom', 'bloom_reveal'].includes(tid)) return 'romance';
     if (['birthday', 'birthday_paigaam', 'paigaam'].includes(tid)) return 'birthday';

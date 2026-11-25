@@ -110,6 +110,7 @@ export class MuseumMultiplayer {
         z: data.z || 0,
         rotY: data.rotY || 0,
         isWalking: Boolean(data.isWalking),
+        isSeated: Boolean(data.isSeated),
         lastSeen: Date.now()
       });
       this.onPeerUpdate(new Map(this.peers));
@@ -185,11 +186,11 @@ export class MuseumMultiplayer {
     }
   }
 
-  sendMove(x, y, z, rotY, isWalking) {
+  sendMove(x, y, z, rotY, isWalking, isSeated = false) {
     this.currentState = {
       name: this.userProfile.name,
       gender: this.userProfile.gender,
-      x, y, z, rotY, isWalking
+      x, y, z, rotY, isWalking, isSeated
     };
 
     const payload = {

@@ -20,10 +20,11 @@ const PORT = process.env.PORT || 3000;
 const uploadsDir = path.join(rootDir, 'uploads');
 const imagesDir = path.join(uploadsDir, 'images');
 const audioDir = path.join(uploadsDir, 'audio');
+const videosDir = path.join(uploadsDir, 'videos');
 const dataDir = path.join(rootDir, 'data');
 const dbFilePath = path.join(dataDir, 'sites.json');
 
-[uploadsDir, imagesDir, audioDir, dataDir].forEach(dir => {
+[uploadsDir, imagesDir, audioDir, videosDir, dataDir].forEach(dir => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
@@ -56,6 +57,8 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (file.mimetype.startsWith('audio/') || file.originalname.match(/\.(mp3|wav|m4a|aac|ogg)$/i)) {
       cb(null, audioDir);
+    } else if (file.mimetype.startsWith('video/') || file.originalname.match(/\.(mp4|webm|mov|mkv)$/i)) {
+      cb(null, videosDir);
     } else {
       cb(null, imagesDir);
     }
@@ -70,7 +73,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB max for high quality music/photos
+  limits: { fileSize: 100 * 1024 * 1024 } // 100MB max for HD video / high quality music
 });
 
 // Middleware
@@ -217,14 +220,15 @@ app.get('/api/fetch-playlist', async (req, res) => {
   });
 });
 
-// API 1: File Upload Endpoint (Images & Music)
+// API 1: File Upload Endpoint (Images, Music & MP4 Videos)
 app.post('/api/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
   const isAudio = req.file.mimetype.startsWith('audio/') || req.file.originalname.match(/\.(mp3|wav|m4a|aac|ogg)$/i);
-  const relativePath = isAudio ? `/uploads/audio/${req.file.filename}` : `/uploads/images/${req.file.filename}`;
+  const isVideo = req.file.mimetype.startsWith('video/') || req.file.originalname.match(/\.(mp4|webm|mov|mkv)$/i);
+  const relativePath = isAudio ? `/uploads/audio/${req.file.filename}` : (isVideo ? `/uploads/videos/${req.file.filename}` : `/uploads/images/${req.file.filename}`);
 
   return res.json({
     success: true,
