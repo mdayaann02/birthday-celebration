@@ -12,6 +12,7 @@ import { renderBlossomTemplate } from './templates/blossomTemplate.js';
 import { renderBloomRevealTemplate } from './templates/bloomRevealTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
 import { renderSorryTemplate } from './templates/sorryTemplate.js';
+import { renderMuseumTemplate } from './templates/museumTemplate.js';
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
   if (data?.primaryColor) {
@@ -38,6 +39,26 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
     const root = container.querySelector('#templateRoot');
     renderBloomRevealTemplate(root, data, isMakerReview);
+    return;
+  }
+
+  if (templateId === 'our_museum') {
+    if (container._museumCleanup) {
+      try { container._museumCleanup(); } catch (e) {}
+    }
+    container.innerHTML = `
+      ${isMakerReview ? `
+        <div class="maker-review-banner" id="makerReviewBanner" style="position:fixed; top:0; left:0; width:100%; z-index:999999;">
+          <div class="maker-banner-content">
+            <span>👁️ <strong>Creator Preview Active:</strong> You are viewing the 3D Museum.</span>
+            <a href="?edit=true" class="btn-banner-edit">✏️ Studio Editor</a>
+          </div>
+        </div>
+      ` : ''}
+      <div id="templateRoot" style="width:100%; height:100vh; overflow:hidden;"></div>
+    `;
+    const root = container.querySelector('#templateRoot');
+    renderMuseumTemplate(root, data, isMakerReview);
     return;
   }
 

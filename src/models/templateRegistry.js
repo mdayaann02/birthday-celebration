@@ -458,5 +458,97 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         { icon: "👑", title: "Queen For A Day", desc: "He must obey your every cute command for 24 hours." }
       ]
     }
+  },
+
+  our_museum: {
+    id: "our_museum",
+    name: "Our Museum (3D Interactive Gallery)",
+    badge: "Virtual 3D Gallery 🏛️✨",
+    icon: "🏛️",
+    description: "Giftvera-inspired 3D virtual art museum: Stroll through sunlit marble & oak galleries, view your memories in spotlighted gold frames, read curatorial memory plaques, take a seat on the gallery bench, and experience the grand centerpiece cinema proposal with falling heart confetti.",
+    defaultTheme: {
+      primary: "#c5a059",
+      bgGradient: "radial-gradient(120% 90% at 50% 10%, #1a1614 0%, #120e0d 50%, #090707 100%)",
+      accent: "#f5e6ca"
+    },
+    defaultData: {
+      recipientName: "My Beloved",
+      senderName: "Yours Always",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      audioSubtitle: "MUSEUM AMBIENCE & STRINGS",
+      audioSrc: "/audio/alfaaz.mp3",
+      museumTitle: "The Museum of Us",
+      museumSubtitle: "A Lifetime of Curated Wonders",
+      museumDedication: "Dedicated to the one who turned everyday moments into priceless works of art. Every hall in this museum is built from our smiles, our quiet midnight talks, and the love that holds my universe together.",
+      establishmentDate: "Est. November 2026",
+      centerpieceTitle: "The Masterpiece: You & Me",
+      centerpieceImage: "/images/queen.jpg",
+      proposalQuestion: "Will you walk through every chapter of life with me?",
+      proposalSubtitle: "Every single day with you is my greatest adventure. Will you be mine forever?",
+      proposalYesBtn: "Yes, Forever & Always! 💍💖",
+      proposalCelebrateTitle: "She Said Yes! 💍✨",
+      proposalCelebrateMsg: "From this moment until eternity, my heart is completely yours. Welcome to our forever.",
+      photos: [
+        {
+          id: 1,
+          image: "/images/sunset.jpg",
+          title: "The Golden Spark",
+          date: "The Day We Met",
+          desc: "The exact moment our paths crossed. The light hit your eyes just right, and suddenly every ordinary thing became magical."
+        },
+        {
+          id: 2,
+          image: "/images/always_you.jpg",
+          title: "Unstoppable Laughter",
+          date: "Summer Afternoon",
+          desc: "Laughing until our stomachs ached over silly inside jokes that nobody else would ever understand."
+        },
+        {
+          id: 3,
+          image: "/images/pretty.jpg",
+          title: "Quiet Sanctuary",
+          date: "Late Night Talks",
+          desc: "Sitting under the city lights, talking about childhood dreams and future hopes until 3 AM."
+        },
+        {
+          id: 4,
+          image: "/images/dream_girl.jpg",
+          title: "Breathtaking Grace",
+          date: "An Unforgettable Evening",
+          desc: "In a room full of people, my eyes only ever search for you. You take my breath away every single day."
+        },
+        {
+          id: 5,
+          image: "/images/vogue_cover.jpg",
+          title: "High Fashion & Adventure",
+          date: "Our Roadtrip",
+          desc: "Singing along at the top of our lungs with the windows rolled down. Anywhere with you is paradise."
+        },
+        {
+          id: 6,
+          image: "/images/baddie.jpg",
+          title: "Pure Confidence & Charm",
+          date: "Unfiltered Magic",
+          desc: "Fierce, brilliant, and hopelessly adorable. The way you light up any room you walk into is pure magic."
+        },
+        {
+          id: 7,
+          image: "/images/beautiful.jpg",
+          title: "The Sweetest Soul",
+          date: "Gentle Mornings",
+          desc: "Your boundless kindness, the warm coffee mornings, and the endless gentleness you bring into this world."
+        },
+        {
+          id: 8,
+          image: "/images/queen.jpg",
+          title: "My Eternal Muse",
+          date: "Forever & Always",
+          desc: "You are not just a chapter in my story — you are the entire book. My muse, my best friend, and my whole heart."
+        }
+      ]
+    }
   }
 };

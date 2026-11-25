@@ -8,12 +8,14 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
 
   const categories = [
     { id: 'all', icon: 'sparkles', label: `All (${Object.keys(TEMPLATES).length})` },
+    { id: 'museum', icon: 'landmark', label: '3D Museum' },
     { id: 'romance', icon: 'heart', label: 'Romance' },
     { id: 'birthday', icon: 'calendar', label: 'Birthday' },
     { id: 'sorry', icon: 'heart-crack', label: 'Apology' }
   ];
 
   function getTemplateCategory(tid) {
+    if (['our_museum'].includes(tid)) return 'museum';
     if (['long_romance', 'tree', 'blossom', 'bloom_reveal'].includes(tid)) return 'romance';
     if (['birthday'].includes(tid)) return 'birthday';
     if (['sorry'].includes(tid)) return 'sorry';

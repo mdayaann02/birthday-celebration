@@ -1070,6 +1070,229 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         }
       });
     });
+  } else if (templateId === 'our_museum') {
+    const museumPhotos = (data.photos && data.photos.length > 0) ? data.photos : (data.polaroids && data.polaroids.length > 0 ? data.polaroids.map((p, i) => ({
+      id: i + 1,
+      image: p.image,
+      title: p.caption || p.title || `Exhibit #${i + 1}`,
+      date: p.date || 'Curated Moment',
+      desc: p.note || ''
+    })) : [
+      { id: 1, image: "/images/sunset.jpg", title: "The Golden Spark", date: "The Day We Met", desc: "The exact moment our paths crossed. Every ordinary thing became magical." },
+      { id: 2, image: "/images/always_you.jpg", title: "Unstoppable Laughter", date: "Summer Afternoon", desc: "Laughing until our stomachs ached over silly inside jokes." },
+      { id: 3, image: "/images/pretty.jpg", title: "Quiet Sanctuary", date: "Late Night Talks", desc: "Sitting under the city lights, talking about childhood dreams until 3 AM." },
+      { id: 4, image: "/images/dream_girl.jpg", title: "Breathtaking Grace", date: "An Unforgettable Evening", desc: "In a room full of people, my eyes only ever search for you." },
+      { id: 5, image: "/images/vogue_cover.jpg", title: "High Fashion & Adventure", date: "Our Roadtrip", desc: "Singing along at the top of our lungs with the windows down." },
+      { id: 6, image: "/images/queen.jpg", title: "My Eternal Muse", date: "Forever & Always", desc: "You are not just a chapter in my story — you are the entire book." }
+    ]);
+
+    specificBox.innerHTML = `
+      <div class="section-title">🏛️ 3D Virtual Museum & Gallery Setup</div>
+      <div class="editor-help-text" style="margin-bottom:14px;">
+        Giftvera-style 3D walkthrough art gallery with entrance brass dedication plaque, spotlighted gold frames, and centerpiece cinema proposal.
+      </div>
+
+      <!-- 1. Entrance Brass Plaque -->
+      <div style="background:rgba(197,160,89,0.08); border:1.5px solid rgba(197,160,89,0.25); border-radius:12px; padding:14px; margin-bottom:16px;">
+        <div style="font-weight:800; font-size:13px; color:#d4af37; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span>🏛️ Entrance Brass Dedication Plaque</span>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Museum Exhibition Title</label>
+          <input type="text" class="form-input" id="edMuseumTitle" value="${data.museumTitle || 'The Museum of Us'}" placeholder="e.g. The Museum of Us" />
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Dedication Subtitle</label>
+          <input type="text" class="form-input" id="edMuseumSubtitle" value="${data.museumSubtitle || `Dedicated to ${data.recipientName || 'My Beloved'}`}" placeholder="e.g. Dedicated to My One & Only" />
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Dedication Plaque Message</label>
+          <textarea rows="3" class="form-textarea" id="edMuseumDedication" placeholder="Heartfelt dedication etched onto the brass entrance plaque...">${data.museumDedication || 'A curated exhibition of our smiles, quiet nights, and an eternal love that words could never hold.'}</textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Establishment Tag / Date</label>
+          <input type="text" class="form-input" id="edEstablishmentDate" value="${data.establishmentDate || 'Est. November 2026'}" placeholder="e.g. Est. November 2026" />
+        </div>
+      </div>
+
+      <!-- 2. Grand Centerpiece & Proposal Screen -->
+      <div style="background:rgba(212,35,92,0.08); border:1.5px solid rgba(212,35,92,0.25); border-radius:12px; padding:14px; margin-bottom:16px;">
+        <div style="font-weight:800; font-size:13px; color:#f472b6; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span>🎬 Grand Centerpiece & Cinema Proposal Screen</span>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Proposal / Big Question</label>
+          <input type="text" class="form-input" id="edMuseumQuestion" value="${data.proposalQuestion || 'Will you walk through every chapter of life with me?'}" placeholder="e.g. Will you marry me? / Will you be mine forever?" />
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Proposal Subtitle / Love Note</label>
+          <textarea rows="2" class="form-textarea" id="edMuseumQuestionSub" placeholder="Heartfelt explanation...">${data.proposalSubtitle || 'Every single day with you is my greatest adventure. Will you be mine forever?'}</textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Yes Button Label</label>
+          <input type="text" class="form-input" id="edMuseumYesBtn" value="${data.proposalYesBtn || 'Yes, Forever & Always! 💍💖'}" />
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Centerpiece Artwork Title</label>
+          <input type="text" class="form-input" id="edCenterpieceTitle" value="${data.centerpieceTitle || 'The Masterpiece: You & Me'}" />
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Centerpiece Image (Cinema Focal Screen)</label>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <img src="${data.centerpieceImage || '/images/queen.jpg'}" id="museumCpThumb" style="width:52px; height:52px; border-radius:8px; object-fit:cover; border:1px solid #d4af37;" />
+            <input type="text" class="form-input" id="edCenterpieceImage" value="${data.centerpieceImage || '/images/queen.jpg'}" style="flex:1;" />
+            <label class="btn-thumb-upload" title="Upload Centerpiece Photo" style="cursor:pointer; background:rgba(212,35,92,0.15); border:1px solid #d4235c; color:#f472b6; border-radius:8px; padding:8px 12px; display:flex; align-items:center; gap:4px;">
+              <i data-lucide="camera"></i>
+              <input type="file" id="fileUploadMuseumCenterpiece" accept="image/*" style="display:none;" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Curated Gallery Artworks -->
+      <div style="font-weight:700; font-size:13px; color:#d4af37; margin: 18px 0 8px; display:flex; align-items:center; justify-content:space-between;">
+        <span>🖼️ Curated Exhibition Artworks (Frames on Left & Right):</span>
+        <span style="font-size:11px; color:#94a3b8;">${museumPhotos.length} Artwork${museumPhotos.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="editor-help-text" style="margin-bottom:10px;">
+        Photos will be hung in 3D gold frames along the museum corridor with individual spotlights and brass nameplates:
+      </div>
+
+      <div id="museumArtworksList">
+        ${museumPhotos.map((p, i) => `
+          <div class="sub-card-editor museum-photo-row" data-i="${i}" style="background:rgba(20,16,14,0.6); border:1px solid rgba(212,175,55,0.2); border-radius:12px; padding:12px; margin-bottom:12px;">
+            <div class="bcard-top-row" style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+              <div class="bcard-drag-handle" title="Drag to reorder" style="cursor:grab; color:#94a3b8;"><i data-lucide="grip-vertical"></i></div>
+              <div class="bcard-thumb-wrap" style="position:relative; width:52px; height:52px;">
+                <img src="${p.image}" class="bcard-thumb" id="museumThumb_${i}" onerror="this.src='/images/sunset.jpg'" style="width:52px; height:52px; border-radius:8px; object-fit:cover; border:1px solid #d4af37;" />
+                <label class="btn-thumb-upload" title="Upload Photo" style="position:absolute; bottom:-4px; right:-4px; background:#111; color:#d4af37; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:10px; border:1px solid #d4af37;">
+                  <i data-lucide="camera" style="width:12px; height:12px;"></i>
+                  <input type="file" class="file-upload-museum-photo" data-i="${i}" accept="image/*" style="display:none;" />
+                </label>
+              </div>
+              <div class="bcard-caption-col" style="flex:1;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span class="bcard-num-badge" style="font-size:11px; font-weight:800; color:#d4af37;">🖼️ EXHIBIT #${i+1}</span>
+                  <button type="button" class="btn-del-museum-photo" data-i="${i}" title="Remove artwork" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; border-radius:6px; padding:2px 8px; font-size:11px; cursor:pointer;">
+                    <i data-lucide="trash-2"></i>
+                  </button>
+                </div>
+                <input type="text" class="form-input museum-photo-title" data-i="${i}" value="${p.title || ''}" placeholder="Artwork Title (e.g. The Golden Spark)" />
+              </div>
+            </div>
+            
+            <div class="bcard-presets-chips" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+              <span class="preset-chip-label" style="font-size:11px; color:#94a3b8; align-self:center;">Quick Pick:</span>
+              <button type="button" class="btn-quick-museum-preset" data-i="${i}" data-src="/images/sunset.jpg">Sunset</button>
+              <button type="button" class="btn-quick-museum-preset" data-i="${i}" data-src="/images/always_you.jpg">Always You</button>
+              <button type="button" class="btn-quick-museum-preset" data-i="${i}" data-src="/images/pretty.jpg">Pretty</button>
+              <button type="button" class="btn-quick-museum-preset" data-i="${i}" data-src="/images/dream_girl.jpg">Dream Girl</button>
+              <button type="button" class="btn-quick-museum-preset" data-i="${i}" data-src="/images/queen.jpg">Queen</button>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-bottom:6px;">
+              <input type="text" class="form-input museum-photo-img" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap camera icon)" style="flex:2;" />
+              <input type="text" class="form-input museum-photo-date" data-i="${i}" value="${p.date || ''}" placeholder="Date / Tag (e.g. Summer 2023)" style="flex:1;" />
+            </div>
+            <textarea rows="2" class="form-textarea museum-photo-desc" data-i="${i}" placeholder="Curatorial Memory Note (shown when inspected in 3D)...">${p.desc || ''}</textarea>
+          </div>
+        `).join('')}
+      </div>
+
+      <button type="button" class="btn-add-museum-photo" id="btnAddMuseumPhoto" style="margin-top:8px; width:100%; background:rgba(197,160,89,0.15); border:1.5px dashed #c5a059; color:#f5e6ca; padding:10px 14px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+        <i data-lucide="plus-circle"></i> Add Exhibition Artwork
+      </button>
+    `;
+
+    // Centerpiece photo upload
+    const cpUpload = specificBox.querySelector('#fileUploadMuseumCenterpiece');
+    cpUpload?.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const res = await uploadFile(file);
+      if (res.success && res.url) {
+        const cpImg = specificBox.querySelector('#edCenterpieceImage');
+        const cpThumb = specificBox.querySelector('#museumCpThumb');
+        if (cpImg) cpImg.value = res.url;
+        if (cpThumb) cpThumb.src = res.url;
+        emitChange();
+      }
+    });
+
+    // Artworks list upload listeners
+    specificBox.querySelectorAll('.file-upload-museum-photo').forEach(inp => {
+      inp.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const i = inp.getAttribute('data-i');
+        const res = await uploadFile(file);
+        if (res.success && res.url) {
+          const imgInput = specificBox.querySelector(`.museum-photo-img[data-i="${i}"]`);
+          const thumb = specificBox.querySelector(`#museumThumb_${i}`);
+          if (imgInput) imgInput.value = res.url;
+          if (thumb) thumb.src = res.url;
+          emitChange();
+        }
+      });
+    });
+
+    // Preset chips
+    specificBox.querySelectorAll('.btn-quick-museum-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = btn.getAttribute('data-i');
+        const src = btn.getAttribute('data-src');
+        const imgInput = specificBox.querySelector(`.museum-photo-img[data-i="${i}"]`);
+        const thumb = specificBox.querySelector(`#museumThumb_${i}`);
+        if (imgInput) imgInput.value = src;
+        if (thumb) thumb.src = src;
+        emitChange();
+      });
+    });
+
+    // Delete photo
+    specificBox.querySelectorAll('.btn-del-museum-photo').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-i'), 10);
+        const rows = specificBox.querySelectorAll('.museum-photo-row');
+        const currentPhotos = Array.from(rows).map((row, i) => ({
+          id: i + 1,
+          image: row.querySelector('.museum-photo-img')?.value || '/images/sunset.jpg',
+          title: row.querySelector('.museum-photo-title')?.value || `Exhibit #${i + 1}`,
+          date: row.querySelector('.museum-photo-date')?.value || '',
+          desc: row.querySelector('.museum-photo-desc')?.value || ''
+        }));
+        currentPhotos.splice(idx, 1);
+        data.photos = currentPhotos;
+        data.polaroids = currentPhotos.map(p => ({ image: p.image, caption: p.title, date: p.date, note: p.desc }));
+        renderVisualEditor(container, templateId, data, onChange);
+        emitChange();
+      });
+    });
+
+    // Add photo
+    const btnAddMuseumPhoto = specificBox.querySelector('#btnAddMuseumPhoto');
+    btnAddMuseumPhoto?.addEventListener('click', () => {
+      const rows = specificBox.querySelectorAll('.museum-photo-row');
+      const currentPhotos = Array.from(rows).map((row, i) => ({
+        id: i + 1,
+        image: row.querySelector('.museum-photo-img')?.value || '/images/sunset.jpg',
+        title: row.querySelector('.museum-photo-title')?.value || `Exhibit #${i + 1}`,
+        date: row.querySelector('.museum-photo-date')?.value || '',
+        desc: row.querySelector('.museum-photo-desc')?.value || ''
+      }));
+      currentPhotos.push({
+        id: currentPhotos.length + 1,
+        image: '/images/sunset.jpg',
+        title: 'New Exhibition Artwork',
+        date: 'Precious Memory',
+        desc: 'A golden memory preserved forever in our museum.'
+      });
+      data.photos = currentPhotos;
+      data.polaroids = currentPhotos.map(p => ({ image: p.image, caption: p.title, date: p.date, note: p.desc }));
+      renderVisualEditor(container, templateId, data, onChange);
+      emitChange();
+    });
+
   } else if (templateId === 'valentine') {
     const valPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
       { title: "That Unforgettable Smile ✨", image: "/images/pretty.jpg", note: "The very first time you looked at me and smiled, my heart decided right then." },
@@ -1855,6 +2078,40 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         sorryPols.push({ image: img, caption: cap, note });
       });
       if (sorryPols.length > 0) updated.polaroids = sorryPols;
+    } else if (templateId === 'our_museum') {
+      const elMTitle = container.querySelector('#edMuseumTitle');
+      const elMSub = container.querySelector('#edMuseumSubtitle');
+      const elMDed = container.querySelector('#edMuseumDedication');
+      const elEst = container.querySelector('#edEstablishmentDate');
+      const elMQ = container.querySelector('#edMuseumQuestion');
+      const elMQSub = container.querySelector('#edMuseumQuestionSub');
+      const elMYes = container.querySelector('#edMuseumYesBtn');
+      const elCpTitle = container.querySelector('#edCenterpieceTitle');
+      const elCpImg = container.querySelector('#edCenterpieceImage');
+
+      if (elMTitle) updated.museumTitle = elMTitle.value;
+      if (elMSub) updated.museumSubtitle = elMSub.value;
+      if (elMDed) updated.museumDedication = elMDed.value;
+      if (elEst) updated.establishmentDate = elEst.value;
+      if (elMQ) updated.proposalQuestion = elMQ.value;
+      if (elMQSub) updated.proposalSubtitle = elMQSub.value;
+      if (elMYes) updated.proposalYesBtn = elMYes.value;
+      if (elCpTitle) updated.centerpieceTitle = elCpTitle.value;
+      if (elCpImg) updated.centerpieceImage = elCpImg.value;
+
+      const photoRows = container.querySelectorAll('.museum-photo-row');
+      if (photoRows.length > 0) {
+        const pArr = [];
+        photoRows.forEach((row, idx) => {
+          const img = row.querySelector('.museum-photo-img')?.value || '/images/sunset.jpg';
+          const title = row.querySelector('.museum-photo-title')?.value || `Exhibit #${idx + 1}`;
+          const date = row.querySelector('.museum-photo-date')?.value || '';
+          const desc = row.querySelector('.museum-photo-desc')?.value || '';
+          pArr.push({ id: idx + 1, image: img, title, date, desc });
+        });
+        updated.photos = pArr;
+        updated.polaroids = pArr.map(p => ({ image: p.image, caption: p.title, date: p.date, note: p.desc }));
+      }
     } else if (templateId === 'valentine') {
       const elQ = container.querySelector('#edValQuestion');
       const elL = container.querySelector('#edValLetter');
@@ -2009,7 +2266,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
   }
 
   // SortableJS drag-and-drop reordering on all polaroid & card lists
-  const sortableLists = container.querySelectorAll('#blossomCardsList, #treePolaroidsList, #polaroidCardsList, #cdPhotosGrid, [id$="PolaroidsList"]');
+  const sortableLists = container.querySelectorAll('#blossomCardsList, #treePolaroidsList, #polaroidCardsList, #cdPhotosGrid, #museumArtworksList, [id$="PolaroidsList"]');
   sortableLists.forEach(listEl => {
     try {
       Sortable.create(listEl, {
