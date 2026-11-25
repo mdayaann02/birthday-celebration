@@ -280,17 +280,15 @@ app.post('/api/upload-chunk', uploadChunk.single('chunk'), async (req, res) => {
       const uniqueFilename = `${Date.now()}_${cleanBase}${ext}`;
       const finalDestPath = path.join(targetDir, uniqueFilename);
 
-      const writeStream = fs.createWriteStream(finalDestPath);
+      const chunkBuffers = [];
       for (let i = 0; i < totalChunks; i++) {
         const partPath = path.join(chunkDir, `part_${i}`);
         if (!fs.existsSync(partPath)) {
-          writeStream.end();
           return res.status(500).json({ error: `Missing chunk ${i} during reassembly` });
         }
-        const partBuffer = fs.readFileSync(partPath);
-        writeStream.write(partBuffer);
+        chunkBuffers.push(fs.readFileSync(partPath));
       }
-      writeStream.end();
+      fs.writeFileSync(finalDestPath, Buffer.concat(chunkBuffers));
 
       // Clean up temp directory
       try {
