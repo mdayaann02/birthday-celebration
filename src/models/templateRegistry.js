@@ -399,9 +399,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
   sorry: {
     id: "sorry",
     name: "Heartfelt Apology ('I'm Sorry')",
-    badge: "Kintsugi & Reconciliation 🥺🕊️",
-    icon: "🥺",
-    description: "Ultra-aesthetic heartfelt reconciliation: Interactive Kintsugi heart mending, cathartic venting room with projectile arsenal, legally binding penance deed, flip memories polaroids with voice apology memo, The Sweetheart Accords peace treaty with royal signature canvas, scratch-off reconciliation coupons, and runaway verdict.",
+    badge: "Warm Candlelit Sanctuary 🕯️🕊️",
+    icon: "🕊️",
+    description: "Ultra-aesthetic intimate sanctuary: Candlelit gateway, illuminated wax-sealed parchment confession, four sacred understanding pillars, Lovable cascading polaroids with audio note, and hold-to-heal olive branch.",
     defaultTheme: {
       primary: "#e07a5f",
       bgGradient: "radial-gradient(120% 90% at 50% 10%, #24191d 0%, #171115 50%, #0d090c 100%)",

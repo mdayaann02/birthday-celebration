@@ -993,63 +993,28 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     ];
 
     specificBox.innerHTML = `
-      <div class="section-title">🥺 Sincere Apology Chapters & Details (Chapters 1 to 8)</div>
+      <div class="section-title">🕊️ Heartfelt Apology & Reconciliation Sanctuary</div>
 
-      <!-- Target Face Photo for Stage 2 Vent Room -->
-      <div class="form-group" style="background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.32); border-radius: 14px; padding: 14px; margin-bottom: 18px;">
-        <label class="form-label" style="font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
-          <span>🎯 Your Photo for Vent Room (Stage 2 Target Face)</span>
-        </label>
-        <div class="editor-help-text" style="margin-bottom: 10px;">
-          Upload your face! In Stage 2, your partner can tap items (Birthday Cake, Teddy Bear, Tomato, Slipper, Water Balloon, Egg) to throw them at your face, and they dynamically splat & stick onto your picture!
-        </div>
-        <div style="display: flex; gap: 14px; align-items: center;">
-          <div style="position: relative; width: 68px; height: 68px; border-radius: 50%; overflow: hidden; border: 2.5px solid #fbbf24; flex-shrink: 0; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
-            <img src="${data.creatorPhoto || '/images/always_you.jpg'}" id="sorryCreatorThumb" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/always_you.jpg'" />
-            <label class="btn-thumb-upload" title="Upload Face Photo" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.55); cursor: pointer; color: #fff; font-size: 16px;">
-              📷
-              <input type="file" id="fileUploadSorryCreator" accept="image/*" style="display: none;" />
-            </label>
-          </div>
-          <div style="flex: 1;">
-            <input type="text" class="form-input" id="edSorryCreatorPhoto" value="${data.creatorPhoto || '/images/always_you.jpg'}" placeholder="Image URL (or tap 📷 to upload from phone)" />
-          </div>
-        </div>
+      <div class="form-group">
+        <label class="form-label">Hero Headline</label>
+        <input type="text" class="form-input" id="edSorryHeroTitle" value="${data.heroTitle || "I'm So Sorry, My Love"}" placeholder="e.g. I'm So Sorry, My Love" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Hero Subtitle</label>
+        <input type="text" class="form-input" id="edSorryHeroSub" value="${data.heroSubtitle || "My world feels heavy and quiet when you are hurt 🥺"}" placeholder="Subtitle..." />
       </div>
       
       <div class="form-group">
         <label class="form-label">Sincere Apology Message (Letter)</label>
-        <textarea rows="4" class="form-textarea" id="edSorryMsg">${data.apologyMessage || ''}</textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">My Penance / Punishment Tasks (1 per line)</label>
-        <div class="editor-help-text" style="margin-bottom:6px;">Tasks and deeds you agree to perform for her:</div>
-        <textarea rows="5" class="form-textarea" id="edSorryPenance">${(data.penances || [
-          "Buy your favorite Iced Boba / Treat right now 🧋",
-          "30-minute soothing massage whenever you ask 💆‍♀️",
-          "Order whatever food you are craving tonight, my treat 🍕",
-          "Watch 3 chick flicks / K-dramas with zero groaning 🍿",
-          "Fold all your laundry & do your chores this weekend 🧹",
-          "Write 100 cute post-it notes of things I adore about you 📝"
-        ]).join('\n')}</textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Official Peace Treaty Clauses (1 per line)</label>
-        <div class="editor-help-text" style="margin-bottom:6px;">Playful legal articles stamped by her fingerprint:</div>
-        <textarea rows="5" class="form-textarea" id="edSorryTreaty">${(data.treatyClauses || [
-          "Party A (The Cutest Girl) is officially declared 100% Right in all past, present, and future disputes.",
-          "Party B must deliver hugs, kisses, and forehead kisses upon demand.",
-          "Permanent hoodie and jacket theft rights are granted with zero retaliation.",
-          "All future disagreements must be settled immediately with dessert and boba.",
-          "No going to sleep angry ever again — cuddles are mandatory."
-        ]).join('\n')}</textarea>
+        <div class="editor-help-text" style="margin-bottom:6px;">Your heartfelt letter that slides out of the wax-sealed parchment:</div>
+        <textarea rows="5" class="form-textarea" id="edSorryMsg">${data.apologyMessage || ''}</textarea>
       </div>
 
       <!-- Memory Polaroids -->
       <div style="margin-top:16px;">
-        <label class="form-label" style="font-weight:700; color:var(--primary);">📸 Reconciliation Memory Photos (Stage 4):</label>
+        <label class="form-label" style="font-weight:700; color:var(--primary);">📸 Cherished Reconciliation Memories:</label>
+        <div class="editor-help-text" style="margin-bottom:8px;">Lovable cascading polaroids with 3D flip card notes:</div>
         <div id="sorryPolsList">
           ${sorryPols.map((p, i) => `
             <div class="sub-card-editor sorry-pol-row" data-i="${i}">
@@ -1876,13 +1841,11 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (anniPols) updated.polaroids = anniPols;
     } else if (templateId === 'sorry') {
       const elSorry = container.querySelector('#edSorryMsg');
-      const elPenance = container.querySelector('#edSorryPenance');
-      const elTreaty = container.querySelector('#edSorryTreaty');
-      const elCreator = container.querySelector('#edSorryCreatorPhoto');
+      const elSorryTitle = container.querySelector('#edSorryHeroTitle');
+      const elSorrySub = container.querySelector('#edSorryHeroSub');
       if (elSorry) updated.apologyMessage = elSorry.value;
-      if (elPenance) updated.penances = elPenance.value.split('\n').map(s => s.trim()).filter(Boolean);
-      if (elTreaty) updated.treatyClauses = elTreaty.value.split('\n').map(s => s.trim()).filter(Boolean);
-      if (elCreator) updated.creatorPhoto = elCreator.value;
+      if (elSorryTitle) updated.heroTitle = elSorryTitle.value;
+      if (elSorrySub) updated.heroSubtitle = elSorrySub.value;
 
       const sorryPols = [];
       container.querySelectorAll('.sorry-pol-row').forEach(row => {

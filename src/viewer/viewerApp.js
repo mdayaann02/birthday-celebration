@@ -41,6 +41,23 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     return;
   }
 
+  if (templateId === 'sorry') {
+    container.innerHTML = `
+      ${isMakerReview ? `
+        <div class="maker-review-banner" id="makerReviewBanner">
+          <div class="maker-banner-content">
+            <span>👁️ <strong>Creator Preview Active:</strong> You are viewing the unlocked website.</span>
+            <a href="?edit=true" class="btn-banner-edit">✏️ Studio Editor</a>
+          </div>
+        </div>
+      ` : ''}
+      <div id="templateRoot" style="width:100%; min-height:100vh;"></div>
+    `;
+    const root = container.querySelector('#templateRoot');
+    renderSorryTemplate(root, data, isMakerReview);
+    return;
+  }
+
   container.innerHTML = `
     ${isMakerReview ? `
       <div class="maker-review-banner" id="makerReviewBanner">
