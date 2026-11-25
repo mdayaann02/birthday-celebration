@@ -24,8 +24,8 @@ function createParquetTexture() {
   canvas.height = 1024;
   const ctx = canvas.getContext('2d');
 
-  // Warm oak museum floor base
-  ctx.fillStyle = '#2b1d14';
+  // Warm blonde European museum oak base
+  ctx.fillStyle = '#614d3b';
   ctx.fillRect(0, 0, 1024, 1024);
 
   const tileW = 64;
@@ -33,22 +33,21 @@ function createParquetTexture() {
   const rows = Math.ceil(1024 / tileH);
   const cols = Math.ceil(1024 / tileW);
 
-  // Parquet wood slats with subtle tonal variations
+  // Parquet wood slats with refined tonal variations and satin finish
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      const isAlt = (r + c) % 2 === 0;
       const x = c * tileW;
       const y = r * tileH;
-      const toneVariance = Math.floor((Math.sin(r * 12.3 + c * 33.7) * 0.5 + 0.5) * 35);
-      const rVal = 44 + toneVariance;
-      const gVal = 28 + Math.floor(toneVariance * 0.7);
-      const bVal = 18 + Math.floor(toneVariance * 0.5);
+      const toneVariance = Math.floor((Math.sin(r * 12.3 + c * 33.7) * 0.5 + 0.5) * 42);
+      const rVal = 102 + toneVariance;
+      const gVal = 78 + Math.floor(toneVariance * 0.82);
+      const bVal = 58 + Math.floor(toneVariance * 0.65);
 
       ctx.fillStyle = `rgb(${rVal}, ${gVal}, ${bVal})`;
       ctx.fillRect(x, y, tileW - 1, tileH - 1);
 
-      // Wood grain lines
-      ctx.strokeStyle = `rgba(15, 10, 5, 0.35)`;
+      // Fine wood grain lines
+      ctx.strokeStyle = `rgba(45, 30, 18, 0.28)`;
       ctx.lineWidth = 1;
       for (let g = 0; g < 3; g++) {
         const lineY = y + 3 + g * 4;
@@ -61,16 +60,16 @@ function createParquetTexture() {
   }
 
   // Soft museum gallery polish sheen
-  const grad = ctx.createRadialGradient(512, 512, 100, 512, 512, 700);
-  grad.addColorStop(0, 'rgba(255, 235, 205, 0.08)');
-  grad.addColorStop(1, 'rgba(0, 0, 0, 0.25)');
+  const grad = ctx.createRadialGradient(512, 512, 120, 512, 512, 750);
+  grad.addColorStop(0, 'rgba(255, 248, 235, 0.12)');
+  grad.addColorStop(1, 'rgba(0, 0, 0, 0.18)');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 1024, 1024);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(6, 30);
+  texture.repeat.set(10, 48);
   return texture;
 }
 
@@ -241,30 +240,35 @@ function createPlacardTexture(index, title, date) {
   return new THREE.CanvasTexture(canvas);
 }
 
-// Procedural Wall Plaster / Paint texture with micro-grain
+// Procedural Wall Plaster / Paint texture with architectural micro-grain (Gallery White)
 function createWallTexture() {
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = 1024;
+  canvas.height = 1024;
   const ctx = canvas.getContext('2d');
 
-  ctx.fillStyle = '#f6f3ed';
-  ctx.fillRect(0, 0, 512, 512);
+  // Pristine Architectural Museum Gallery White
+  ctx.fillStyle = '#faf9f6';
+  ctx.fillRect(0, 0, 1024, 1024);
 
-  const imgData = ctx.getImageData(0, 0, 512, 512);
+  const imgData = ctx.getImageData(0, 0, 1024, 1024);
   const d = imgData.data;
   for (let i = 0; i < d.length; i += 4) {
-    const grain = (Math.random() - 0.5) * 12;
+    const grain = (Math.random() - 0.5) * 6;
     d[i] = Math.min(255, Math.max(0, d[i] + grain));
     d[i + 1] = Math.min(255, Math.max(0, d[i + 1] + grain));
     d[i + 2] = Math.min(255, Math.max(0, d[i + 2] + grain));
   }
   ctx.putImageData(imgData, 0, 0);
 
+  // Very subtle vertical roller variation
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+  ctx.fillRect(0, 0, 1024, 1024);
+
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(8, 4);
+  texture.repeat.set(16, 8);
   return texture;
 }
 
@@ -714,14 +718,14 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   // --------------------------------------------------------------------------
   const canvasContainer = container.querySelector('#threeMuseumCanvas');
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0e0b0a);
-  scene.fog = new THREE.FogExp2(0x120e0c, 0.015);
+  scene.background = new THREE.Color(0xf6f5f2);
+  scene.fog = new THREE.Fog(0xf5f4f0, 45, 220);
 
   const camera = new THREE.PerspectiveCamera(
     60,
     canvasContainer.clientWidth / canvasContainer.clientHeight,
     0.1,
-    200
+    250
   );
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
@@ -731,74 +735,117 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   renderer.toneMappingExposure = 1.15;
   canvasContainer.appendChild(renderer.domElement);
 
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0xfff5ea, 0.75);
+  // Museum Ambient & Architectural Sky Lighting
+  const ambientLight = new THREE.AmbientLight(0xfff8ee, 0.9);
   scene.add(ambientLight);
 
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xd0c4b2, 0.45);
-  hemiLight.position.set(0, 10, 0);
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xe8e2d8, 0.7);
+  hemiLight.position.set(0, 18, 0);
   scene.add(hemiLight);
 
-  // Gallery Dimensions
-  const hallWidth = 11;
-  const hallHeight = 5.8;
-  const artworkSpacing = 9.5;
+  // Gallery Dimensions (Grand Monumental Museum Wing)
+  const hallWidth = 18;
+  const hallHeight = 8.2;
+  const artworkSpacing = 14;
   const totalArtworks = artworks.length;
-  const hallLength = Math.max(65, (totalArtworks / 2 + 2) * artworkSpacing + 25);
-  const rotundaZ = -(hallLength - 12);
+  const hallLength = Math.max(90, (totalArtworks / 2 + 2) * artworkSpacing + 35);
+  const rotundaZ = -(hallLength - 16);
+  const benchZ = rotundaZ + 9.5;
+  const cinemaZ = rotundaZ + 0.25;
 
-  // 1. Floor Mesh
+  // 1. Floor Mesh (French Blonde Oak Herringbone Parquet with Satin Sheen)
   const floorTexture = createParquetTexture();
-  const floorGeo = new THREE.PlaneGeometry(hallWidth * 2.2, hallLength + 30);
+  const floorGeo = new THREE.PlaneGeometry(hallWidth * 2.5, hallLength + 60);
   const floorMat = new THREE.MeshStandardMaterial({
     map: floorTexture,
-    roughness: 0.28,
-    metalness: 0.08
+    roughness: 0.22,
+    metalness: 0.04
   });
   const floorMesh = new THREE.Mesh(floorGeo, floorMat);
   floorMesh.rotation.x = -Math.PI / 2;
   floorMesh.position.set(0, 0, -hallLength / 2 + 5);
   scene.add(floorMesh);
 
-  // 2. Ceiling Mesh
-  const ceilingGeo = new THREE.PlaneGeometry(hallWidth * 2.2, hallLength + 30);
+  // 2. Ceiling Mesh (Pristine White Architectural Ceiling with Central Skylights)
+  const ceilingGeo = new THREE.PlaneGeometry(hallWidth * 2.5, hallLength + 60);
   const ceilingMat = new THREE.MeshStandardMaterial({
-    color: 0x1b1614,
-    roughness: 0.85
+    color: 0xfcfbfa,
+    roughness: 0.92
   });
   const ceilingMesh = new THREE.Mesh(ceilingGeo, ceilingMat);
   ceilingMesh.rotation.x = Math.PI / 2;
   ceilingMesh.position.set(0, hallHeight, -hallLength / 2 + 5);
   scene.add(ceilingMesh);
 
-  // Track lights rail along ceiling
-  const trackGeo = new THREE.BoxGeometry(0.18, 0.1, hallLength + 20);
-  const trackMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.9, roughness: 0.2 });
+  // Central Frosted Glass Skylight Grid (diffused natural daylight)
+  const skylightW = 5.2;
+  const skylightGeo = new THREE.PlaneGeometry(skylightW, hallLength + 20);
+  const skylightMat = new THREE.MeshStandardMaterial({
+    color: 0xedf5fa,
+    roughness: 0.28,
+    metalness: 0.05,
+    transparent: true,
+    opacity: 0.88,
+    emissive: 0x22272e
+  });
+  const skylightMesh = new THREE.Mesh(skylightGeo, skylightMat);
+  skylightMesh.rotation.x = Math.PI / 2;
+  skylightMesh.position.set(0, hallHeight - 0.02, -hallLength / 2 + 5);
+  scene.add(skylightMesh);
+
+  // Skylight bronze architectural mullion frames
+  const mullionGeo = new THREE.BoxGeometry(0.12, 0.08, hallLength + 20);
+  const mullionMat = new THREE.MeshStandardMaterial({ color: 0x231d18, metalness: 0.75, roughness: 0.3 });
+  const mulL = new THREE.Mesh(mullionGeo, mullionMat);
+  mulL.position.set(-skylightW / 2, hallHeight - 0.03, -hallLength / 2 + 5);
+  scene.add(mulL);
+  const mulR = new THREE.Mesh(mullionGeo, mullionMat);
+  mulR.position.set(skylightW / 2, hallHeight - 0.03, -hallLength / 2 + 5);
+  scene.add(mulR);
+
+  // Transverse Skylight Ribs spaced along the hall
+  for (let sz = 6; sz >= rotundaZ - 4; sz -= 7) {
+    const rib = new THREE.Mesh(new THREE.BoxGeometry(skylightW, 0.08, 0.12), mullionMat);
+    rib.position.set(0, hallHeight - 0.03, sz);
+    scene.add(rib);
+  }
+
+  // Soft Natural Daylight Downlights along center spine
+  for (let lz = 2; lz >= rotundaZ + 8; lz -= 20) {
+    const skyDownlight = new THREE.PointLight(0xfffdf7, 1.35, 38, 1.15);
+    skyDownlight.position.set(0, hallHeight - 0.4, lz);
+    scene.add(skyDownlight);
+  }
+
+  // 3. Dual Track Lights Rails along Ceiling
+  const trackGeo = new THREE.BoxGeometry(0.22, 0.12, hallLength + 30);
+  const trackMat = new THREE.MeshStandardMaterial({ color: 0x181818, metalness: 0.88, roughness: 0.25 });
   const trackLeft = new THREE.Mesh(trackGeo, trackMat);
-  trackLeft.position.set(-hallWidth / 2 + 1.2, hallHeight - 0.06, -hallLength / 2 + 5);
+  trackLeft.position.set(-hallWidth / 2 + 3.4, hallHeight - 0.08, -hallLength / 2 + 5);
   scene.add(trackLeft);
 
   const trackRight = new THREE.Mesh(trackGeo, trackMat);
-  trackRight.position.set(hallWidth / 2 - 1.2, hallHeight - 0.06, -hallLength / 2 + 5);
+  trackRight.position.set(hallWidth / 2 - 3.4, hallHeight - 0.08, -hallLength / 2 + 5);
   scene.add(trackRight);
 
-  // 3. Walls
+  // 4. White Walls (Pristine Architectural Gallery White)
   const wallTexture = createWallTexture();
   const wallMat = new THREE.MeshStandardMaterial({
     map: wallTexture,
-    roughness: 0.85,
-    metalness: 0.05
+    color: 0xffffff,
+    roughness: 0.92,
+    metalness: 0.01
   });
 
   // Left Wall
-  const leftWallGeo = new THREE.PlaneGeometry(hallLength + 30, hallHeight);
-  const leftWall = new THREE.Mesh(leftWallGeo, wallMat);
+  const sideWallGeo = new THREE.PlaneGeometry(hallLength + 40, hallHeight);
+  const leftWall = new THREE.Mesh(sideWallGeo, wallMat);
   leftWall.position.set(-hallWidth / 2, hallHeight / 2, -hallLength / 2 + 5);
   leftWall.rotation.y = Math.PI / 2;
   scene.add(leftWall);
 
   // Right Wall
-  const rightWall = new THREE.Mesh(leftWallGeo, wallMat);
+  const rightWall = new THREE.Mesh(sideWallGeo, wallMat);
   rightWall.position.set(hallWidth / 2, hallHeight / 2, -hallLength / 2 + 5);
   rightWall.rotation.y = -Math.PI / 2;
   scene.add(rightWall);
@@ -806,22 +853,61 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   // Entrance Back Wall (behind player at start)
   const entranceWallGeo = new THREE.PlaneGeometry(hallWidth, hallHeight);
   const entranceBackWall = new THREE.Mesh(entranceWallGeo, wallMat);
-  entranceBackWall.position.set(0, hallHeight / 2, 7.5);
+  entranceBackWall.position.set(0, hallHeight / 2, 8.5);
   scene.add(entranceBackWall);
 
-  // Baseboards (Dark Walnut) along Left & Right
-  const baseboardGeo = new THREE.BoxGeometry(0.1, 0.32, hallLength + 30);
-  const baseboardMat = new THREE.MeshStandardMaterial({ color: 0x24160e, roughness: 0.4 });
+  // 3D Architectural Pilasters between Artwork bays along Left & Right walls
+  const pilasterGeo = new THREE.BoxGeometry(0.72, hallHeight, 0.32);
+  const pilasterMat = new THREE.MeshStandardMaterial({ color: 0xfbfbfa, roughness: 0.9 });
+  const pilasterGoldTrimMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.75, roughness: 0.3 });
+
+  const numPilasters = Math.ceil(totalArtworks / 2) + 2;
+  for (let p = 0; p <= numPilasters; p++) {
+    const pz = - (p * artworkSpacing + 2.0);
+    if (pz < rotundaZ + 4) continue;
+
+    // Left Pilaster
+    const pLeft = new THREE.Mesh(pilasterGeo, pilasterMat);
+    pLeft.position.set(-hallWidth / 2 + 0.16, hallHeight / 2, pz);
+    scene.add(pLeft);
+
+    const trimL = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.08, 0.36), pilasterGoldTrimMat);
+    trimL.position.set(-hallWidth / 2 + 0.16, hallHeight - 0.5, pz);
+    scene.add(trimL);
+
+    // Right Pilaster
+    const pRight = new THREE.Mesh(pilasterGeo, pilasterMat);
+    pRight.position.set(hallWidth / 2 - 0.16, hallHeight / 2, pz);
+    scene.add(pRight);
+
+    const trimR = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.08, 0.36), pilasterGoldTrimMat);
+    trimR.position.set(hallWidth / 2 - 0.16, hallHeight - 0.5, pz);
+    scene.add(trimR);
+  }
+
+  // Luxury Two-Tier Carrara Marble & Gold Baseboards
+  const baseboardGeo = new THREE.BoxGeometry(0.12, 0.45, hallLength + 40);
+  const baseboardMat = new THREE.MeshStandardMaterial({ color: 0xf5f4f0, roughness: 0.4, metalness: 0.08 });
   const bbLeft = new THREE.Mesh(baseboardGeo, baseboardMat);
-  bbLeft.position.set(-hallWidth / 2 + 0.05, 0.16, -hallLength / 2 + 5);
+  bbLeft.position.set(-hallWidth / 2 + 0.06, 0.225, -hallLength / 2 + 5);
   scene.add(bbLeft);
 
   const bbRight = new THREE.Mesh(baseboardGeo, baseboardMat);
-  bbRight.position.set(hallWidth / 2 - 0.05, 0.16, -hallLength / 2 + 5);
+  bbRight.position.set(hallWidth / 2 - 0.06, 0.225, -hallLength / 2 + 5);
   scene.add(bbRight);
 
-  // 4. Entrance Dedication Plaque on Entrance Feature Wall
-  // We place a grand entrance partition archway at z = 2
+  // Continuous Architectural Crown Molding along Ceiling Edges
+  const crownGeo = new THREE.BoxGeometry(0.16, 0.25, hallLength + 40);
+  const crownMat = new THREE.MeshStandardMaterial({ color: 0xfcfbfa, roughness: 0.9 });
+  const crownL = new THREE.Mesh(crownGeo, crownMat);
+  crownL.position.set(-hallWidth / 2 + 0.08, hallHeight - 0.125, -hallLength / 2 + 5);
+  scene.add(crownL);
+
+  const crownR = new THREE.Mesh(crownGeo, crownMat);
+  crownR.position.set(hallWidth / 2 - 0.08, hallHeight - 0.125, -hallLength / 2 + 5);
+  scene.add(crownR);
+
+  // 5. Entrance Dedication Plaque on Entrance Feature Wall
   const entrancePlaqueTexture = createPlaqueTexture(
     museumTitle,
     museumSubtitle,
@@ -830,24 +916,37 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     establishmentDate
   );
 
-  const plaqueGeo = new THREE.BoxGeometry(4.2, 3.15, 0.08);
+  const plaqueGeo = new THREE.BoxGeometry(5.4, 4.0, 0.12);
   const plaqueMat = new THREE.MeshStandardMaterial({
     map: entrancePlaqueTexture,
-    metalness: 0.65,
+    metalness: 0.68,
     roughness: 0.32
   });
   const entrancePlaque = new THREE.Mesh(plaqueGeo, plaqueMat);
-  entrancePlaque.position.set(0, 2.7, 3.8);
+  entrancePlaque.position.set(0, 3.6, 4.2);
+
+  // Outer Gold Gilded Molded Border
+  const plaqueBorder = new THREE.Mesh(
+    new THREE.BoxGeometry(5.8, 4.4, 0.16),
+    new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.82, roughness: 0.28 })
+  );
+  entrancePlaque.add(plaqueBorder);
   scene.add(entrancePlaque);
 
-  // Spotlight shining on Entrance Plaque
-  const plaqueSpot = new THREE.SpotLight(0xfff0d0, 2.8, 12, Math.PI / 5, 0.5, 1.2);
-  plaqueSpot.position.set(0, hallHeight - 0.2, 1.5);
-  plaqueSpot.target = entrancePlaque;
-  scene.add(plaqueSpot);
-  scene.add(plaqueSpot.target);
+  // Dual Ceiling Museum Framing Spotlights aimed at Entrance Plaque
+  const plaqueSpotL = new THREE.SpotLight(0xfff5e4, 4.5, 18, Math.PI / 4.8, 0.58, 1.15);
+  plaqueSpotL.position.set(-2.2, hallHeight - 0.25, 1.2);
+  plaqueSpotL.target = entrancePlaque;
+  scene.add(plaqueSpotL);
+  scene.add(plaqueSpotL.target);
 
-  // 5. Framed Artworks along Left and Right walls
+  const plaqueSpotR = new THREE.SpotLight(0xfff5e4, 4.5, 18, Math.PI / 4.8, 0.58, 1.15);
+  plaqueSpotR.position.set(2.2, hallHeight - 0.25, 1.2);
+  plaqueSpotR.target = entrancePlaque;
+  scene.add(plaqueSpotR);
+  scene.add(plaqueSpotR.target);
+
+  // 6. Framed Artworks along Left and Right walls
   const interactiveArtworks = [];
   const textureLoader = new THREE.TextureLoader();
 
@@ -865,34 +964,34 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   artworks.forEach((art, index) => {
     const isLeft = index % 2 === 0;
     const pairIndex = Math.floor(index / 2);
-    const zPos = - (pairIndex * artworkSpacing + 7.5);
-    const xPos = isLeft ? (-hallWidth / 2 + 0.16) : (hallWidth / 2 - 0.16);
+    const zPos = - (pairIndex * artworkSpacing + 9.0);
+    const xPos = isLeft ? (-hallWidth / 2 + 0.18) : (hallWidth / 2 - 0.18);
     const rotY = isLeft ? Math.PI / 2 : -Math.PI / 2;
 
     const group = new THREE.Group();
-    group.position.set(xPos, 2.6, zPos);
+    group.position.set(xPos, 3.2, zPos);
     group.rotation.y = rotY;
 
-    // Outer Beveled Frame
-    const frameW = 3.2;
-    const frameH = 2.4;
-    const frameDepth = 0.12;
+    // Outer Grand Beveled Gold Frame (4.2m x 3.1m)
+    const frameW = 4.2;
+    const frameH = 3.1;
+    const frameDepth = 0.16;
     const outerFrame = new THREE.Mesh(
       new THREE.BoxGeometry(frameW, frameH, frameDepth),
       goldFrameMat
     );
     group.add(outerFrame);
 
-    // Passe-partout / White Mat border
+    // Archival Museum White Mat Passe-partout
     const matMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(frameW - 0.28, frameH - 0.28, frameDepth + 0.02),
+      new THREE.BoxGeometry(frameW - 0.35, frameH - 0.35, frameDepth + 0.02),
       matBorderMat
     );
     group.add(matMesh);
 
     // Canvas Image
-    const canvasW = frameW - 0.65;
-    const canvasH = frameH - 0.65;
+    const canvasW = frameW - 0.85;
+    const canvasH = frameH - 0.85;
     const canvasGeo = new THREE.PlaneGeometry(canvasW, canvasH);
 
     // Load photo texture with fallback
@@ -901,7 +1000,6 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       undefined,
       undefined,
       () => {
-        // Fallback on error
         const fallbackTex = textureLoader.load('/images/sunset.jpg');
         canvasMesh.material.map = fallbackTex;
         canvasMesh.material.needsUpdate = true;
@@ -917,30 +1015,40 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     canvasMesh.position.z = frameDepth / 2 + 0.02;
     group.add(canvasMesh);
 
-    // Brass Placard below Frame
+    // Brass Curatorial Placard below Frame
     const placardTex = createPlacardTexture(index, art.title, art.date);
     const placardMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(1.6, 0.5, 0.04),
-      new THREE.MeshStandardMaterial({ map: placardTex, metalness: 0.7, roughness: 0.35 })
+      new THREE.BoxGeometry(2.0, 0.55, 0.05),
+      new THREE.MeshStandardMaterial({ map: placardTex, metalness: 0.72, roughness: 0.32 })
     );
-    placardMesh.position.set(0, -frameH / 2 - 0.42, 0);
+    placardMesh.position.set(0, -frameH / 2 - 0.5, 0);
     group.add(placardMesh);
 
-    // Dedicated Ceiling Spotlight directly onto frame
-    const spotX = isLeft ? (-hallWidth / 2 + 2.2) : (hallWidth / 2 - 2.2);
-    const spotLight = new THREE.SpotLight(0xfff7e8, 3.2, 10, Math.PI / 6, 0.6, 1.2);
+    // Dedicated Ceiling Museum Track Projector Spotlight (30° angle down to canvas)
+    const spotX = isLeft ? (-hallWidth / 2 + 3.4) : (hallWidth / 2 - 3.4);
+    const spotLight = new THREE.SpotLight(0xfff8ee, 5.5, 22, Math.PI / 5.2, 0.65, 1.15);
     spotLight.position.set(spotX, hallHeight - 0.15, zPos);
     spotLight.target = canvasMesh;
     scene.add(spotLight);
     scene.add(spotLight.target);
 
-    // Small fixture cylinder on the ceiling track
-    const fixture = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.1, 0.14, 0.22, 12),
-      trackMat
-    );
-    fixture.position.set(spotX, hallHeight - 0.1, zPos);
-    scene.add(fixture);
+    // Pin-spot accent on Placard
+    const pinSpot = new THREE.SpotLight(0xffedd2, 2.2, 14, Math.PI / 7, 0.5, 1.2);
+    pinSpot.position.set(spotX, hallHeight - 0.25, zPos);
+    pinSpot.target = placardMesh;
+    scene.add(pinSpot);
+    scene.add(pinSpot.target);
+
+    // 3D Track Lighting Fixture Body on the ceiling rail
+    const fixtureGroup = new THREE.Group();
+    fixtureGroup.position.set(spotX, hallHeight - 0.08, zPos);
+    const fixtureBase = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.06, 0.24), trackMat);
+    const fixtureCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.32, 14), trackMat);
+    fixtureCyl.rotation.z = isLeft ? -0.45 : 0.45;
+    fixtureCyl.position.y = -0.15;
+    fixtureGroup.add(fixtureBase);
+    fixtureGroup.add(fixtureCyl);
+    scene.add(fixtureGroup);
 
     scene.add(group);
 
@@ -951,29 +1059,28 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       data: art,
       index,
       lookPosition: new THREE.Vector3(
-        isLeft ? xPos + 2.8 : xPos - 2.8,
-        2.5,
+        isLeft ? xPos + 4.2 : xPos - 4.2,
+        3.0,
         zPos
       ),
-      targetLookAt: new THREE.Vector3(xPos, 2.5, zPos)
+      targetLookAt: new THREE.Vector3(xPos, 3.0, zPos)
     });
   });
 
-  // 6. Grand Centerpiece Rotunda & Cinema Room
-  // Back Wall of the Museum
-  const rotundaWallGeo = new THREE.PlaneGeometry(hallWidth * 1.8, hallHeight);
+  // 7. Grand Centerpiece Rotunda & Cinema Amphitheater
+  const rotundaWallGeo = new THREE.PlaneGeometry(hallWidth * 2.2, hallHeight);
   const backWall = new THREE.Mesh(rotundaWallGeo, wallMat);
   backWall.position.set(0, hallHeight / 2, rotundaZ);
   scene.add(backWall);
 
-  // Grand Centerpiece Cinema Screen
-  const screenW = 6.8;
-  const screenH = 4.0;
+  // Grand Centerpiece Cinema Screen (10.8m x 6.4m)
+  const screenW = 10.8;
+  const screenH = 6.4;
   const cinemaScreenGroup = new THREE.Group();
-  cinemaScreenGroup.position.set(0, 2.9, rotundaZ + 0.18);
+  cinemaScreenGroup.position.set(0, 4.2, cinemaZ);
 
   const cinemaFrame = new THREE.Mesh(
-    new THREE.BoxGeometry(screenW + 0.4, screenH + 0.4, 0.12),
+    new THREE.BoxGeometry(screenW + 0.6, screenH + 0.6, 0.18),
     goldFrameMat
   );
   cinemaScreenGroup.add(cinemaFrame);
@@ -987,7 +1094,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       metalness: 0.05
     })
   );
-  cinemaCanvas.position.z = 0.08;
+  cinemaCanvas.position.z = 0.1;
   cinemaScreenGroup.add(cinemaCanvas);
 
   // Cinema Couple Video Element (Synchronized bench movie player)
@@ -1020,40 +1127,40 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   // Centerpiece Placard
   const cpPlacardTex = createPlacardTexture(99, centerpieceTitle, 'Permanent Masterpiece');
   const cpPlacard = new THREE.Mesh(
-    new THREE.BoxGeometry(2.4, 0.6, 0.04),
-    new THREE.MeshStandardMaterial({ map: cpPlacardTex, metalness: 0.7, roughness: 0.35 })
+    new THREE.BoxGeometry(3.2, 0.7, 0.05),
+    new THREE.MeshStandardMaterial({ map: cpPlacardTex, metalness: 0.72, roughness: 0.32 })
   );
-  cpPlacard.position.set(0, -screenH / 2 - 0.45, 0.05);
+  cpPlacard.position.set(0, -screenH / 2 - 0.55, 0.05);
   cinemaScreenGroup.add(cpPlacard);
 
   scene.add(cinemaScreenGroup);
 
-  // Centerpiece Ceiling Spotlight (Warm Dramatic Spotlight)
-  const cpSpot = new THREE.SpotLight(0xffedd0, 4.5, 16, Math.PI / 4.5, 0.55, 1.2);
-  cpSpot.position.set(0, hallHeight - 0.2, rotundaZ + 5.5);
+  // Centerpiece Ceiling Spotlights (Warm Dramatic Theatrical Spotlight)
+  const cpSpot = new THREE.SpotLight(0xfff6e5, 6.5, 30, Math.PI / 4.2, 0.6, 1.1);
+  cpSpot.position.set(0, hallHeight - 0.3, benchZ);
   cpSpot.target = cinemaCanvas;
   scene.add(cpSpot);
   scene.add(cpSpot.target);
 
-  // 7. Gallery Tufted Leather Bench in Front of Centerpiece
+  // 8. Gallery Tufted Leather Bench in Front of Centerpiece
   const benchGroup = new THREE.Group();
-  benchGroup.position.set(0, 0, rotundaZ + 5.8);
+  benchGroup.position.set(0, 0, benchZ);
 
   const benchSeat = new THREE.Mesh(
-    new THREE.BoxGeometry(3.2, 0.45, 1.1),
-    new THREE.MeshStandardMaterial({ color: 0x22130c, roughness: 0.45, metalness: 0.1 })
+    new THREE.BoxGeometry(4.4, 0.48, 1.25),
+    new THREE.MeshStandardMaterial({ color: 0x24150e, roughness: 0.42, metalness: 0.08 })
   );
   benchSeat.position.y = 0.55;
   benchGroup.add(benchSeat);
 
-  // Bench walnut legs
-  const legGeo = new THREE.CylinderGeometry(0.05, 0.04, 0.35, 10);
-  const legMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.8, roughness: 0.3 });
+  // Bench walnut & brass legs
+  const legGeo = new THREE.CylinderGeometry(0.06, 0.05, 0.35, 12);
+  const legMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.85, roughness: 0.28 });
   const legPositions = [
-    [-1.4, 0.18, -0.4],
-    [1.4, 0.18, -0.4],
-    [-1.4, 0.18, 0.4],
-    [1.4, 0.18, 0.4]
+    [-1.9, 0.18, -0.45],
+    [1.9, 0.18, -0.45],
+    [-1.9, 0.18, 0.45],
+    [1.9, 0.18, 0.45]
   ];
   legPositions.forEach(([lx, ly, lz]) => {
     const leg = new THREE.Mesh(legGeo, legMat);
@@ -1071,16 +1178,16 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       title: museumTitle,
       subtitle: museumSubtitle,
       stepLabel: 'ENTRANCE VESTIBULE',
-      cameraPos: new THREE.Vector3(0, 2.3, 0.4),
-      lookAt: new THREE.Vector3(0, 2.6, 3.8)
+      cameraPos: new THREE.Vector3(0, 3.2, -1.2),
+      lookAt: new THREE.Vector3(0, 3.6, 4.2)
     }
   ];
 
   artworks.forEach((art, idx) => {
     const isLeft = idx % 2 === 0;
     const pairIndex = Math.floor(idx / 2);
-    const zPos = - (pairIndex * artworkSpacing + 7.5);
-    const xPos = isLeft ? (-hallWidth / 2 + 0.16) : (hallWidth / 2 - 0.16);
+    const zPos = - (pairIndex * artworkSpacing + 9.0);
+    const xPos = isLeft ? (-hallWidth / 2 + 0.18) : (hallWidth / 2 - 0.18);
 
     waypoints.push({
       id: `art_${idx}`,
@@ -1088,11 +1195,11 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       subtitle: art.desc || `Curated Memory: ${art.date}`,
       stepLabel: `EXHIBIT ${String(idx + 1).padStart(2, '0')} OF ${String(artworks.length).padStart(2, '0')}`,
       cameraPos: new THREE.Vector3(
-        isLeft ? xPos + 3.2 : xPos - 3.2,
-        2.45,
-        zPos + (isLeft ? 0.3 : -0.3)
+        isLeft ? xPos + 4.2 : xPos - 4.2,
+        3.0,
+        zPos + (isLeft ? 0.4 : -0.4)
       ),
-      lookAt: new THREE.Vector3(xPos, 2.45, zPos),
+      lookAt: new THREE.Vector3(xPos, 3.0, zPos),
       artworkIndex: idx
     });
   });
@@ -1103,8 +1210,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     title: centerpieceTitle,
     subtitle: proposalQuestion,
     stepLabel: 'THE MASTERPIECE',
-    cameraPos: new THREE.Vector3(0, 2.1, rotundaZ + 6.2),
-    lookAt: new THREE.Vector3(0, 2.8, rotundaZ + 0.18),
+    cameraPos: new THREE.Vector3(0, 2.6, benchZ + 2.5),
+    lookAt: new THREE.Vector3(0, 4.0, cinemaZ),
     isCenterpiece: true
   });
 
@@ -1350,8 +1457,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
           });
           if (peer.isSeated) {
             peerSeatedMap.set(userId, true);
-            const peerBenchX = peer.gender === 'male' ? -0.55 : 0.55;
-            pAvatar.group.position.set(peerBenchX, 0, rotundaZ + 5.8);
+            const peerBenchX = peer.gender === 'male' ? -0.75 : 0.75;
+            pAvatar.group.position.set(peerBenchX, 0, benchZ);
             pAvatar.group.rotation.y = Math.PI;
             pAvatar.setSeated(true);
           }
@@ -1399,16 +1506,16 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       soundFx.sparkle();
     } else if (data.action === 'sit') {
       peerSeatedMap.set(data.userId, true);
-      const peerBenchX = data.gender === 'male' ? -0.55 : 0.55;
-      rec.targetPos.set(peerBenchX, 0, rotundaZ + 5.8);
-      rec.avatar.group.position.set(peerBenchX, 0, rotundaZ + 5.8);
+      const peerBenchX = data.gender === 'male' ? -0.75 : 0.75;
+      rec.targetPos.set(peerBenchX, 0, benchZ);
+      rec.avatar.group.position.set(peerBenchX, 0, benchZ);
       rec.avatar.group.rotation.y = Math.PI;
       rec.avatar.setSeated(true);
       if (typeof checkBenchVideoPlayback === 'function') checkBenchVideoPlayback();
     } else if (data.action === 'stand') {
       peerSeatedMap.delete(data.userId);
       rec.avatar.setSeated(false);
-      rec.avatar.group.position.set(0, 0, rotundaZ + 7.2);
+      rec.avatar.group.position.set(0, 0, benchZ + 2.0);
       if (typeof checkBenchVideoPlayback === 'function') checkBenchVideoPlayback();
     } else if (data.action === 'bench_video_sync') {
       if (cinemaVideoElem && typeof data.currentTime === 'number') {
@@ -2079,34 +2186,34 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       btnDockSit.title = 'Stand up from bench';
     }
 
-    const myBenchX = (userProfile.gender === 'male') ? -0.55 : 0.55;
+    const myBenchX = (userProfile.gender === 'male') ? -0.75 : 0.75;
     if (localAvatar) {
-      localAvatar.group.position.set(myBenchX, 0, rotundaZ + 5.8);
+      localAvatar.group.position.set(myBenchX, 0, benchZ);
       localAvatar.group.rotation.y = Math.PI; // Face cinema screen
       localAvatar.setSeated(true);
     }
     if (multiplayer) {
       multiplayer.sendAction('sit');
-      multiplayer.sendMove(myBenchX, 0, rotundaZ + 5.8, Math.PI, false, true);
+      multiplayer.sendMove(myBenchX, 0, benchZ, Math.PI, false, true);
     }
 
     // Cinematic mood lighting (dim ambient spotlights)
     gsap.to(ambientLight, { intensity: 0.22, duration: 1.4 });
     gsap.to(hemiLight, { intensity: 0.15, duration: 1.4 });
-    gsap.to(cpSpot, { intensity: 5.5, duration: 1.4 });
+    gsap.to(cpSpot, { intensity: 6.5, duration: 1.4 });
 
     // Smoothly drop camera to romantic seated height facing the screen
     gsap.to(camera.position, {
       x: 0,
-      y: 1.8,
-      z: rotundaZ + 8.4,
+      y: 2.2,
+      z: benchZ + 3.2,
       duration: 1.8,
       ease: 'power2.inOut'
     });
     gsap.to(currentLookAtTarget, {
       x: 0,
-      y: 2.6,
-      z: rotundaZ + 0.18,
+      y: 4.0,
+      z: cinemaZ,
       duration: 1.8,
       ease: 'power2.inOut',
       onUpdate: () => camera.lookAt(currentLookAtTarget)
@@ -2132,20 +2239,20 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
     if (localAvatar) {
       localAvatar.setSeated(false);
-      localAvatar.group.position.set(0, 0, rotundaZ + 7.4);
+      localAvatar.group.position.set(0, 0, benchZ + 2.0);
       localAvatar.group.rotation.y = Math.PI;
     }
     if (multiplayer) {
       multiplayer.sendAction('stand');
-      multiplayer.sendMove(0, 0, rotundaZ + 7.4, Math.PI, false, false);
+      multiplayer.sendMove(0, 0, benchZ + 2.0, Math.PI, false, false);
     }
 
     checkBenchVideoPlayback();
 
     // Restore museum lighting
-    gsap.to(ambientLight, { intensity: 0.75, duration: 1.2 });
-    gsap.to(hemiLight, { intensity: 0.45, duration: 1.2 });
-    gsap.to(cpSpot, { intensity: 4.5, duration: 1.2 });
+    gsap.to(ambientLight, { intensity: 0.9, duration: 1.2 });
+    gsap.to(hemiLight, { intensity: 0.7, duration: 1.2 });
+    gsap.to(cpSpot, { intensity: 5.5, duration: 1.2 });
 
     walkYaw = 0;
     walkPitch = 0.05;
@@ -2649,8 +2756,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         }
 
         // Keep inside museum bounds
-        localAvatar.group.position.x = Math.max(-hallWidth / 2 + 1.2, Math.min(hallWidth / 2 - 1.2, localAvatar.group.position.x));
-        localAvatar.group.position.z = Math.max(rotundaZ + 2.0, Math.min(6.2, localAvatar.group.position.z));
+        localAvatar.group.position.x = Math.max(-hallWidth / 2 + 1.8, Math.min(hallWidth / 2 - 1.8, localAvatar.group.position.x));
+        localAvatar.group.position.z = Math.max(rotundaZ + 2.8, Math.min(6.5, localAvatar.group.position.z));
         localAvatar.group.position.y = 0;
 
         // Animate local avatar limbs
@@ -2672,9 +2779,9 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         // TPP Chase Camera Positioning (behind avatar, looking forward)
         // Dynamically glide camera closer & lower when kneeling to showcase the ring box & proposal
         const isKneelingNow = localAvatar.isKneeling();
-        const camDist = isKneelingNow ? 3.0 : 3.8;
-        const camHeight = isKneelingNow ? 1.45 : 1.95;
-        const focusY = isKneelingNow ? 0.95 : 1.35;
+        const camDist = isKneelingNow ? 3.2 : 4.4;
+        const camHeight = isKneelingNow ? 1.55 : 2.25;
+        const focusY = isKneelingNow ? 1.05 : 1.5;
 
         const desiredCamX = localAvatar.group.position.x + Math.sin(walkYaw) * Math.cos(walkPitch) * camDist;
         const desiredCamY = localAvatar.group.position.y + camHeight + Math.sin(walkPitch) * camDist;
@@ -2692,8 +2799,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         localAvatar.update(delta, false, 0);
         if (multiplayer && (now - lastMoveBroadcastTime > 1500)) {
           lastMoveBroadcastTime = now;
-          const myBenchX = (userProfile.gender === 'male') ? -0.55 : 0.55;
-          multiplayer.sendMove(myBenchX, 0, rotundaZ + 5.8, Math.PI, false, true);
+          const myBenchX = (userProfile.gender === 'male') ? -0.75 : 0.75;
+          multiplayer.sendMove(myBenchX, 0, benchZ, Math.PI, false, true);
         }
       }
     }
@@ -2710,10 +2817,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
     // Proximity checks when in walk mode
     if (currentMode === 'walk') {
-      const benchPos = new THREE.Vector3(0, 1.7, rotundaZ + 5.8);
+      const benchPos = new THREE.Vector3(0, 1.7, benchZ);
       const currentPos = localAvatar ? localAvatar.group.position : camera.position;
       const distToBench = currentPos.distanceTo(benchPos);
-      if (distToBench < 4.5 && !isSeatedOnBench) {
+      if (distToBench < 5.5 && !isSeatedOnBench) {
         if (benchPrompt) benchPrompt.style.display = 'block';
       } else {
         if (benchPrompt) benchPrompt.style.display = 'none';
@@ -2723,7 +2830,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       let nearArt = null;
       for (const art of interactiveArtworks) {
         const d = currentPos.distanceTo(art.targetLookAt);
-        if (d < 3.8) {
+        if (d < 4.5) {
           nearArt = art;
           break;
         }
