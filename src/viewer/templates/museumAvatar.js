@@ -255,7 +255,7 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   leftHand.position.y = -0.48;
   leftArmGroup.add(leftHand);
 
-  // Right Arm (Can wave!)
+  // Right Arm (Can wave & hold ring!)
   const rightArmGroup = new THREE.Group();
   rightArmGroup.position.set(-0.32, 0.2, 0);
   torsoGroup.add(rightArmGroup);
@@ -265,6 +265,42 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), skinMat);
   rightHand.position.y = -0.48;
   rightArmGroup.add(rightHand);
+
+  // 3D Velvet Ring Box with Sparkling Diamond Ring (Revealed on Kneeling Proposal)
+  const ringBoxGroup = new THREE.Group();
+  ringBoxGroup.position.set(0, -0.04, 0.14);
+  ringBoxGroup.visible = false;
+  rightHand.add(ringBoxGroup);
+
+  const boxBaseMat = new THREE.MeshStandardMaterial({ color: 0x831843, roughness: 0.85 });
+  const boxBase = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.12), boxBaseMat);
+  ringBoxGroup.add(boxBase);
+
+  const boxLid = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 0.12), boxBaseMat);
+  boxLid.position.set(0, 0.08, -0.05);
+  boxLid.rotation.x = -Math.PI / 2.3;
+  ringBoxGroup.add(boxLid);
+
+  const ringBandMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.2 });
+  const ringBand = new THREE.Mesh(new THREE.TorusGeometry(0.028, 0.006, 8, 16), ringBandMat);
+  ringBand.position.set(0, 0.05, 0);
+  ringBand.rotation.x = Math.PI / 2;
+  ringBoxGroup.add(ringBand);
+
+  const diamondMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    metalness: 0.1,
+    roughness: 0.05,
+    emissive: 0x60a5fa,
+    emissiveIntensity: 0.6
+  });
+  const diamond = new THREE.Mesh(new THREE.OctahedronGeometry(0.022, 0), diamondMat);
+  diamond.position.set(0, 0.08, 0);
+  ringBoxGroup.add(diamond);
+
+  const ringLight = new THREE.PointLight(0xffeedd, 0, 2.5);
+  ringLight.position.set(0, 0.14, 0);
+  ringBoxGroup.add(ringLight);
 
   // Left Leg
   const leftLegGroup = new THREE.Group();
@@ -303,11 +339,54 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   let currentAction = null;
   let actionTimer = 0;
   let isSeated = false;
+  let isKneeling = false;
+  let isSurprised = false;
 
   function setSeated(sitting) {
     isSeated = sitting;
     if (sitting) {
+      isKneeling = false;
+      isSurprised = false;
+      ringBoxGroup.visible = false;
       currentAction = null;
+    } else {
+      leftLegGroup.position.set(0.14, 0.65, 0);
+      rightLegGroup.position.set(-0.14, 0.65, 0);
+      torsoGroup.position.set(0, 0.95, 0);
+      torsoGroup.rotation.x = 0;
+      rightArmGroup.rotation.set(0, 0, 0);
+      leftArmGroup.rotation.set(0, 0, 0);
+    }
+  }
+
+  function setKneeling(kneeling) {
+    isKneeling = kneeling;
+    ringBoxGroup.visible = kneeling;
+    if (kneeling) {
+      isSeated = false;
+      isSurprised = false;
+      ringLight.intensity = 1.8;
+      currentAction = null;
+    } else {
+      ringLight.intensity = 0;
+      leftLegGroup.position.set(0.14, 0.65, 0);
+      rightLegGroup.position.set(-0.14, 0.65, 0);
+      torsoGroup.position.set(0, 0.95, 0);
+      torsoGroup.rotation.x = 0;
+      rightArmGroup.rotation.set(0, 0, 0);
+      leftArmGroup.rotation.set(0, 0, 0);
+    }
+  }
+
+  function setSurprise(surprise) {
+    isSurprised = surprise;
+    if (surprise) {
+      isSeated = false;
+      isKneeling = false;
+      ringBoxGroup.visible = false;
+    } else {
+      rightArmGroup.rotation.set(0, 0, 0);
+      leftArmGroup.rotation.set(0, 0, 0);
     }
   }
 
@@ -364,6 +443,47 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   }
 
   function update(delta, isWalking, speed = 1) {
+    if (isKneeling) {
+      // 3D Romantic Real-Time One-Knee Proposal Pose
+      // Right knee drops to the floor
+      rightLegGroup.rotation.x = THREE.MathUtils.lerp(rightLegGroup.rotation.x, -Math.PI / 2.15, 0.16);
+      rightLegGroup.position.y = THREE.MathUtils.lerp(rightLegGroup.position.y, 0.28, 0.16);
+      rightLegGroup.position.z = THREE.MathUtils.lerp(rightLegGroup.position.z, -0.16, 0.16);
+
+      // Left foot planted flat with knee bent
+      leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, 0.48, 0.16);
+      leftLegGroup.position.y = THREE.MathUtils.lerp(leftLegGroup.position.y, 0.42, 0.16);
+      leftLegGroup.position.z = THREE.MathUtils.lerp(leftLegGroup.position.z, 0.18, 0.16);
+
+      // Torso lowers gracefully to kneeling height
+      torsoGroup.position.y = THREE.MathUtils.lerp(torsoGroup.position.y, 0.52, 0.16);
+      torsoGroup.position.z = THREE.MathUtils.lerp(torsoGroup.position.z, -0.04, 0.16);
+      torsoGroup.rotation.x = THREE.MathUtils.lerp(torsoGroup.rotation.x, 0.08, 0.16);
+
+      // Right arm extends forward holding out the velvet ring box to partner
+      rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -Math.PI / 2.2, 0.16);
+      rightArmGroup.rotation.y = THREE.MathUtils.lerp(rightArmGroup.rotation.y, 0.1, 0.16);
+      rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.12, 0.16);
+
+      // Left arm rests over heart
+      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -0.7, 0.16);
+      leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.55, 0.16);
+
+      // Diamond sparkles & spins
+      diamond.rotation.y += delta * 3.5;
+      return;
+    }
+
+    if (isSurprised) {
+      // Recipient Hands to Cheeks / Heart in romantic surprise
+      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -1.6, 0.16);
+      leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.45, 0.16);
+      rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -1.6, 0.16);
+      rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.45, 0.16);
+      torsoGroup.position.y = 0.95 + Math.sin(idleTimer * 3.5) * 0.02;
+      return;
+    }
+
     if (isSeated) {
       // Sitting pose on gallery bench
       leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, -Math.PI / 2 + 0.1, 0.15);
@@ -441,6 +561,9 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
     showChatBubble,
     burstHearts,
     setSeated,
+    setKneeling,
+    setSurprise,
+    isKneeling: () => isKneeling,
     dispose
   };
 }

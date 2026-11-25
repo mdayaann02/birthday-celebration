@@ -527,11 +527,45 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             <span class="action-emoji">🛋️</span>
             <span class="action-text">Sit Together</span>
           </button>
+          <button type="button" class="btn-dock-action btn-dock-propose" id="btnDockPropose" title="Kneel down on one knee to propose">
+            <span class="action-emoji">💍</span>
+            <span class="action-text">Propose</span>
+          </button>
         </div>
 
         <div class="multi-dock-right">
           <div class="multi-avatar-badge" id="multiAvatarBadge">
             <span class="my-avatar-tag" id="myAvatarTag">👦 You</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Interactive Kneeling Proposal Banner -->
+      <div class="realtime-proposal-banner" id="realtimeProposalBanner" style="display:none;">
+        <div class="proposal-banner-backdrop" id="realtimeProposalBackdrop"></div>
+        <div class="proposal-banner-card">
+          <button type="button" class="btn-close-banner" id="btnCloseRealtimeBanner">✕</button>
+          <div class="proposal-banner-seal">💍 ✨</div>
+          <span class="proposal-banner-eyebrow" id="realtimeBannerEyebrow">REAL-TIME 3D PROPOSAL</span>
+          <h3 class="proposal-banner-title" id="realtimeBannerTitle">On Bended Knee For You</h3>
+          <p class="proposal-banner-question" id="realtimeBannerQuestion">${proposalQuestion}</p>
+          <div class="proposal-banner-actions" id="realtimeBannerActions">
+            <button type="button" class="btn-banner-accept" id="btnAcceptRealtimeProposal">
+              <span>${proposalYesBtn}</span>
+            </button>
+            <button type="button" class="btn-banner-stand" id="btnStandRealtimeProposal">
+              <span>Stand Up</span>
+            </button>
+          </div>
+          <!-- Real-Time Celebration Box -->
+          <div class="realtime-celebrate-box" id="realtimeCelebrateBox" style="display:none;">
+            <div class="celebrate-sparkles">✨ 💍 🥂 💖 🕊️ ✨</div>
+            <h3 class="celebrate-title">${proposalCelebrateTitle}</h3>
+            <p class="celebrate-text">${proposalCelebrateMsg}</p>
+            <div class="celebrate-badge">ACCEPTED IN REAL-TIME • FOREVER & ALWAYS</div>
+            <button type="button" class="btn-banner-done" id="btnDoneRealtimeProposal">
+              <span>Continue Exploring 🏛️</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1156,7 +1190,21 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const btnDockHeart = container.querySelector('#btnDockHeart');
   const btnDockChat = container.querySelector('#btnDockChat');
   const btnDockSit = container.querySelector('#btnDockSit');
+  const btnDockPropose = container.querySelector('#btnDockPropose');
   const myAvatarTag = container.querySelector('#myAvatarTag');
+
+  // Real-Time Proposal Banner Elements
+  const realtimeProposalBanner = container.querySelector('#realtimeProposalBanner');
+  const realtimeProposalBackdrop = container.querySelector('#realtimeProposalBackdrop');
+  const btnCloseRealtimeBanner = container.querySelector('#btnCloseRealtimeBanner');
+  const btnAcceptRealtimeProposal = container.querySelector('#btnAcceptRealtimeProposal');
+  const btnStandRealtimeProposal = container.querySelector('#btnStandRealtimeProposal');
+  const btnDoneRealtimeProposal = container.querySelector('#btnDoneRealtimeProposal');
+  const realtimeBannerActions = container.querySelector('#realtimeBannerActions');
+  const realtimeCelebrateBox = container.querySelector('#realtimeCelebrateBox');
+  const realtimeBannerEyebrow = container.querySelector('#realtimeBannerEyebrow');
+  const realtimeBannerTitle = container.querySelector('#realtimeBannerTitle');
+  const realtimeBannerQuestion = container.querySelector('#realtimeBannerQuestion');
 
   const museumChatTray = container.querySelector('#museumChatTray');
   const btnCloseChatTray = container.querySelector('#btnCloseChatTray');
@@ -1261,6 +1309,67 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     } else if (data.action === 'stand') {
       rec.avatar.setSeated(false);
       rec.avatar.group.position.set(0, 0, rotundaZ + 7.2);
+    } else if (data.action === 'propose_kneel') {
+      // 3D Romantic Real-Time Kneeling Proposal from peer
+      rec.avatar.setKneeling(true);
+
+      if (localAvatar) {
+        // Proposer faces recipient
+        const dx = localAvatar.group.position.x - rec.avatar.group.position.x;
+        const dz = localAvatar.group.position.z - rec.avatar.group.position.z;
+        rec.avatar.group.rotation.y = Math.atan2(dx, dz);
+
+        // Local recipient turns toward kneeling partner and enters romantic surprise pose
+        localAvatar.group.rotation.y = Math.atan2(-dx, -dz);
+        localAvatar.setSurprise(true);
+      }
+
+      soundFx.sparkle();
+
+      // Display real-time banner for recipient with yes button
+      if (realtimeProposalBanner) {
+        if (realtimeBannerEyebrow) realtimeBannerEyebrow.textContent = `💍 ${data.proposerName || 'YOUR LOVE'} IS PROPOSING!`;
+        if (realtimeBannerTitle) realtimeBannerTitle.textContent = `${data.proposerName || 'Your Love'} Drops Down On One Knee`;
+        if (realtimeBannerQuestion) realtimeBannerQuestion.textContent = data.question || proposalQuestion;
+        if (realtimeBannerActions) realtimeBannerActions.style.display = 'flex';
+        if (realtimeCelebrateBox) realtimeCelebrateBox.style.display = 'none';
+        if (btnStandRealtimeProposal) btnStandRealtimeProposal.style.display = 'none';
+        if (btnAcceptRealtimeProposal) btnAcceptRealtimeProposal.style.display = 'inline-flex';
+        realtimeProposalBanner.style.display = 'flex';
+      }
+    } else if (data.action === 'propose_accept') {
+      soundFx.sparkle();
+      // Grand celebratory confetti
+      const end = Date.now() + 5 * 1000;
+      const colors = ['#e63946', '#ffb703', '#f4a261', '#e76f51', '#ffffff', '#ffd166', '#ec4899'];
+      (function frame() {
+        confetti({ particleCount: 7, angle: 60, spread: 60, origin: { x: 0 }, colors });
+        confetti({ particleCount: 7, angle: 120, spread: 60, origin: { x: 1 }, colors });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      }());
+
+      if (localAvatar) {
+        localAvatar.burstHearts(scene, rec.avatar.group.position);
+        localAvatar.setSurprise(false);
+        localAvatar.playGesture('wave');
+      }
+      rec.avatar.burstHearts(scene, localAvatar ? localAvatar.group.position : null);
+
+      if (realtimeProposalBanner) {
+        if (realtimeBannerActions) realtimeBannerActions.style.display = 'none';
+        if (realtimeCelebrateBox) {
+          realtimeCelebrateBox.style.display = 'block';
+          gsap.fromTo(realtimeCelebrateBox,
+            { scale: 0.88, opacity: 0, y: 20 },
+            { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: 'back.out(1.6)' }
+          );
+        }
+        realtimeProposalBanner.style.display = 'flex';
+      }
+    } else if (data.action === 'propose_stand') {
+      rec.avatar.setKneeling(false);
+      if (localAvatar) localAvatar.setSurprise(false);
+      if (realtimeProposalBanner) realtimeProposalBanner.style.display = 'none';
     }
   }
 
@@ -1399,11 +1508,116 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   });
 
   // --------------------------------------------------------------------------
+  // REAL-TIME 3D PROPOSAL SYSTEM (ONE KNEE + VELVET RING BOX)
+  // --------------------------------------------------------------------------
+  function toggleKneelingProposal() {
+    if (!localAvatar) return;
+    soundFx.sparkle();
+
+    const isCurrentlyKneeling = localAvatar.isKneeling();
+    if (isCurrentlyKneeling) {
+      standFromProposal();
+    } else {
+      if (isSeatedOnBench) {
+        standUpFromBench();
+      }
+
+      // Turn towards peer if nearby
+      if (peerAvatarsMap.size > 0) {
+        const firstPeer = Array.from(peerAvatarsMap.values())[0];
+        const peerPos = firstPeer.avatar.group.position;
+        const dx = peerPos.x - localAvatar.group.position.x;
+        const dz = peerPos.z - localAvatar.group.position.z;
+        localAvatar.group.rotation.y = Math.atan2(dx, dz);
+      }
+
+      localAvatar.setKneeling(true);
+      if (btnDockPropose) btnDockPropose.classList.add('active');
+
+      if (realtimeProposalBanner) {
+        if (realtimeBannerEyebrow) realtimeBannerEyebrow.textContent = '💍 REAL-TIME 3D PROPOSAL';
+        if (realtimeBannerTitle) realtimeBannerTitle.textContent = 'On Bended Knee For You';
+        if (realtimeBannerQuestion) realtimeBannerQuestion.textContent = proposalQuestion;
+        if (realtimeBannerActions) realtimeBannerActions.style.display = 'flex';
+        if (realtimeCelebrateBox) realtimeCelebrateBox.style.display = 'none';
+        if (btnStandRealtimeProposal) btnStandRealtimeProposal.style.display = 'inline-flex';
+        if (btnAcceptRealtimeProposal) btnAcceptRealtimeProposal.style.display = 'inline-flex';
+        realtimeProposalBanner.style.display = 'flex';
+      }
+
+      if (multiplayer) {
+        multiplayer.sendAction('propose_kneel', {
+          question: proposalQuestion,
+          proposerName: userProfile.name,
+          proposerGender: userProfile.gender
+        });
+      }
+    }
+  }
+
+  function standFromProposal() {
+    if (localAvatar) {
+      localAvatar.setKneeling(false);
+      localAvatar.setSurprise(false);
+    }
+    if (btnDockPropose) btnDockPropose.classList.remove('active');
+    if (realtimeProposalBanner) realtimeProposalBanner.style.display = 'none';
+    if (multiplayer) {
+      multiplayer.sendAction('propose_stand');
+    }
+  }
+
+  function acceptProposal() {
+    soundFx.sparkle();
+    const end = Date.now() + 5 * 1000;
+    const colors = ['#e63946', '#ffb703', '#f4a261', '#e76f51', '#ffffff', '#ffd166', '#ec4899'];
+    (function frame() {
+      confetti({ particleCount: 7, angle: 60, spread: 60, origin: { x: 0 }, colors });
+      confetti({ particleCount: 7, angle: 120, spread: 60, origin: { x: 1 }, colors });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    }());
+
+    let targetPos = null;
+    if (peerAvatarsMap.size > 0) {
+      const firstPeer = Array.from(peerAvatarsMap.values())[0];
+      targetPos = firstPeer.avatar.group.position;
+      firstPeer.avatar.burstHearts(scene, localAvatar ? localAvatar.group.position : null);
+    }
+    if (localAvatar) {
+      localAvatar.burstHearts(scene, targetPos);
+      localAvatar.setSurprise(false);
+      localAvatar.playGesture('wave');
+    }
+
+    if (realtimeBannerActions) realtimeBannerActions.style.display = 'none';
+    if (realtimeCelebrateBox) {
+      realtimeCelebrateBox.style.display = 'block';
+      gsap.fromTo(realtimeCelebrateBox,
+        { scale: 0.88, opacity: 0, y: 20 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: 'back.out(1.6)' }
+      );
+    }
+
+    if (multiplayer) {
+      multiplayer.sendAction('propose_accept', {
+        acceptorName: userProfile.name
+      });
+    }
+  }
+
+  btnDockPropose?.addEventListener('click', toggleKneelingProposal);
+  btnAcceptRealtimeProposal?.addEventListener('click', acceptProposal);
+  btnStandRealtimeProposal?.addEventListener('click', standFromProposal);
+  btnCloseRealtimeBanner?.addEventListener('click', standFromProposal);
+  realtimeProposalBackdrop?.addEventListener('click', standFromProposal);
+  btnDoneRealtimeProposal?.addEventListener('click', standFromProposal);
+
+  // --------------------------------------------------------------------------
   // FREE WALK CONTROLLER (TPP with WASD / Joystick + Camera Orbit)
   // --------------------------------------------------------------------------
   const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-  let walkYaw = Math.PI; // Face forward towards gallery hall (-Z)
+  let walkYaw = 0; // 0 faces forward towards gallery hall (-Z)
   let walkPitch = 0.05;
   const moveDirection = { forward: 0, right: 0 };
   const keysDown = {};
@@ -1494,7 +1708,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     gsap.to(hemiLight, { intensity: 0.45, duration: 1.2 });
     gsap.to(cpSpot, { intensity: 4.5, duration: 1.2 });
 
-    walkYaw = Math.PI;
+    walkYaw = 0;
     walkPitch = 0.05;
   }
 
@@ -1502,7 +1716,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   btnStandBench?.addEventListener('click', standUpFromBench);
   btnOpenProposalBench?.addEventListener('click', () => {
     soundFx.sparkle();
-    showProposalModal();
+    toggleKneelingProposal();
   });
 
   function setMode(mode) {
@@ -1531,7 +1745,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         desktopHint.style.display = 'block';
       }
       isTourPlaying = false;
-      walkYaw = Math.PI;
+      walkYaw = 0;
       walkPitch = 0.05;
     }
   }
@@ -1569,10 +1783,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     prevMouseX = e.clientX;
     prevMouseY = e.clientY;
 
-    // Moving mouse to the right rotates camera to the right
-    walkYaw += dx * 0.0035;
+    // Moving mouse to the right rotates camera smoothly to the right
+    walkYaw -= dx * 0.0035;
     walkPitch -= dy * 0.003;
-    walkPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, walkPitch));
+    walkPitch = Math.max(-0.35, Math.min(0.65, walkPitch));
   });
 
   window.addEventListener('mouseup', () => {
@@ -1605,10 +1819,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
           const dy = touch.clientY - prevTouchLookY;
           prevTouchLookX = touch.clientX;
           prevTouchLookY = touch.clientY;
-          // Swiping to the right rotates camera to the right
-          walkYaw += dx * 0.0045;
+          // Swiping right rotates camera smoothly to the right
+          walkYaw -= dx * 0.0045;
           walkPitch -= dy * 0.0035;
-          walkPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, walkPitch));
+          walkPitch = Math.max(-0.35, Math.min(0.65, walkPitch));
         }
       }
     }, { passive: false });
@@ -1937,14 +2151,19 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         strafeDelta += moveDirection.right;
 
         const mag = Math.hypot(forwardDelta, strafeDelta);
-        const isWalking = mag > 0.08;
+        const isWalking = mag > 0.08 && !localAvatar.isKneeling();
+
+        // If kneeling and player attempts to walk, stand up gracefully
+        if (localAvatar.isKneeling() && mag > 0.08) {
+          standFromProposal();
+        }
 
         if (isWalking) {
           const normFwd = (forwardDelta / Math.max(1, mag)) * walkSpeed;
           const normStf = (strafeDelta / Math.max(1, mag)) * walkSpeed;
 
-          // Camera horizontal forward direction (XZ plane)
-          const camFwd = new THREE.Vector3(Math.sin(walkYaw), 0, Math.cos(walkYaw)).normalize();
+          // Camera horizontal forward direction (XZ plane: looking into gallery towards -Z when walkYaw = 0)
+          const camFwd = new THREE.Vector3(-Math.sin(walkYaw), 0, -Math.cos(walkYaw)).normalize();
           const camRight = new THREE.Vector3().crossVectors(camFwd, new THREE.Vector3(0, 1, 0)).normalize();
 
           const moveVec = new THREE.Vector3()
@@ -1986,12 +2205,12 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
           );
         }
 
-        // TPP Chase Camera Positioning
+        // TPP Chase Camera Positioning (behind avatar, looking forward)
         const camDist = 3.8;
-        const camHeight = 2.1;
-        const desiredCamX = localAvatar.group.position.x - Math.sin(walkYaw) * Math.cos(walkPitch) * camDist;
+        const camHeight = 1.95;
+        const desiredCamX = localAvatar.group.position.x + Math.sin(walkYaw) * Math.cos(walkPitch) * camDist;
         const desiredCamY = localAvatar.group.position.y + camHeight + Math.sin(walkPitch) * camDist;
-        const desiredCamZ = localAvatar.group.position.z - Math.cos(walkYaw) * Math.cos(walkPitch) * camDist;
+        const desiredCamZ = localAvatar.group.position.z + Math.cos(walkYaw) * Math.cos(walkPitch) * camDist;
 
         camera.position.lerp(new THREE.Vector3(desiredCamX, desiredCamY, desiredCamZ), 0.16);
 
