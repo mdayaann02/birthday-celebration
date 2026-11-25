@@ -22875,11 +22875,11 @@ body:has(#bloomContainer) {
 .museum-proposal-modal {
   position: fixed;
   inset: 0;
-  z-index: 120;
+  z-index: 1500;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
 }
 
 .proposal-modal-backdrop {
@@ -22888,18 +22888,47 @@ body:has(#bloomContainer) {
   background: rgba(6, 4, 4, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  cursor: pointer;
 }
 
 .proposal-modal-card {
   position: relative;
   max-width: 580px;
   width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
   background: radial-gradient(circle at 50% 15%, #2c161d 0%, #1a0e13 60%, #0d070a 100%);
   border: 2px solid #d4235c;
   border-radius: 26px;
-  padding: 36px 30px;
+  padding: 34px 28px;
   text-align: center;
   box-shadow: 0 26px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(212, 35, 92, 0.3);
+}
+
+.btn-close-proposal {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1.5px solid rgba(212, 175, 55, 0.6);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: all 0.2s ease;
+}
+
+.btn-close-proposal:hover {
+  transform: scale(1.1);
+  background: #d4af37;
+  color: #111;
 }
 
 .proposal-gold-seal {
@@ -23051,6 +23080,52 @@ body:has(#bloomContainer) {
 
 .btn-celebrate-done:hover {
   transform: scale(1.05);
+}
+
+/* Proposal Modal Landscape & Compact Screen Fit */
+@media (max-height: 540px), (orientation: landscape) and (max-height: 600px) {
+  .proposal-modal-card {
+    padding: 16px 24px;
+    max-height: 88vh;
+  }
+  .proposal-gold-seal {
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+  .proposal-eyebrow {
+    font-size: 9px;
+    margin-bottom: 2px;
+  }
+  .proposal-title {
+    font-size: 18px;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .proposal-subtitle {
+    font-size: 11.5px;
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .proposal-centerpiece-preview {
+    margin-bottom: 10px;
+  }
+  .proposal-centerpiece-preview img {
+    max-height: 115px;
+  }
+  .preview-caption {
+    font-size: 10px;
+    padding: 2px 8px;
+    bottom: 6px;
+  }
+  .proposal-action-row {
+    gap: 8px;
+  }
+  .btn-proposal-yes,
+  .btn-proposal-no {
+    padding: 8px 18px;
+    font-size: 12.5px;
+    border-radius: 12px;
+  }
 }
 
 /* Mobile Responsiveness for Museum */
@@ -23301,6 +23376,35 @@ body:has(#bloomContainer) {
 .museum-bench-prompt,
 .museum-stand-prompt {
   pointer-events: auto;
+}
+
+.museum-stand-prompt {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-open-proposal-bench {
+  background: linear-gradient(135deg, #d4235c, #ff4d8d);
+  color: #fff;
+  border: 1.5px solid #ffccd8;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(212, 35, 92, 0.5);
+  transition: all 0.2s ease;
+}
+
+.btn-open-proposal-bench:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 28px rgba(212, 35, 92, 0.7);
 }
 
 .btn-sit-bench {

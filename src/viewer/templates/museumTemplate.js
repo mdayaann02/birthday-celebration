@@ -489,7 +489,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         <div class="museum-stand-prompt" id="standPrompt" style="display:none;">
           <button type="button" class="btn-stand-bench" id="btnStandBench" title="Stand up and continue walking">
             <span class="stand-icon">🚶</span>
-            <span>Stand Up & Explore Gallery</span>
+            <span>Stand Up & Explore</span>
+          </button>
+          <button type="button" class="btn-open-proposal-bench" id="btnOpenProposalBench" title="Read The Masterpiece Proposal">
+            <span>💍 The Proposal</span>
           </button>
         </div>
         <div class="museum-art-prompt-badge" id="artPromptBadge" style="display:none;">
@@ -579,8 +582,9 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
       <!-- Centerpiece Proposal / Cinema Modal -->
       <div class="museum-proposal-modal" id="proposalModal" style="display:none;">
-        <div class="proposal-modal-backdrop"></div>
+        <div class="proposal-modal-backdrop" id="proposalModalBackdrop"></div>
         <div class="proposal-modal-card" id="proposalCard">
+          <button type="button" class="btn-close-proposal" id="btnCloseProposal" title="Return to Gallery">✕</button>
           <div class="proposal-gold-seal">🏛️ 💍</div>
           <span class="proposal-eyebrow">THE GRAND EXHIBIT</span>
           <h2 class="proposal-title" id="proposalTitle">${proposalQuestion}</h2>
@@ -1410,6 +1414,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const artPromptBadge = container.querySelector('#artPromptBadge');
   const btnSitBench = container.querySelector('#btnSitBench');
   const btnStandBench = container.querySelector('#btnStandBench');
+  const btnOpenProposalBench = container.querySelector('#btnOpenProposalBench');
 
   let isSeatedOnBench = false;
 
@@ -1417,7 +1422,16 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     soundFx.pop(480);
     isSeatedOnBench = true;
     if (benchPrompt) benchPrompt.style.display = 'none';
-    if (standPrompt) standPrompt.style.display = 'block';
+    if (standPrompt) standPrompt.style.display = 'flex';
+
+    // Update Dock Button Label & Icon
+    if (btnDockSit) {
+      const em = btnDockSit.querySelector('.action-emoji');
+      const tx = btnDockSit.querySelector('.action-text');
+      if (em) em.textContent = '🚶';
+      if (tx) tx.textContent = 'Stand Up';
+      btnDockSit.title = 'Stand up from bench';
+    }
 
     const myBenchX = (userProfile.gender === 'male') ? -0.55 : 0.55;
     if (localAvatar) {
@@ -1448,10 +1462,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       z: rotundaZ + 0.18,
       duration: 1.8,
       ease: 'power2.inOut',
-      onUpdate: () => camera.lookAt(currentLookAtTarget),
-      onComplete: () => {
-        setTimeout(showProposalModal, 600);
-      }
+      onUpdate: () => camera.lookAt(currentLookAtTarget)
     });
   }
 
@@ -1459,6 +1470,15 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     soundFx.pop(520);
     isSeatedOnBench = false;
     if (standPrompt) standPrompt.style.display = 'none';
+
+    // Reset Dock Button Label & Icon
+    if (btnDockSit) {
+      const em = btnDockSit.querySelector('.action-emoji');
+      const tx = btnDockSit.querySelector('.action-text');
+      if (em) em.textContent = '🛋️';
+      if (tx) tx.textContent = 'Sit Together';
+      btnDockSit.title = 'Sit together on the gallery bench';
+    }
 
     if (localAvatar) {
       localAvatar.setSeated(false);
@@ -1480,6 +1500,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
   btnSitBench?.addEventListener('click', sitOnBench);
   btnStandBench?.addEventListener('click', standUpFromBench);
+  btnOpenProposalBench?.addEventListener('click', () => {
+    soundFx.sparkle();
+    showProposalModal();
+  });
 
   function setMode(mode) {
     currentMode = mode;
@@ -1785,6 +1809,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   // PROPOSAL / CENTERPIECE MODAL & CELEBRATION
   // --------------------------------------------------------------------------
   const proposalModal = container.querySelector('#proposalModal');
+  const proposalModalBackdrop = container.querySelector('#proposalModalBackdrop');
+  const btnCloseProposal = container.querySelector('#btnCloseProposal');
   const btnProposalYes = container.querySelector('#btnProposalYes');
   const btnProposalNo = container.querySelector('#btnProposalNo');
   const proposalActionRow = container.querySelector('#proposalActionRow');
@@ -1793,9 +1819,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
   function showProposalModal() {
     proposalModal.style.display = 'flex';
+    if (multiplayerDock) multiplayerDock.style.display = 'none';
     gsap.fromTo('#proposalCard',
-      { scale: 0.85, opacity: 0, y: 40 },
-      { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)' }
+      { scale: 0.88, opacity: 0, y: 30 },
+      { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: 'back.out(1.4)' }
     );
   }
 
@@ -1803,13 +1830,19 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     gsap.to('#proposalCard', {
       scale: 0.9,
       opacity: 0,
-      y: 30,
-      duration: 0.3,
+      y: 20,
+      duration: 0.25,
       onComplete: () => {
         proposalModal.style.display = 'none';
+        if (multiplayerDock && hasEnteredMuseum) {
+          multiplayerDock.style.display = 'flex';
+        }
       }
     });
   }
+
+  btnCloseProposal?.addEventListener('click', hideProposalModal);
+  proposalModalBackdrop?.addEventListener('click', hideProposalModal);
 
   if (btnProposalYes) {
     btnProposalYes.addEventListener('click', () => {
