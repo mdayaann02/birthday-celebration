@@ -1,11 +1,7 @@
-// src/viewer/templates/bloomRevealTemplate.js - Exact Bloom Reveal Surprise Experience
-// Faithfully recreated from bloom-reveal-surprise.lovable.app
-// Features: 4-digit PIN gate, 88-flower spiral vortex curtain, left/right parting reveal,
-// 10 Things I Love About You glass accordion, 10 Polaroid memories gallery,
-// word-by-word scroll illuminated parchment love letter, Spotify top songs, and typewriter devotion finale.
-
-import confetti from 'canvas-confetti';
-import { initMusicPlayer } from '../../components/musicPlayer.js';
+// src/viewer/templates/bloomRevealTemplate.js - 100% Faithful Recreation of bloom-reveal-surprise.lovable.app
+// Features exact layout, timings, 88-flower spiral swarm, parting curtain,
+// 10 reasons accordion, 10 tilted polaroids on #DDB8DD, 260vh sticky scroll-illuminated love letter,
+// Spotify embeds, and typewriter finale with "Go to the start" return FAB.
 
 const FLOWER_IMAGES = [
   '/bloom/flower1.png',
@@ -37,11 +33,7 @@ const POLAROID_TILTS = [-4, 3, -2, 5, -3, 2, -5, 4, -1, 3];
 
 export function renderBloomRevealTemplate(container, data = {}, isMakerReview = false) {
   const targetPin = (data.bloomPin || '0000').trim();
-  const recipient = data.recipientName || 'Beautiful';
-  const gateGreeting = data.gateGreeting || `Hi, ${recipient.toLowerCase()}`;
-  const gateSubtitle = data.gateSubtitle || 'Enter the correct password to see your surprise :)';
-  const reasonsTitle = data.reasonsTitle || '10 things I love about you';
-  const reasonsList = (data.reasonsList && data.reasonsList.length > 0) ? data.reasonsList : [
+  const reasons = (data.reasonsList && data.reasonsList.length > 0) ? data.reasonsList : [
     {
       title: "Your Virtual Good Morning Smiles",
       body: "Waking up to your sleepy face on our morning video calls instantly brightens my entire day. Even when we are miles apart, that sweet smile makes me feel like you are right beside me."
@@ -84,16 +76,12 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
     }
   ];
 
-  const polaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : POLAROID_IMAGES.map((img, i) => ({
-    title: `Memory #${i + 1}`,
-    image: img,
-    note: "A cherished moment forever in my heart."
-  }));
+  const polaroids = (data.polaroids && data.polaroids.length > 0)
+    ? data.polaroids.map((p, idx) => typeof p === 'string' ? p : (p.image || POLAROID_IMAGES[idx % POLAROID_IMAGES.length]))
+    : POLAROID_IMAGES;
 
-  const letterTitle = data.letterTitle || "My Dearest,";
   const letterText = data.letterText || "My Dearest, I am writing this because words sometimes catch in my throat when I look at you, overwhelmed by how much you mean to me. Please keep this little note as a token of my heart—a small reminder of a love that belongs entirely to you, even when we are apart. Lately, the distance between us feels a little heavier, and I find myself yearning for you in the quietest moments of the day. I miss the simple warmth of your hand in mine, the soft sound of your laughter, and the way the world just makes sense whenever you are near. You are my peace, my constant joy, and the brightest part of my life. No matter where we are or how long the days feel before I can hold you again, please never forget how deeply, truly, and completely you are loved. You have my whole heart, today and for all the days to come. Forever and always yours, With all my love";
 
-  const songsTitle = data.songsTitle || "Our Top Songs";
   const spotifyTracks = (data.spotifyTracks && data.spotifyTracks.length > 0) ? data.spotifyTracks : [
     "6Qyc6fS4DsZjB2mRW9DsQs",
     "7sapKrjDij2fpDVj0GxP66",
@@ -104,30 +92,25 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
 
   const endingQuote = data.endingQuote || "I love you, to the moon and back.";
 
-  // Generate the 88-flower spiral swarm (11 cols x 8 rows + boundary offsets)
-  const Pd = 11;
-  const Fd = 8;
-  const Id = 100 / Pd;
-  const Ld = 100 / Fd;
-  const Rd = 22; // 22vmax
-  const Md = 4200; // spiral duration ms
-  const Nd = 2600; // parting duration ms
+  // Mathematical Swarm Generator (Pd = 11 cols, Fd = 8 rows, Md = 4200ms, Nd = 2600ms)
+  const Pd = 11, Fd = 8, Id = 100 / Pd, Ld = 100 / Fd, Rd = 22;
+  const Md = 4200, Nd = 2600;
 
-  function buildFlowerList() {
+  function buildSwarm() {
     const list = [];
-    for (let row = -1; row <= Fd; row++) {
-      for (let col = -1; col <= Pd; col++) {
-        const r = (row + 2) * 131 + (col + 2) * 17;
+    for (let t = -1; t <= Fd; t++) {
+      for (let n = -1; n <= Pd; n++) {
+        const r = (t + 2) * 131 + (n + 2) * 17;
         const i = ((r * 9301 + 49297) % 233280) / 233280 - 0.5;
         const a = ((r * 4801 + 9973) % 233280) / 233280 - 0.5;
-        const x = (col + 0.5) * Id + i * Id * 0.6;
-        const y = (row + 0.5) * Ld + a * Ld * 0.6;
-        const c = x - 50;
-        const l = y - 50;
+        const o = (n + 0.5) * Id + i * Id * 0.6;
+        const s = (t + 0.5) * Ld + a * Ld * 0.6;
+        const c = o - 50;
+        const l = s - 50;
         const u = Math.max(0, 1 - Math.hypot(c, l) / 90) * (Md - 1100);
         list.push({
-          x,
-          y,
+          x: o,
+          y: s,
           img: FLOWER_IMAGES[Math.abs(r) % FLOWER_IMAGES.length],
           rot: (r * 37) % 360,
           spinMs: 5000 + (Math.abs(r) % 4000),
@@ -140,170 +123,98 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
     return list;
   }
 
-  const flowerList = buildFlowerList();
-  const leftFlowers = flowerList.filter(f => f.x < 50);
-  const rightFlowers = flowerList.filter(f => f.x >= 50);
+  const swarm = buildSwarm();
+  const leftFlowers = swarm.filter(f => f.x < 50);
+  const rightFlowers = swarm.filter(f => f.x >= 50);
 
-  // Play synthetic audio chime or error sound
-  function playBloomTone(type = 'chime') {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      if (type === 'tap') {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.08);
-      } else if (type === 'error') {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(110, ctx.currentTime + 0.25);
-        gain.gain.setValueAtTime(0.18, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.25);
-      } else if (type === 'unlock') {
-        [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.type = 'triangle';
-          osc.frequency.value = freq;
-          const start = ctx.currentTime + idx * 0.1;
-          gain.gain.setValueAtTime(0.15, start);
-          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.6);
-          osc.start(start);
-          osc.stop(start + 0.6);
-        });
-      }
-    } catch {
-      // AudioContext unavailable
-    }
-  }
+  const words = letterText.trim().split(/\s+/);
 
-  // Pre-split letter words for scroll illumination
-  const letterWords = letterText.trim().split(/\s+/);
-  const isEditor = Boolean(window.isCelebrationEditorMode) || isMakerReview;
+  // In editor mode inside the studio chassis, creators can click a discreet test button
+  const isEditorMode = Boolean(window.isCelebrationEditorMode);
 
-  // Render Template Root Structure
   container.innerHTML = `
-    <div class="bloom-root" id="bloomRoot">
-      <!-- Background Audio Player Slot -->
-      <div id="bloomPlayerSlot" class="bloom-player-slot"></div>
+    <div id="bloomContainer" class="relative min-h-screen w-full overflow-hidden" style="background-color: #EDD9ED; font-family: 'Dancing Script', cursive;">
+      
+      <!-- Editor Mode Subtle Action Pill (Only in Studio Workspace) -->
+      ${isEditorMode ? `
+        <div style="position: fixed; top: 14px; right: 14px; z-index: 1000; display: flex; gap: 8px;">
+          <button type="button" id="bloomEditorBypassBtn" style="background: rgba(54, 15, 90, 0.85); color: #fff; border: 1px solid rgba(255,255,255,0.4); border-radius: 9999px; padding: 4px 12px; font-size: 11px; font-family: system-ui, sans-serif; cursor: pointer; backdrop-filter: blur(8px);">
+            👁️ Toggle Gate / Unlocked
+          </button>
+        </div>
+      ` : ''}
 
-      <!-- STAGE 1 & 2: PASSCODE GATE -->
-      <section class="bloom-gate-wrap" id="bloomGateWrap" style="background-color: #fbf7f5; display: ${isEditor ? 'none' : 'flex'};">
-        <div class="bloom-gate-container">
-          <div class="bloom-gate-box" id="bloomGateBox">
+      <!-- GATE & PASSCODE SECTION -->
+      <div id="bloomGateLayer" class="relative z-10" style="background-color: #fbf7f5; display: block;">
+        <section class="flex min-h-screen w-full items-center justify-center px-6" style="background-color: #fbf7f5;">
+          <div id="bloomGateShakeBox" class="flex flex-col items-center gap-8" style="color: #360f5a;">
             
-            ${isEditor ? `
-              <div class="bloom-creator-badge">
-                <span>👁️ Creator Mode: Gate Preview</span>
-                <button type="button" class="bloom-quick-unlock-btn" id="bloomQuickUnlockBtn">⚡ View Unlocked Content</button>
-              </div>
-            ` : ''}
-
-            <div class="bloom-gate-header">
-              <h1 class="bloom-gate-title">${gateGreeting}</h1>
-              <p class="bloom-gate-sub">${gateSubtitle}</p>
+            <div class="text-center">
+              <h1 class="text-5xl md:text-6xl" style="font-family: 'Dancing Script', cursive; font-weight: 700;">Hi, beautiful</h1>
+              <p class="mt-3 text-xl md:text-2xl" style="font-family: 'Dancing Script', cursive; font-weight: 500;">Enter the correct password to see your surprise :)</p>
             </div>
 
-            <!-- 4-Dot Passcode Indicators -->
-            <div class="bloom-pin-dots" id="bloomPinDots">
-              <div class="bloom-pin-dot" data-index="0"></div>
-              <div class="bloom-pin-dot" data-index="1"></div>
-              <div class="bloom-pin-dot" data-index="2"></div>
-              <div class="bloom-pin-dot" data-index="3"></div>
+            <!-- 4 DOTS -->
+            <div class="flex gap-4" id="bloomPinDots">
+              <div class="h-3.5 w-3.5 rounded-full border-2 transition-all bloom-dot" data-idx="0" style="border-color: #360f5a; background-color: transparent;"></div>
+              <div class="h-3.5 w-3.5 rounded-full border-2 transition-all bloom-dot" data-idx="1" style="border-color: #360f5a; background-color: transparent;"></div>
+              <div class="h-3.5 w-3.5 rounded-full border-2 transition-all bloom-dot" data-idx="2" style="border-color: #360f5a; background-color: transparent;"></div>
+              <div class="h-3.5 w-3.5 rounded-full border-2 transition-all bloom-dot" data-idx="3" style="border-color: #360f5a; background-color: transparent;"></div>
             </div>
 
-            <!-- PIN Numpad -->
-            <div class="bloom-numpad" id="bloomNumpad">
-              ${['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(num => `
-                <button type="button" class="bloom-num-btn" data-key="${num}">${num}</button>
+            <!-- NUMPAD -->
+            <div class="grid grid-cols-3 gap-4">
+              ${['1','2','3','4','5','6','7','8','9'].map(d => `
+                <button type="button" class="bloom-numpad-btn flex h-14 w-14 items-center justify-center rounded-full border-2 text-xl font-medium transition-all hover:scale-105 active:scale-95 md:h-16 md:w-16 md:text-2xl"
+                  data-val="${d}" style="border-color: #360f5a; color: #360f5a; background-color: rgba(54,15,90,0.04); cursor: pointer; outline: none;">
+                  ${d}
+                </button>
               `).join('')}
-              <button type="button" class="bloom-num-btn bloom-btn-action" data-key="backspace" aria-label="Delete">⌫</button>
-              <button type="button" class="bloom-num-btn" data-key="0">0</button>
-              <div class="bloom-num-btn-placeholder"></div>
+              <button type="button" class="bloom-numpad-btn flex h-14 w-14 items-center justify-center rounded-full border-2 text-xl font-medium transition-all hover:scale-105 active:scale-95 md:h-16 md:w-16 md:text-2xl"
+                data-val="backspace" aria-label="delete" style="border-color: #360f5a; color: #360f5a; background-color: rgba(54,15,90,0.04); cursor: pointer; outline: none;">
+                ⌫
+              </button>
+              <button type="button" class="bloom-numpad-btn flex h-14 w-14 items-center justify-center rounded-full border-2 text-xl font-medium transition-all hover:scale-105 active:scale-95 md:h-16 md:w-16 md:text-2xl"
+                data-val="0" style="border-color: #360f5a; color: #360f5a; background-color: rgba(54,15,90,0.04); cursor: pointer; outline: none;">
+                0
+              </button>
+              <div></div>
             </div>
 
-            <div class="bloom-gate-hint">
-              <span>Default PIN: <strong>${targetPin}</strong></span>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <!-- FLOWER SWARM OVERLAY (Spiral & Parting Animations) -->
-      <div class="bloom-flower-curtain" id="bloomFlowerCurtain" style="display: none;">
-        <div class="bloom-curtain-half bloom-curtain-left" id="bloomCurtainLeft">
-          ${leftFlowers.map((f, i) => {
+      <!-- FLOWER SWARM CURTAIN (SPIRAL & PARTING) -->
+      <div id="bloomCurtainLayer" class="pointer-events-none absolute inset-0 z-20" style="display: none; overflow: hidden;">
+        <div id="bloomCurtainLeft" class="absolute inset-0" style="will-change: transform;">
+          ${leftFlowers.map(f => {
             const dx = f.x - 50;
             const dy = f.y - 50;
             const dist = Math.hypot(dx, dy) || 1;
             const fromX = `${(dx / dist) * 70}vw`;
             const fromY = `${(dy / dist) * 70}vh`;
             return `
-              <div class="bloom-flower-item" style="
-                left: ${f.x}vw;
-                top: ${f.y}vh;
-                width: ${Rd}vmax;
-                height: ${Rd}vmax;
-                margin-left: -${Rd / 2}vmax;
-                margin-top: -${Rd / 2}vmax;
-                --fx-from-x: ${fromX};
-                --fx-from-y: ${fromY};
-                --fx-scale: ${f.scale};
-                animation: flowerFlyIn 1100ms cubic-bezier(0.22, 0.61, 0.36, 1) ${f.delay}ms both;
-              ">
-                <div class="bloom-flower-spinner" style="
-                  --fx-rot: ${f.rot}deg;
-                  animation: ${f.spinDir === 1 ? 'spinCW' : 'spinCCW'} ${f.spinMs}ms linear infinite;
-                ">
-                  <img src="${f.img}" alt="" draggable="false" />
+              <div style="position: absolute; left: ${f.x}vw; top: ${f.y}vh; width: ${Rd}vmax; height: ${Rd}vmax; margin-left: -${Rd / 2}vmax; margin-top: -${Rd / 2}vmax; --fx-from-x: ${fromX}; --fx-from-y: ${fromY}; --fx-scale: ${f.scale}; animation: flowerFlyIn 1100ms cubic-bezier(0.22,0.61,0.36,1) ${f.delay}ms both; will-change: transform, opacity;">
+                <div style="width: 100%; height: 100%; --fx-rot: ${f.rot}deg; animation: ${f.spinDir === 1 ? 'spinCW' : 'spinCCW'} ${f.spinMs}ms linear infinite; will-change: transform;">
+                  <img src="${f.img}" alt="" draggable="false" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(54,15,90,0.15)); transform: translateZ(0);" />
                 </div>
               </div>
             `;
           }).join('')}
         </div>
 
-        <div class="bloom-curtain-half bloom-curtain-right" id="bloomCurtainRight">
-          ${rightFlowers.map((f, i) => {
+        <div id="bloomCurtainRight" class="absolute inset-0" style="will-change: transform;">
+          ${rightFlowers.map(f => {
             const dx = f.x - 50;
             const dy = f.y - 50;
             const dist = Math.hypot(dx, dy) || 1;
             const fromX = `${(dx / dist) * 70}vw`;
             const fromY = `${(dy / dist) * 70}vh`;
             return `
-              <div class="bloom-flower-item" style="
-                left: ${f.x}vw;
-                top: ${f.y}vh;
-                width: ${Rd}vmax;
-                height: ${Rd}vmax;
-                margin-left: -${Rd / 2}vmax;
-                margin-top: -${Rd / 2}vmax;
-                --fx-from-x: ${fromX};
-                --fx-from-y: ${fromY};
-                --fx-scale: ${f.scale};
-                animation: flowerFlyIn 1100ms cubic-bezier(0.22, 0.61, 0.36, 1) ${f.delay}ms both;
-              ">
-                <div class="bloom-flower-spinner" style="
-                  --fx-rot: ${f.rot}deg;
-                  animation: ${f.spinDir === 1 ? 'spinCW' : 'spinCCW'} ${f.spinMs}ms linear infinite;
-                ">
-                  <img src="${f.img}" alt="" draggable="false" />
+              <div style="position: absolute; left: ${f.x}vw; top: ${f.y}vh; width: ${Rd}vmax; height: ${Rd}vmax; margin-left: -${Rd / 2}vmax; margin-top: -${Rd / 2}vmax; --fx-from-x: ${fromX}; --fx-from-y: ${fromY}; --fx-scale: ${f.scale}; animation: flowerFlyIn 1100ms cubic-bezier(0.22,0.61,0.36,1) ${f.delay}ms both; will-change: transform, opacity;">
+                <div style="width: 100%; height: 100%; --fx-rot: ${f.rot}deg; animation: ${f.spinDir === 1 ? 'spinCW' : 'spinCCW'} ${f.spinMs}ms linear infinite; will-change: transform;">
+                  <img src="${f.img}" alt="" draggable="false" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(54,15,90,0.15)); transform: translateZ(0);" />
                 </div>
               </div>
             `;
@@ -311,213 +222,207 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
         </div>
       </div>
 
-      <!-- REVEALED CELEBRATION MASTERPIECE -->
-      <main class="bloom-revealed-body" id="bloomRevealedBody" style="display: ${isEditor ? 'block' : 'none'};">
-        ${isEditor ? `
-          <div class="bloom-editor-floating-bar" style="position:sticky; top:12px; z-index:100; display:flex; justify-content:center; margin-bottom:12px;">
-            <div style="background:rgba(54,15,90,0.92); backdrop-filter:blur(10px); color:#fff; padding:6px 14px; border-radius:9999px; box-shadow:0 8px 24px rgba(54,15,90,0.35); display:flex; align-items:center; gap:10px; font-size:12px; font-family:system-ui, sans-serif;">
-              <span>🌸 <strong>Bloom Reveal:</strong> Live Preview</span>
-              <button type="button" class="bloom-toggle-gate-btn" id="bloomToggleGateBtn" style="background:#ffcf6a; color:#360f5a; border:none; border-radius:9999px; padding:3px 10px; font-size:11px; font-weight:700; cursor:pointer;">🔒 Test PIN Gate</button>
-            </div>
-          </div>
-        ` : ''}
+      <!-- REVEALED EXPERIENCE (kd) -->
+      <div id="bloomRevealedLayer" class="relative z-0 w-full" style="display: none; background-color: #EDD9ED;">
         
-        <!-- SECTION 1: 10 THINGS I LOVE ABOUT YOU -->
-        <section class="bloom-section bloom-sec-reasons" id="bloomSecReasons" style="background-image: url('/bloom/hero-bg.jpeg');">
-          <div class="bloom-section-inner">
-            <h2 class="bloom-section-title">${reasonsTitle}</h2>
-            <div class="bloom-reasons-grid">
-              ${reasonsList.map((reason, idx) => `
-                <div class="bloom-reason-card" data-idx="${idx}">
-                  <button type="button" class="bloom-reason-btn" aria-expanded="false">
-                    <span class="bloom-reason-heading">${idx + 1}. ${reason.title}</span>
-                    <span class="bloom-reason-icon">+</span>
-                  </button>
-                  <div class="bloom-reason-body">
-                    <p class="bloom-reason-text">${reason.body}</p>
-                  </div>
+        <!-- SECTION 1: 10 THINGS I LOVE ABOUT YOU (bd) -->
+        <section class="bloom-anim-sec relative flex min-h-screen w-full flex-col items-center justify-center px-6 py-24"
+          style="color: #360f5a; background-image: url('/bloom/hero-bg.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+          <h2 class="text-center text-5xl md:text-7xl" style="font-family: 'Dancing Script', cursive; font-weight: 700;">
+            10 things I love about you
+          </h2>
+          <div class="mt-12 grid w-full max-w-4xl grid-cols-1 gap-3 md:grid-cols-2">
+            ${reasons.map((item, idx) => `
+              <div class="bloom-accordion-card overflow-hidden rounded-2xl border-2 backdrop-blur-sm"
+                style="border-color: #360f5a; background-color: rgba(255,255,255,0.35);" data-idx="${idx}">
+                <button type="button" class="bloom-accordion-toggle flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-white/40"
+                  style="color: #360f5a; background: transparent; border: none; cursor: pointer; outline: none;">
+                  <span class="text-lg md:text-xl" style="font-family: 'Dancing Script', cursive; font-weight: 600;">
+                    ${idx + 1}. ${item.title}
+                  </span>
+                  <span class="bloom-plus-icon text-2xl leading-none" style="display: inline-block; transition: transform 0.3s ease;">+</span>
+                </button>
+                <div class="bloom-accordion-panel" style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.22,0.61,0.36,1), opacity 0.4s ease;">
+                  <p class="px-5 pb-5 pt-1 text-base md:text-lg" style="font-family: 'Caveat', cursive; color: #360f5a; line-height: 1.5; margin: 0;">
+                    ${item.body}
+                  </p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- SECTION 2: POLAROIDS GALLERY (Cd) -->
+        <section class="bloom-anim-sec relative flex min-h-screen w-full items-center justify-center px-6 py-24"
+          style="background-color: #DDB8DD; color: #360f5a;">
+          <div class="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 sm:grid-cols-3 md:gap-10 lg:grid-cols-5">
+            ${polaroids.map((imgSrc, idx) => `
+              <figure class="mx-auto" style="padding: 12px 12px 42px 12px; background: #fff; box-shadow: 0 14px 32px -10px rgba(54,15,90,0.4), 0 6px 12px rgba(0,0,0,0.18); border-radius: 3px; transform: rotate(${POLAROID_TILTS[idx % POLAROID_TILTS.length]}deg); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                <img src="${imgSrc}" alt="" draggable="false" class="block h-40 w-40 object-cover sm:h-44 sm:w-44 md:h-48 md:w-48" loading="lazy" />
+              </figure>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- SECTION 3: THE LOVE LETTER (Td - 260vh Sticky Scroll Reveal) -->
+        <section id="bloomSecLetter" class="relative w-full" style="height: 260vh; background-image: url('/bloom/section3-bg.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+          <div class="sticky top-0 z-10 flex h-screen w-full items-center justify-center px-6">
+            <div class="w-full max-w-3xl">
+              <div class="relative mx-auto w-full rounded-sm"
+                style="background: linear-gradient(180deg, #fdfaf3 0%, #f8f1e4 100%); padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 3.5rem); box-shadow: 0 30px 60px -20px rgba(54,15,90,0.35), 0 12px 24px -12px rgba(54,15,90,0.25), inset 0 0 40px rgba(180,150,90,0.08); border: 1px solid rgba(180,150,90,0.18);">
+                <p class="text-center" style="font-family: 'Caveat', cursive; color: #360f5a; font-size: clamp(1.2rem, 2.4vw, 1.9rem); line-height: 1.7; letter-spacing: 0.01em;">
+                  ${words.map((word, i) => `
+                    <span class="bloom-letter-word" data-w="${i}" style="opacity: 0.08; display: inline-block; margin-right: 0.35em; transition: opacity 0.25s ease;">${word}</span>
+                  `).join(' ')}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4: OUR TOP SONGS (Dd) -->
+        <section class="bloom-anim-sec relative flex min-h-screen w-full flex-col items-center justify-center px-6 py-24"
+          style="background: linear-gradient(180deg, #EDD9ED 0%, #d8bfe4 100%); color: #360f5a;">
+          <div class="w-full">
+            <h2 class="text-center text-5xl md:text-7xl" style="font-family: 'Dancing Script', cursive; font-weight: 700; color: #360f5a;">
+              Our Top Songs
+            </h2>
+            <div class="mx-auto mt-12 grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              ${spotifyTracks.map(id => `
+                <div class="overflow-hidden rounded-3xl" style="background: rgba(255,255,255,0.25); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 10px 30px -12px rgba(54,15,90,0.35), inset 0 1px 0 rgba(255,255,255,0.6);">
+                  <iframe title="spotify-${id}" src="https://open.spotify.com/embed/track/${id}?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border: 0; display: block; border-radius: 24px; width: 100%;"></iframe>
                 </div>
               `).join('')}
             </div>
           </div>
         </section>
 
-        <!-- SECTION 2: CHERISHED MEMORIES (POLAROID PHOTO GALLERY) -->
-        <section class="bloom-section bloom-sec-gallery" id="bloomSecGallery" style="background-color: #DDB8DD;">
-          <div class="bloom-gallery-inner">
-            <h2 class="bloom-section-title bloom-gallery-title">Memories With You 📷</h2>
-            <div class="bloom-polaroids-grid">
-              ${polaroids.map((p, idx) => {
-                const tilt = POLAROID_TILTS[idx % POLAROID_TILTS.length];
-                return `
-                  <figure class="bloom-polaroid-card" style="--card-tilt: ${tilt}deg;" data-idx="${idx}">
-                    <div class="bloom-polaroid-img-wrap">
-                      <img src="${p.image}" alt="${p.title || 'Memory'}" loading="lazy" />
-                    </div>
-                    <figcaption class="bloom-polaroid-caption">
-                      <span class="bloom-polaroid-title">${p.title || `Memory #${idx + 1}`}</span>
-                      ${p.note ? `<span class="bloom-polaroid-note">${p.note}</span>` : ''}
-                    </figcaption>
-                  </figure>
-                `;
-              }).join('')}
-            </div>
-          </div>
+        <!-- SECTION 5: DEVOTION TYPEWRITER & RESTART FAB (Od) -->
+        <section id="bloomSecEnding" class="bloom-anim-sec relative flex min-h-screen w-full items-center justify-center overflow-hidden px-6"
+          style="background-image: url('/bloom/section5-bg.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+          <h2 class="relative z-10 px-6 text-center text-4xl md:text-7xl"
+            style="font-family: 'Dancing Script', cursive; font-weight: 700; color: #360f5a; text-shadow: 0 2px 8px rgba(255,255,255,0.9);">
+            <span id="bloomTypewriterContent"></span><span style="animation: cursorBlink 0.9s infinite; display: inline-block;">|</span>
+          </h2>
+
+          <button type="button" id="bloomRestartBtn" class="fixed bottom-6 right-6 z-50 rounded-full px-5 py-3 text-base md:text-lg"
+            style="font-family: 'Dancing Script', cursive; font-weight: 700; color: #fbf7f5; background-color: #360f5a; box-shadow: 0 10px 30px -8px rgba(54,15,90,0.6); animation: fabFloat 3s ease-in-out infinite; border: none; cursor: pointer;">
+            Go to the start
+          </button>
         </section>
 
-        <!-- SECTION 3: MY DEAREST (SCROLL-ILLUMINATED PARCHMENT LOVE LETTER) -->
-        <section class="bloom-sec-letter" id="bloomSecLetter" style="background-image: url('/bloom/section3-bg.jpeg');">
-          <div class="bloom-letter-sticky-frame">
-            <div class="bloom-parchment-sheet">
-              <h3 class="bloom-letter-salutation">${letterTitle}</h3>
-              <div class="bloom-letter-words-flow" id="bloomLetterWordsFlow">
-                ${letterWords.map((word, i) => `
-                  <span class="bloom-letter-word" data-word-idx="${i}">${word}</span>
-                `).join(' ')}
-              </div>
-              <div class="bloom-scroll-prompt-indicator">
-                <span>↓ Scroll smoothly to illuminate words ↓</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- SECTION 4: OUR TOP SONGS -->
-        <section class="bloom-section bloom-sec-songs" id="bloomSecSongs" style="background: linear-gradient(180deg, #EDD9ED 0%, #d8bfe4 100%);">
-          <div class="bloom-section-inner">
-            <h2 class="bloom-section-title">${songsTitle}</h2>
-            <div class="bloom-songs-grid">
-              ${spotifyTracks.map(trackId => `
-                <div class="bloom-song-card">
-                  <iframe 
-                    title="spotify-${trackId}"
-                    src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0"
-                    width="100%"
-                    height="152"
-                    frameborder="0"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy">
-                  </iframe>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        </section>
-
-        <!-- SECTION 5: SWEET ENDING & TYPEWRITER DEVOTION -->
-        <section class="bloom-section bloom-sec-ending" id="bloomSecEnding" style="background-image: url('/bloom/section5-bg.jpeg');">
-          <div class="bloom-ending-inner">
-            <div class="bloom-ending-quote-box">
-              <h2 class="bloom-typewriter-text" id="bloomTypewriterText" data-full-text="${endingQuote}"></h2>
-            </div>
-          </div>
-        </section>
-
-        <!-- FLOATING RESTART ACTION BUTTON -->
-        <button type="button" class="bloom-floating-restart-fab" id="bloomRestartFab" aria-label="Go to the start">
-          <span>Go to the start 🌸</span>
-        </button>
-
-      </main>
-
-      <!-- LIGHTBOX PHOTO MODAL -->
-      <div class="bloom-lightbox-modal" id="bloomLightboxModal" style="display: none;">
-        <div class="bloom-lightbox-backdrop" id="bloomLightboxBackdrop"></div>
-        <div class="bloom-lightbox-content">
-          <button type="button" class="bloom-lightbox-close" id="bloomLightboxClose">&times;</button>
-          <img src="" id="bloomLightboxImg" alt="Enlarged Memory" />
-          <p id="bloomLightboxCaption"></p>
-        </div>
       </div>
+
+      <style>
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-10px); }
+          40% { transform: translateX(10px); }
+          60% { transform: translateX(-8px); }
+          80% { transform: translateX(8px); }
+        }
+        @keyframes flowerFlyIn {
+          0% {
+            transform: translate3d(var(--fx-from-x), var(--fx-from-y), 0) scale(0.4);
+            opacity: 0;
+          }
+          25% { opacity: 1; }
+          100% {
+            transform: translate3d(0, 0, 0) scale(var(--fx-scale));
+            opacity: 1;
+          }
+        }
+        @keyframes spinCW {
+          from { transform: rotate(var(--fx-rot)); }
+          to   { transform: rotate(calc(var(--fx-rot) + 360deg)); }
+        }
+        @keyframes spinCCW {
+          from { transform: rotate(var(--fx-rot)); }
+          to   { transform: rotate(calc(var(--fx-rot) - 360deg)); }
+        }
+        @keyframes fabFloat {
+          0%, 100% { transform: translateY(0); box-shadow: 0 10px 30px -8px rgba(54,15,90,0.55); }
+          50% { transform: translateY(-8px); box-shadow: 0 18px 36px -10px rgba(54,15,90,0.7); }
+        }
+        @keyframes cursorBlink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        .bloom-anim-sec {
+          transition: opacity 1.1s cubic-bezier(0.22,0.61,0.36,1), transform 1.1s cubic-bezier(0.22,0.61,0.36,1);
+        }
+      </style>
     </div>
   `;
 
-  // Initialize Elements
-  const gateWrap = container.querySelector('#bloomGateWrap');
-  const gateBox = container.querySelector('#bloomGateBox');
-  const pinDots = container.querySelectorAll('.bloom-pin-dot');
-  const numBtns = container.querySelectorAll('.bloom-num-btn');
-  const curtain = container.querySelector('#bloomFlowerCurtain');
+  // Dynamic Logic & Event Handling
+  const rootWrap = container.querySelector('#bloomContainer');
+  const gateLayer = container.querySelector('#bloomGateLayer');
+  const gateShakeBox = container.querySelector('#bloomGateShakeBox');
+  const curtainLayer = container.querySelector('#bloomCurtainLayer');
   const curtainLeft = container.querySelector('#bloomCurtainLeft');
   const curtainRight = container.querySelector('#bloomCurtainRight');
-  const revealedBody = container.querySelector('#bloomRevealedBody');
-  const restartFab = container.querySelector('#bloomRestartFab');
-  const quickUnlockBtn = container.querySelector('#bloomQuickUnlockBtn');
-
-  // Music Player Initialization
-  try {
-    const playerSlot = container.querySelector('#bloomPlayerSlot');
-    if (playerSlot && data.audioSrc) {
-      initMusicPlayer(playerSlot, data);
-    }
-  } catch (err) {
-    console.warn('Bloom audio player init fallback:', err);
-  }
+  const revealedLayer = container.querySelector('#bloomRevealedLayer');
+  const pinDots = container.querySelectorAll('.bloom-dot');
+  const restartBtn = container.querySelector('#bloomRestartBtn');
+  const bypassBtn = container.querySelector('#bloomEditorBypassBtn');
 
   let enteredPin = '';
-  let isLocked = true;
-  let isBusyTransitioning = false;
+  let stage = 'gate'; // 'gate' | 'spiral' | 'parting' | 'revealed'
 
-  function updatePinDots() {
+  function updateDots() {
     pinDots.forEach((dot, idx) => {
-      if (idx < enteredPin.length) {
-        dot.classList.add('active');
-      } else {
-        dot.classList.remove('active');
-      }
+      dot.style.backgroundColor = idx < enteredPin.length ? '#360f5a' : 'transparent';
     });
   }
 
-  function handleKeyInput(digit) {
-    if (isBusyTransitioning || !isLocked) return;
+  function handleKeyInput(val) {
+    if (stage !== 'gate') return;
     if (enteredPin.length >= 4) return;
 
-    playBloomTone('tap');
-    enteredPin += digit;
-    updatePinDots();
+    enteredPin += val;
+    updateDots();
 
     if (enteredPin.length === 4) {
       if (enteredPin === targetPin) {
-        // Correct PIN!
-        playBloomTone('unlock');
-        startBloomRevealSequence();
-      } else {
-        // Wrong PIN!
-        playBloomTone('error');
-        gateBox.classList.add('shake-error');
+        // Correct password -> trigger spiral transition after 180ms
         setTimeout(() => {
-          gateBox.classList.remove('shake-error');
+          transitionToSpiral();
+        }, 180);
+      } else {
+        // Wrong password -> shake and clear after 500ms
+        gateShakeBox.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+          gateShakeBox.style.animation = '';
           enteredPin = '';
-          updatePinDots();
-        }, 550);
+          updateDots();
+        }, 500);
       }
     }
   }
 
   function handleBackspace() {
-    if (isBusyTransitioning || !isLocked) return;
+    if (stage !== 'gate') return;
     if (enteredPin.length > 0) {
-      playBloomTone('tap');
       enteredPin = enteredPin.slice(0, -1);
-      updatePinDots();
+      updateDots();
     }
   }
 
-  numBtns.forEach(btn => {
+  container.querySelectorAll('.bloom-numpad-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const key = btn.getAttribute('data-key');
-      if (key === 'backspace') {
+      const val = btn.getAttribute('data-val');
+      if (val === 'backspace') {
         handleBackspace();
-      } else if (key) {
-        handleKeyInput(key);
+      } else if (val) {
+        handleKeyInput(val);
       }
     });
   });
 
-  // Physical keyboard support
   function handleKeyDown(e) {
-    if (!isLocked || isBusyTransitioning) return;
+    if (stage !== 'gate') return;
     if (/^[0-9]$/.test(e.key)) {
       handleKeyInput(e.key);
     } else if (e.key === 'Backspace') {
@@ -526,202 +431,151 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
   }
   window.addEventListener('keydown', handleKeyDown);
 
-  // Quick Unlock (for Creator Mode)
-  if (quickUnlockBtn) {
-    quickUnlockBtn.addEventListener('click', () => {
-      startBloomRevealSequence(true);
-    });
-  }
+  // TRANSITION: Gate -> Spiral -> Parting -> Revealed
+  function transitionToSpiral() {
+    stage = 'spiral';
+    curtainLayer.style.display = 'block';
 
-  const toggleGateBtn = container.querySelector('#bloomToggleGateBtn');
-  if (toggleGateBtn) {
-    toggleGateBtn.addEventListener('click', () => {
-      revealedBody.style.display = 'none';
-      gateWrap.style.display = 'flex';
-      isLocked = true;
-      enteredPin = '';
-      updatePinDots();
-    });
-  }
-
-  // If in editor mode, initialize revealed features immediately so preview chassis is active
-  if (isEditor) {
-    isLocked = false;
-    initRevealedFeatures();
-  }
-
-  // REVEAL ANIMATION SEQUENCE
-  function startBloomRevealSequence(isInstant = false) {
-    if (isBusyTransitioning) return;
-    isBusyTransitioning = true;
-    isLocked = false;
-
-    // Confetti celebration
-    try {
-      confetti({
-        particleCount: 75,
-        spread: 90,
-        origin: { y: 0.6 },
-        colors: ['#360f5a', '#edd9ed', '#f43f5e', '#ffcf6a', '#a855f7']
-      });
-    } catch (e) {}
-
-    if (isInstant) {
-      gateWrap.style.display = 'none';
-      revealedBody.style.display = 'block';
-      isBusyTransitioning = false;
-      initRevealedFeatures();
-      return;
-    }
-
-    // Step 1: Show Flower Curtain Swarm (Spiral phase)
-    curtain.style.display = 'block';
-
+    // After Md = 4200ms, transition to parting
     setTimeout(() => {
-      // Step 2: Parting Phase (Flowers separate left and right)
-      curtainLeft.style.transition = `transform ${Nd}ms cubic-bezier(0.65, 0, 0.35, 1)`;
-      curtainRight.style.transition = `transform ${Nd}ms cubic-bezier(0.65, 0, 0.35, 1)`;
-      curtainLeft.style.transform = 'translate3d(-110%, 0, 0)';
-      curtainRight.style.transform = 'translate3d(110%, 0, 0)';
-
-      // Hide gate, show revealed website underneath
-      gateWrap.style.display = 'none';
-      revealedBody.style.display = 'block';
-
-      setTimeout(() => {
-        // Step 3: Complete Reveal
-        curtain.style.display = 'none';
-        isBusyTransitioning = false;
-        initRevealedFeatures();
-      }, Nd);
-
+      transitionToParting();
     }, Md);
   }
 
-  // INITIALIZE INTERACTIVE FEATURES OF THE REVEALED EXPERIENCE
-  function initRevealedFeatures() {
-    // 1. Accordion Toggle
-    const reasonCards = container.querySelectorAll('.bloom-reason-card');
-    reasonCards.forEach(card => {
-      const btn = card.querySelector('.bloom-reason-btn');
-      btn.addEventListener('click', () => {
-        const isOpen = card.classList.contains('is-open');
-        reasonCards.forEach(c => {
-          c.classList.remove('is-open');
-          c.querySelector('.bloom-reason-btn').setAttribute('aria-expanded', 'false');
-        });
-        if (!isOpen) {
-          card.classList.add('is-open');
-          btn.setAttribute('aria-expanded', 'true');
-        }
-      });
-    });
+  function transitionToParting() {
+    stage = 'parting';
+    // Part curtain left and right
+    curtainLeft.style.transition = `transform ${Nd}ms cubic-bezier(0.65, 0, 0.35, 1)`;
+    curtainRight.style.transition = `transform ${Nd}ms cubic-bezier(0.65, 0, 0.35, 1)`;
+    curtainLeft.style.transform = 'translate3d(-110%, 0, 0)';
+    curtainRight.style.transform = 'translate3d(110%, 0, 0)';
 
-    // 2. Lightbox Modal for Polaroids
-    const lightboxModal = container.querySelector('#bloomLightboxModal');
-    const lightboxBackdrop = container.querySelector('#bloomLightboxBackdrop');
-    const lightboxClose = container.querySelector('#bloomLightboxClose');
-    const lightboxImg = container.querySelector('#bloomLightboxImg');
-    const lightboxCaption = container.querySelector('#bloomLightboxCaption');
+    gateLayer.style.display = 'none';
+    revealedLayer.style.display = 'block';
+    rootWrap.classList.remove('overflow-hidden');
 
-    container.querySelectorAll('.bloom-polaroid-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const img = card.querySelector('img');
-        const title = card.querySelector('.bloom-polaroid-title');
-        const note = card.querySelector('.bloom-polaroid-note');
-        if (img && lightboxModal) {
-          lightboxImg.src = img.src;
-          lightboxCaption.innerHTML = `<strong>${title ? title.textContent : ''}</strong>${note ? '<br>' + note.textContent : ''}`;
-          lightboxModal.style.display = 'flex';
-        }
-      });
-    });
+    // After Nd = 2600ms, reveal is complete
+    setTimeout(() => {
+      stage = 'revealed';
+      curtainLayer.style.display = 'none';
+      initRevealedEffects();
+    }, Nd);
+  }
 
-    if (lightboxClose && lightboxModal) {
-      lightboxClose.addEventListener('click', () => {
-        lightboxModal.style.display = 'none';
-      });
-      lightboxBackdrop.addEventListener('click', () => {
-        lightboxModal.style.display = 'none';
-      });
-    }
+  // RESTART: Smooth scroll to top and reset to gate
+  function resetToGate() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      enteredPin = '';
+      updateDots();
+      stage = 'gate';
+      revealedLayer.style.display = 'none';
+      curtainLayer.style.display = 'none';
+      curtainLeft.style.transform = 'translate3d(0, 0, 0)';
+      curtainRight.style.transform = 'translate3d(0, 0, 0)';
+      gateLayer.style.display = 'block';
+      rootWrap.classList.add('overflow-hidden');
+    }, 500);
+  }
 
-    // 3. Scroll-Illuminated Parchment Letter
-    const secLetter = container.querySelector('#bloomSecLetter');
-    const wordsFlow = container.querySelector('#bloomLetterWordsFlow');
-    if (secLetter && wordsFlow) {
-      const words = wordsFlow.querySelectorAll('.bloom-letter-word');
-      const totalWords = words.length;
+  if (restartBtn) {
+    restartBtn.addEventListener('click', resetToGate);
+  }
 
-      function updateLetterScroll() {
-        const rect = secLetter.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        // Total scrollable range inside secLetter
-        const progress = Math.min(1, Math.max(0, -rect.top / (rect.height - windowHeight)));
-        const activeCount = Math.round(progress * totalWords);
-
-        words.forEach((span, i) => {
-          if (i < activeCount) {
-            span.classList.add('illuminated');
-          } else {
-            span.classList.remove('illuminated');
-          }
-        });
+  // Bypass toggle for studio editor preview
+  if (bypassBtn) {
+    bypassBtn.addEventListener('click', () => {
+      if (stage === 'gate') {
+        gateLayer.style.display = 'none';
+        revealedLayer.style.display = 'block';
+        rootWrap.classList.remove('overflow-hidden');
+        stage = 'revealed';
+        initRevealedEffects();
+      } else {
+        resetToGate();
       }
+    });
+  }
 
-      window.addEventListener('scroll', updateLetterScroll, { passive: true });
-      updateLetterScroll();
+  // INITIALIZE INTERACTIVE REVEALED FEATURES
+  function initRevealedEffects() {
+    // 1. Accordion Toggle
+    let openCardIdx = null;
+    const cards = container.querySelectorAll('.bloom-accordion-card');
+    cards.forEach((card, idx) => {
+      const toggle = card.querySelector('.bloom-accordion-toggle');
+      const panel = card.querySelector('.bloom-accordion-panel');
+      const icon = card.querySelector('.bloom-plus-icon');
+
+      toggle.addEventListener('click', () => {
+        const isCurrentOpen = openCardIdx === idx;
+        // Close all
+        cards.forEach(c => {
+          c.querySelector('.bloom-accordion-panel').style.maxHeight = '0';
+          c.querySelector('.bloom-accordion-panel').style.opacity = '0';
+          c.querySelector('.bloom-plus-icon').style.transform = 'none';
+        });
+
+        if (!isCurrentOpen) {
+          openCardIdx = idx;
+          panel.style.maxHeight = '300px';
+          panel.style.opacity = '1';
+          icon.style.transform = 'rotate(45deg)';
+        } else {
+          openCardIdx = null;
+        }
+      });
+    });
+
+    // 2. Scroll-Illuminated Letter (Td)
+    const secLetter = container.querySelector('#bloomSecLetter');
+    const wordSpans = container.querySelectorAll('.bloom-letter-word');
+    const totalWords = wordSpans.length;
+
+    function handleLetterScroll() {
+      if (!secLetter) return;
+      const rect = secLetter.getBoundingClientRect();
+      const windowH = window.innerHeight;
+      const scrollProgress = -rect.top / (rect.height - windowH);
+      const normalized = Math.min(1, Math.max(0, (scrollProgress - 0.05) / 0.9));
+      const illuminatedCount = Math.round(normalized * totalWords);
+
+      wordSpans.forEach((span, i) => {
+        span.style.opacity = i < illuminatedCount ? '1' : '0.08';
+      });
     }
 
-    // 4. Typewriter Ending Quote
-    const typewriterEl = container.querySelector('#bloomTypewriterText');
-    if (typewriterEl) {
-      const fullText = typewriterEl.getAttribute('data-full-text') || endingQuote;
-      let hasStartedTypewriter = false;
+    window.addEventListener('scroll', handleLetterScroll, { passive: true });
+    handleLetterScroll();
+
+    // 3. Typewriter Effect (Od)
+    const typewriterContent = container.querySelector('#bloomTypewriterContent');
+    const secEnding = container.querySelector('#bloomSecEnding');
+    if (typewriterContent && secEnding) {
+      let currentLen = 0;
+      let hasStarted = false;
 
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting && !hasStartedTypewriter) {
-            hasStartedTypewriter = true;
-            let currentLength = 0;
-            typewriterEl.innerHTML = `<span class="bloom-typewriter-content"></span><span class="bloom-typewriter-cursor">|</span>`;
-            const contentSpan = typewriterEl.querySelector('.bloom-typewriter-content');
-
+          if (entry.isIntersecting && !hasStarted) {
+            hasStarted = true;
             const timer = setInterval(() => {
-              if (currentLength < fullText.length) {
-                currentLength++;
-                contentSpan.textContent = fullText.slice(0, currentLength);
+              if (currentLen < endingQuote.length) {
+                currentLen++;
+                typewriterContent.textContent = endingQuote.slice(0, currentLen);
               } else {
                 clearInterval(timer);
               }
-            }, 65);
+            }, 60);
           }
         });
       }, { threshold: 0.35 });
 
-      observer.observe(typewriterEl);
-    }
-
-    // 5. Restart Button (Smooth scroll to top and reset)
-    if (restartFab) {
-      restartFab.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => {
-          revealedBody.style.display = 'none';
-          gateWrap.style.display = 'flex';
-          curtain.style.display = 'none';
-          curtainLeft.style.transform = 'translate3d(0, 0, 0)';
-          curtainRight.style.transform = 'translate3d(0, 0, 0)';
-          enteredPin = '';
-          updatePinDots();
-          isLocked = true;
-          isBusyTransitioning = false;
-        }, 600);
-      });
+      observer.observe(secEnding);
     }
   }
 
-  // Cleanup on destroy
+  // Cleanup
   return () => {
     window.removeEventListener('keydown', handleKeyDown);
   };

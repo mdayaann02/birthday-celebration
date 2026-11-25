@@ -43,6 +43,13 @@ export function renderViewerApp(container, templateId, data, isMakerReviewParam 
 }
 
 function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
+  if (templateId === 'bloom_reveal') {
+    container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
+    const root = container.querySelector('#templateRoot');
+    renderBloomRevealTemplate(root, data, isMakerReview);
+    return;
+  }
+
   container.innerHTML = `
     ${isMakerReview ? `
       <div class="maker-review-banner" id="makerReviewBanner">
@@ -61,9 +68,6 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     case 'long_romance':
     case 'blossom':
       renderBlossomTemplate(root, data, isMakerReview);
-      break;
-    case 'bloom_reveal':
-      renderBloomRevealTemplate(root, data, isMakerReview);
       break;
     case 'tree':
       renderTreeTemplate(root, data, isMakerReview);

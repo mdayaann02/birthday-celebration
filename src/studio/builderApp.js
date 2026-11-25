@@ -23,7 +23,7 @@ export function renderStudioApp(root) {
   const searchParams = new URLSearchParams(window.location.search);
   const hash = window.location.hash.replace(/^#/, '');
   const urlTid = searchParams.get('template') || (hash.startsWith('template=') ? hash.substring(9) : null) || (TEMPLATES[hash] ? hash : null);
-  let activeTemplateId = (urlTid && TEMPLATES[urlTid]) ? urlTid : "long_romance";
+  let activeTemplateId = (urlTid && TEMPLATES[urlTid]) ? urlTid : "bloom_reveal";
   let activeData = getActiveCelebrationData(activeTemplateId);
   let currentMobileTab = "editor"; // "editor" | "preview"
   let currentViewport = "mobile"; // "mobile" | "tablet" | "desktop"
