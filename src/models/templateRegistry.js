@@ -768,3 +768,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     }
   }
 };
+
+// Aliases for seamless routing and backward compatibility
+TEMPLATES.wedding = TEMPLATES.wedding_invite;
+TEMPLATES.shubh_weds = TEMPLATES.wedding_invite;
+

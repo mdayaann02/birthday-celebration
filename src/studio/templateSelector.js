@@ -25,7 +25,8 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
   }
 
   function render() {
-    const list = Object.values(TEMPLATES).filter(t => {
+    const uniqueTemplates = Array.from(new Map(Object.values(TEMPLATES).map(t => [t.id, t])).values());
+    const list = uniqueTemplates.filter(t => {
       if (activeFilter === 'all') return true;
       return getTemplateCategory(t.id) === activeFilter;
     });

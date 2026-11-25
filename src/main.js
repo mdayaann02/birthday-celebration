@@ -93,8 +93,9 @@ async function initApp() {
 
   if (isExplicitViewer) {
     window.isCelebrationEditorMode = false;
-    const tmplQuery = searchParams.get('template') || 
+    const rawTmpl = searchParams.get('template') || 
                       (hash.startsWith('template=') ? hash.substring(9) : null);
+    const tmplQuery = (rawTmpl === 'wedding' || rawTmpl === 'shubh_weds') ? 'wedding_invite' : rawTmpl;
     const activeTemplateId = (tmplQuery && TEMPLATES[tmplQuery]) ? tmplQuery : getPublishedTemplateId();
     const celebrationData = getActiveCelebrationData(activeTemplateId);
     renderViewerApp(root, activeTemplateId, celebrationData, isMakerReview);

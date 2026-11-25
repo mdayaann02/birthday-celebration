@@ -21,10 +21,11 @@ const uploadsDir = path.join(rootDir, 'uploads');
 const imagesDir = path.join(uploadsDir, 'images');
 const audioDir = path.join(uploadsDir, 'audio');
 const videosDir = path.join(uploadsDir, 'videos');
+const tempUploadsDir = path.join(uploadsDir, 'temp');
 const dataDir = path.join(rootDir, 'data');
 const dbFilePath = path.join(dataDir, 'sites.json');
 
-[uploadsDir, imagesDir, audioDir, videosDir, dataDir].forEach(dir => {
+[uploadsDir, imagesDir, audioDir, videosDir, tempUploadsDir, dataDir].forEach(dir => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
@@ -237,6 +238,91 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     mimetype: req.file.mimetype,
     size: req.file.size
   });
+});
+
+// API 1b: Chunked File Upload Endpoint (Bypasses serverless payload limits for HD video & media)
+const chunkStorage = multer.memoryStorage();
+const uploadChunk = multer({ storage: chunkStorage, limits: { fileSize: 10 * 1024 * 1024 } });
+
+app.post('/api/upload-chunk', uploadChunk.single('chunk'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No chunk uploaded" });
+    }
+
+    const uploadId = (req.body.uploadId || '').replace(/[^a-zA-Z0-9_-]/g, '');
+    const chunkIndex = parseInt(req.body.chunkIndex, 10);
+    const totalChunks = parseInt(req.body.totalChunks, 10);
+    const originalName = req.body.filename || 'media.mp4';
+    const mimetype = req.body.mimetype || 'video/mp4';
+
+    if (!uploadId || isNaN(chunkIndex) || isNaN(totalChunks) || totalChunks <= 0) {
+      return res.status(400).json({ error: "Invalid chunk metadata" });
+    }
+
+    const chunkDir = path.join(tempUploadsDir, uploadId);
+    if (!fs.existsSync(chunkDir)) {
+      fs.mkdirSync(chunkDir, { recursive: true });
+    }
+
+    const chunkFilePath = path.join(chunkDir, `part_${chunkIndex}`);
+    fs.writeFileSync(chunkFilePath, req.file.buffer);
+
+    // Check if all chunks have arrived
+    const parts = fs.readdirSync(chunkDir).filter(f => f.startsWith('part_'));
+    if (parts.length === totalChunks) {
+      const isAudio = mimetype.startsWith('audio/') || originalName.match(/\.(mp3|wav|m4a|aac|ogg)$/i);
+      const isVideo = mimetype.startsWith('video/') || originalName.match(/\.(mp4|webm|mov|mkv)$/i);
+      const targetDir = isAudio ? audioDir : (isVideo ? videosDir : imagesDir);
+
+      const ext = path.extname(originalName).toLowerCase() || (isVideo ? '.mp4' : (isAudio ? '.mp3' : '.jpg'));
+      const cleanBase = path.basename(originalName, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
+      const uniqueFilename = `${Date.now()}_${cleanBase}${ext}`;
+      const finalDestPath = path.join(targetDir, uniqueFilename);
+
+      const writeStream = fs.createWriteStream(finalDestPath);
+      for (let i = 0; i < totalChunks; i++) {
+        const partPath = path.join(chunkDir, `part_${i}`);
+        if (!fs.existsSync(partPath)) {
+          writeStream.end();
+          return res.status(500).json({ error: `Missing chunk ${i} during reassembly` });
+        }
+        const partBuffer = fs.readFileSync(partPath);
+        writeStream.write(partBuffer);
+      }
+      writeStream.end();
+
+      // Clean up temp directory
+      try {
+        fs.rmSync(chunkDir, { recursive: true, force: true });
+      } catch (e) {
+        console.warn("Could not remove temp chunk dir:", e);
+      }
+
+      const relativePath = isAudio ? `/uploads/audio/${uniqueFilename}` : (isVideo ? `/uploads/videos/${uniqueFilename}` : `/uploads/images/${uniqueFilename}`);
+      const stats = fs.statSync(finalDestPath);
+
+      return res.json({
+        success: true,
+        complete: true,
+        url: relativePath,
+        filename: uniqueFilename,
+        mimetype,
+        size: stats.size
+      });
+    }
+
+    return res.json({
+      success: true,
+      complete: false,
+      chunkIndex,
+      totalChunks,
+      received: parts.length
+    });
+  } catch (err) {
+    console.error("Chunk upload error:", err);
+    return res.status(500).json({ error: "Failed to process chunk", details: err.message });
+  }
 });
 
 // API 2: Save / Publish Website

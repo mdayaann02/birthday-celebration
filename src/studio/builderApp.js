@@ -22,8 +22,9 @@ export function renderStudioApp(root) {
 
   const searchParams = new URLSearchParams(window.location.search);
   const hash = window.location.hash.replace(/^#/, '');
-  const urlTid = searchParams.get('template') || (hash.startsWith('template=') ? hash.substring(9) : null) || (TEMPLATES[hash] ? hash : null);
-  let activeTemplateId = (urlTid && TEMPLATES[urlTid]) ? urlTid : "bloom_reveal";
+  const rawUrlTid = searchParams.get('template') || (hash.startsWith('template=') ? hash.substring(9) : null) || (TEMPLATES[hash] ? hash : null);
+  const urlTid = (rawUrlTid === 'wedding' || rawUrlTid === 'shubh_weds') ? 'wedding_invite' : rawUrlTid;
+  let activeTemplateId = (urlTid && TEMPLATES[urlTid]) ? urlTid : "wedding_invite";
   let activeData = getActiveCelebrationData(activeTemplateId);
   let currentMobileTab = "editor"; // "editor" | "preview"
   let currentViewport = "mobile"; // "mobile" | "tablet" | "desktop"
@@ -508,6 +509,10 @@ export function renderStudioApp(root) {
   function updateLivePreview() {
     try {
       if (previewContainer) {
+        if (previewContainer._cleanup) {
+          try { previewContainer._cleanup(); } catch {}
+          previewContainer._cleanup = null;
+        }
         previewContainer.querySelectorAll('audio').forEach(a => {
           try { a.pause(); a.currentTime = 0; } catch {}
         });

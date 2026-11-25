@@ -1172,10 +1172,13 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           </label>
           <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
             <input type="text" class="form-input" id="edCenterpieceVideo" value="${data.centerpieceVideo || '/video/couple_memories.mp4'}" placeholder="/video/couple_memories.mp4 or direct MP4 URL" style="flex:1;" />
-            <label class="btn-file-upload-sm" title="Upload MP4 Video" style="cursor:pointer; background:linear-gradient(135deg, rgba(212,35,92,0.25), rgba(197,160,89,0.25)); border:1.5px solid #d4af37; color:#f5e6ca; border-radius:8px; padding:8px 12px; display:inline-flex; align-items:center; gap:6px; position:relative; flex-shrink:0; font-size:12px; font-weight:700;">
-              <i data-lucide="film"></i> Upload MP4
+            <label class="btn-file-upload-sm" id="btnUploadMuseumVideoLabel" title="Upload MP4 Video" style="cursor:pointer; background:linear-gradient(135deg, rgba(212,35,92,0.25), rgba(197,160,89,0.25)); border:1.5px solid #d4af37; color:#f5e6ca; border-radius:8px; padding:8px 12px; display:inline-flex; align-items:center; gap:6px; position:relative; flex-shrink:0; font-size:12px; font-weight:700;">
+              <i data-lucide="film"></i> <span id="museumVideoBtnText">Upload MP4</span>
               <input type="file" id="fileUploadMuseumVideo" accept="video/mp4,video/webm,video/*" style="display:none;" />
             </label>
+          </div>
+          <div id="museumVideoUploadProgress" style="display:none; font-size:11px; color:#d4af37; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+            <span id="museumVideoUploadProgressText">Uploading: 0%</span>
           </div>
           <div id="museumVideoPreviewBox" style="position:relative; width:100%; border-radius:8px; overflow:hidden; background:#0a0808; border:1px solid rgba(212,175,55,0.3);">
             <video id="museumVideoPreview" src="${data.centerpieceVideo || '/video/couple_memories.mp4'}" controls style="width:100%; max-height:160px; display:block; object-fit:contain; background:#000;"></video>
@@ -1261,17 +1264,50 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     const videoUpload = specificBox.querySelector('#fileUploadMuseumVideo');
     const edVideoInput = specificBox.querySelector('#edCenterpieceVideo');
     const videoPreview = specificBox.querySelector('#museumVideoPreview');
+    const videoBtnText = specificBox.querySelector('#museumVideoBtnText');
+    const videoProgressBox = specificBox.querySelector('#museumVideoUploadProgress');
+    const videoProgressText = specificBox.querySelector('#museumVideoUploadProgressText');
 
     videoUpload?.addEventListener('change', async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      const res = await uploadFile(file);
-      if (res.success && res.url) {
+
+      // 1. Instant local preview
+      try {
+        const instantUrl = URL.createObjectURL(file);
+        if (videoPreview) {
+          videoPreview.src = instantUrl;
+          videoPreview.load();
+        }
+        if (edVideoInput) edVideoInput.value = instantUrl;
+      } catch {}
+
+      if (videoProgressBox) videoProgressBox.style.display = 'flex';
+      if (videoProgressText) videoProgressText.textContent = 'Uploading: 0%...';
+      if (videoBtnText) videoBtnText.textContent = 'Uploading...';
+
+      const res = await uploadFile(file, (pct) => {
+        if (videoProgressText) videoProgressText.textContent = `Uploading: ${pct}%...`;
+      });
+
+      if (res && res.success && res.url) {
         if (edVideoInput) edVideoInput.value = res.url;
         if (videoPreview) {
           videoPreview.src = res.url;
           videoPreview.load();
         }
+        if (videoProgressText) {
+          videoProgressText.textContent = '✓ Video uploaded successfully!';
+          videoProgressText.style.color = '#34d399';
+        }
+        if (videoBtnText) videoBtnText.textContent = 'Change MP4';
+        emitChange();
+      } else {
+        if (videoProgressText) {
+          videoProgressText.textContent = res?.error || 'Upload error. Video saved locally.';
+          videoProgressText.style.color = '#f87171';
+        }
+        if (videoBtnText) videoBtnText.textContent = 'Retry Upload';
         emitChange();
       }
     });

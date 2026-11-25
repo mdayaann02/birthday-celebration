@@ -94,16 +94,138 @@ async function prepareImageForUpload(file, maxDimension = 1600, quality = 0.85) 
   });
 }
 
-// Upload photo or song file
-// Pre-optimizes images and uploads to backend server for permanent, clean URLs
-export async function uploadFile(file) {
-  // 1. If backend server is available, upload directly to get a clean permanent short URL
+// IndexedDB cache for offline & instant video playback
+const IDB_DB_NAME = 'celebration_media_db';
+const IDB_STORE_NAME = 'media_cache';
+
+function openMediaDB() {
+  return new Promise((resolve, reject) => {
+    if (typeof indexedDB === 'undefined') return reject(new Error('IndexedDB not supported'));
+    const req = indexedDB.open(IDB_DB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(IDB_STORE_NAME)) {
+        db.createObjectStore(IDB_STORE_NAME);
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+export async function saveMediaToIndexedDB(key, blob) {
   try {
-    const uploadPayload = file.type?.startsWith('image/') ? await prepareImageForUpload(file) : file;
+    const db = await openMediaDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE_NAME, 'readwrite');
+      const store = tx.objectStore(IDB_STORE_NAME);
+      store.put(blob, key);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch (err) {
+    console.warn("Could not save to IndexedDB:", err);
+    return false;
+  }
+}
+
+export async function getMediaFromIndexedDB(key) {
+  try {
+    const db = await openMediaDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE_NAME, 'readonly');
+      const store = tx.objectStore(IDB_STORE_NAME);
+      const req = store.get(key);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (err) {
+    console.warn("Could not get from IndexedDB:", err);
+    return null;
+  }
+}
+
+// Upload photo, song, or video file
+// Pre-optimizes images and uploads to backend server for permanent, clean URLs
+// Uses chunked upload for large files (>3.5MB) to avoid serverless payload limits
+export async function uploadFile(file, onProgress) {
+  const isVideo = file.type?.startsWith('video/') || file.name?.match(/\.(mp4|webm|mov|mkv)$/i);
+  const isImage = file.type?.startsWith('image/');
+
+  let localBlobUrl = null;
+  if (isVideo) {
+    try {
+      localBlobUrl = URL.createObjectURL(file);
+      saveMediaToIndexedDB('custom_museum_video', file);
+    } catch (e) {
+      console.warn("Could not cache video in IndexedDB:", e);
+    }
+  }
+
+  // 1. Files larger than 3.5MB: use Chunked Upload
+  const CHUNK_SIZE = 2.5 * 1024 * 1024;
+  if (file.size > 3.5 * 1024 * 1024) {
+    try {
+      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+      const uploadId = 'up_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+
+      let lastResult = null;
+      for (let i = 0; i < totalChunks; i++) {
+        const start = i * CHUNK_SIZE;
+        const end = Math.min(file.size, start + CHUNK_SIZE);
+        const chunkBlob = file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append('chunk', chunkBlob, file.name || 'media.mp4');
+        formData.append('uploadId', uploadId);
+        formData.append('chunkIndex', String(i));
+        formData.append('totalChunks', String(totalChunks));
+        formData.append('filename', file.name || 'media.mp4');
+        formData.append('mimetype', file.type || 'video/mp4');
+
+        if (onProgress) {
+          const pct = Math.round(((i + 1) / totalChunks) * 100);
+          onProgress(pct);
+        }
+
+        const res = await fetch('/api/upload-chunk', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          throw new Error(`Chunk ${i} upload failed with status ${res.status}`);
+        }
+
+        const json = await res.json();
+        if (json.complete && json.url) {
+          lastResult = json;
+        }
+      }
+
+      if (lastResult && lastResult.url) {
+        return { success: true, url: lastResult.url, isServer: true, isVideo };
+      }
+    } catch (chunkErr) {
+      console.warn("Chunked upload notice, attempting client fallback:", chunkErr);
+      if (isVideo && localBlobUrl) {
+        return {
+          success: true,
+          url: localBlobUrl,
+          isLocalBlob: true,
+          warning: "Saved to browser storage."
+        };
+      }
+    }
+  }
+
+  // 2. Normal Single-Part Upload for files <= 3.5MB
+  try {
+    const uploadPayload = isImage ? await prepareImageForUpload(file) : file;
     const formData = new FormData();
     formData.append('file', uploadPayload);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 45000); // Generous 45s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 45000);
 
     const res = await fetch('/api/upload', {
       method: 'POST',
@@ -115,23 +237,32 @@ export async function uploadFile(file) {
     if (res.ok) {
       const json = await res.json();
       if (json.success && json.url) {
-        return { success: true, url: json.url, isServer: true };
+        if (onProgress) onProgress(100);
+        return { success: true, url: json.url, isServer: true, isVideo };
       }
     }
   } catch (err) {
-    console.warn("Backend upload notice, attempting client fallback:", err);
+    console.warn("Backend single upload notice, attempting fallback:", err);
   }
 
-  // 2. If it's an image and server failed/offline, use lightweight client compression
-  if (file.type && file.type.startsWith('image/')) {
+  // 3. Fallbacks
+  if (isImage) {
     return await compressImageFile(file, 800, 0.75);
   }
 
-  // 3. If audio and no backend server:
+  if (isVideo && localBlobUrl) {
+    return {
+      success: true,
+      url: localBlobUrl,
+      isLocalBlob: true,
+      warning: "Saved to browser storage."
+    };
+  }
+
   return {
     success: false,
     isAudio: true,
-    error: "Direct MP3 upload requires the backend server. To ensure your website plays reliably on all phones, please select from the built-in romantic tracks (like Alfaaz) or paste a direct MP3 link!"
+    error: "Direct file upload could not connect to server. Please select a built-in option or paste a direct URL!"
   };
 }
 
@@ -188,17 +319,19 @@ export function getPublishedTemplateId() {
     const pub = localStorage.getItem(PUBLISHED_KEY);
     if (pub) {
       const parsed = JSON.parse(pub);
-      if (parsed.templateId && TEMPLATES[parsed.templateId]) {
-        return parsed.templateId;
+      const tid = (parsed.templateId === 'wedding' || parsed.templateId === 'shubh_weds') ? 'wedding_invite' : parsed.templateId;
+      if (tid && TEMPLATES[tid]) {
+        return tid;
       }
     }
   } catch {}
-  return "blossom";
+  return "wedding_invite";
 }
 
 // Get active celebration data for viewer
-export function getActiveCelebrationData(templateId = "blossom") {
-  const template = TEMPLATES[templateId] || TEMPLATES.blossom;
+export function getActiveCelebrationData(templateId = "wedding_invite") {
+  const resolvedId = (templateId === 'wedding' || templateId === 'shubh_weds') ? 'wedding_invite' : (templateId || 'wedding_invite');
+  const template = TEMPLATES[resolvedId] || TEMPLATES.wedding_invite || TEMPLATES.blossom;
   let baseData = JSON.parse(JSON.stringify(template.defaultData));
 
   // 1. Check published site in localStorage
@@ -206,7 +339,8 @@ export function getActiveCelebrationData(templateId = "blossom") {
     const pub = localStorage.getItem(PUBLISHED_KEY);
     if (pub) {
       const parsed = JSON.parse(pub);
-      if (parsed.templateId === templateId && parsed.data) {
+      const pubId = (parsed.templateId === 'wedding' || parsed.templateId === 'shubh_weds') ? 'wedding_invite' : parsed.templateId;
+      if (pubId === resolvedId && parsed.data) {
         const merged = { ...baseData, ...parsed.data };
         if (baseData.polaroids && (!merged.polaroids || merged.polaroids.length === 0)) {
           merged.polaroids = baseData.polaroids;
@@ -214,13 +348,28 @@ export function getActiveCelebrationData(templateId = "blossom") {
         if (baseData.cards && (!merged.cards || merged.cards.length === 0)) {
           merged.cards = baseData.cards;
         }
+        if (baseData.functions && (!merged.functions || merged.functions.length === 0)) {
+          merged.functions = baseData.functions;
+        }
+        if (baseData.gallery && (!merged.gallery || merged.gallery.length === 0)) {
+          merged.gallery = baseData.gallery;
+        }
+        if (baseData.photos && (!merged.photos || merged.photos.length === 0)) {
+          merged.photos = baseData.photos;
+        }
+        if (!merged.centerpieceImage && baseData.centerpieceImage) {
+          merged.centerpieceImage = baseData.centerpieceImage;
+        }
+        if (!merged.centerpieceVideo && baseData.centerpieceVideo) {
+          merged.centerpieceVideo = baseData.centerpieceVideo;
+        }
         return merged;
       }
     }
   } catch {}
 
   // 2. Check local draft
-  const draft = getLocalDraft(templateId);
+  const draft = getLocalDraft(resolvedId);
   if (draft) {
     const merged = { ...baseData, ...draft };
     if (baseData.polaroids && (!merged.polaroids || merged.polaroids.length === 0)) {
@@ -228,6 +377,21 @@ export function getActiveCelebrationData(templateId = "blossom") {
     }
     if (baseData.cards && (!merged.cards || merged.cards.length === 0)) {
       merged.cards = baseData.cards;
+    }
+    if (baseData.functions && (!merged.functions || merged.functions.length === 0)) {
+      merged.functions = baseData.functions;
+    }
+    if (baseData.gallery && (!merged.gallery || merged.gallery.length === 0)) {
+      merged.gallery = baseData.gallery;
+    }
+    if (baseData.photos && (!merged.photos || merged.photos.length === 0)) {
+      merged.photos = baseData.photos;
+    }
+    if (!merged.centerpieceImage && baseData.centerpieceImage) {
+      merged.centerpieceImage = baseData.centerpieceImage;
+    }
+    if (!merged.centerpieceVideo && baseData.centerpieceVideo) {
+      merged.centerpieceVideo = baseData.centerpieceVideo;
     }
     return merged;
   }
