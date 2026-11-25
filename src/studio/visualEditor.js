@@ -1209,6 +1209,120 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       ${renderGenPolaroidsBlock('bro', 'Brotherhood Hall of Fame Polaroids', broPols)}
       ${renderBroClausesBlock(broClauses)}
     `;
+  } else if (templateId === 'bloom_reveal') {
+    const bloomPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
+      { title: "Sweet Beginning 🌸", image: "/bloom/p1.png", note: "Where our journey quietly began, full of tender smiles." },
+      { title: "Pure Joy ✨", image: "/bloom/p2.png", note: "Sunlight and carefree laughs that stay with me forever." },
+      { title: "Quiet Moments ☕", image: "/bloom/p3.png", note: "Just peaceful afternoons together lost in time." },
+      { title: "Golden Hour 🌅", image: "/bloom/p4.png", note: "The warm sky that couldn't compare to your radiance." },
+      { title: "Holding Hands 💫", image: "/bloom/p5.png", note: "Finding home in the gentle warmth of your hand." },
+      { title: "Little Surprises 🎁", image: "/bloom/p6.png", note: "Every sweet memory we built step by step." },
+      { title: "Endless Laughter 🫶", image: "/bloom/p7.png", note: "Unfiltered giggles that erase every worry." },
+      { title: "Dreaming Big 🌙", image: "/bloom/p8.png", note: "Talking for hours under late night stars." },
+      { title: "Always Beside You 🕊️", image: "/bloom/p9.png", note: "Through sunny days and stormy seasons." },
+      { title: "Forever & Ever 👑", image: "/bloom/p10.png", note: "My whole heart belongs entirely to you." }
+    ];
+
+    const reasons = (data.reasonsList && data.reasonsList.length > 0) ? data.reasonsList : [
+      { title: "Your Virtual Good Morning Smiles", body: "Waking up to your sleepy face on our morning video calls instantly brightens my entire day." },
+      { title: "The Way You Laugh at My Bad Jokes", body: "I know my sense of humor can be terrible, but you always let out the most genuine, joyful laugh anyway." },
+      { title: "Your Unwavering Support", body: "Whenever I feel overwhelmed by a busy week, you always know exactly the right words to encourage me." }
+    ];
+
+    const spotifyTracks = (data.spotifyTracks && data.spotifyTracks.length > 0) ? data.spotifyTracks.join(', ') : '6Qyc6fS4DsZjB2mRW9DsQs, 7sapKrjDij2fpDVj0GxP66, 3vsNteZn6E5qBSSBO78W7b, 1EzrEOXmMH3G43AXT1y7pA, 1JSTJqkT5qHq8MDJnJbRE1';
+
+    specificBox.innerHTML = `
+      <div class="section-title">🌸 Bloom Reveal Surprise Settings</div>
+      
+      <!-- Bloom PIN & Gate Settings -->
+      <div style="background:rgba(54,15,90,0.08); border:1px solid rgba(54,15,90,0.2); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:var(--primary); font-size:14px; font-weight:700; margin-bottom:8px;">🔐 4-Digit Secret Reveal PIN</h4>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Recipient PIN Code (4 Digits)</label>
+            <input type="text" maxlength="4" class="form-input" id="edBloomPin" value="${data.bloomPin || '0000'}" placeholder="0000" style="font-size:18px; font-weight:700; letter-spacing:4px;" />
+            <div class="editor-help-text">The recipient enters this PIN on the tactile keypad to trigger the 88-flower vortex reveal!</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gate Greeting Title</label>
+            <input type="text" class="form-input" id="edBloomGreeting" value="${data.gateGreeting || 'Hi, beautiful'}" placeholder="e.g. Hi, beautiful" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Gate Subtitle / Prompt</label>
+          <input type="text" class="form-input" id="edBloomSubtitle" value="${data.gateSubtitle || 'Enter the correct password to see your surprise :)'}" />
+        </div>
+      </div>
+
+      <!-- Section 1: Reasons Accordion -->
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:var(--primary); font-size:14px; font-weight:700; margin-bottom:8px;">💖 Section 1: Reasons Accordion</h4>
+        <div class="form-group">
+          <label class="form-label">Accordion Section Title</label>
+          <input type="text" class="form-input" id="edBloomReasonsTitle" value="${data.reasonsTitle || '10 things I love about you'}" />
+        </div>
+        <div id="bloomReasonsListContainer">
+          ${reasons.map((r, i) => `
+            <div class="sub-card-editor bloom-reason-edit-row" data-i="${i}" style="margin-bottom:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <strong style="color:var(--primary); font-size:12px;">Reason #${i + 1}</strong>
+                ${reasons.length > 1 ? `<button type="button" class="btn-remove-bloom-reason" data-i="${i}" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:11px;">✕ Remove</button>` : ''}
+              </div>
+              <div class="form-group" style="margin-bottom:6px;">
+                <label class="form-label" style="font-size:11px;">Title</label>
+                <input type="text" class="form-input bloom-reason-input-title" data-i="${i}" value="${r.title || ''}" placeholder="e.g. Your Virtual Good Morning Smiles" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" style="font-size:11px;">Body / Explanation</label>
+                <textarea rows="2" class="form-textarea bloom-reason-input-body" data-i="${i}" placeholder="Why you love this...">${r.body || ''}</textarea>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" class="btn-action-outline" id="btnAddBloomReason" style="margin-top:6px; width:100%;">+ Add Another Reason</button>
+      </div>
+
+      <!-- Section 2: Polaroid Photos -->
+      <div style="margin-bottom:18px;">
+        ${renderGenPolaroidsBlock('bloom', 'Bloom Cherished Memories (10 Polaroids)', bloomPols)}
+      </div>
+
+      <!-- Section 3: Parchment Love Letter -->
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:var(--primary); font-size:14px; font-weight:700; margin-bottom:8px;">📜 Section 3: Scroll-Illuminated Parchment Letter</h4>
+        <div class="form-group">
+          <label class="form-label">Letter Salutation</label>
+          <input type="text" class="form-input" id="edBloomLetterTitle" value="${data.letterTitle || 'My Dearest,'}" />
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Heartfelt Letter (Words light up dynamically as the reader scrolls!)</label>
+          <textarea rows="7" class="form-textarea" id="edBloomLetterText">${data.letterText || ''}</textarea>
+        </div>
+      </div>
+
+      <!-- Section 4: Spotify Songs -->
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:var(--primary); font-size:14px; font-weight:700; margin-bottom:8px;">🎵 Section 4: Our Top Songs (Spotify Embeds)</h4>
+        <div class="form-group">
+          <label class="form-label">Section Heading</label>
+          <input type="text" class="form-input" id="edBloomSongsTitle" value="${data.songsTitle || 'Our Top Songs'}" />
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Spotify Track IDs (comma separated)</label>
+          <input type="text" class="form-input" id="edBloomSpotifyTracks" value="${spotifyTracks}" placeholder="6Qyc6fS4DsZjB2mRW9DsQs, 7sapKrjDij2fpDVj0GxP66..." />
+          <div class="editor-help-text">Paste Spotify track IDs separated by commas.</div>
+        </div>
+      </div>
+
+      <!-- Section 5: Devotion Finale -->
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px;">
+        <h4 style="color:var(--primary); font-size:14px; font-weight:700; margin-bottom:8px;">🌙 Section 5: Typewriter Devotion Finale</h4>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Typewriter Ending Quote</label>
+          <input type="text" class="form-input" id="edBloomEndingQuote" value="${data.endingQuote || 'I love you, to the moon and back.'}" />
+        </div>
+      </div>
+    `;
   }
 
   // Bind song preset buttons
@@ -1549,6 +1663,36 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     });
   });
 
+  // Bloom Reason add/delete handlers
+  const btnAddReason = container.querySelector('#btnAddBloomReason');
+  if (btnAddReason) {
+    btnAddReason.addEventListener('click', (e) => {
+      e.preventDefault();
+      const reasons = Array.isArray(data.reasonsList) ? [...data.reasonsList] : [];
+      reasons.push({
+        title: `Reason #${reasons.length + 1}`,
+        body: 'Another beautiful reason why you mean the entire world to me.'
+      });
+      data.reasonsList = reasons;
+      renderVisualEditor(container, templateId, data, onChange);
+      emitChange();
+    });
+  }
+
+  container.querySelectorAll('.btn-remove-bloom-reason').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const idx = parseInt(btn.getAttribute('data-i'));
+      const reasons = Array.isArray(data.reasonsList) ? [...data.reasonsList] : [];
+      if (idx >= 0 && idx < reasons.length) {
+        reasons.splice(idx, 1);
+        data.reasonsList = reasons;
+        renderVisualEditor(container, templateId, data, onChange);
+        emitChange();
+      }
+    });
+  });
+
   // Bind text input listeners
   function emitChange() {
     const updated = { ...data };
@@ -1782,6 +1926,46 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (Array.isArray(broPols)) updated.polaroids = broPols;
       const clauses = extractBroCodeClauses();
       if (Array.isArray(clauses)) updated.broCodeClauses = clauses;
+    } else if (templateId === 'bloom_reveal') {
+      const elPin = container.querySelector('#edBloomPin');
+      const elGreet = container.querySelector('#edBloomGreeting');
+      const elSub = container.querySelector('#edBloomSubtitle');
+      const elRTitle = container.querySelector('#edBloomReasonsTitle');
+      const elLTitle = container.querySelector('#edBloomLetterTitle');
+      const elLText = container.querySelector('#edBloomLetterText');
+      const elSTitle = container.querySelector('#edBloomSongsTitle');
+      const elTracks = container.querySelector('#edBloomSpotifyTracks');
+      const elQuote = container.querySelector('#edBloomEndingQuote');
+
+      if (elPin) updated.bloomPin = elPin.value.trim();
+      if (elGreet) updated.gateGreeting = elGreet.value;
+      if (elSub) updated.gateSubtitle = elSub.value;
+      if (elRTitle) updated.reasonsTitle = elRTitle.value;
+      if (elLTitle) updated.letterTitle = elLTitle.value;
+      if (elLText) updated.letterText = elLText.value;
+      if (elSTitle) updated.songsTitle = elSTitle.value;
+      if (elQuote) updated.endingQuote = elQuote.value;
+
+      if (elTracks) {
+        updated.spotifyTracks = elTracks.value.split(',').map(s => s.trim()).filter(Boolean);
+      }
+
+      const reasonRows = container.querySelectorAll('.bloom-reason-edit-row');
+      if (reasonRows.length > 0) {
+        const list = [];
+        reasonRows.forEach(row => {
+          const tInput = row.querySelector('.bloom-reason-input-title');
+          const bInput = row.querySelector('.bloom-reason-input-body');
+          list.push({
+            title: tInput ? tInput.value : '',
+            body: bInput ? bInput.value : ''
+          });
+        });
+        updated.reasonsList = list;
+      }
+
+      const bloomPols = extractGenPols('bloom');
+      if (Array.isArray(bloomPols)) updated.polaroids = bloomPols;
     }
 
     onChange(updated);

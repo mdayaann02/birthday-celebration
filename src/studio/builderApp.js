@@ -365,7 +365,7 @@ export function renderStudioApp(root) {
     stripRow.innerHTML = Object.values(TEMPLATES).map(t => {
       const isSel = t.id === activeTemplateId;
       const cleanName = t.name
-        .replace(/ Masterpiece| Celebration| Tribute| Sincere | & Tree/g, '')
+        .replace(/ Masterpiece| Celebration| Tribute| Sincere | & Tree| Surprise/g, '')
         .trim();
       return `
         <button type="button" class="occ-quick-pill ${isSel ? 'active' : ''}" data-tid="${t.id}" title="${t.name}">

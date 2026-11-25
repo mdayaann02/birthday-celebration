@@ -9,6 +9,7 @@ import { initPlayfulDock } from './playfulDock.js';
 
 import { renderTreeTemplate } from './templates/treeTemplate.js';
 import { renderBlossomTemplate } from './templates/blossomTemplate.js';
+import { renderBloomRevealTemplate } from './templates/bloomRevealTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
 import { renderAnniversaryTemplate } from './templates/anniversaryTemplate.js';
 import { renderSorryTemplate } from './templates/sorryTemplate.js';
@@ -60,6 +61,9 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     case 'long_romance':
     case 'blossom':
       renderBlossomTemplate(root, data, isMakerReview);
+      break;
+    case 'bloom_reveal':
+      renderBloomRevealTemplate(root, data, isMakerReview);
       break;
     case 'tree':
       renderTreeTemplate(root, data, isMakerReview);

@@ -247,6 +247,98 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     }
   },
 
+  bloom_reveal: {
+    id: "bloom_reveal",
+    name: "Bloom Reveal Surprise",
+    badge: "Bloom Reveal 🌸💜",
+    icon: "🌸",
+    description: "The viral flower-reveal romance template: Interactive 4-digit PIN gate, 88-flower spiral vortex curtain parting reveal, 10 Things I Love About You glass accordion, 10 Polaroid memories gallery, scroll-illuminated parchment love letter, Spotify top songs, and typewriter devotion finale.",
+    defaultTheme: {
+      primary: "#360f5a",
+      bgGradient: "linear-gradient(180deg, #fbf7f5 0%, #edd9ed 100%)",
+      accent: "#d4235c"
+    },
+    defaultData: {
+      recipientName: "Beautiful",
+      senderName: "Yours Forever",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      bloomPin: "0000",
+      gateGreeting: "Hi, beautiful",
+      gateSubtitle: "Enter the correct password to see your surprise :)",
+      reasonsTitle: "10 things I love about you",
+      reasonsList: [
+        {
+          title: "Your Virtual Good Morning Smiles",
+          body: "Waking up to your sleepy face on our morning video calls instantly brightens my entire day. Even when we are miles apart, that sweet smile makes me feel like you are right beside me."
+        },
+        {
+          title: "The Way You Laugh at My Bad Jokes",
+          body: "I know my sense of humor can be terrible, but you always let out the most genuine, joyful laugh anyway. Hearing that sound over the phone is absolute music to my ears."
+        },
+        {
+          title: "Your Unwavering Support",
+          body: "Whenever I feel overwhelmed by a busy week, you always know exactly the right words to encourage me. Your belief in my dreams pushes me to be the best version of myself every single day."
+        },
+        {
+          title: "Our Late-Night Movie Syncs",
+          body: "There is nothing better than counting down from three so we can press play on a movie at the exact same time. Hearing you gasp or laugh at the same moments makes the distance between us completely disappear."
+        },
+        {
+          title: "The Little Care Packages You Send",
+          body: "Opening the mail to find my favorite snacks and a handwritten letter from you always brings tears to my eyes. It is a beautiful physical reminder of how deeply you love and care for me."
+        },
+        {
+          title: "Your Passion for Your Hobbies",
+          body: "Watching you light up while talking about your digital illustrations or new projects is incredibly inspiring. Your dedication to your creative pursuits is just one of the many reasons I fell for you."
+        },
+        {
+          title: "The Way You Remember Small Details",
+          body: "You always surprise me by bringing up a random passing comment I made weeks ago. It shows me how intently you listen and how much you genuinely value our conversations."
+        },
+        {
+          title: "Your Sweet Voice Notes",
+          body: "Sometimes I wake up to random voice recordings of you singing or just telling me about your day. I play them on repeat whenever I am missing you a little extra."
+        },
+        {
+          title: "The Comfort of Your Advice",
+          body: "You have an incredible ability to look at any problem I face with a calm and logical perspective. I can always rely on your quiet wisdom to help me navigate through stressful situations."
+        },
+        {
+          title: "Dreaming About Our Future Together",
+          body: "We spend hours talking about the day we finally close the gap and can share the same space permanently. Just the thought of building a life with you keeps me going through the toughest of times."
+        }
+      ],
+      polaroids: [
+        { title: "Sweet Beginning 🌸", image: "/bloom/p1.png", note: "Where our journey quietly began, full of tender smiles." },
+        { title: "Pure Joy ✨", image: "/bloom/p2.png", note: "Sunlight and carefree laughs that stay with me forever." },
+        { title: "Quiet Moments ☕", image: "/bloom/p3.png", note: "Just peaceful afternoons together lost in time." },
+        { title: "Golden Hour 🌅", image: "/bloom/p4.png", note: "The warm sky that couldn't compare to your radiance." },
+        { title: "Holding Hands 💫", image: "/bloom/p5.png", note: "Finding home in the gentle warmth of your hand." },
+        { title: "Little Surprises 🎁", image: "/bloom/p6.png", note: "Every sweet memory we built step by step." },
+        { title: "Endless Laughter 🫶", image: "/bloom/p7.png", note: "Unfiltered giggles that erase every worry." },
+        { title: "Dreaming Big 🌙", image: "/bloom/p8.png", note: "Talking for hours under late night stars." },
+        { title: "Always Beside You 🕊️", image: "/bloom/p9.png", note: "Through sunny days and stormy seasons." },
+        { title: "Forever & Ever 👑", image: "/bloom/p10.png", note: "My whole heart belongs entirely to you." }
+      ],
+      letterTitle: "My Dearest,",
+      letterText: "My Dearest, I am writing this because words sometimes catch in my throat when I look at you, overwhelmed by how much you mean to me. Please keep this little note as a token of my heart—a small reminder of a love that belongs entirely to you, even when we are apart. Lately, the distance between us feels a little heavier, and I find myself yearning for you in the quietest moments of the day. I miss the simple warmth of your hand in mine, the soft sound of your laughter, and the way the world just makes sense whenever you are near. You are my peace, my constant joy, and the brightest part of my life. No matter where we are or how long the days feel before I can hold you again, please never forget how deeply, truly, and completely you are loved. You have my whole heart, today and for all the days to come. Forever and always yours, With all my love",
+      songsTitle: "Our Top Songs",
+      spotifyTracks: [
+        "6Qyc6fS4DsZjB2mRW9DsQs",
+        "7sapKrjDij2fpDVj0GxP66",
+        "3vsNteZn6E5qBSSBO78W7b",
+        "1EzrEOXmMH3G43AXT1y7pA",
+        "1JSTJqkT5qHq8MDJnJbRE1"
+      ],
+      endingQuote: "I love you, to the moon and back.",
+      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      audioSubtitle: "BLOOM REVEAL SURPRISE",
+      audioSrc: "/audio/alfaaz.mp3"
+    }
+  },
+
   birthday: {
     id: "birthday",
     name: "Birthday Celebration",

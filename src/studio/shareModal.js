@@ -96,6 +96,11 @@ export function getOccasionWhatsAppMessage(templateId, data, safeUrl) {
     return `To my partner-in-crime and the coolest brother, ${recipientName}! 🏍️🔥👑\n\nNo matter how much we argue, you're always my rock. I built this celebration website loaded with our legendary adventures, bike physics & memories.\n\nCheck out your website here:\n${safeUrl}\n\nParty on, Bhai! 👊🎉`;
   }
 
+  // 10b. Bloom Reveal Surprise
+  if (tid === 'bloom_reveal') {
+    return `Hey ${recipientName}, I made a little surprise for you... 🌸💜\n\nEnter the secret password to unlock your flowers and memories:\n${safeUrl}\n\nMade with all my love! ✨`;
+  }
+
   // 11. Bestie Girl
   if (tid === 'bestie_girl') {
     return `To my soul sister and ultimate bestie, ${recipientName}! 💖👯‍♀️✨\n\nLife is a hundred times more fun and chaotic with you! I made you an exclusive aesthetic celebration website packed with our craziest photos, bestie promises & soundtrack.\n\nOpen your surprise bestie website:\n${safeUrl}\n\nBest friends forever & ever! 🫶🎉`;
