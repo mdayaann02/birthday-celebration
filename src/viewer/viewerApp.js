@@ -45,9 +45,15 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   }
 
   if (templateId === 'birthday_paigaam' || templateId === 'paigaam') {
+    if (container._cleanup) {
+      try { container._cleanup(); } catch (e) {}
+    }
     container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
     const root = container.querySelector('#templateRoot');
     renderPaigaamTemplate(root, data, isMakerReview);
+    container._cleanup = () => {
+      if (root && root._cleanup) root._cleanup();
+    };
     return;
   }
 

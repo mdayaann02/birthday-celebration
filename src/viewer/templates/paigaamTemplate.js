@@ -1,21 +1,122 @@
 // src/viewer/templates/paigaamTemplate.js - Authentic Birthday Paigaam Experience
-// Exact faithful recreation of paigaam.cc/birthday-paigaam:
-// 1. Passcode Cameo Unlock
-// 2. Interactive Mascot Question ("Wanna see it?" with dodging NO button)
+// Faithful multi-screen recreation of paigaam.cc/birthday-paigaam/demo enhanced with Three.js 3D & Lovable motion:
+// 1. Passcode Cameo Unlock (Scalloped pearl cameo + 4-digit keypad + keyboard support)
+// 2. Interactive Mascot Question ("Wanna see it?" with growing YES, shrinking NO & crying bunny/bear duo)
 // 3. Wax-sealed 3D Unfolding Love Letter with Typewriter Reveal
-// 4. Nostalgic Cassette Tape Voice Note with Live Waveform
-// 5. Retro Turntable Vinyl Song Player (with built-in sweet music-box synth)
-// 6. Vintage Spiral Scrapbook (Flipping Polaroids, Lightbox Zoom, Drag-rearrange, Love Notes, Reasons Checklist)
-// 7. Grand Finale Birthday Cake with Blowable Candles, Helium Balloons, Confetti & Fireworks!
+// 4. Nostalgic Cassette Tape Voice Note with Live Waveform & Audio Ducking
+// 5. Retro Turntable Vinyl Song Player (with built-in music-box synth + floating mini-player)
+// 6. Vintage Spiral Scrapbook (Flipping Polaroids, Lightbox Zoom & Swipe, Sticky Love Notes, Reasons Checklist)
+// 7. Grand Finale Birthday Cake with Blowable Candles, Three.js 3D Hearts/Confetti & Fireworks!
 
 import './paigaam.css';
 import { createPaigaamSound } from './paigaamSound.js';
+import { createPaigaamThreeLayer } from './paigaamThreeBg.js';
+
+function createTyper(els, opts = {}) {
+  const items = Array.from(els).map(el => ({
+    el,
+    origHtml: el.getAttribute('data-orig') || el.innerHTML
+  }));
+  items.forEach(it => {
+    it.el.setAttribute('data-orig', it.origHtml);
+    const tmp = document.createElement('div');
+    it.parts = it.origHtml.split(/<br\s*\/?>/i).map(p => {
+      tmp.innerHTML = p;
+      return tmp.textContent || '';
+    });
+  });
+
+  const total = items.reduce((s, it) => s + it.parts.join('').length, 0) || 1;
+  const cps = Math.max(opts.min || 28, Math.min(opts.max || 72, total / (opts.seconds || 8)));
+  const caret = document.createElement('span');
+  caret.className = 'bp-caret';
+  caret.setAttribute('aria-hidden', 'true');
+
+  let rafId = 0;
+  let done = false;
+
+  function finish() {
+    if (done) return;
+    done = true;
+    cancelAnimationFrame(rafId);
+    items.forEach(it => {
+      it.el.innerHTML = it.origHtml;
+      it.el.style.visibility = '';
+    });
+    caret.remove();
+    if (opts.onDone) opts.onDone();
+  }
+
+  function render(n) {
+    let left = n;
+    items.forEach(it => {
+      const len = it.parts.join('').length;
+      if (left <= 0) {
+        it.el.style.visibility = 'hidden';
+        it.el.textContent = '\u00A0';
+        return;
+      }
+      it.el.style.visibility = '';
+      const take = Math.min(left, len);
+      left -= len;
+      it.el.textContent = '';
+      let remaining = take;
+      it.parts.forEach((part, pi) => {
+        if (remaining <= 0) return;
+        const chunk = part.slice(0, remaining);
+        remaining -= part.length;
+        it.el.appendChild(document.createTextNode(chunk));
+        if (pi < it.parts.length - 1 && remaining > 0) {
+          it.el.appendChild(document.createElement('br'));
+        }
+      });
+      if (take < len) it.el.appendChild(caret);
+    });
+  }
+
+  function start(instant = false) {
+    done = false;
+    cancelAnimationFrame(rafId);
+    if (instant || document.body.classList.contains('bp--still')) {
+      finish();
+      return;
+    }
+    let t0 = 0;
+    render(0);
+    const step = (ts) => {
+      if (done) return;
+      if (!t0) t0 = ts;
+      const typed = Math.floor(((ts - t0) / 1000) * cps);
+      if (typed >= total) {
+        finish();
+        return;
+      }
+      render(typed);
+      rafId = requestAnimationFrame(step);
+    };
+    rafId = requestAnimationFrame(step);
+  }
+
+  function reset() {
+    done = false;
+    cancelAnimationFrame(rafId);
+    caret.remove();
+    items.forEach(it => {
+      it.el.innerHTML = it.origHtml;
+      it.el.style.visibility = '';
+    });
+  }
+
+  return { start, finish, reset };
+}
 
 export function renderPaigaamTemplate(container, data = {}, isMakerReview = false) {
-  // Teardown previous instance if any
   if (container._cleanup) {
     try { container._cleanup(); } catch (e) {}
   }
+
+  // Crucial: Enable .js class on <html> so paigaam.css hides inactive screens instead of stacking all on one page
+  document.documentElement.classList.add('js');
 
   const recipientName = data.recipientName || 'Meher';
   const senderName = data.senderName || 'Rahul';
@@ -34,7 +135,6 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     'Fine. NO is officially out of order.'
   ];
 
-  const letterTitle = data.letterTitle || `for ${recipientName}`;
   const letterSalutation = data.letterSalutation || `Dear ${recipientName},`;
   const letterTextRaw = data.letterText || [
     'Happy birthday, my favourite human.',
@@ -86,7 +186,6 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
   const thankYouText = data.thankYouText || `I just opened my birthday surprise 🥹💕 Thank you, ${senderName}!`;
   const waUrl = `https://wa.me/?text=${encodeURIComponent(thankYouText)}`;
 
-  // Apply theme swatches if provided
   const blush = data.theme?.blush || '#F9C6D4';
   const cream = data.theme?.cream || '#FFF4D6';
   const peach = data.theme?.peach || '#FFD9B8';
@@ -99,13 +198,15 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
   document.body.style.setProperty('--peach', peach);
   document.body.style.setProperty('--lavender', lavender);
   document.body.style.setProperty('--accent', accent);
+  document.body.style.setProperty('--font-head', "'Fraunces', Georgia, serif");
+  document.body.style.setProperty('--font-script', "'Great Vibes', cursive");
+  document.body.style.setProperty('--font-hand', "'Caveat', 'Comic Sans MS', cursive");
 
   const SND = createPaigaamSound();
   const sfx = (name, arg) => {
     try { SND.sfx[name](arg); } catch (e) {}
   };
 
-  // Render HTML stage
   container.innerHTML = `
     <div class="bp-experience-wrap">
       ${isMakerReview ? `
@@ -166,21 +267,55 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
                     ` : `
                       <span class="bp-frame__empty">
                         <svg viewBox="0 0 200 200" aria-hidden="true">
-                          <circle cx="100" cy="100" r="74" fill="none" stroke="#C9A24A" stroke-width=".8" stroke-dasharray="2 5"/>
-                          <path fill="none" stroke="#C9A24A" stroke-width="1.3" d="M12 21.2s-7.6-4.6-10-9.4C0.3 8.2 2.2 3.8 6.4 3.8c2.5 0 4.1 1.4 5.6 3.4 1.5-2 3.1-3.4 5.6-3.4 4.2 0 6.1 4.4 4.4 8-2.4 4.8-10 9.4-10 9.4z" transform="translate(88 52)"/>
+                          <defs><linearGradient id="bpPhGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7E9B8"/><stop offset=".3" stop-color="#C9A24A"/><stop offset=".52" stop-color="#F4E2A6"/><stop offset=".78" stop-color="#A8802F"/><stop offset="1" stop-color="#E9D08C"/></linearGradient></defs>
+                          <circle cx="100" cy="100" r="74" fill="none" stroke="url(#bpPhGold)" stroke-width=".8" stroke-dasharray="2 5" stroke-linecap="round"/>
+                          <path fill="none" stroke="url(#bpPhGold)" stroke-width="1.3" stroke-linejoin="round" transform="translate(88 52) scale(1)" d="M12 21.2s-7.6-4.6-10-9.4C0.3 8.2 2.2 3.8 6.4 3.8c2.5 0 4.1 1.4 5.6 3.4 1.5-2 3.1-3.4 5.6-3.4 4.2 0 6.1 4.4 4.4 8-2.4 4.8-10 9.4-10 9.4z"/>
+                          <path fill="none" stroke="url(#bpPhGold)" stroke-width=".9" stroke-linecap="round" d="M74 140 H92 M108 140 H126"/>
+                          <circle cx="100" cy="140" r="1.8" fill="#C9A24A"/>
                         </svg>
                         <span class="bp-frame__invite">your photo<br>here</span>
                       </span>
                     `}
                   </div>
                   <svg class="bp-cameo" viewBox="0 0 320 320" aria-hidden="true" focusable="false">
-                    <circle cx="160" cy="160" r="148" fill="none" stroke="#C9A24A" stroke-width="6"/>
-                    <circle cx="160" cy="160" r="138" fill="none" stroke="#E9D08C" stroke-width="2" stroke-dasharray="3 4"/>
+                    <defs>
+                      <linearGradient id="bpCamGold" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#F7E9B8"/><stop offset=".3" stop-color="#C9A24A"/><stop offset=".52" stop-color="#F4E2A6"/><stop offset=".78" stop-color="#A8802F"/><stop offset="1" stop-color="#E9D08C"/>
+                      </linearGradient>
+                      <mask id="bpCamMask"><rect width="320" height="320" fill="#fff"/><circle cx="160" cy="160" r="109" fill="#000"/></mask>
+                    </defs>
+                    <g mask="url(#bpCamMask)">
+                      <path class="f-lace" d="M160.00 14.00 A12.08 12.08 0 0 1 180.78 15.49 A12.08 12.08 0 0 1 201.13 19.91 A12.08 12.08 0 0 1 220.65 27.19 A12.08 12.08 0 0 1 238.93 37.18 A12.08 12.08 0 0 1 255.61 49.66 A12.08 12.08 0 0 1 270.34 64.39 A12.08 12.08 0 0 1 282.82 81.07 A12.08 12.08 0 0 1 292.81 99.35 A12.08 12.08 0 0 1 300.09 118.87 A12.08 12.08 0 0 1 304.51 139.22 A12.08 12.08 0 0 1 306.00 160.00 A12.08 12.08 0 0 1 304.51 180.78 A12.08 12.08 0 0 1 300.09 201.13 A12.08 12.08 0 0 1 292.81 220.65 A12.08 12.08 0 0 1 282.82 238.93 A12.08 12.08 0 0 1 270.34 255.61 A12.08 12.08 0 0 1 255.61 270.34 A12.08 12.08 0 0 1 238.93 282.82 A12.08 12.08 0 0 1 220.65 292.81 A12.08 12.08 0 0 1 201.13 300.09 A12.08 12.08 0 0 1 180.78 304.51 A12.08 12.08 0 0 1 160.00 306.00 A12.08 12.08 0 0 1 139.22 304.51 A12.08 12.08 0 0 1 118.87 300.09 A12.08 12.08 0 0 1 99.35 292.81 A12.08 12.08 0 0 1 81.07 282.82 A12.08 12.08 0 0 1 64.39 270.34 A12.08 12.08 0 0 1 49.66 255.61 A12.08 12.08 0 0 1 37.18 238.93 A12.08 12.08 0 0 1 27.19 220.65 A12.08 12.08 0 0 1 19.91 201.13 A12.08 12.08 0 0 1 15.49 180.78 A12.08 12.08 0 0 1 14.00 160.00 A12.08 12.08 0 0 1 15.49 139.22 A12.08 12.08 0 0 1 19.91 118.87 A12.08 12.08 0 0 1 27.19 99.35 A12.08 12.08 0 0 1 37.18 81.07 A12.08 12.08 0 0 1 49.66 64.39 A12.08 12.08 0 0 1 64.39 49.66 A12.08 12.08 0 0 1 81.07 37.18 A12.08 12.08 0 0 1 99.35 27.19 A12.08 12.08 0 0 1 118.87 19.91 A12.08 12.08 0 0 1 139.22 15.49 A12.08 12.08 0 0 1 160.00 14.00Z"/>
+                      <path fill="none" stroke="url(#bpCamGold)" stroke-width="1.2" d="M160.00 14.00 A12.08 12.08 0 0 1 180.78 15.49 A12.08 12.08 0 0 1 201.13 19.91 A12.08 12.08 0 0 1 220.65 27.19 A12.08 12.08 0 0 1 238.93 37.18 A12.08 12.08 0 0 1 255.61 49.66 A12.08 12.08 0 0 1 270.34 64.39 A12.08 12.08 0 0 1 282.82 81.07 A12.08 12.08 0 0 1 292.81 99.35 A12.08 12.08 0 0 1 300.09 118.87 A12.08 12.08 0 0 1 304.51 139.22 A12.08 12.08 0 0 1 306.00 160.00 A12.08 12.08 0 0 1 304.51 180.78 A12.08 12.08 0 0 1 300.09 201.13 A12.08 12.08 0 0 1 292.81 220.65 A12.08 12.08 0 0 1 282.82 238.93 A12.08 12.08 0 0 1 270.34 255.61 A12.08 12.08 0 0 1 255.61 270.34 A12.08 12.08 0 0 1 238.93 282.82 A12.08 12.08 0 0 1 220.65 292.81 A12.08 12.08 0 0 1 201.13 300.09 A12.08 12.08 0 0 1 180.78 304.51 A12.08 12.08 0 0 1 160.00 306.00 A12.08 12.08 0 0 1 139.22 304.51 A12.08 12.08 0 0 1 118.87 300.09 A12.08 12.08 0 0 1 99.35 292.81 A12.08 12.08 0 0 1 81.07 282.82 A12.08 12.08 0 0 1 64.39 270.34 A12.08 12.08 0 0 1 49.66 255.61 A12.08 12.08 0 0 1 37.18 238.93 A12.08 12.08 0 0 1 27.19 220.65 A12.08 12.08 0 0 1 19.91 201.13 A12.08 12.08 0 0 1 15.49 180.78 A12.08 12.08 0 0 1 14.00 160.00 A12.08 12.08 0 0 1 15.49 139.22 A12.08 12.08 0 0 1 19.91 118.87 A12.08 12.08 0 0 1 27.19 99.35 A12.08 12.08 0 0 1 37.18 81.07 A12.08 12.08 0 0 1 49.66 64.39 A12.08 12.08 0 0 1 64.39 49.66 A12.08 12.08 0 0 1 81.07 37.18 A12.08 12.08 0 0 1 99.35 27.19 A12.08 12.08 0 0 1 118.87 19.91 A12.08 12.08 0 0 1 139.22 15.49 A12.08 12.08 0 0 1 160.00 14.00Z"/>
+                      <circle cx="160" cy="160" r="131" fill="none" stroke="url(#bpCamGold)" stroke-width=".9" stroke-dasharray="1 4.2" stroke-linecap="round"/>
+                      <circle cx="160" cy="160" r="125" class="f-paper"/>
+                      <circle cx="160" cy="160" r="125" fill="none" stroke="url(#bpCamGold)" stroke-width="1.8"/>
+                      <circle cx="160" cy="160" r="119.5" fill="none" stroke="url(#bpCamGold)" stroke-width=".7"/>
+                      <circle cx="160" cy="160" r="109.5" fill="none" stroke="url(#bpCamGold)" stroke-width="1.4"/>
+                    </g>
+                    <g class="bp-cameo__bow" transform="translate(160 22)">
+                      <path class="f-blush" stroke="url(#bpCamGold)" stroke-width=".9" d="M0 0 C-14 -16 -40 -16 -38 -2 C-36 10 -14 6 0 0Z"/>
+                      <path class="f-blush" stroke="url(#bpCamGold)" stroke-width=".9" d="M0 0 C14 -16 40 -16 38 -2 C36 10 14 6 0 0Z"/>
+                      <path class="f-blush" stroke="url(#bpCamGold)" stroke-width=".9" d="M-3 2 L-16 26 L-10 24 L-7 31 L2 4Z"/>
+                      <path class="f-blush" stroke="url(#bpCamGold)" stroke-width=".9" d="M3 2 L16 26 L10 24 L7 31 L-2 4Z"/>
+                      <ellipse cx="0" cy="0" rx="6" ry="5" class="f-blushdeep" stroke="url(#bpCamGold)" stroke-width=".9"/>
+                    </g>
+                    <g class="bp-cameo__sprig" transform="translate(160 296)">
+                      <path fill="none" class="s-sage" stroke-width="1.3" stroke-linecap="round" d="M0 0 C-14 -2 -30 -8 -44 -18 M0 0 C14 -2 30 -8 44 -18"/>
+                      <g class="f-sage" opacity=".9">
+                        <path d="M-16 -4 C-20 -12 -14 -16 -10 -10 C-12 -7 -13 -5 -16 -4Z"/><path d="M-30 -10 C-36 -17 -30 -22 -25 -16 C-27 -13 -28 -11 -30 -10Z"/>
+                        <path d="M16 -4 C20 -12 14 -16 10 -10 C12 -7 13 -5 16 -4Z"/><path d="M30 -10 C36 -17 30 -22 25 -16 C27 -13 28 -11 30 -10Z"/>
+                      </g>
+                      <g class="f-blush" stroke="url(#bpCamGold)" stroke-width=".6">
+                        <circle cx="0" cy="-2" r="5.5"/><circle cx="-42" cy="-19" r="3.4"/><circle cx="42" cy="-19" r="3.4"/>
+                      </g>
+                      <circle cx="0" cy="-2" r="1.8" fill="#E9D08C"/>
+                    </g>
                   </svg>
                   <span class="bp-frame__glint" aria-hidden="true"></span>
                 </div>
-                <span class="bp-deco bp-deco--s1">✦</span>
-                <span class="bp-deco bp-deco--s3">✦</span>
+                <span class="bp-deco bp-deco--s1"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="f-gold" d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg></span>
+                <span class="bp-deco bp-deco--s3"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="f-gold" d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg></span>
               </div>
             </div>
 
@@ -205,7 +340,7 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
                 <button type="button" class="bp-key bp-key--soft" data-key="back" aria-label="Delete last digit">⌫</button>
               </div>
               <button type="button" class="bp-pill bp-enter">ENTER</button>
-              <p class="bp-hint"><span>${passcodeHint}</span></p>
+              <p class="bp-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="f-acc" d="M12 21.2s-7.6-4.6-10-9.4C0.3 8.2 2.2 3.8 6.4 3.8c2.5 0 4.1 1.4 5.6 3.4 1.5-2 3.1-3.4 5.6-3.4 4.2 0 6.1 4.4 4.4 8-2.4 4.8-10 9.4-10 9.4z"/></svg> <span>${passcodeHint}</span></p>
             </div>
           </div>
         </section>
@@ -218,17 +353,28 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
                 <div class="bp-q__bunny">
                   <svg class="bp-bunny" viewBox="0 0 240 150" aria-hidden="true">
                     <g class="bp-bunny__ears">
-                      <ellipse cx="88" cy="40" rx="14" ry="38" fill="#FFFBF0" stroke="#5B2A3C" stroke-width="3" transform="rotate(-14 88 40)"/>
-                      <ellipse cx="88" cy="42" rx="7" ry="24" fill="#F9C6D4" transform="rotate(-14 88 42)"/>
-                      <ellipse cx="148" cy="40" rx="14" ry="38" fill="#FFFBF0" stroke="#5B2A3C" stroke-width="3" transform="rotate(14 148 40)"/>
-                      <ellipse cx="148" cy="42" rx="7" ry="24" fill="#F9C6D4" transform="rotate(14 148 42)"/>
+                      <g transform="rotate(-14 88 52)"><ellipse class="f-white s-ink" stroke-width="3" cx="88" cy="52" rx="18" ry="46"/><ellipse class="f-blush" cx="88" cy="56" rx="8" ry="32"/></g>
+                      <g transform="rotate(14 152 52)"><ellipse class="f-white s-ink" stroke-width="3" cx="152" cy="52" rx="18" ry="46"/><ellipse class="f-blush" cx="152" cy="56" rx="8" ry="32"/></g>
+                      <g transform="translate(158 20) rotate(18)"><path class="f-acc s-ink" stroke-width="2.4" stroke-linejoin="round" d="M0 0 L-16 -9 L-16 9 Z M0 0 L16 -9 L16 9 Z"/><circle class="f-acc s-ink" stroke-width="2.4" r="4.5"/></g>
                     </g>
-                    <ellipse cx="118" cy="100" rx="52" ry="44" fill="#FFFBF0" stroke="#5B2A3C" stroke-width="3.5"/>
-                    <circle cx="98" cy="94" r="5" fill="#5B2A3C"/>
-                    <circle cx="138" cy="94" r="5" fill="#5B2A3C"/>
-                    <ellipse cx="118" cy="105" rx="5" ry="3.5" fill="#EE9DB4"/>
-                    <ellipse cx="82" cy="104" rx="8" ry="4" fill="#F9C6D4" opacity=".8"/>
-                    <ellipse cx="154" cy="104" rx="8" ry="4" fill="#F9C6D4" opacity=".8"/>
+                    <ellipse class="f-white s-ink" stroke-width="3" cx="120" cy="118" rx="72" ry="52"/>
+                    <g class="bp-bunny__eyes">
+                      <circle class="f-ink" cx="96" cy="112" r="6.5"/><circle class="f-white" cx="98.5" cy="109" r="2.2"/>
+                      <circle class="f-ink" cx="144" cy="112" r="6.5"/><circle class="f-white" cx="146.5" cy="109" r="2.2"/>
+                    </g>
+                    <g class="bp-bunny__happy s-ink" fill="none" stroke-width="4" stroke-linecap="round">
+                      <path d="M88 114 Q96 104 104 114"/><path d="M136 114 Q144 104 152 114"/>
+                    </g>
+                    <ellipse class="f-blush" cx="80" cy="128" rx="11" ry="6.5" opacity=".9"/>
+                    <ellipse class="f-blush" cx="160" cy="128" rx="11" ry="6.5" opacity=".9"/>
+                    <path class="f-acc" d="M114.5 121 Q120 117 125.5 121 Q120 127.5 114.5 121Z"/>
+                    <path class="s-ink" fill="none" stroke-width="2.6" stroke-linecap="round" d="M112 130 Q116 135 120 130 Q124 135 128 130"/>
+                    <g class="f-white s-ink" stroke-width="3">
+                      <ellipse cx="82" cy="146" rx="20" ry="12"/><ellipse cx="158" cy="146" rx="20" ry="12"/>
+                    </g>
+                    <g class="s-ink" stroke-width="2" stroke-linecap="round" opacity=".55">
+                      <path d="M76 142 v7"/><path d="M86 141 v8"/><path d="M152 141 v8"/><path d="M162 142 v7"/>
+                    </g>
                   </svg>
                 </div>
                 <div class="bp-card bp-wavy bp-q__card">
@@ -244,6 +390,48 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
             <div class="bp-q__no" hidden>
               <h2 class="bp-q__nohead" aria-live="assertive">How dare you click NO!</h2>
               <button type="button" class="bp-pill bp-again">TRY AGAIN <span aria-hidden="true">↺</span></button>
+              <div class="bp-q__duo">
+                <svg class="bp-duo" viewBox="0 0 430 310" aria-hidden="true" focusable="false">
+                  <ellipse cx="130" cy="296" rx="84" ry="10" class="f-ink" opacity=".08"/>
+                  <ellipse cx="300" cy="296" rx="74" ry="10" class="f-ink" opacity=".08"/>
+                  <g class="bp-duo__bear">
+                    <circle class="f-peach s-ink" stroke-width="3" cx="76" cy="64" r="23"/><circle class="f-blush" cx="76" cy="64" r="12"/>
+                    <circle class="f-peach s-ink" stroke-width="3" cx="184" cy="64" r="23"/><circle class="f-blush" cx="184" cy="64" r="12"/>
+                    <ellipse class="f-peach s-ink" stroke-width="3" cx="130" cy="230" rx="74" ry="66"/>
+                    <ellipse class="f-cream" cx="130" cy="242" rx="44" ry="40"/>
+                    <ellipse class="f-peach s-ink" stroke-width="3" cx="130" cy="120" rx="70" ry="61"/>
+                    <ellipse class="f-cream s-ink" stroke-width="2.5" cx="130" cy="142" rx="29" ry="20"/>
+                    <ellipse class="f-ink" cx="130" cy="133" rx="8.5" ry="5.8"/>
+                    <path class="s-ink" fill="none" stroke-width="3" stroke-linecap="round" d="M119 153 Q130 146 141 153"/>
+                    <g class="s-ink" stroke-width="4.5" stroke-linecap="round"><path d="M86 98 L111 108"/><path d="M174 98 L149 108"/></g>
+                    <circle class="f-ink" cx="100" cy="118" r="5.5"/><circle class="f-ink" cx="160" cy="118" r="5.5"/>
+                    <ellipse class="f-blush" cx="86" cy="140" rx="12" ry="7.5" opacity=".95"/><ellipse class="f-blush" cx="174" cy="140" rx="12" ry="7.5" opacity=".95"/>
+                    <path class="s-ink" fill="none" stroke-width="30" stroke-linecap="round" d="M74 214 Q122 240 176 206"/>
+                    <path class="s-peach" fill="none" stroke-width="24" stroke-linecap="round" d="M74 214 Q122 240 176 206"/>
+                    <path class="s-ink" fill="none" stroke-width="30" stroke-linecap="round" d="M186 214 Q138 240 86 206"/>
+                    <path class="s-peach" fill="none" stroke-width="24" stroke-linecap="round" d="M186 214 Q138 240 86 206"/>
+                    <g class="s-acc bp-duo__vein" fill="none" stroke-width="4.5" stroke-linecap="round">
+                      <path d="M194 46 q8 7 16 0"/><path d="M194 70 q8 -7 16 0"/><path d="M190 50 q7 8 0 16"/><path d="M214 50 q-7 8 0 16"/>
+                    </g>
+                  </g>
+                  <g class="bp-duo__bunny">
+                    <g transform="rotate(-10 268 66)"><ellipse class="f-white s-ink" stroke-width="3" cx="268" cy="66" rx="17" ry="48"/><ellipse class="f-blush" cx="268" cy="70" rx="8" ry="33"/></g>
+                    <g transform="rotate(12 330 66)"><ellipse class="f-white s-ink" stroke-width="3" cx="330" cy="66" rx="17" ry="48"/><ellipse class="f-blush" cx="330" cy="70" rx="8" ry="33"/></g>
+                    <ellipse class="f-white s-ink" stroke-width="3" cx="300" cy="238" rx="64" ry="58"/>
+                    <ellipse class="f-lavlight" cx="300" cy="248" rx="38" ry="34"/>
+                    <ellipse class="f-white s-ink" stroke-width="3" cx="300" cy="142" rx="64" ry="55"/>
+                    <circle class="f-ink" cx="277" cy="136" r="11"/><circle class="f-white" cx="281" cy="131" r="4.5"/><circle class="f-white" cx="273" cy="141" r="2"/>
+                    <circle class="f-ink" cx="323" cy="136" r="11"/><circle class="f-white" cx="327" cy="131" r="4.5"/><circle class="f-white" cx="319" cy="141" r="2"/>
+                    <g class="bp-duo__tears" fill="none" stroke="#9EC3FF" stroke-width="7" stroke-linecap="round" opacity=".9">
+                      <path d="M270 150 Q266 178 272 206"/><path d="M330 150 Q334 178 328 206"/>
+                    </g>
+                    <ellipse class="f-blush" cx="264" cy="158" rx="11" ry="6.5"/><ellipse class="f-blush" cx="336" cy="158" rx="11" ry="6.5"/>
+                    <path class="f-acc s-ink" stroke-width="2.6" stroke-linejoin="round" d="M288 166 Q300 154 312 166 Q300 182 288 166Z"/>
+                    <circle class="f-white s-ink" stroke-width="3" cx="246" cy="168" r="14"/>
+                    <circle class="f-white s-ink" stroke-width="3" cx="354" cy="168" r="14"/>
+                  </g>
+                </svg>
+              </div>
             </div>
           </div>
         </section>
@@ -431,7 +619,7 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
                   `;
                 }).join('')}
               </div>
-              <p class="bp-book__tip">tap a photo to flip it · hold & drag to rearrange · <span aria-hidden="true">🔍</span> to zoom & swipe</p>
+              <p class="bp-book__tip">tap a photo to flip it · <span aria-hidden="true">🔍</span> to zoom & swipe</p>
             </section>
 
             <div class="bp-book__pair">
@@ -482,22 +670,33 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
             <div class="bp-cakewrap">
               <p class="bp-cake__hint">${cakeHint}</p>
               <svg class="bp-cake" viewBox="0 0 300 286" aria-label="A birthday cake with 5 candles" focusable="false">
+                <defs>
+                  <radialGradient id="bpFlameGlow"><stop offset="0" stop-color="#FFE7A8" stop-opacity=".95"/><stop offset="1" stop-color="#FFE7A8" stop-opacity="0"/></radialGradient>
+                  <radialGradient id="bpFlame" cx="50%" cy="65%" r="60%"><stop offset="0" stop-color="#FFF8DA"/><stop offset=".5" stop-color="#FFC861"/><stop offset="1" stop-color="#F08A3C"/></radialGradient>
+                </defs>
                 <ellipse class="f-cream s-ink" stroke-width="3" cx="150" cy="262" rx="136" ry="18"/>
                 <rect class="f-blush s-ink" stroke-width="3" x="36" y="176" width="228" height="84" rx="18"/>
+                <path class="f-cream" d="M36 178 H264 V188 Q257.7 198 251.3 194 Q246.3 184 238.7 188 Q232.3 204 226.0 197.6 Q220.9 184 213.3 188 Q207.0 210 200.7 201.2 Q195.6 184 188.0 188 Q181.7 216 175.3 204.8 Q170.3 184 162.7 188 Q156.3 198 150.0 194 Q144.9 184 137.3 188 Q131.0 204 124.7 197.6 Q119.6 184 112.0 188 Q105.7 210 99.3 201.2 Q94.3 184 86.7 188 Q80.3 216 74.0 204.8 Q68.9 184 61.3 188 Q55.0 198 48.7 194 Q43.6 184 36.0 188Z"/>
                 <rect class="f-lav s-ink" stroke-width="3" x="78" y="108" width="144" height="72" rx="16"/>
+                <path class="f-cream" d="M78 110 H222 V120 Q216.0 136 210.0 129.6 Q205.2 116 198.0 120 Q192.0 142 186.0 133.2 Q181.2 116 174.0 120 Q168.0 148 162.0 136.8 Q157.2 116 150.0 120 Q144.0 130 138.0 126 Q133.2 116 126.0 120 Q120.0 136 114.0 129.6 Q109.2 116 102.0 120 Q96.0 142 90.0 133.2 Q85.2 116 78.0 120Z"/>
+                <rect class="f-acc" x="70" y="214" width="10" height="3.6" rx="1.8" transform="rotate(20 75 215.8)"/><rect class="f-gold" x="96" y="236" width="10" height="3.6" rx="1.8" transform="rotate(-30 101 237.8)"/><rect class="f-lavdeep" x="128" y="220" width="10" height="3.6" rx="1.8" transform="rotate(50 133 221.8)"/><rect class="f-acc" x="180" y="232" width="10" height="3.6" rx="1.8" transform="rotate(-15 185 233.8)"/><rect class="f-gold" x="214" y="216" width="10" height="3.6" rx="1.8" transform="rotate(35 219 217.8)"/><rect class="f-lavdeep" x="236" y="238" width="10" height="3.6" rx="1.8" transform="rotate(-40 241 239.8)"/>
+                <path transform="translate(51 226) scale(.75)" class="f-acc" d="M12 21.2s-7.6-4.6-10-9.4C0.3 8.2 2.2 3.8 6.4 3.8c2.5 0 4.1 1.4 5.6 3.4 1.5-2 3.1-3.4 5.6-3.4 4.2 0 6.1 4.4 4.4 8-2.4 4.8-10 9.4-10 9.4z"/>
+                <path transform="translate(141 226) scale(.75)" class="f-acc" d="M12 21.2s-7.6-4.6-10-9.4C0.3 8.2 2.2 3.8 6.4 3.8c2.5 0 4.1 1.4 5.6 3.4 1.5-2 3.1-3.4 5.6-3.4 4.2 0 6.1 4.4 4.4 8-2.4 4.8-10 9.4-10 9.4z"/>
+                <path transform="translate(231 226) scale(.75)" class="f-acc" d="M12 21.2s-7.6-4.6-10-9.4C0.3 8.2 2.2 3.8 6.4 3.8c2.5 0 4.1 1.4 5.6 3.4 1.5-2 3.1-3.4 5.6-3.4 4.2 0 6.1 4.4 4.4 8-2.4 4.8-10 9.4-10 9.4z"/>
                 ${[0, 1, 2, 3, 4].map(idx => {
-                  const candleX = [98, 124, 150, 176, 202][idx];
+                  const cx = [98, 124, 150, 176, 202][idx];
                   return `
                     <g class="bp-candle" data-candle="${idx}" role="button" tabindex="0" aria-label="Blow out candle ${idx + 1}">
-                      <rect x="${candleX - 15}" y="20" width="30" height="92" fill="transparent"/>
-                      <rect class="f-cream s-ink" stroke-width="2.2" x="${candleX - 5.5}" y="70" width="11" height="40" rx="3"/>
-                      <path class="s-ink" stroke-width="2" stroke-linecap="round" d="M${candleX} 70 v-6"/>
-                      <g class="bp-flame" style="transform-origin:${candleX}px 62px">
-                        <circle cx="${candleX}" cy="50" r="17" fill="#FFE7A8"/>
-                        <path fill="#FFC861" d="M${candleX} 34 C${candleX + 8} 44 ${candleX + 9} 52 ${candleX + 6} 58 C${candleX + 4} 63 ${candleX - 4} 63 ${candleX - 6} 58 C${candleX - 9} 52 ${candleX - 6} 44 ${candleX} 34Z"/>
+                      <rect x="${cx - 15}" y="20" width="30" height="92" fill="transparent"/>
+                      <rect class="f-cream s-ink" stroke-width="2.2" x="${cx - 5.5}" y="70" width="11" height="40" rx="3"/>
+                      <g class="s-acc" stroke-width="3" opacity=".85"><path d="M${cx - 5} 82 l10 -6"/><path d="M${cx - 5} 94 l10 -6"/><path d="M${cx - 5} 106 l10 -6"/></g>
+                      <path class="s-ink" stroke-width="2" stroke-linecap="round" d="M${cx} 70 v-6"/>
+                      <g class="bp-flame" style="transform-origin:${cx}px 62px">
+                        <circle cx="${cx}" cy="50" r="17" fill="url(#bpFlameGlow)"/>
+                        <path fill="url(#bpFlame)" d="M${cx} 34 C${cx + 8} 44 ${cx + 9} 52 ${cx + 6} 58 C${cx + 4} 63 ${cx - 4} 63 ${cx - 6} 58 C${cx - 9} 52 ${cx - 6} 44 ${cx} 34Z"/>
                       </g>
                       <g class="bp-smoke" fill="#B9A9C9">
-                        <circle cx="${candleX}" cy="56" r="4"/><circle cx="${candleX + 4}" cy="46" r="5"/><circle cx="${candleX - 2}" cy="34" r="6"/>
+                        <circle cx="${cx}" cy="56" r="4"/><circle cx="${cx + 4}" cy="46" r="5"/><circle cx="${cx - 2}" cy="34" r="6"/>
                       </g>
                     </g>
                   `;
@@ -531,37 +730,37 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     </div>
   `;
 
-  // Selectors
   const root = container.querySelector('.bp-experience-wrap');
   const screens = {};
   root.querySelectorAll('.bp-screen').forEach(s => {
     screens[s.getAttribute('data-screen')] = s;
   });
   const ORDER = ['unlock', 'question', 'letter', 'voice', 'song', 'scrapbook', 'finale'];
-  let current = 'unlock';
+  let current = null;
   const hooks = {};
   const tickHooks = [];
   let isDestroyed = false;
 
-  // Background canvases
+  // Three.js 3D Ambient Layer + 2D FX Overlay Canvas
   const amb = root.querySelector('.bp-ambient');
   const fxc = root.querySelector('.bp-fx');
-  const actx = amb ? amb.getContext('2d') : null;
   const fctx = fxc ? fxc.getContext('2d') : null;
-  let W = window.innerWidth, H = window.innerHeight;
+  const threeLayer = createPaigaamThreeLayer(amb, { accent, blush, lavender, peach, cream });
 
+  let W = window.innerWidth;
+  let H = window.innerHeight;
   function resizeCanvases() {
     W = window.innerWidth;
     H = window.innerHeight;
-    if (amb) { amb.width = W; amb.height = H; }
     if (fxc) { fxc.width = W; fxc.height = H; }
   }
   resizeCanvases();
   window.addEventListener('resize', resizeCanvases);
 
-  // FX particles engine
+  // FX particles (2D crisp overlay + Three.js 3D bursts)
   let particles = [];
   function burstHearts(x, y, count = 16, power = 1.2) {
+    threeLayer?.burst(x, y, Math.min(20, count), 'hearts');
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
       const speed = (2 + Math.random() * 4) * power;
@@ -569,7 +768,7 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
         x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed - 1.5,
-        size: 14 + Math.random() * 8,
+        size: 12 + Math.random() * 8,
         color: [accent, blush, lavender, peach][i % 4],
         alpha: 1,
         life: 0.9 + Math.random() * 0.4
@@ -578,6 +777,7 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
   }
 
   function confetti(x, y, count = 80) {
+    threeLayer?.burst(x, y, Math.min(36, Math.round(count / 2)), 'confetti');
     for (let i = 0; i < count; i++) {
       particles.push({
         x, y,
@@ -586,8 +786,6 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
         size: 6 + Math.random() * 6,
         color: [accent, '#FFC107', blush, lavender, '#4CAF50', '#2196F3'][i % 6],
         alpha: 1,
-        rotation: Math.random() * 360,
-        vr: (Math.random() - 0.5) * 10,
         life: 1.2 + Math.random() * 0.8
       });
     }
@@ -595,14 +793,13 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
 
   function firework(x, y) {
     sfx('firework');
-    burstHearts(x, y, 22, 1.8);
-    confetti(x, y, 40);
+    threeLayer?.burst(x, y, 28, 'firework');
+    burstHearts(x, y, 16, 1.8);
+    confetti(x, y, 36);
   }
 
-  // Animation RAF loop
   let lastTime = performance.now();
   let rafId = null;
-
   function animLoop(nowTime) {
     if (isDestroyed) return;
     const dt = Math.min((nowTime - lastTime) / 1000, 0.1);
@@ -614,7 +811,7 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 9.8 * dt * 0.8; // gravity
+        p.vy += 9.8 * dt * 0.8;
         p.alpha -= dt / p.life;
         if (p.alpha <= 0) {
           particles.splice(i, 1);
@@ -630,7 +827,6 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
       }
     }
 
-    // Call tick hooks
     tickHooks.forEach(hook => {
       try { hook(dt, nowTime / 1000); } catch (e) {}
     });
@@ -639,22 +835,22 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
   }
   rafId = requestAnimationFrame(animLoop);
 
-  // Wavy borders generator
+  // Wavy SVG scalloped borders
   function wavePath(w, h, r) {
     const s = r * 2;
-    let d = '';
     function edge(len, dx, dy) {
-      const n = Math.max(2, Math.round(len / s)), step = len / n;
+      const n = Math.max(2, Math.round(len / s));
+      const step = len / n;
       let seg = '';
       for (let i = 0; i < n; i++) {
         seg += ` a${(step / 2).toFixed(2)} ${(step / 2).toFixed(2)} 0 0 1 ${(dx * step).toFixed(2)} ${(dy * step).toFixed(2)}`;
       }
       return seg;
     }
-    d = `M${r} ${r}${edge(w - 2 * r, 1, 0)}${edge(h - 2 * r, 0, 1)}${edge(w - 2 * r, -1, 0)}${edge(h - 2 * r, 0, -1)}Z`;
-    return d;
+    return `M${r} ${r}${edge(w - 2 * r, 1, 0)}${edge(h - 2 * r, 0, 1)}${edge(w - 2 * r, -1, 0)}${edge(h - 2 * r, 0, -1)}Z`;
   }
 
+  const waveDraws = [];
   root.querySelectorAll('.bp-wavy').forEach(card => {
     const NS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(NS, 'svg');
@@ -666,18 +862,22 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     card.insertBefore(svg, card.firstChild);
 
     function draw() {
-      const w = card.offsetWidth, h = card.offsetHeight;
+      const w = card.offsetWidth;
+      const h = card.offsetHeight;
       if (!w || !h) return;
       const r = w < 340 ? 8 : 10;
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
       fill.setAttribute('d', wavePath(w, h, r));
+      card.classList.add('has-wave');
     }
     draw();
-    setTimeout(draw, 100);
-    window.addEventListener('resize', draw);
+    waveDraws.push(draw);
+    setTimeout(draw, 120);
   });
+  const onResizeWaves = () => waveDraws.forEach(fn => fn());
+  window.addEventListener('resize', onResizeWaves);
 
-  // Screen Navigation & Progress
+  // Screen Navigation & Lovable-style Transitions
   const progressDots = root.querySelectorAll('.bp-progress i');
   function setProgress(name) {
     const idx = ORDER.indexOf(name);
@@ -690,15 +890,21 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
 
   function go(name) {
     if (!screens[name] || name === current) return;
-    const prev = screens[current];
+    const prev = current ? screens[current] : null;
     const next = screens[name];
-    if (hooks[current]?.leave) hooks[current].leave();
-    if (prev) prev.classList.remove('is-active');
+    if (current && hooks[current]?.leave) hooks[current].leave();
+
+    if (prev) {
+      prev.classList.remove('is-active');
+      prev.classList.add('is-leaving');
+      setTimeout(() => prev.classList.remove('is-leaving'), 520);
+    }
     next.classList.add('is-active');
     current = name;
     document.body.setAttribute('data-screen', name);
     setProgress(name);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(onResizeWaves, 60);
     if (hooks[name]?.enter) hooks[name].enter();
   }
 
@@ -713,7 +919,8 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     btn.addEventListener('click', nextScreen);
   });
 
-  // 1. UNLOCK LOGIC
+  // 1. UNLOCK LOGIC (Keypad + Keyboard)
+  const onKeyDownUnlock = [];
   (() => {
     const s = screens.unlock;
     if (!s) return;
@@ -728,6 +935,7 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
 
     function paint() {
       boxes.forEach((b, i) => b.classList.toggle('is-filled', i < code.length));
+      boxesWrap?.setAttribute('aria-label', `Passcode, ${code.length} of 4 digits entered`);
       enter?.classList.toggle('is-ready', code.length === 4);
     }
 
@@ -750,17 +958,18 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     }
 
     function unlockSuccess() {
+      if (busy) return;
       busy = true;
       boxesWrap?.classList.add('is-right');
       if (msg) msg.textContent = 'Yay! Unlocked 💖';
       const r = boxesWrap.getBoundingClientRect();
       burstHearts(r.left + r.width / 2, r.top + r.height / 2, 26, 1.6);
       sfx('unlock');
-      setTimeout(nextScreen, 1000);
+      setTimeout(nextScreen, 950);
     }
 
     function check() {
-      if (busy) return;
+      if (busy || current !== 'unlock') return;
       if (code.length < 4) {
         if (msg) msg.textContent = 'Four numbers please ✨';
         sfx('soft');
@@ -773,7 +982,7 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
         sfx('wrong');
         boxesWrap?.classList.add('is-wrong');
         if (msg) msg.textContent = 'Nope! Try again silly 💕';
-        if (hint && tries >= 2) hint.style.opacity = '1';
+        if (hint && tries >= 2) hint.classList.add('is-shown');
         setTimeout(() => {
           code = '';
           paint();
@@ -786,10 +995,28 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     });
     enter?.addEventListener('click', check);
 
-    const bypassBtn = container.querySelector('#btnBypassUnlock');
-    if (bypassBtn) {
-      bypassBtn.addEventListener('click', unlockSuccess);
-    }
+    const keyHandler = (e) => {
+      if (current !== 'unlock') return;
+      if (/^\d$/.test(e.key)) press(e.key);
+      else if (e.key === 'Backspace') press('back');
+      else if (e.key === 'Escape') press('clear');
+      else if (e.key === 'Enter') check();
+    };
+    window.addEventListener('keydown', keyHandler);
+    onKeyDownUnlock.push(keyHandler);
+
+    container.querySelector('#btnBypassUnlock')?.addEventListener('click', unlockSuccess);
+
+    hooks.unlock = {
+      enter: () => {
+        busy = false;
+        code = '';
+        tries = 0;
+        boxesWrap?.classList.remove('is-right', 'is-wrong');
+        if (msg) msg.textContent = '';
+        paint();
+      }
+    };
   })();
 
   // 2. QUESTION LOGIC
@@ -807,8 +1034,8 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     let done = false;
 
     function updateSize() {
-      yes.style.transform = `scale(${Math.min(1 + noCount * 0.22, 2.2)})`;
-      no.style.transform = `scale(${Math.max(0.65, 1 - noCount * 0.08)})`;
+      if (yes) yes.style.transform = `scale(${Math.min(1 + noCount * 0.22, 2.2)})`;
+      if (no) no.style.transform = `scale(${Math.max(0.62, 1 - noCount * 0.08)})`;
     }
 
     function sayYes() {
@@ -816,11 +1043,12 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
       done = true;
       SND.wake();
       sfx('yes');
+      s.classList.add('is-happy');
       if (nudge) nudge.textContent = 'Yay! I knew it 💕';
       const r = yes.getBoundingClientRect();
       confetti(r.left + r.width / 2, r.top + r.height / 2, 100);
       burstHearts(r.left + r.width / 2, r.top, 16, 1.4);
-      setTimeout(nextScreen, 1500);
+      setTimeout(nextScreen, 1450);
     }
 
     yes?.addEventListener('click', sayYes);
@@ -839,6 +1067,18 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
       if (ask) ask.hidden = false;
       updateSize();
     });
+
+    hooks.question = {
+      enter: () => {
+        done = false;
+        noCount = 0;
+        s.classList.remove('is-happy');
+        if (ask) ask.hidden = false;
+        if (noPanel) noPanel.hidden = true;
+        if (nudge) nudge.textContent = '';
+        updateSize();
+      }
+    };
   })();
 
   // 3. LETTER TYPEWRITER & ENVELOPE
@@ -848,7 +1088,21 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     const env = s.querySelector('.bp-env');
     const letter = s.querySelector('.bp-letter');
     const reread = s.querySelector('.bp-reread');
+    const typer = createTyper(letter.querySelectorAll('[data-type]'), {
+      seconds: 9,
+      onDone: () => {
+        s.classList.add('is-signed');
+        setTimeout(() => s.classList.add('is-done'), 650);
+      }
+    });
+
+    let timers = [];
     let running = false;
+
+    function clearTimers() {
+      timers.forEach(clearTimeout);
+      timers = [];
+    }
 
     function openEnvelope() {
       if (running) return;
@@ -859,27 +1113,58 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
       const r = env.getBoundingClientRect();
       burstHearts(r.left + r.width / 2, r.top + r.height * 0.6, 14, 1.1);
 
-      setTimeout(() => { env.classList.add('is-open'); sfx('paper'); }, 400);
-      setTimeout(() => { env.classList.add('is-rising'); }, 1100);
-      setTimeout(() => { env.classList.add('is-away'); }, 2000);
-      setTimeout(() => { s.classList.add('is-reading'); sfx('paper'); }, 2500);
+      timers.push(setTimeout(() => { env.classList.add('is-open'); sfx('paper'); }, 380));
+      timers.push(setTimeout(() => { env.classList.add('is-rising'); }, 1050));
+      timers.push(setTimeout(() => { env.classList.add('is-away'); }, 1900));
+      timers.push(setTimeout(() => {
+        s.classList.add('is-reading');
+        sfx('paper');
+        typer.start();
+      }, 2400));
+    }
+
+    function resetEnvelope() {
+      clearTimers();
+      running = false;
+      typer.reset();
+      env.classList.remove('is-cracked', 'is-open', 'is-rising', 'is-away');
+      s.classList.remove('is-reading', 'is-signed', 'is-done');
     }
 
     env?.addEventListener('click', openEnvelope);
-    reread?.addEventListener('click', () => {
-      running = false;
-      env.classList.remove('is-cracked', 'is-open', 'is-rising', 'is-away');
-      s.classList.remove('is-reading');
-      setTimeout(openEnvelope, 300);
+    env?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openEnvelope();
+      }
     });
+
+    reread?.addEventListener('click', () => {
+      resetEnvelope();
+      setTimeout(openEnvelope, 260);
+    });
+
+    hooks.letter = {
+      enter: resetEnvelope,
+      leave: clearTimers
+    };
   })();
 
-  // 4. VOICE NOTE & 5. OUR SONG PLAYERS
+  // 4. VOICE NOTE & 5. OUR SONG PLAYERS + MINI-PLAYER
   const voiceEl = root.querySelector('.bp-audio-voice');
   const songEl = root.querySelector('.bp-audio-song');
+  const miniBtn = root.querySelector('.bp-mini');
+  let isSongPlaying = false;
 
-  function bindAudio(screenEl, audioEl, isSong = false) {
-    if (!screenEl || !audioEl) return;
+  function updateMiniPlayer() {
+    if (!miniBtn) return;
+    const showMini = isSongPlaying && (current === 'scrapbook' || current === 'finale');
+    miniBtn.hidden = !showMini;
+    miniBtn.classList.toggle('is-playing', isSongPlaying);
+  }
+
+  function bindAudio(screenEl, cardEl, audioEl, isSong = false) {
+    if (!screenEl || !cardEl || !audioEl) return;
     const btn = screenEl.querySelector('.bp-play');
     const seek = screenEl.querySelector('.bp-seek');
     const fill = screenEl.querySelector('.bp-track__fill');
@@ -887,7 +1172,8 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
 
     function fmt(sec) {
       if (!isFinite(sec) || sec < 0) sec = 0;
-      const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
       return `${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
@@ -895,16 +1181,25 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
       const dur = audioEl.duration || 0;
       const cur = audioEl.currentTime || 0;
       const p = dur ? cur / dur : 0;
-      if (fill) fill.style.width = `${p * 100}%`;
-      if (seek) seek.value = Math.round(p * 1000);
+      if (fill) fill.style.setProperty('--p', `${(p * 100).toFixed(2)}%`);
+      if (seek) seek.value = String(Math.round(p * 1000));
       if (time) time.textContent = fmt(dur > 0 && cur > 0 ? dur - cur : dur);
     }
 
     audioEl.addEventListener('timeupdate', update);
     audioEl.addEventListener('loadedmetadata', update);
-    audioEl.addEventListener('play', () => screenEl.classList.add('is-playing'));
-    audioEl.addEventListener('pause', () => screenEl.classList.remove('is-playing'));
+    audioEl.addEventListener('play', () => {
+      cardEl.classList.add('is-playing');
+      screenEl.classList.add('is-playing');
+      if (isSong) { isSongPlaying = true; updateMiniPlayer(); }
+    });
+    audioEl.addEventListener('pause', () => {
+      cardEl.classList.remove('is-playing');
+      screenEl.classList.remove('is-playing');
+      if (isSong) { isSongPlaying = false; updateMiniPlayer(); }
+    });
     audioEl.addEventListener('ended', () => {
+      cardEl.classList.remove('is-playing');
       screenEl.classList.remove('is-playing');
       audioEl.currentTime = 0;
       update();
@@ -920,14 +1215,18 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     btn?.addEventListener('click', () => {
       SND.wake();
       if (isSong && !songUrl) {
-        // Fallback music box
         if (SND.musicBox.playing) {
           SND.musicBox.stop();
+          cardEl.classList.remove('is-playing');
           screenEl.classList.remove('is-playing');
+          isSongPlaying = false;
         } else {
           SND.musicBox.start();
+          cardEl.classList.add('is-playing');
           screenEl.classList.add('is-playing');
+          isSongPlaying = true;
         }
+        updateMiniPlayer();
         return;
       }
 
@@ -941,15 +1240,40 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     });
   }
 
-  bindAudio(screens.voice, voiceEl, false);
-  bindAudio(screens.song, songEl, true);
+  bindAudio(screens.voice, root.querySelector('.bp-voice'), voiceEl, false);
+  bindAudio(screens.song, root.querySelector('.bp-song'), songEl, true);
 
-  // Cassette spools & waveform visualizer tick hook
+  miniBtn?.addEventListener('click', () => {
+    SND.wake();
+    if (!songUrl) {
+      if (SND.musicBox.playing) {
+        SND.musicBox.stop();
+        isSongPlaying = false;
+      } else {
+        SND.musicBox.start();
+        isSongPlaying = true;
+      }
+      updateMiniPlayer();
+      return;
+    }
+    if (songEl.paused) songEl.play().catch(() => {});
+    else songEl.pause();
+  });
+
+  hooks.voice = {
+    leave: () => {
+      if (voiceEl && !voiceEl.paused) voiceEl.pause();
+    }
+  };
+  hooks.song = { enter: updateMiniPlayer, leave: updateMiniPlayer };
+  hooks.scrapbook = { enter: updateMiniPlayer };
+
+  // Voice waveform tick
   const waveBars = root.querySelectorAll('.bp-wave i');
   tickHooks.push((dt, t) => {
     if (current === 'voice' && voiceEl && !voiceEl.paused) {
       waveBars.forEach((bar, i) => {
-        const h = 0.2 + 0.7 * Math.abs(Math.sin(t * 6 + i * 0.7) * Math.sin(t * 2.3 + i));
+        const h = 0.2 + 0.72 * Math.abs(Math.sin(t * 6 + i * 0.7) * Math.sin(t * 2.3 + i));
         bar.style.transform = `scaleY(${h.toFixed(2)})`;
       });
     }
@@ -989,7 +1313,8 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
       if (zoomBtn) {
         openLightbox(idx);
       } else if (flipBtn) {
-        pola.classList.toggle('is-flipped');
+        const flipped = pola.classList.toggle('is-flipped');
+        flipBtn.setAttribute('aria-pressed', String(flipped));
         sfx('paper');
       }
     });
@@ -998,22 +1323,23 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     lb?.querySelector('.bp-lightbox__prev')?.addEventListener('click', () => openLightbox(lbIndex - 1));
     lb?.querySelector('.bp-lightbox__next')?.addEventListener('click', () => openLightbox(lbIndex + 1));
 
-    // Sticky love notes pop
     s.querySelectorAll('.bp-note__btn').forEach(btn => {
       btn.addEventListener('click', () => {
         sfx('pop');
         const r = btn.getBoundingClientRect();
-        burstHearts(r.left + r.width / 2, r.top + r.height / 2, 6, 0.7);
+        burstHearts(r.left + r.width / 2, r.top + r.height / 2, 8, 0.8);
       });
     });
   })();
 
-  // 7. FINALE CAKE & CANDLE BLOWING
+  // 7. FINALE CAKE & CANDLE BLOWING + TYPEWRITER TITLE
   (() => {
     const s = screens.finale;
     if (!s) return;
     const candles = s.querySelectorAll('.bp-candle');
     const doneText = s.querySelector('.bp-cake__done');
+    const titleEl = s.querySelector('#bpFinaleTitle');
+    const titleTyper = titleEl ? createTyper([titleEl], { seconds: 1.8 }) : null;
     let candlesOut = 0;
 
     function blowCandle(candle) {
@@ -1022,7 +1348,7 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
       candlesOut++;
       sfx('puff');
       const r = candle.getBoundingClientRect();
-      burstHearts(r.left + r.width / 2, r.top + 10, 6, 0.8);
+      burstHearts(r.left + r.width / 2, r.top + 10, 8, 0.85);
 
       if (candlesOut >= candles.length) {
         setTimeout(() => {
@@ -1035,12 +1361,18 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
               firework(W * (0.2 + Math.random() * 0.6), H * (0.15 + Math.random() * 0.3));
             }, 300 + i * 450);
           }
-        }, 400);
+        }, 380);
       }
     }
 
     candles.forEach(candle => {
       candle.addEventListener('click', () => blowCandle(candle));
+      candle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          blowCandle(candle);
+        }
+      });
     });
 
     s.querySelector('.bp-replay')?.addEventListener('click', () => {
@@ -1050,6 +1382,13 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
       if (doneText) doneText.textContent = '';
       go('unlock');
     });
+
+    hooks.finale = {
+      enter: () => {
+        updateMiniPlayer();
+        titleTyper?.start();
+      }
+    };
   })();
 
   // Sound and Motion Toggles
@@ -1067,17 +1406,22 @@ export function renderPaigaamTemplate(container, data = {}, isMakerReview = fals
     document.body.classList.toggle('bp--still');
     const isStill = document.body.classList.contains('bp--still');
     motBtn.setAttribute('aria-pressed', String(!isStill));
+    threeLayer?.setStill(isStill);
   });
 
   // Start on initial screen
   go('unlock');
 
-  // Teardown function
+  // Cleanup
   container._cleanup = () => {
     isDestroyed = true;
     if (rafId) cancelAnimationFrame(rafId);
     window.removeEventListener('resize', resizeCanvases);
+    window.removeEventListener('resize', onResizeWaves);
+    onKeyDownUnlock.forEach(fn => window.removeEventListener('keydown', fn));
+    threeLayer?.dispose();
     document.body.classList.remove('bp', 'bp--still');
+    document.body.removeAttribute('data-screen');
     if (voiceEl) voiceEl.pause();
     if (songEl) songEl.pause();
     SND.destroy();
