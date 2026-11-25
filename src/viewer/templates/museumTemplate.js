@@ -1948,9 +1948,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     prevMouseY = e.clientY;
 
     // Moving mouse to the right rotates camera smoothly to the right
+    // Moving mouse up tilts camera up (natural non-inverted look), moving mouse down tilts down
     walkYaw -= dx * 0.0035;
-    walkPitch -= dy * 0.003;
-    walkPitch = Math.max(-0.35, Math.min(0.65, walkPitch));
+    walkPitch += dy * 0.003;
+    walkPitch = Math.max(-0.45, Math.min(0.65, walkPitch));
   });
 
   window.addEventListener('mouseup', () => {
@@ -1984,9 +1985,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
           prevTouchLookX = touch.clientX;
           prevTouchLookY = touch.clientY;
           // Swiping right rotates camera smoothly to the right
+          // Swiping up tilts camera up (natural non-inverted look), swiping down tilts down
           walkYaw -= dx * 0.0045;
-          walkPitch -= dy * 0.0035;
-          walkPitch = Math.max(-0.35, Math.min(0.65, walkPitch));
+          walkPitch += dy * 0.0035;
+          walkPitch = Math.max(-0.45, Math.min(0.65, walkPitch));
         }
       }
     }, { passive: false });
@@ -2380,7 +2382,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
         currentLookAtTarget.set(
           localAvatar.group.position.x,
-          localAvatar.group.position.y + 1.35,
+          localAvatar.group.position.y + 1.35 - Math.sin(walkPitch) * 0.8,
           localAvatar.group.position.z
         );
         camera.lookAt(currentLookAtTarget);
