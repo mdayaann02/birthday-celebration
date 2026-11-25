@@ -1698,15 +1698,19 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
       // Proposer sees status banner waiting for partner
       if (realtimeProposalBanner) {
-        if (realtimeBannerEyebrow) realtimeBannerEyebrow.textContent = '💍 YOU ARE PROPOSING ON ONE KNEE';
-        if (realtimeBannerTitle) realtimeBannerTitle.textContent = 'Presenting The Ring Box ✨';
-        if (realtimeBannerQuestion) realtimeBannerQuestion.textContent = `${proposalQuestion}\n(Waiting for her reply 💖)`;
+        if (realtimeBannerEyebrow) realtimeBannerEyebrow.textContent = '💍 YOU ARE PROPOSING';
+        if (realtimeBannerTitle) realtimeBannerTitle.textContent = 'On One Knee ✨';
+        if (realtimeBannerQuestion) realtimeBannerQuestion.textContent = `${proposalQuestion}`;
         if (realtimeBannerActions) realtimeBannerActions.style.display = 'flex';
         if (realtimeCelebrateBox) realtimeCelebrateBox.style.display = 'none';
         if (btnStandRealtimeProposal) btnStandRealtimeProposal.style.display = 'inline-flex';
         if (btnAcceptRealtimeProposal) btnAcceptRealtimeProposal.style.display = 'none';
         if (btnRunawayNoProposal) btnRunawayNoProposal.style.display = 'none';
         realtimeProposalBanner.style.display = 'flex';
+        gsap.fromTo('#realtimeProposalBanner .proposal-banner-card',
+          { scale: 0.85, opacity: 0, y: -20 },
+          { scale: 1, opacity: 1, y: 0, duration: 0.35, ease: 'back.out(1.4)' }
+        );
       }
 
       if (multiplayer) {
@@ -1772,7 +1776,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   btnDockPropose?.addEventListener('click', toggleKneelingProposal);
   btnAcceptRealtimeProposal?.addEventListener('click', acceptProposal);
   btnStandRealtimeProposal?.addEventListener('click', standFromProposal);
-  btnCloseRealtimeBanner?.addEventListener('click', standFromProposal);
+  btnCloseRealtimeBanner?.addEventListener('click', () => {
+    soundFx.pop(400);
+    if (realtimeProposalBanner) realtimeProposalBanner.style.display = 'none';
+  });
   realtimeProposalBackdrop?.addEventListener('click', standFromProposal);
   btnDoneRealtimeProposal?.addEventListener('click', standFromProposal);
 
@@ -2372,8 +2379,12 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         }
 
         // TPP Chase Camera Positioning (behind avatar, looking forward)
-        const camDist = 3.8;
-        const camHeight = 1.95;
+        // Dynamically glide camera closer & lower when kneeling to showcase the ring box & proposal
+        const isKneelingNow = localAvatar.isKneeling();
+        const camDist = isKneelingNow ? 3.0 : 3.8;
+        const camHeight = isKneelingNow ? 1.45 : 1.95;
+        const focusY = isKneelingNow ? 0.95 : 1.35;
+
         const desiredCamX = localAvatar.group.position.x + Math.sin(walkYaw) * Math.cos(walkPitch) * camDist;
         const desiredCamY = localAvatar.group.position.y + camHeight + Math.sin(walkPitch) * camDist;
         const desiredCamZ = localAvatar.group.position.z + Math.cos(walkYaw) * Math.cos(walkPitch) * camDist;
@@ -2382,7 +2393,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
         currentLookAtTarget.set(
           localAvatar.group.position.x,
-          localAvatar.group.position.y + 1.35 - Math.sin(walkPitch) * 0.8,
+          localAvatar.group.position.y + focusY - Math.sin(walkPitch) * 0.8,
           localAvatar.group.position.z
         );
         camera.lookAt(currentLookAtTarget);

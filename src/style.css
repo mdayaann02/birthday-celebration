@@ -24073,54 +24073,55 @@ body:has(#bloomContainer) {
 
 .realtime-proposal-banner {
   position: fixed;
-  inset: 0;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1600;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 16px;
-  pointer-events: auto;
+  pointer-events: none;
+  width: auto;
+  max-width: 92vw;
 }
 
 .proposal-banner-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(10, 6, 8, 0.68);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  cursor: pointer;
+  display: none !important;
 }
 
 .proposal-banner-card {
   position: relative;
-  max-width: 480px;
-  width: 92%;
-  background: radial-gradient(circle at 50% 0%, #2e101f 0%, #170911 65%, #0b0508 100%);
-  border: 1.5px solid rgba(225, 29, 72, 0.6);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(225, 29, 72, 0.35);
-  border-radius: 24px;
-  padding: 26px 30px;
+  max-width: 380px;
+  width: 92vw;
+  background: linear-gradient(135deg, rgba(34, 12, 22, 0.94), rgba(16, 6, 12, 0.97));
+  border: 1.5px solid rgba(244, 114, 182, 0.65);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 0 30px rgba(225, 29, 72, 0.35);
+  border-radius: 20px;
+  padding: 14px 18px 16px;
   text-align: center;
   color: #fff;
-  animation: bannerCardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: auto;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: bannerCardPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes bannerCardPop {
-  0% { opacity: 0; transform: scale(0.85) translateY(20px); }
+  0% { opacity: 0; transform: scale(0.85) translateY(-10px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .btn-close-banner {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 32px;
-  height: 32px;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: #fff;
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -24129,52 +24130,52 @@ body:has(#bloomContainer) {
 }
 
 .btn-close-banner:hover {
-  background: rgba(225, 29, 72, 0.5);
+  background: rgba(225, 29, 72, 0.6);
   border-color: #e11d48;
   transform: rotate(90deg);
 }
 
 .proposal-banner-seal {
-  font-size: 32px;
-  margin-bottom: 6px;
+  font-size: 20px;
+  margin-bottom: 2px;
   animation: sealFloat 2.2s ease-in-out infinite alternate;
 }
 
 @keyframes sealFloat {
   0% { transform: translateY(0); }
-  100% { transform: translateY(-4px); }
+  100% { transform: translateY(-3px); }
 }
 
 .proposal-banner-eyebrow {
   display: inline-block;
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-size: 10px;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
   color: #f472b6;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
 
 .proposal-banner-title {
   font-family: 'Cinzel', serif;
-  font-size: 21px;
+  font-size: 17px;
   font-weight: 700;
   color: #fff;
-  margin: 0 0 10px 0;
+  margin: 0 0 4px 0;
   letter-spacing: 0.5px;
 }
 
 .proposal-banner-question {
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: 13.5px;
+  line-height: 1.4;
   color: #fce7f3;
-  margin: 0 0 20px 0;
+  margin: 0 0 12px 0;
   font-style: italic;
 }
 
 .proposal-banner-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
@@ -24184,9 +24185,9 @@ body:has(#bloomContainer) {
   background: linear-gradient(135deg, #e11d48, #be123c);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 12px 26px;
+  padding: 8px 22px;
   border-radius: 999px;
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(225, 29, 72, 0.5);
@@ -24200,19 +24201,19 @@ body:has(#bloomContainer) {
 }
 
 .btn-banner-stand {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   color: #e2e8f0;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 12px 20px;
+  padding: 8px 18px;
   border-radius: 999px;
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-banner-stand:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
   color: #fff;
   border-color: #fff;
 }
@@ -24220,29 +24221,29 @@ body:has(#bloomContainer) {
 .realtime-celebrate-box {
   background: rgba(225, 29, 72, 0.15);
   border: 1px solid rgba(244, 114, 182, 0.4);
-  border-radius: 18px;
-  padding: 18px;
-  margin-top: 10px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 6px;
 }
 
 .celebrate-sparkles {
-  font-size: 24px;
-  margin-bottom: 8px;
+  font-size: 18px;
+  margin-bottom: 4px;
 }
 
 .celebrate-title {
   font-family: 'Cinzel', serif;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   color: #fb7185;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
 }
 
 .celebrate-text {
-  font-size: 14px;
+  font-size: 12.5px;
   color: #fdf2f8;
-  line-height: 1.45;
-  margin: 0 0 12px 0;
+  line-height: 1.4;
+  margin: 0 0 8px 0;
 }
 
 .celebrate-badge {
@@ -24250,21 +24251,21 @@ body:has(#bloomContainer) {
   background: rgba(225, 29, 72, 0.3);
   border: 1px solid rgba(244, 114, 182, 0.5);
   border-radius: 999px;
-  padding: 5px 14px;
-  font-size: 11px;
+  padding: 3px 10px;
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   color: #fbcfe8;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .btn-banner-done {
   background: linear-gradient(135deg, #d4af37, #b8860b);
   color: #171007;
   border: none;
-  padding: 10px 24px;
+  padding: 7px 18px;
   border-radius: 999px;
-  font-size: 13.5px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -24277,26 +24278,29 @@ body:has(#bloomContainer) {
 
 /* Landscape mode mobile optimization */
 @media (max-height: 540px), (orientation: landscape) and (max-height: 600px) {
+  .realtime-proposal-banner {
+    top: 56px;
+  }
   .proposal-banner-card {
-    padding: 14px 20px;
-    max-height: 86vh;
-    overflow-y: auto;
+    max-width: 340px;
+    padding: 10px 14px 12px;
+    border-radius: 16px;
   }
   .proposal-banner-seal {
-    font-size: 20px;
-    margin-bottom: 2px;
+    font-size: 16px;
+    margin-bottom: 1px;
   }
   .proposal-banner-title {
-    font-size: 17px;
-    margin-bottom: 4px;
+    font-size: 15px;
+    margin-bottom: 2px;
   }
   .proposal-banner-question {
-    font-size: 13px;
-    margin-bottom: 12px;
+    font-size: 12px;
+    margin-bottom: 6px;
   }
   .btn-banner-accept, .btn-banner-stand {
-    padding: 8px 18px;
-    font-size: 12.5px;
+    padding: 6px 14px;
+    font-size: 12px;
   }
 }
 
