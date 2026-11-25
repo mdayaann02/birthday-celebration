@@ -324,13 +324,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         </div>
 
         <div class="museum-top-controls">
-          <button type="button" class="btn-museum-mode active" id="btnTourMode" title="Cinematic Guided Tour">
-            <span class="mode-icon">🧭</span>
-            <span class="mode-label">Guided Tour</span>
-          </button>
-          <button type="button" class="btn-museum-mode" id="btnWalkMode" title="Free Walkthrough Exploration">
-            <span class="mode-icon">🚶</span>
-            <span class="mode-label">Free Walk</span>
+          <button type="button" class="btn-museum-mode-toggle mode-tour" id="btnModeToggle" title="Current: Guided Tour • Tap to switch to Free Walk">
+            <span class="mode-icon" id="modeToggleIcon">🧭</span>
+            <span class="mode-label" id="modeToggleLabel">Guided Tour</span>
+            <span class="mode-toggle-arrow">⇄</span>
           </button>
           <button type="button" class="btn-museum-icon" id="btnFullscreenToggle" title="Toggle Fullscreen (Landscape)">
             <span id="fullscreenIcon">⛶</span>
@@ -500,44 +497,53 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         </div>
       </div>
 
-      <!-- Multiplayer Interaction Dock (Bottom Floating Bar) -->
-      <div class="museum-multiplayer-dock" id="multiplayerDock" style="display:none;">
-        <div class="multi-dock-left">
-          <div class="multiplayer-status-pill" id="multiStatusPill">
-            <span class="pulse-indicator"></span>
-            <span id="multiStatusText">Exploring Solo</span>
-            <span class="peer-count-badge" id="peerCountBadge" style="display:none;">1</span>
+      <!-- Pop-Out Interactive Actions (Right Down Corner Pop-Out Drawer) -->
+      <div class="museum-corner-interact" id="cornerInteractZone" style="display:none;">
+        <!-- Popped-Out Action Drawer Panel (Initially popped in) -->
+        <div class="museum-multiplayer-dock" id="multiplayerDock" style="display:none;">
+          <div class="dock-panel-top">
+            <div class="multiplayer-status-pill" id="multiStatusPill">
+              <span class="pulse-indicator"></span>
+              <span id="multiStatusText">Exploring Solo</span>
+              <span class="peer-count-badge" id="peerCountBadge" style="display:none;">1</span>
+            </div>
+            <div class="multi-avatar-badge" id="multiAvatarBadge">
+              <span class="my-avatar-tag" id="myAvatarTag">👦 You</span>
+            </div>
+            <button type="button" class="btn-close-dock-panel" id="btnCloseDockPanel" title="Pop In Menu">✕</button>
+          </div>
+
+          <div class="multi-dock-center">
+            <button type="button" class="btn-dock-action" id="btnDockWave" title="Wave to everyone">
+              <span class="action-emoji">👋</span>
+              <span class="action-text">Wave</span>
+            </button>
+            <button type="button" class="btn-dock-action" id="btnDockHeart" title="Send glowing hearts">
+              <span class="action-emoji">💖</span>
+              <span class="action-text">Hearts</span>
+            </button>
+            <button type="button" class="btn-dock-action" id="btnDockChat" title="Quick Chat & Reactions">
+              <span class="action-emoji">💬</span>
+              <span class="action-text">React</span>
+            </button>
+            <button type="button" class="btn-dock-action" id="btnDockSit" title="Sit Together on Gallery Bench">
+              <span class="action-emoji">🛋️</span>
+              <span class="action-text">Sit Together</span>
+            </button>
+            <button type="button" class="btn-dock-action btn-dock-propose" id="btnDockPropose" title="Kneel down on one knee to propose">
+              <span class="action-emoji">💍</span>
+              <span class="action-text">Propose</span>
+            </button>
           </div>
         </div>
 
-        <div class="multi-dock-center">
-          <button type="button" class="btn-dock-action" id="btnDockWave" title="Wave to everyone">
-            <span class="action-emoji">👋</span>
-            <span class="action-text">Wave</span>
-          </button>
-          <button type="button" class="btn-dock-action" id="btnDockHeart" title="Send glowing hearts">
-            <span class="action-emoji">💖</span>
-            <span class="action-text">Hearts</span>
-          </button>
-          <button type="button" class="btn-dock-action" id="btnDockChat" title="Quick Chat & Reactions">
-            <span class="action-emoji">💬</span>
-            <span class="action-text">React</span>
-          </button>
-          <button type="button" class="btn-dock-action" id="btnDockSit" title="Sit Together on Gallery Bench">
-            <span class="action-emoji">🛋️</span>
-            <span class="action-text">Sit Together</span>
-          </button>
-          <button type="button" class="btn-dock-action btn-dock-propose" id="btnDockPropose" title="Kneel down on one knee to propose">
-            <span class="action-emoji">💍</span>
-            <span class="action-text">Propose</span>
-          </button>
-        </div>
-
-        <div class="multi-dock-right">
-          <div class="multi-avatar-badge" id="multiAvatarBadge">
-            <span class="my-avatar-tag" id="myAvatarTag">👦 You</span>
-          </div>
-        </div>
+        <!-- Floating Pop-Out Trigger Button in Right Down Corner -->
+        <button type="button" class="btn-dock-launcher" id="btnToggleDock" title="Open Interactive Actions">
+          <span class="launcher-pulse-dot" id="launcherPulseDot"></span>
+          <span class="launcher-icon" id="launcherIcon">✨</span>
+          <span class="launcher-label" id="launcherLabel">Actions</span>
+          <span class="launcher-peer-badge" id="launcherPeerBadge" style="display:none;">1</span>
+        </button>
       </div>
 
       <!-- Floating Interactive Proposal Notification Bullet (Shown to girl first) -->
@@ -1088,8 +1094,9 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const btnNextArtwork = container.querySelector('#btnNextArtwork');
   const btnJumpCenterpiece = container.querySelector('#btnJumpCenterpiece');
 
-  const btnTourMode = container.querySelector('#btnTourMode');
-  const btnWalkMode = container.querySelector('#btnWalkMode');
+  const btnModeToggle = container.querySelector('#btnModeToggle');
+  const modeToggleIcon = container.querySelector('#modeToggleIcon');
+  const modeToggleLabel = container.querySelector('#modeToggleLabel');
   const museumTourDock = container.querySelector('#museumTourDock');
   const mobileControls = container.querySelector('#museumMobileControls');
   const desktopHint = container.querySelector('#desktopHint');
@@ -1198,6 +1205,12 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const genderCardFemale = container.querySelector('#genderCardFemale');
   const btnEnterMuseum = container.querySelector('#btnEnterMuseum');
 
+  const cornerInteractZone = container.querySelector('#cornerInteractZone');
+  const btnToggleDock = container.querySelector('#btnToggleDock');
+  const btnCloseDockPanel = container.querySelector('#btnCloseDockPanel');
+  const launcherIcon = container.querySelector('#launcherIcon');
+  const launcherLabel = container.querySelector('#launcherLabel');
+  const launcherPeerBadge = container.querySelector('#launcherPeerBadge');
   const multiplayerDock = container.querySelector('#multiplayerDock');
   const multiStatusText = container.querySelector('#multiStatusText');
   const peerCountBadge = container.querySelector('#peerCountBadge');
@@ -1207,6 +1220,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const btnDockSit = container.querySelector('#btnDockSit');
   const btnDockPropose = container.querySelector('#btnDockPropose');
   const myAvatarTag = container.querySelector('#myAvatarTag');
+  let isDockPoppedOut = false;
 
   // Real-Time Proposal Banner Elements
   const proposalBullet = container.querySelector('#proposalBullet');
@@ -1264,6 +1278,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     if (peerCountBadge) {
       peerCountBadge.textContent = String(peerCount + 1);
       peerCountBadge.style.display = peerCount > 0 ? 'inline-flex' : 'none';
+    }
+    if (launcherPeerBadge) {
+      launcherPeerBadge.textContent = String(peerCount + 1);
+      launcherPeerBadge.style.display = peerCount > 0 ? 'inline-flex' : 'none';
     }
     if (multiStatusText) {
       if (peerCount === 0) {
@@ -1446,9 +1464,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     if (myAvatarTag) {
       myAvatarTag.textContent = `${userProfile.gender === 'male' ? '👦' : '👧'} ${userProfile.name}`;
     }
-    if (multiplayerDock) {
-      multiplayerDock.style.display = 'flex';
+    if (cornerInteractZone) {
+      cornerInteractZone.style.display = 'flex';
     }
+    setDockPoppedOut(false);
 
     // Connect real-time multiplayer
     const roomName = (data.passcode || data.slug || data.id || 'our_museum')
@@ -1538,6 +1557,52 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     } else {
       sitOnBench();
     }
+  });
+
+  // --------------------------------------------------------------------------
+  // BOTTOM-RIGHT CORNER POP-OUT INTERACTIVE ACTIONS DRAWER
+  // --------------------------------------------------------------------------
+  function setDockPoppedOut(open) {
+    isDockPoppedOut = open;
+    if (!multiplayerDock) return;
+    if (open) {
+      multiplayerDock.style.display = 'flex';
+      gsap.fromTo(multiplayerDock,
+        { scale: 0.85, opacity: 0, y: 15, transformOrigin: 'bottom right' },
+        { scale: 1, opacity: 1, y: 0, duration: 0.3, ease: 'back.out(1.5)' }
+      );
+      if (btnToggleDock) {
+        btnToggleDock.classList.add('active');
+        if (launcherIcon) launcherIcon.textContent = '✕';
+        if (launcherLabel) launcherLabel.textContent = 'Hide';
+      }
+    } else {
+      gsap.to(multiplayerDock, {
+        scale: 0.85,
+        opacity: 0,
+        y: 15,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => {
+          multiplayerDock.style.display = 'none';
+        }
+      });
+      if (btnToggleDock) {
+        btnToggleDock.classList.remove('active');
+        if (launcherIcon) launcherIcon.textContent = '✨';
+        if (launcherLabel) launcherLabel.textContent = 'Actions';
+      }
+    }
+  }
+
+  btnToggleDock?.addEventListener('click', () => {
+    soundFx.pop(460);
+    setDockPoppedOut(!isDockPoppedOut);
+  });
+
+  btnCloseDockPanel?.addEventListener('click', () => {
+    soundFx.pop(400);
+    setDockPoppedOut(false);
   });
 
   // --------------------------------------------------------------------------
@@ -1695,6 +1760,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
       localAvatar.setKneeling(true);
       if (btnDockPropose) btnDockPropose.classList.add('active');
+      setDockPoppedOut(false);
 
       // Proposer sees status banner waiting for partner
       if (realtimeProposalBanner) {
@@ -1890,13 +1956,27 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     toggleKneelingProposal();
   });
 
+  function updateModeButtonUI(mode) {
+    if (!btnModeToggle) return;
+    if (mode === 'tour') {
+      btnModeToggle.className = 'btn-museum-mode-toggle mode-tour';
+      if (modeToggleIcon) modeToggleIcon.textContent = '🧭';
+      if (modeToggleLabel) modeToggleLabel.textContent = 'Guided Tour';
+      btnModeToggle.title = 'Currently in Guided Tour • Tap to switch to Free Walk';
+    } else {
+      btnModeToggle.className = 'btn-museum-mode-toggle mode-walk';
+      if (modeToggleIcon) modeToggleIcon.textContent = '🚶';
+      if (modeToggleLabel) modeToggleLabel.textContent = 'Free Walk';
+      btnModeToggle.title = 'Currently in Free Walk • Tap to switch to Guided Tour';
+    }
+  }
+
   function setMode(mode) {
     currentMode = mode;
     clearTimeout(tourAdvanceTimeout);
+    updateModeButtonUI(mode);
 
     if (mode === 'tour') {
-      btnTourMode?.classList.add('active');
-      btnWalkMode?.classList.remove('active');
       museumTourDock.style.display = 'block';
       mobileControls.style.display = 'none';
       desktopHint.style.display = 'none';
@@ -1907,8 +1987,6 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       if (tourPlayIcon) tourPlayIcon.textContent = '⏸';
       goToWaypoint(tourIndex);
     } else {
-      btnWalkMode?.classList.add('active');
-      btnTourMode?.classList.remove('active');
       museumTourDock.style.display = 'none';
       if (isTouchDevice) {
         mobileControls.style.display = 'block';
@@ -1921,8 +1999,12 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     }
   }
 
-  btnTourMode?.addEventListener('click', () => setMode('tour'));
-  btnWalkMode?.addEventListener('click', () => setMode('walk'));
+  btnModeToggle?.addEventListener('click', () => {
+    soundFx.pop(480);
+    const nextMode = currentMode === 'tour' ? 'walk' : 'tour';
+    setMode(nextMode);
+  });
+  updateModeButtonUI(currentMode);
 
   // Desktop Keyboard Walk (WASD / Arrow Keys)
   window.addEventListener('keydown', (e) => {
@@ -2206,6 +2288,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
   function showProposalModal() {
     proposalModal.style.display = 'flex';
+    if (cornerInteractZone) cornerInteractZone.style.display = 'none';
     if (multiplayerDock) multiplayerDock.style.display = 'none';
     gsap.fromTo('#proposalCard',
       { scale: 0.88, opacity: 0, y: 30 },
@@ -2221,8 +2304,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       duration: 0.25,
       onComplete: () => {
         proposalModal.style.display = 'none';
-        if (multiplayerDock && hasEnteredMuseum) {
-          multiplayerDock.style.display = 'flex';
+        if (cornerInteractZone && hasEnteredMuseum) {
+          cornerInteractZone.style.display = 'flex';
         }
       }
     });
