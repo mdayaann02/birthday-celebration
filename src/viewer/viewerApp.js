@@ -11,16 +11,7 @@ import { renderTreeTemplate } from './templates/treeTemplate.js';
 import { renderBlossomTemplate } from './templates/blossomTemplate.js';
 import { renderBloomRevealTemplate } from './templates/bloomRevealTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
-import { renderAnniversaryTemplate } from './templates/anniversaryTemplate.js';
 import { renderSorryTemplate } from './templates/sorryTemplate.js';
-import { renderValentineTemplate } from './templates/valentineTemplate.js';
-import { renderFriendshipTemplate } from './templates/friendshipTemplate.js';
-import { renderMotherTemplate } from './templates/motherTemplate.js';
-import { renderFatherTemplate } from './templates/fatherTemplate.js';
-import { renderSisterTemplate } from './templates/sisterTemplate.js';
-import { renderBrotherTemplate } from './templates/brotherTemplate.js';
-import { renderBestieGirlTemplate } from './templates/bestieGirlTemplate.js';
-import { renderBestieBoyTemplate } from './templates/bestieBoyTemplate.js';
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
   if (data?.primaryColor) {
@@ -72,35 +63,8 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     case 'tree':
       renderTreeTemplate(root, data, isMakerReview);
       break;
-    case 'anniversary':
-      renderAnniversaryTemplate(root, data);
-      break;
     case 'sorry':
       renderSorryTemplate(root, data);
-      break;
-    case 'valentine':
-      renderValentineTemplate(root, data);
-      break;
-    case 'friendship':
-      renderFriendshipTemplate(root, data);
-      break;
-    case 'mother':
-      renderMotherTemplate(root, data);
-      break;
-    case 'father':
-      renderFatherTemplate(root, data);
-      break;
-    case 'sister':
-      renderSisterTemplate(root, data);
-      break;
-    case 'brother':
-      renderBrotherTemplate(root, data);
-      break;
-    case 'bestie_girl':
-      renderBestieGirlTemplate(root, data, isMakerReview);
-      break;
-    case 'bestie_boy':
-      renderBestieBoyTemplate(root, data, isMakerReview);
       break;
     case 'birthday':
     default:

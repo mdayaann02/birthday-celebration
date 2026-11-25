@@ -10,15 +10,13 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
     { id: 'all', icon: 'sparkles', label: `All (${Object.keys(TEMPLATES).length})` },
     { id: 'romance', icon: 'heart', label: 'Romance' },
     { id: 'birthday', icon: 'calendar', label: 'Birthday' },
-    { id: 'family', icon: 'shield-check', label: 'Family' },
-    { id: 'friends', icon: 'sparkle', label: 'Friends' }
+    { id: 'sorry', icon: 'heart-crack', label: 'Apology' }
   ];
 
   function getTemplateCategory(tid) {
-    if (['long_romance', 'tree', 'blossom', 'bloom_reveal', 'valentine', 'anniversary', 'sorry'].includes(tid)) return 'romance';
+    if (['long_romance', 'tree', 'blossom', 'bloom_reveal'].includes(tid)) return 'romance';
     if (['birthday'].includes(tid)) return 'birthday';
-    if (['mother', 'father', 'sister', 'brother'].includes(tid)) return 'family';
-    if (['friendship', 'bestie_girl', 'bestie_boy'].includes(tid)) return 'friends';
+    if (['sorry'].includes(tid)) return 'sorry';
     return 'all';
   }
 
