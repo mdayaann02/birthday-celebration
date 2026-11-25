@@ -1141,7 +1141,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           <div style="display:flex; gap:10px; align-items:center;">
             <img src="${data.centerpieceImage || '/images/queen.jpg'}" id="museumCpThumb" style="width:52px; height:52px; border-radius:8px; object-fit:cover; border:1px solid #d4af37;" />
             <input type="text" class="form-input" id="edCenterpieceImage" value="${data.centerpieceImage || '/images/queen.jpg'}" style="flex:1;" />
-            <label class="btn-thumb-upload" title="Upload Centerpiece Photo" style="cursor:pointer; background:rgba(212,35,92,0.15); border:1px solid #d4235c; color:#f472b6; border-radius:8px; padding:8px 12px; display:flex; align-items:center; gap:4px;">
+            <label class="btn-file-upload-sm" title="Upload Centerpiece Photo" style="cursor:pointer; background:rgba(212,35,92,0.15); border:1px solid #d4235c; color:#f472b6; border-radius:8px; padding:8px 12px; display:inline-flex; align-items:center; gap:4px; position:relative; flex-shrink:0;">
               <i data-lucide="camera"></i>
               <input type="file" id="fileUploadMuseumCenterpiece" accept="image/*" style="display:none;" />
             </label>
@@ -1165,7 +1165,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
               <div class="bcard-drag-handle" title="Drag to reorder" style="cursor:grab; color:#94a3b8;"><i data-lucide="grip-vertical"></i></div>
               <div class="bcard-thumb-wrap" style="position:relative; width:52px; height:52px;">
                 <img src="${p.image}" class="bcard-thumb" id="museumThumb_${i}" onerror="this.src='/images/sunset.jpg'" style="width:52px; height:52px; border-radius:8px; object-fit:cover; border:1px solid #d4af37;" />
-                <label class="btn-thumb-upload" title="Upload Photo" style="position:absolute; bottom:-4px; right:-4px; background:#111; color:#d4af37; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:10px; border:1px solid #d4af37;">
+                <label class="btn-museum-cam-badge" title="Upload Photo" style="position:absolute; bottom:-4px; right:-4px; top:auto; left:auto; background:#111; color:#d4af37; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:10px; border:1px solid #d4af37; z-index:3;">
                   <i data-lucide="camera" style="width:12px; height:12px;"></i>
                   <input type="file" class="file-upload-museum-photo" data-i="${i}" accept="image/*" style="display:none;" />
                 </label>

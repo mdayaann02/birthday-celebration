@@ -1481,6 +1481,15 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
   function checkOrientationPrompt() {
     if (!rotateOverlay) return;
+    // Never prompt inside studio editor mode or preview container
+    if (window.isCelebrationEditorMode || 
+        container.closest('.preview-frame-container') || 
+        container.closest('.studio-preview-pane') || 
+        container.closest('.studio-layout') ||
+        document.body.classList.contains('is-editor-mode')) {
+      rotateOverlay.style.display = 'none';
+      return;
+    }
     const isPortrait = isPortraitMode();
     // Only prompt if in portrait and user hasn't explicitly dismissed it for this session
     if (isPortrait && !userDismissedPortrait) {

@@ -9973,7 +9973,7 @@ select option {
   display: block;
 }
 
-.btn-thumb-upload {
+.bcard-thumb-wrap .btn-thumb-upload {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
@@ -23112,7 +23112,7 @@ body:has(#bloomContainer) {
    ========================================================================== */
 
 .museum-rotate-overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 150;
   display: flex;
