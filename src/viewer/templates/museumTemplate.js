@@ -1279,17 +1279,21 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     // Sync peer 3D avatars
     peers.forEach((peer, userId) => {
       if (!peerAvatarsMap.has(userId)) {
-        const pAvatar = create3DAvatar(peer.name, peer.gender, false);
-        pAvatar.group.position.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
-        pAvatar.group.rotation.y = peer.rotY || Math.PI;
-        scene.add(pAvatar.group);
-        peerAvatarsMap.set(userId, {
-          avatar: pAvatar,
-          targetPos: new THREE.Vector3(peer.x || 0, peer.y || 0, peer.z || 3.2),
-          targetRotY: peer.rotY || Math.PI,
-          isWalking: Boolean(peer.isWalking)
-        });
-        soundFx.sparkle();
+        try {
+          const pAvatar = create3DAvatar(peer.name, peer.gender, false);
+          pAvatar.group.position.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
+          pAvatar.group.rotation.y = peer.rotY || Math.PI;
+          scene.add(pAvatar.group);
+          peerAvatarsMap.set(userId, {
+            avatar: pAvatar,
+            targetPos: new THREE.Vector3(peer.x || 0, peer.y || 0, peer.z || 3.2),
+            targetRotY: peer.rotY || Math.PI,
+            isWalking: Boolean(peer.isWalking)
+          });
+          soundFx.sparkle();
+        } catch (err) {
+          console.error('Failed to spawn peer avatar:', err);
+        }
       } else {
         const rec = peerAvatarsMap.get(userId);
         rec.targetPos.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
@@ -1422,10 +1426,21 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     }
 
     // Spawn 3D local avatar
-    localAvatar = create3DAvatar(userProfile.name, userProfile.gender, true);
-    localAvatar.group.position.set(0, 0, 3.2);
-    localAvatar.group.rotation.y = Math.PI; // Face forward down the grand hall (-Z)
-    scene.add(localAvatar.group);
+    try {
+      localAvatar = create3DAvatar(userProfile.name, userProfile.gender, true);
+      localAvatar.group.position.set(0, 0, 3.2);
+      localAvatar.group.rotation.y = Math.PI; // Face forward down the grand hall (-Z)
+      scene.add(localAvatar.group);
+
+      // Snap camera directly to TPP behind avatar
+      walkYaw = 0;
+      walkPitch = 0.05;
+      camera.position.set(0, 1.95, 3.2 + 3.8);
+      currentLookAtTarget.set(0, 1.35, 3.2);
+      camera.lookAt(currentLookAtTarget);
+    } catch (err) {
+      console.error('Failed to create localAvatar:', err);
+    }
 
     // Update HUD
     if (myAvatarTag) {

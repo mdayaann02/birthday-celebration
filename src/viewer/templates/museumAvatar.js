@@ -208,6 +208,13 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
     metalness: 0.85,
     roughness: 0.25
   });
+  const diamondMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    metalness: 0.1,
+    roughness: 0.05,
+    emissive: 0x93c5fd,
+    emissiveIntensity: 0.7
+  });
 
   // ============================================================================
   // 1. TORSO & UPPER BODY HIERARCHY
