@@ -16,6 +16,7 @@ import { initMusicPlayer } from '../../components/musicPlayer.js';
 import { soundFx } from '../audioSynth.js';
 import { create3DAvatar } from './museumAvatar.js';
 import { MuseumMultiplayer } from './museumMultiplayer.js';
+import { getMediaFromIndexedDB } from '../../models/siteStorage.js';
 
 // Procedural Canvas Texture Generator for French Herringbone / Parquet Wood Floor
 function createParquetTexture() {
@@ -934,21 +935,24 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   scene.add(entrancePlaque);
 
   // Dual Ceiling Museum Framing Spotlights aimed at Entrance Plaque
+  const plaqueSpotTarget = new THREE.Object3D();
+  plaqueSpotTarget.position.set(0, 3.6, 4.2);
+  scene.add(plaqueSpotTarget);
+
   const plaqueSpotL = new THREE.SpotLight(0xfff5e4, 4.5, 18, Math.PI / 4.8, 0.58, 1.15);
   plaqueSpotL.position.set(-2.2, hallHeight - 0.25, 1.2);
-  plaqueSpotL.target = entrancePlaque;
+  plaqueSpotL.target = plaqueSpotTarget;
   scene.add(plaqueSpotL);
-  scene.add(plaqueSpotL.target);
 
   const plaqueSpotR = new THREE.SpotLight(0xfff5e4, 4.5, 18, Math.PI / 4.8, 0.58, 1.15);
   plaqueSpotR.position.set(2.2, hallHeight - 0.25, 1.2);
-  plaqueSpotR.target = entrancePlaque;
+  plaqueSpotR.target = plaqueSpotTarget;
   scene.add(plaqueSpotR);
-  scene.add(plaqueSpotR.target);
 
   // 6. Framed Artworks along Left and Right walls
   const interactiveArtworks = [];
   const textureLoader = new THREE.TextureLoader();
+  textureLoader.setCrossOrigin('anonymous');
 
   // Shared frame materials
   const goldFrameMat = new THREE.MeshStandardMaterial({
@@ -994,25 +998,39 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     const canvasH = frameH - 0.85;
     const canvasGeo = new THREE.PlaneGeometry(canvasW, canvasH);
 
-    // Load photo texture with fallback
-    const photoTexture = textureLoader.load(
-      art.image,
-      undefined,
-      undefined,
-      () => {
-        const fallbackTex = textureLoader.load('/images/sunset.jpg');
-        canvasMesh.material.map = fallbackTex;
-        canvasMesh.material.needsUpdate = true;
-      }
-    );
-
     const canvasMat = new THREE.MeshStandardMaterial({
-      map: photoTexture,
       roughness: 0.38,
       metalness: 0.02
     });
+
+    // Load photo texture with robust asynchronous onLoad & fallback
+    const photoTexture = textureLoader.load(
+      art.image,
+      (loadedTex) => {
+        if ('colorSpace' in loadedTex && THREE.SRGBColorSpace) {
+          loadedTex.colorSpace = THREE.SRGBColorSpace;
+        }
+        loadedTex.generateMipmaps = true;
+        loadedTex.needsUpdate = true;
+        canvasMat.map = loadedTex;
+        canvasMat.needsUpdate = true;
+      },
+      undefined,
+      (err) => {
+        console.warn('Artwork texture load error, falling back to /images/sunset.jpg:', art.image, err);
+        textureLoader.load('/images/sunset.jpg', (fallbackTex) => {
+          if ('colorSpace' in fallbackTex && THREE.SRGBColorSpace) {
+            fallbackTex.colorSpace = THREE.SRGBColorSpace;
+          }
+          canvasMat.map = fallbackTex;
+          canvasMat.needsUpdate = true;
+        });
+      }
+    );
+    canvasMat.map = photoTexture;
+
     const canvasMesh = new THREE.Mesh(canvasGeo, canvasMat);
-    canvasMesh.position.z = frameDepth / 2 + 0.02;
+    canvasMesh.position.z = frameDepth / 2 + 0.04;
     group.add(canvasMesh);
 
     // Brass Curatorial Placard below Frame
@@ -1021,23 +1039,30 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       new THREE.BoxGeometry(2.0, 0.55, 0.05),
       new THREE.MeshStandardMaterial({ map: placardTex, metalness: 0.72, roughness: 0.32 })
     );
-    placardMesh.position.set(0, -frameH / 2 - 0.5, 0);
+    placardMesh.position.set(0, -frameH / 2 - 0.5, 0.04);
     group.add(placardMesh);
+
+    // Dedicated targets for spotlights so meshes are NEVER detached from their parent group
+    const spotTarget = new THREE.Object3D();
+    spotTarget.position.set(xPos, 3.2, zPos);
+    scene.add(spotTarget);
+
+    const placardTarget = new THREE.Object3D();
+    placardTarget.position.set(xPos, 3.2 - frameH / 2 - 0.5, zPos);
+    scene.add(placardTarget);
 
     // Dedicated Ceiling Museum Track Projector Spotlight (30° angle down to canvas)
     const spotX = isLeft ? (-hallWidth / 2 + 3.4) : (hallWidth / 2 - 3.4);
     const spotLight = new THREE.SpotLight(0xfff8ee, 5.5, 22, Math.PI / 5.2, 0.65, 1.15);
     spotLight.position.set(spotX, hallHeight - 0.15, zPos);
-    spotLight.target = canvasMesh;
+    spotLight.target = spotTarget;
     scene.add(spotLight);
-    scene.add(spotLight.target);
 
     // Pin-spot accent on Placard
     const pinSpot = new THREE.SpotLight(0xffedd2, 2.2, 14, Math.PI / 7, 0.5, 1.2);
     pinSpot.position.set(spotX, hallHeight - 0.25, zPos);
-    pinSpot.target = placardMesh;
+    pinSpot.target = placardTarget;
     scene.add(pinSpot);
-    scene.add(pinSpot.target);
 
     // 3D Track Lighting Fixture Body on the ceiling rail
     const fixtureGroup = new THREE.Group();
@@ -1085,20 +1110,45 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   );
   cinemaScreenGroup.add(cinemaFrame);
 
-  const centerpieceTex = textureLoader.load(centerpieceImage);
+  const cpCanvasMat = new THREE.MeshStandardMaterial({
+    roughness: 0.35,
+    metalness: 0.05
+  });
+
+  const centerpieceTex = textureLoader.load(
+    centerpieceImage,
+    (loadedTex) => {
+      if ('colorSpace' in loadedTex && THREE.SRGBColorSpace) {
+        loadedTex.colorSpace = THREE.SRGBColorSpace;
+      }
+      loadedTex.generateMipmaps = true;
+      loadedTex.needsUpdate = true;
+      cpCanvasMat.map = loadedTex;
+      cpCanvasMat.needsUpdate = true;
+    },
+    undefined,
+    (err) => {
+      console.warn("Failed to load centerpiece image:", centerpieceImage, err);
+      textureLoader.load('/images/queen.jpg', (fallbackTex) => {
+        if ('colorSpace' in fallbackTex && THREE.SRGBColorSpace) {
+          fallbackTex.colorSpace = THREE.SRGBColorSpace;
+        }
+        cpCanvasMat.map = fallbackTex;
+        cpCanvasMat.needsUpdate = true;
+      });
+    }
+  );
+  cpCanvasMat.map = centerpieceTex;
+
   const cinemaCanvas = new THREE.Mesh(
     new THREE.PlaneGeometry(screenW, screenH),
-    new THREE.MeshStandardMaterial({
-      map: centerpieceTex,
-      roughness: 0.35,
-      metalness: 0.05
-    })
+    cpCanvasMat
   );
-  cinemaCanvas.position.z = 0.1;
+  cinemaCanvas.position.z = 0.14;
   cinemaScreenGroup.add(cinemaCanvas);
 
   // Cinema Couple Video Element (Synchronized bench movie player)
-  const videoSrc = data.centerpieceVideo || '/video/couple_memories.mp4';
+  let videoSrc = data.centerpieceVideo || '/video/couple_memories.mp4';
   const cinemaVideoElem = document.createElement('video');
   cinemaVideoElem.id = 'museumCinemaVideo';
   cinemaVideoElem.src = videoSrc;
@@ -1110,6 +1160,26 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   cinemaVideoElem.style.display = 'none';
   document.body.appendChild(cinemaVideoElem);
 
+  // If running in browser and user uploaded a local video cached in IndexedDB
+  if (typeof window !== 'undefined' && (!data.centerpieceVideo || data.centerpieceVideo.startsWith('blob:'))) {
+    getMediaFromIndexedDB('custom_museum_video').then((cachedBlob) => {
+      if (cachedBlob && cinemaVideoElem) {
+        cinemaVideoElem.src = URL.createObjectURL(cachedBlob);
+        cinemaVideoElem.load();
+      }
+    }).catch((e) => {
+      console.warn("Could not retrieve cached video:", e);
+    });
+  }
+
+  cinemaVideoElem.addEventListener('error', (e) => {
+    console.warn("Custom video failed to play from", cinemaVideoElem.src, "falling back to /video/couple_memories.mp4", e);
+    if (!cinemaVideoElem.src.endsWith('/video/couple_memories.mp4')) {
+      cinemaVideoElem.src = '/video/couple_memories.mp4';
+      cinemaVideoElem.load();
+    }
+  });
+
   let cinemaVideoTexture = null;
   function getCinemaVideoTexture() {
     if (!cinemaVideoTexture) {
@@ -1117,6 +1187,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       cinemaVideoTexture.minFilter = THREE.LinearFilter;
       cinemaVideoTexture.magFilter = THREE.LinearFilter;
       cinemaVideoTexture.format = THREE.RGBAFormat;
+      cinemaVideoTexture.generateMipmaps = false;
       if ('colorSpace' in cinemaVideoTexture && THREE.SRGBColorSpace) {
         cinemaVideoTexture.colorSpace = THREE.SRGBColorSpace;
       }
@@ -1135,12 +1206,16 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
   scene.add(cinemaScreenGroup);
 
+  // Dedicated spotlight target for Centerpiece screen (never detaches cinemaCanvas)
+  const cpSpotTarget = new THREE.Object3D();
+  cpSpotTarget.position.set(0, 4.2, cinemaZ);
+  scene.add(cpSpotTarget);
+
   // Centerpiece Ceiling Spotlights (Warm Dramatic Theatrical Spotlight)
   const cpSpot = new THREE.SpotLight(0xfff6e5, 6.5, 30, Math.PI / 4.2, 0.6, 1.1);
   cpSpot.position.set(0, hallHeight - 0.3, benchZ);
-  cpSpot.target = cinemaCanvas;
+  cpSpot.target = cpSpotTarget;
   scene.add(cpSpot);
-  scene.add(cpSpot.target);
 
   // 8. Gallery Tufted Leather Bench in Front of Centerpiece
   const benchGroup = new THREE.Group();
