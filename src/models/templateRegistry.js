@@ -254,9 +254,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     icon: "🎂",
     description: "Floating sky lanterns, 3D age milestone, photo loop ribbon, polaroid notes, Vogue flipbook, scratch card, VIP lanyard, and iMessage chat.",
     defaultTheme: {
-      primary: "#d4af37",
-      bgGradient: "radial-gradient(120% 88% at 50% 24%, #1c1815 0%, #13100e 65%, #0a0807 100%)",
-      accent: "#e11d48"
+      primary: "#f59e0b",
+      bgGradient: "radial-gradient(circle at 50% 12%, #1e1938 0%, #111124 55%, #080812 100%)",
+      accent: "#fbbf24"
     },
     defaultData: {
       recipientName: "My Special One",
@@ -312,8 +312,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     description: "Live 'Together Since' love counter, golden memories gallery, emotional love letters, our journey timeline, and musical heart shower.",
     defaultTheme: {
       primary: "#d4af37",
-      bgGradient: "linear-gradient(180deg, #120e17 0%, #1e1322 100%)",
-      accent: "#ff758f"
+      bgGradient: "radial-gradient(circle at 50% 15%, #2a1622 0%, #180c13 55%, #0c050a 100%)",
+      accent: "#fde047"
     },
     defaultData: {
       recipientName: "My Love",
@@ -355,8 +355,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     icon: "🥺",
     description: "Ultra-aesthetic heartfelt reconciliation: Interactive Kintsugi heart mending, cathartic venting room with projectile arsenal, legally binding penance deed, flip memories polaroids with voice apology memo, The Sweetheart Accords peace treaty with royal signature canvas, scratch-off reconciliation coupons, and runaway verdict.",
     defaultTheme: {
-      primary: "#f43f5e",
-      bgGradient: "radial-gradient(120% 90% at 50% 12%, #150924 0%, #0c0515 50%, #05020a 100%)",
+      primary: "#6366f1",
+      bgGradient: "radial-gradient(circle at 50% 15%, #181c33 0%, #0f1222 55%, #070913 100%)",
       accent: "#fbbf24"
     },
     defaultData: {
@@ -419,9 +419,9 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     icon: "💖",
     description: "Falling rose petals, wax-sealed love letter, interactive 'Be My Valentine' proposal with playful runaway 'NO' button, and photo memories.",
     defaultTheme: {
-      primary: "#ff3366",
-      bgGradient: "linear-gradient(180deg, #1f0b18 0%, #2b0d20 100%)",
-      accent: "#ffd166"
+      primary: "#f43f5e",
+      bgGradient: "radial-gradient(circle at 50% 15%, #350815 0%, #1e030b 55%, #0c0104 100%)",
+      accent: "#fb7185"
     },
     defaultData: {
       recipientName: "Sweetheart",
@@ -507,8 +507,8 @@ I love you endlessly, my soul sister! 🫂🧿✨`
     description: "The ultimate interactive brotherhood journey: Fist-bump shockwave unlock, bro-code security keypad, hype intro note, lighter flame to ignite the celebration cake/torch, blowable candles, 3D polaroid roast & memory wall, tactical neon switch, and sealed brotherhood letter.",
     defaultTheme: {
       primary: "#38bdf8",
-      bgGradient: "linear-gradient(180deg, #090e1a 0%, #0d1527 100%)",
-      accent: "#0284c7"
+      bgGradient: "radial-gradient(circle at 50% 12%, #1e293b 0%, #0f172a 55%, #020617 100%)",
+      accent: "#f59e0b"
     },
     defaultData: {
       recipientName: "Bhai / My Guy",
@@ -561,9 +561,9 @@ Brothers for life, no matter where life takes us. Ride or die forever! 👊🔥�
     icon: "👯",
     description: "Crazy memories hall of fame, certified Best Friend award, inside joke playlist, and heartfelt gratitude for your ride-or-die.",
     defaultTheme: {
-      primary: "#20bf6b",
-      bgGradient: "linear-gradient(180deg, #091a13 0%, #10261e 100%)",
-      accent: "#f7b731"
+      primary: "#f59e0b",
+      bgGradient: "radial-gradient(circle at 50% 12%, #fffcf0 0%, #fef3c7 45%, #fde68a 100%)",
+      accent: "#d97706"
     },
     defaultData: {
       recipientName: "Bestie",
@@ -638,7 +638,7 @@ I love you more than words could ever describe, Maa! 🌸👑❤️`
     description: "Tribute to Papa: Deep royal navy & constellation stars, pillars of strength wisdom cards, Best Dad in the World 3D trophy, Polaroid memories, and wax-seal letter.",
     defaultTheme: {
       primary: "#3b82f6",
-      bgGradient: "linear-gradient(180deg, #090e1a 0%, #111a2e 100%)",
+      bgGradient: "radial-gradient(circle at 50% 12%, #141c2e 0%, #0b111e 55%, #05080e 100%)",
       accent: "#fbbf24"
     },
     defaultData: {
@@ -715,9 +715,9 @@ Love you endlessly, my favourite sister! 💖💅✨`
     icon: "🏍️",
     description: "Asphalt speedway & nitro carbon-weave theme: 60FPS Superbike Highway Sprint arena with revving throttle and nitro afterburners, slamming fist bump centerpiece, Sacred Bhai Bro-Code Constitution with rubber stamp ratification, and brothers hall of fame.",
     defaultTheme: {
-      primary: "#06b6d4",
-      bgGradient: "radial-gradient(circle at 50% 15%, #0e1726 0%, #070d18 50%, #020408 100%)",
-      accent: "#f59e0b"
+      primary: "#f59e0b",
+      bgGradient: "radial-gradient(ellipse at 50% 0%, #1a2337 0%, #0e1524 50%, #070a10 100%)",
+      accent: "#06b6d4"
     },
     defaultData: {
       recipientName: "Bhai",

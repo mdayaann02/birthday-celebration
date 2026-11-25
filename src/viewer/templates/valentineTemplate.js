@@ -85,11 +85,11 @@ export function renderValentineTemplate(container, data) {
         </div>
       </div>
 
-      <!-- CONTINUOUS IMMERSIVE STORY FLOW (NO PROGRESS BARS, NATURAL CHAPTERS) -->
-      <main class="val-flow-container" style="display:flex; flex-direction:column; gap:32px;">
+      <!-- FOCUSED CHAPTER JOURNEY FLOW (ONE IMMERSIVE SCENE AT A TIME) -->
+      <main class="val-flow-container" style="display:flex; flex-direction:column;">
         
         <!-- CHAPTER 1: CUPID'S ARCHERY GAME -->
-        <section class="val-story-card" style="background:rgba(22,4,12,0.88); border:1.5px solid rgba(244,63,94,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px); text-align:center;">
+        <section class="val-story-card active" data-chapter="1" style="background:rgba(26,6,15,0.92); border:1.5px solid rgba(244,63,94,0.4); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px); text-align:center;">
           <div class="val-tag" style="display:inline-block; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fca5a5; background:rgba(244,63,94,0.15); padding:4px 14px; border-radius:20px; border:1px solid rgba(244,63,94,0.4); margin-bottom:14px;">
             CUPID'S SACRED ARROW 🏹❤️
           </div>
@@ -116,10 +116,17 @@ export function renderValentineTemplate(container, data) {
               🎯 Direct Cupid Strike
             </button>
           </div>
+
+          <div class="val-nav-dock">
+            <button type="button" class="btn-val-next" data-next="2" style="background:linear-gradient(135deg, #f43f5e, #be123c); color:#fff;">
+              <span>Love Letter of Devotion 💌</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 2: WAX SEAL LETTER -->
-        <section class="val-story-card" style="background:rgba(22,4,12,0.88); border:1.5px solid rgba(244,63,94,0.35); border-radius:24px; padding:28px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px); text-align:center;">
+        <section class="val-story-card" data-chapter="2" style="background:rgba(26,6,15,0.92); border:1.5px solid rgba(244,63,94,0.4); border-radius:24px; padding:28px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px); text-align:center;">
           <div class="val-tag" style="display:inline-block; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fca5a5; background:rgba(244,63,94,0.15); padding:4px 14px; border-radius:20px; border:1px solid rgba(244,63,94,0.4); margin-bottom:14px;">
             A CONFESSION OF DEVOTION 🌹
           </div>
@@ -137,10 +144,18 @@ export function renderValentineTemplate(container, data) {
             </button>
           </div>
           <p class="envelope-subtitle" style="margin-top:14px; font-size:12px; color:#fca5a5; font-weight:700;">👆 Tap the wax seal to read!</p>
+
+          <div class="val-nav-dock">
+            <button type="button" class="btn-val-prev" data-prev="1">⬅ Back</button>
+            <button type="button" class="btn-val-next" data-next="3" style="background:linear-gradient(135deg, #f43f5e, #be123c); color:#fff;">
+              <span>Cherished Memories 📸</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 3: POLAROIDS -->
-        <section class="val-story-card" style="background:rgba(22,4,12,0.88); border:1.5px solid rgba(244,63,94,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px);">
+        <section class="val-story-card" data-chapter="3" style="background:rgba(26,6,15,0.92); border:1.5px solid rgba(244,63,94,0.4); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px);">
           <div class="val-tag" style="text-align:center; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fca5a5; margin-bottom:6px;">WHY I FELL FOR YOU 📸</div>
           <h2 class="val-memories-title" style="text-align:center; color:#fff; font-size:22px; font-weight:800; margin:0 0 20px 0;">Cherished Moments With You</h2>
           <div class="val-polaroids-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px;">
@@ -154,10 +169,18 @@ export function renderValentineTemplate(container, data) {
               </div>
             `).join('')}
           </div>
+
+          <div class="val-nav-dock">
+            <button type="button" class="btn-val-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-val-next" data-next="4" style="background:linear-gradient(135deg, #f43f5e, #be123c); color:#fff;">
+              <span>Love Quiz Trivia 🎯</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 4: LOVE QUIZ -->
-        <section class="val-story-card" style="background:rgba(22,4,12,0.88); border:1.5px solid rgba(244,63,94,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px); text-align:center;">
+        <section class="val-story-card" data-chapter="4" style="background:rgba(26,6,15,0.92); border:1.5px solid rgba(244,63,94,0.4); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px); text-align:center;">
           <div class="val-tag" style="font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fca5a5; margin-bottom:6px;">HOW DEEPLY DO YOU KNOW MY HEART? 🎯</div>
           <h2 class="val-quiz-title" style="color:#fff; font-size:22px; font-weight:800; margin:0 0 16px 0;">Our Sweet Love Trivia</h2>
           <div class="val-quiz-box" style="background:rgba(255,255,255,0.04); border:1px solid rgba(244,63,94,0.3); border-radius:18px; padding:20px; max-width:440px; margin:0 auto;">
@@ -169,10 +192,18 @@ export function renderValentineTemplate(container, data) {
             </div>
             <div id="valQuizFeedback" style="margin-top:14px; font-weight:800; font-size:13px; min-height:22px;"></div>
           </div>
+
+          <div class="val-nav-dock">
+            <button type="button" class="btn-val-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-val-next" data-next="5" style="background:linear-gradient(135deg, #f43f5e, #be123c); color:#fff;">
+              <span>Forever Devotion Seal 🌹</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 5: FOREVER DEVOTION SEAL -->
-        <section class="val-story-card" style="background:linear-gradient(135deg, rgba(35,5,15,0.92), rgba(15,2,8,0.95)); border:2px solid rgba(244,63,94,0.45); border-radius:24px; padding:28px 20px; box-shadow:0 16px 40px rgba(0,0,0,0.7); text-align:center;">
+        <section class="val-story-card" data-chapter="5" style="background:linear-gradient(135deg, rgba(35,5,15,0.95), rgba(15,2,8,0.98)); border:2px solid rgba(244,63,94,0.45); border-radius:24px; padding:28px 20px; box-shadow:0 16px 40px rgba(0,0,0,0.7); text-align:center;">
           <div style="font-size:42px; margin-bottom:8px;">🌹💍✨</div>
           <h2 style="color:#fb7185; font-size:24px; font-weight:900; margin:0 0 10px 0;">Forever My Valentine</h2>
           <p style="color:#fecdd3; font-size:13.5px; line-height:1.6; max-width:520px; margin:0 auto 20px;">
@@ -180,6 +211,13 @@ export function renderValentineTemplate(container, data) {
           </p>
           <div style="display:inline-flex; align-items:center; gap:8px; padding:8px 20px; background:rgba(244,63,94,0.18); border:1px solid #f43f5e; border-radius:30px; color:#fff; font-weight:800; font-size:13px;">
             ❤️ Forever In Love, ${data.senderName || 'Yours Completely'}
+          </div>
+
+          <div class="val-nav-dock">
+            <button type="button" class="btn-val-prev" data-prev="4">⬅ Back</button>
+            <button type="button" class="btn-val-replay" id="btnValReplay" style="background:linear-gradient(135deg, #f43f5e, #be123c); color:#fff; padding:10px 20px; border-radius:24px; font-weight:800; border:none; cursor:pointer;">
+              <span>🌹 Replay Valentine's Love ↺</span>
+            </button>
           </div>
         </section>
 
@@ -294,6 +332,82 @@ Happy Valentine's Day, my forever love.`}
       }
     });
   });
+
+  // Chapter-by-Chapter Journey Navigation
+  let currentValChapter = 1;
+  const totalValChapters = 5;
+
+  function goToValChapter(ch) {
+    const targetCh = Math.max(1, Math.min(totalValChapters, ch));
+    const cards = container.querySelectorAll('.val-story-card');
+    const currentCard = container.querySelector(`.val-story-card[data-chapter="${currentValChapter}"]`);
+    const targetCard = container.querySelector(`.val-story-card[data-chapter="${targetCh}"]`);
+    if (!targetCard) return;
+
+    if (currentCard && currentCard !== targetCard) {
+      gsap.to(currentCard, {
+        opacity: 0,
+        y: -15,
+        scale: 0.98,
+        duration: 0.22,
+        ease: 'power2.in',
+        onComplete: () => {
+          cards.forEach(c => {
+            c.style.display = 'none';
+            c.classList.remove('active');
+          });
+          targetCard.style.display = 'block';
+          targetCard.style.opacity = '0';
+          targetCard.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          gsap.fromTo(targetCard,
+            { opacity: 0, y: 20, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'back.out(1.2)' }
+          );
+          currentValChapter = targetCh;
+        }
+      });
+    } else {
+      cards.forEach(c => {
+        if (c.getAttribute('data-chapter') == targetCh) {
+          c.style.display = 'block';
+          c.classList.add('active');
+          c.style.opacity = '1';
+        } else {
+          c.style.display = 'none';
+          c.classList.remove('active');
+        }
+      });
+      currentValChapter = targetCh;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  container.querySelectorAll('.btn-val-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'));
+      playValTone('chime');
+      goToValChapter(next);
+    });
+  });
+
+  container.querySelectorAll('.btn-val-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'));
+      playValTone('chime');
+      goToValChapter(prev);
+    });
+  });
+
+  container.querySelector('#btnValReplay')?.addEventListener('click', () => {
+    playValTone('chime');
+    goToValChapter(1);
+  });
+
+  // Activate Chapter 1 initially
+  goToValChapter(1);
 
   // Top music player
   initMusicPlayer(container.querySelector('#valPlayerSlot'), {

@@ -432,22 +432,59 @@ export function renderFatherTemplate(container, data) {
   }
 
   // Ensure all story cards are displayed in continuous flow
-  container.querySelectorAll('.fam-page-card').forEach(card => {
-    card.style.display = 'block';
-    card.classList.add('active');
-  });
-
   const totalPages = dadPageTitles.length;
   let currentPage = 1;
 
   function goToPage(page) {
-    currentPage = Math.max(1, Math.min(totalPages, page));
-    const targetCard = container.querySelector(`.fam-page-card[data-page="${currentPage}"]`);
-    if (targetCard) {
-      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const targetPage = Math.max(1, Math.min(totalPages, page));
+    const cards = container.querySelectorAll('.fam-page-card');
+    const currentCard = container.querySelector(`.fam-page-card[data-page="${currentPage}"]`);
+    const targetCard = container.querySelector(`.fam-page-card[data-page="${targetPage}"]`);
+    if (!targetCard) return;
+
+    if (currentCard && currentCard !== targetCard) {
+      gsap.to(currentCard, {
+        opacity: 0,
+        y: -15,
+        scale: 0.98,
+        duration: 0.22,
+        ease: 'power2.in',
+        onComplete: () => {
+          cards.forEach(c => {
+            c.style.display = 'none';
+            c.classList.remove('active');
+          });
+          targetCard.style.display = 'block';
+          targetCard.style.opacity = '0';
+          targetCard.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          gsap.fromTo(targetCard,
+            { opacity: 0, y: 20, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'back.out(1.2)' }
+          );
+          currentPage = targetPage;
+        }
+      });
+    } else {
+      cards.forEach(c => {
+        if (c.getAttribute('data-page') == targetPage) {
+          c.style.display = 'block';
+          c.classList.add('active');
+          c.style.opacity = '1';
+        } else {
+          c.style.display = 'none';
+          c.classList.remove('active');
+        }
+      });
+      currentPage = targetPage;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     if (navigator.vibrate) navigator.vibrate(15);
   }
+
+  // Activate Page 1 initially
+  goToPage(1);
 
   // Bind Next / Prev buttons
   container.querySelectorAll('.btn-fam-next').forEach(btn => {

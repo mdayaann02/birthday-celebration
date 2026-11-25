@@ -93,11 +93,11 @@ export function renderBirthdayTemplate(container, data) {
         </div>
       </div>
 
-      <!-- CONTINUOUS IMMERSIVE STORY FLOW (NO PROGRESS BARS, NATURAL CHAPTERS) -->
-      <main class="bday-flow-container" id="bdayPagesContainer" style="display:flex; flex-direction:column; gap:32px;">
+      <!-- FOCUSED CHAPTER JOURNEY FLOW (ONE IMMERSIVE SCENE AT A TIME) -->
+      <main class="bday-flow-container" id="bdayPagesContainer" style="display:flex; flex-direction:column;">
         
         <!-- CHAPTER 1: HERO & INTERACTIVE BALLOON POPPING MINI-GAME -->
-        <section class="bday-story-card" style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(245,158,11,0.3); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.5); backdrop-filter:blur(10px);">
+        <section class="bday-story-card active" data-chapter="1" style="background:rgba(18,22,36,0.9); border:1.5px solid rgba(245,158,11,0.4); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px);">
           <div id="tpHeroSlot"></div>
 
           <!-- Interactive Balloon Pop Game -->
@@ -114,10 +114,17 @@ export function renderBirthdayTemplate(container, data) {
             </div>
             <div class="balloon-wish-bubble" id="balloonWishBubble" style="margin-top:12px; min-height:24px; font-weight:700; color:#38bdf8; font-size:13px;"></div>
           </div>
+
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-next" data-next="2" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>The Wish Cake 🎂</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 2: 3D MULTI-TIER CAKE & CANDLE BLOWING CEREMONY -->
-        <section class="bday-story-card" style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(245,158,11,0.3); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.5); text-align:center; backdrop-filter:blur(10px);">
+        <section class="bday-story-card" data-chapter="2" style="background:rgba(18,22,36,0.9); border:1.5px solid rgba(245,158,11,0.4); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); text-align:center; backdrop-filter:blur(14px);">
           <div class="bday-finale-card">
             <span style="display:inline-block; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#f59e0b; background:rgba(245,158,11,0.15); padding:4px 12px; border-radius:20px; border:1px solid rgba(245,158,11,0.4); margin-bottom:14px;">
               SACRED BIRTHDAY RITUAL 🎂
@@ -172,10 +179,18 @@ export function renderBirthdayTemplate(container, data) {
               💨 Blow Out Candles &amp; Make A Wish 🎂
             </button>
           </div>
+
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="1">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="3" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>Stardust Memories 📸</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 3: MEMORY LANE (PHOTO RIBBON & POLAROID SCRAPBOOK) -->
-        <section class="bday-story-card" style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(245,158,11,0.3); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.5); backdrop-filter:blur(10px);">
+        <section class="bday-story-card" data-chapter="3" style="background:rgba(18,22,36,0.9); border:1.5px solid rgba(245,158,11,0.4); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px);">
           <div style="text-align:center; margin-bottom:14px;">
             <span style="font-size:11px; font-weight:800; letter-spacing:1.5px; color:#f59e0b; background:rgba(245,158,11,0.15); padding:4px 12px; border-radius:20px; border:1px solid rgba(245,158,11,0.4);">
               CHRONICLES OF CELEBRATION 📸
@@ -184,25 +199,49 @@ export function renderBirthdayTemplate(container, data) {
           </div>
           <div id="tpRibbonSlot"></div>
           <div id="tpPolaroidSlot"></div>
+
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="4" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>Celebration Flipbook 📖</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 4: CELEBRATION MAGAZINE FLIPBOOK -->
-        <section class="bday-story-card" style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(245,158,11,0.3); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.5); backdrop-filter:blur(10px);">
+        <section class="bday-story-card" data-chapter="4" style="background:rgba(18,22,36,0.9); border:1.5px solid rgba(245,158,11,0.4); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px);">
           <div id="tpFlipSlot"></div>
+
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="5" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>Confidential Wish 🎟️</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 5: SCRATCH-OFF SECRET SURPRISE TICKET -->
-        <section class="bday-story-card" style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(245,158,11,0.3); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.5); backdrop-filter:blur(10px);">
+        <section class="bday-story-card" data-chapter="5" style="background:rgba(18,22,36,0.9); border:1.5px solid rgba(245,158,11,0.4); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px);">
           <div style="text-align:center; margin-bottom:12px;">
             <span style="font-size:11px; font-weight:800; letter-spacing:1.5px; color:#f59e0b; background:rgba(245,158,11,0.15); padding:4px 12px; border-radius:20px; border:1px solid rgba(245,158,11,0.4);">
               CONFIDENTIAL WISH 🎟️
             </span>
           </div>
           <div id="tpScratchSlot"></div>
+
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="4">⬅ Back</button>
+            <button type="button" class="btn-bday-next" data-next="6" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>VIP All-Access Pass 🪪</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 6: VIP LANYARD PASS & CELEBRATION FINALE -->
-        <section class="bday-story-card" style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(245,158,11,0.3); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.5); text-align:center; backdrop-filter:blur(10px);">
+        <section class="bday-story-card" data-chapter="6" style="background:rgba(18,22,36,0.9); border:1.5px solid rgba(245,158,11,0.4); border-radius:24px; padding:20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); text-align:center; backdrop-filter:blur(14px);">
           <div style="margin-bottom:14px;">
             <span style="font-size:11px; font-weight:800; letter-spacing:1.5px; color:#f59e0b; background:rgba(245,158,11,0.15); padding:4px 12px; border-radius:20px; border:1px solid rgba(245,158,11,0.4);">
               OFFICIAL ALL-ACCESS PASS 🪪
@@ -210,6 +249,13 @@ export function renderBirthdayTemplate(container, data) {
           </div>
           <div id="tpLanyardSlot"></div>
           <div id="tpChatSlot" style="margin-top:20px;"></div>
+
+          <div class="bday-nav-dock">
+            <button type="button" class="btn-bday-prev" data-prev="5">⬅ Back</button>
+            <button type="button" class="btn-bday-replay" id="btnBdayReplay" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000; padding:10px 20px; border-radius:24px; font-weight:800; border:none; cursor:pointer;">
+              <span>🎉 Replay Celebration ↺</span>
+            </button>
+          </div>
         </section>
 
       </main>
@@ -232,6 +278,82 @@ export function renderBirthdayTemplate(container, data) {
     };
     gateEl.addEventListener('click', executeOpenGate);
   }
+
+  // Chapter-by-Chapter Journey Navigation
+  let currentBdayChapter = 1;
+  const totalBdayChapters = 6;
+
+  function goToBdayChapter(ch) {
+    const targetCh = Math.max(1, Math.min(totalBdayChapters, ch));
+    const cards = container.querySelectorAll('.bday-story-card');
+    const currentCard = container.querySelector(`.bday-story-card[data-chapter="${currentBdayChapter}"]`);
+    const targetCard = container.querySelector(`.bday-story-card[data-chapter="${targetCh}"]`);
+    if (!targetCard) return;
+
+    if (currentCard && currentCard !== targetCard) {
+      gsap.to(currentCard, {
+        opacity: 0,
+        y: -15,
+        scale: 0.98,
+        duration: 0.22,
+        ease: 'power2.in',
+        onComplete: () => {
+          cards.forEach(c => {
+            c.style.display = 'none';
+            c.classList.remove('active');
+          });
+          targetCard.style.display = 'block';
+          targetCard.style.opacity = '0';
+          targetCard.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          gsap.fromTo(targetCard,
+            { opacity: 0, y: 20, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'back.out(1.2)' }
+          );
+          currentBdayChapter = targetCh;
+        }
+      });
+    } else {
+      cards.forEach(c => {
+        if (c.getAttribute('data-chapter') == targetCh) {
+          c.style.display = 'block';
+          c.classList.add('active');
+          c.style.opacity = '1';
+        } else {
+          c.style.display = 'none';
+          c.classList.remove('active');
+        }
+      });
+      currentBdayChapter = targetCh;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  container.querySelectorAll('.btn-bday-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'));
+      playBdayTone('chime');
+      goToBdayChapter(next);
+    });
+  });
+
+  container.querySelectorAll('.btn-bday-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'));
+      playBdayTone('chime');
+      goToBdayChapter(prev);
+    });
+  });
+
+  container.querySelector('#btnBdayReplay')?.addEventListener('click', () => {
+    playBdayTone('cheer');
+    goToBdayChapter(1);
+  });
+
+  // Activate Chapter 1 initially
+  goToBdayChapter(1);
 
   // =========================================================================
   // 60FPS BACKGROUND BALLOONS & CONFETTI CANVAS ANIMATION

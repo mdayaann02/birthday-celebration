@@ -84,11 +84,11 @@ export function renderAnniversaryTemplate(container, data) {
         </div>
       </div>
 
-      <!-- CONTINUOUS IMMERSIVE STORY FLOW (NO PROGRESS BARS, NATURAL CHAPTERS) -->
-      <main class="anni-flow-container" style="display:flex; flex-direction:column; gap:32px;">
+      <!-- FOCUSED CHAPTER JOURNEY FLOW (ONE IMMERSIVE SCENE AT A TIME) -->
+      <main class="anni-flow-container" style="display:flex; flex-direction:column;">
         
         <!-- CHAPTER 1: HERO & LIVE LOVE COUNTER -->
-        <section class="anni-story-card" style="background:rgba(18,6,12,0.88); border:1.5px solid rgba(251,191,36,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px); text-align:center;">
+        <section class="anni-story-card active" data-chapter="1" style="background:rgba(22,10,16,0.92); border:1.5px solid rgba(251,191,36,0.4); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px); text-align:center;">
           <div class="anni-badge" style="display:inline-block; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fde047; background:rgba(251,191,36,0.15); padding:4px 14px; border-radius:20px; border:1px solid rgba(251,191,36,0.4); margin-bottom:14px;">
             ✨ CELEBRATING OUR LOVE STORY ✨
           </div>
@@ -175,10 +175,17 @@ export function renderAnniversaryTemplate(container, data) {
               ✦ Tap Glasses to Clink a Royal Toast ✦
             </div>
           </div>
+
+          <div class="anni-nav-dock">
+            <button type="button" class="btn-anni-next" data-next="2" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>Our Love Story Chapters 📖</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 2: TIMELINE MILESTONES -->
-        <section class="anni-story-card" style="background:rgba(18,6,12,0.88); border:1.5px solid rgba(251,191,36,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px);">
+        <section class="anni-story-card" data-chapter="2" style="background:rgba(22,10,16,0.92); border:1.5px solid rgba(251,191,36,0.4); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px);">
           <div class="anni-section-tag" style="text-align:center; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fde047; margin-bottom:6px;">CHAPTERS OF US 📖</div>
           <h2 class="anni-section-head" style="text-align:center; color:#fff; font-size:22px; font-weight:800; margin:0 0 20px 0;">Our Beautiful Journey</h2>
           <div class="anni-timeline">
@@ -196,10 +203,18 @@ export function renderAnniversaryTemplate(container, data) {
               </div>
             `).join('')}
           </div>
+
+          <div class="anni-nav-dock">
+            <button type="button" class="btn-anni-prev" data-prev="1">⬅ Back</button>
+            <button type="button" class="btn-anni-next" data-next="3" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>Treasured Keepsakes 📸</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 3: POLAROID KEEPSAKE SCRAPBOOK -->
-        <section class="anni-story-card" style="background:rgba(18,6,12,0.88); border:1.5px solid rgba(251,191,36,0.35); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px);">
+        <section class="anni-story-card" data-chapter="3" style="background:rgba(22,10,16,0.92); border:1.5px solid rgba(251,191,36,0.4); border-radius:24px; padding:24px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px);">
           <div class="anni-section-tag" style="text-align:center; font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fde047; margin-bottom:6px;">TREASURED MOMENTS 📸</div>
           <h2 class="anni-section-head" style="text-align:center; color:#fff; font-size:22px; font-weight:800; margin:0 0 20px 0;">Moments Frozen in Gold</h2>
           <div class="anni-polaroids-row" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px;">
@@ -213,10 +228,18 @@ export function renderAnniversaryTemplate(container, data) {
               </div>
             `).join('')}
           </div>
+
+          <div class="anni-nav-dock">
+            <button type="button" class="btn-anni-prev" data-prev="2">⬅ Back</button>
+            <button type="button" class="btn-anni-next" data-next="4" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>Wax-Sealed Love Letter 💌</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 4: WAX SEAL LETTER -->
-        <section class="anni-story-card" style="background:rgba(18,6,12,0.88); border:1.5px solid rgba(251,191,36,0.35); border-radius:24px; padding:28px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(10px); text-align:center;">
+        <section class="anni-story-card" data-chapter="4" style="background:rgba(22,10,16,0.92); border:1.5px solid rgba(251,191,36,0.4); border-radius:24px; padding:28px 20px; box-shadow:0 12px 35px rgba(0,0,0,0.6); backdrop-filter:blur(14px); text-align:center;">
           <div class="anni-section-tag" style="font-size:11px; font-weight:800; letter-spacing:1.5px; color:#fde047; margin-bottom:6px;">FROM THE DEPTHS OF MY SOUL 💌</div>
           <h2 class="anni-section-head" style="color:#fff; font-size:22px; font-weight:800; margin:0 0 16px 0;">A Love Letter to ${recipient}</h2>
 
@@ -231,10 +254,18 @@ export function renderAnniversaryTemplate(container, data) {
             </button>
           </div>
           <p class="envelope-subtitle" style="margin-top:14px; font-size:12px; color:#fde047; font-weight:700;">👆 Tap the gold seal to unroll our love letter!</p>
+
+          <div class="anni-nav-dock">
+            <button type="button" class="btn-anni-prev" data-prev="3">⬅ Back</button>
+            <button type="button" class="btn-anni-next" data-next="5" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000;">
+              <span>Proclamation of Eternity 👑</span>
+              <span>➔</span>
+            </button>
+          </div>
         </section>
 
         <!-- CHAPTER 5: PROCLAMATION OF ETERNITY -->
-        <section class="anni-story-card" style="background:linear-gradient(135deg, rgba(30,10,20,0.92), rgba(15,3,10,0.95)); border:2px solid rgba(251,191,36,0.45); border-radius:24px; padding:28px 20px; box-shadow:0 16px 40px rgba(0,0,0,0.7); text-align:center;">
+        <section class="anni-story-card" data-chapter="5" style="background:linear-gradient(135deg, rgba(30,10,20,0.95), rgba(15,3,10,0.98)); border:2px solid rgba(251,191,36,0.45); border-radius:24px; padding:28px 20px; box-shadow:0 16px 40px rgba(0,0,0,0.7); text-align:center;">
           <div style="font-size:42px; margin-bottom:8px;">👑✨</div>
           <h2 style="color:#fbbf24; font-size:24px; font-weight:900; margin:0 0 10px 0;">Proclamation of Eternity</h2>
           <p style="color:#fbcfe8; font-size:13.5px; line-height:1.6; max-width:520px; margin:0 auto 20px;">
@@ -242,6 +273,13 @@ export function renderAnniversaryTemplate(container, data) {
           </p>
           <div style="display:inline-flex; align-items:center; gap:8px; padding:8px 20px; background:rgba(251,191,36,0.15); border:1px solid #fbbf24; border-radius:30px; color:#fde047; font-weight:800; font-size:13px;">
             ❤️ Forever Yours, ${data.senderName || 'My Whole Heart'}
+          </div>
+
+          <div class="anni-nav-dock">
+            <button type="button" class="btn-anni-prev" data-prev="4">⬅ Back</button>
+            <button type="button" class="btn-anni-replay" id="btnAnniReplay" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#000; padding:10px 20px; border-radius:24px; font-weight:800; border:none; cursor:pointer;">
+              <span>💍 Replay Our Love Story ↺</span>
+            </button>
           </div>
         </section>
 
@@ -344,6 +382,82 @@ Forever and always, yours.`}
   closeModal?.addEventListener('click', () => {
     modal.classList.remove('visible');
   });
+
+  // Chapter-by-Chapter Journey Navigation
+  let currentAnniChapter = 1;
+  const totalAnniChapters = 5;
+
+  function goToAnniChapter(ch) {
+    const targetCh = Math.max(1, Math.min(totalAnniChapters, ch));
+    const cards = container.querySelectorAll('.anni-story-card');
+    const currentCard = container.querySelector(`.anni-story-card[data-chapter="${currentAnniChapter}"]`);
+    const targetCard = container.querySelector(`.anni-story-card[data-chapter="${targetCh}"]`);
+    if (!targetCard) return;
+
+    if (currentCard && currentCard !== targetCard) {
+      gsap.to(currentCard, {
+        opacity: 0,
+        y: -15,
+        scale: 0.98,
+        duration: 0.22,
+        ease: 'power2.in',
+        onComplete: () => {
+          cards.forEach(c => {
+            c.style.display = 'none';
+            c.classList.remove('active');
+          });
+          targetCard.style.display = 'block';
+          targetCard.style.opacity = '0';
+          targetCard.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          gsap.fromTo(targetCard,
+            { opacity: 0, y: 20, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'back.out(1.2)' }
+          );
+          currentAnniChapter = targetCh;
+        }
+      });
+    } else {
+      cards.forEach(c => {
+        if (c.getAttribute('data-chapter') == targetCh) {
+          c.style.display = 'block';
+          c.classList.add('active');
+          c.style.opacity = '1';
+        } else {
+          c.style.display = 'none';
+          c.classList.remove('active');
+        }
+      });
+      currentAnniChapter = targetCh;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  container.querySelectorAll('.btn-anni-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = parseInt(btn.getAttribute('data-next'));
+      playAnniTone('chime');
+      goToAnniChapter(next);
+    });
+  });
+
+  container.querySelectorAll('.btn-anni-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = parseInt(btn.getAttribute('data-prev'));
+      playAnniTone('chime');
+      goToAnniChapter(prev);
+    });
+  });
+
+  container.querySelector('#btnAnniReplay')?.addEventListener('click', () => {
+    playAnniTone('chime');
+    goToAnniChapter(1);
+  });
+
+  // Activate Chapter 1 initially
+  goToAnniChapter(1);
 
   // Top music player
   initMusicPlayer(container.querySelector('#anniPlayerSlot'), {
