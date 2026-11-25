@@ -1,15 +1,20 @@
-// src/viewer/templates/sorryTemplate.js - The Lovable-Tier Heartfelt Apology Experience
-// Rebuilt from the ground up: Atmospheric Candlelit Sanctuary, Illuminated Parchment Letter,
-// 4 Sacred Reflections, Lovable Cascading Polaroids with Voice Note, and Hold-to-Heal Olive Branch Finale.
-// High-performance 60FPS, zero heavy canvas loops, zero lag.
+// src/viewer/templates/sorryTemplate.js - The Page-by-Page Realistic Apology & Vent Sanctuary
+// Rebuilt on the Long Wish (blossomTemplate) Fullscreen Scene Architecture:
+// Scene 1: The Candlelit Gateway (Atmosphere)
+// Scene 2: The Sincere Confession Letter (Parchment & Wax Seal)
+// Scene 3: The Realistic Tactile Venting Room (Physics, Recoil, Liquid Splats, Anger Release)
+// Scene 4: Four Sacred Promises (Accountability & Understanding)
+// Scene 5: Cherished Memories & Voice Memo (Lovable Staggered Polaroids)
+// Scene 6: The Olive Branch (2-Second Hold-to-Heal Finale)
+// Strictly Page-by-Page. Zero progress bars. 60FPS butter-smooth performance.
 
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
 import html2canvas from 'html2canvas';
 import { initMusicPlayer } from '../../components/musicPlayer.js';
-import { initBlurText, initClickSpark, initShinyText, initStarBorder, initMagneticButton } from '../../utils/reactBitsEffects.js';
+import { initBlurText, initShinyText, initStarBorder, initMagneticButton } from '../../utils/reactBitsEffects.js';
 
-// Ultra-lightweight Web Audio sound generator for tactile feedback
+// Real-time Web Audio Synthesizer for tactile feedback & sound effects
 function playSound(type) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -21,13 +26,13 @@ function playSound(type) {
       const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(440, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.28);
       gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.35);
+      osc.stop(now + 0.32);
     } else if (type === 'unseal') {
       const node = ctx.createBufferSource();
       const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
@@ -44,6 +49,76 @@ function playSound(type) {
       filter.connect(gain);
       gain.connect(ctx.destination);
       node.start(now);
+    } else if (type === 'punch') {
+      // Heavy physical punch thud
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.exponentialRampToValueAtTime(35, now + 0.22);
+      gain.gain.setValueAtTime(0.6, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.25);
+    } else if (type === 'splat') {
+      // Realistic juicy tomato / liquid squish
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(380, now);
+      osc.frequency.exponentialRampToValueAtTime(65, now + 0.22);
+      gain.gain.setValueAtTime(0.45, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.24);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.24);
+    } else if (type === 'whack') {
+      // High-speed sharp slipper whack
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(450, now);
+      osc.frequency.exponentialRampToValueAtTime(90, now + 0.16);
+      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
+    } else if (type === 'splash') {
+      // Water / boba splash
+      const node = ctx.createBufferSource();
+      const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.2, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < buffer.length; i++) data[i] = Math.random() * 2 - 1;
+      node.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1200, now);
+      filter.frequency.exponentialRampToValueAtTime(250, now + 0.2);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      node.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      node.start(now);
+    } else if (type === 'boing') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(460, now + 0.15);
+      osc.frequency.exponentialRampToValueAtTime(260, now + 0.28);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.28);
     } else if (type === 'chime') {
       [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
@@ -57,7 +132,7 @@ function playSound(type) {
         osc.start(now + idx * 0.06);
         osc.stop(now + idx * 0.06 + 0.45);
       });
-    } else if (type === 'healSuccess') {
+    } else if (type === 'victory') {
       [392.00, 523.25, 659.25, 783.99, 1046.50, 1318.50].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -75,11 +150,17 @@ function playSound(type) {
 }
 
 export function renderSorryTemplate(container, data = {}, isMakerReview = false) {
+  let activeScene = 1;
+  const totalScenes = 6;
+  let angerLevel = 100;
+  let ventCount = 0;
+
   const recipientName = data.recipientName || 'My Love';
   const senderName = data.senderName || 'Yours Always';
   const heroTitle = data.heroTitle || "I'm So Sorry, My Love";
-  const heroSubtitle = data.heroSubtitle || "My world feels heavy and quiet when you are hurt 🥺";
-  const apologyMessage = data.apologyMessage || "I know I made a mistake, and seeing you upset hurts me more than anything in this world. My intention was never to make you feel unheard or unvalued. I take full accountability for my actions. You mean the world to me, and I promise to listen with an open heart, protect your peace, and cherish you better every single day.";
+  const heroSubtitle = data.heroSubtitle || "My universe feels heavy, gray, and completely quiet when you are hurt 🥺";
+  const apologyMessage = data.apologyMessage || "I know I made a mistake, and seeing you upset hurts me more than anything in this world. My intention was never to make you feel unheard, neglected, or unvalued. I take full accountability. You mean everything to me, and I promise to listen with an open heart, protect your peace above my pride, and cherish you better every single day.";
+  const creatorPhoto = data.creatorPhoto || "/images/always_you.jpg";
 
   const reflections = [
     {
@@ -122,189 +203,343 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
     <!-- Top Audio Player Slot -->
     <div id="sorryPlayerSlot"></div>
 
-    <div class="sorry-sanctuary-wrap" id="sorrySanctuary">
-      
-      <!-- ======================================================== -->
-      <!-- ACT I: THE CANDLELIT SANCTUARY (OPENER & ATMOSPHERE)     -->
-      <!-- ======================================================== -->
-      <section class="sanctuary-hero-section">
-        
-        <!-- Glowing Candle Gateway -->
-        <div class="candle-gateway" id="candleGateway" role="button" tabindex="0" title="Tap to light the candle & open my heart">
-          <div class="candle-glow-aura" id="candleAura"></div>
-          <div class="candle-flame" id="candleFlame">
-            <span class="flame-inner"></span>
-          </div>
-          <div class="candle-body"></div>
-          <div class="candle-label" id="candleLabel">
-            🕯️ Tap to light candle & hear my heart
-          </div>
-        </div>
-
-        <!-- Headline & Apology Subtitle -->
-        <div class="hero-text-block">
-          <div class="heartfelt-tag">A SINCERE MESSAGE FROM MY HEART</div>
-          <h1 class="hero-confession-title" id="heroConfessionTitle">${heroTitle}</h1>
-          <p class="hero-confession-sub">${heroSubtitle}</p>
-        </div>
-
-        <!-- Floating Navigation Indicator -->
-        <div class="sanctuary-dock-nav">
-          <button type="button" class="dock-nav-pill active" data-target="sec-letter">💌 Letter</button>
-          <button type="button" class="dock-nav-pill" data-target="sec-reflections">🕊️ Reflections</button>
-          <button type="button" class="dock-nav-pill" data-target="sec-memories">📸 Memories</button>
-          <button type="button" class="dock-nav-pill" data-target="sec-heal">❤️‍🩹 Heal</button>
-        </div>
-      </section>
+    <div class="sorry-film-stage" id="sorryFilmStage">
 
       <!-- ======================================================== -->
-      <!-- ACT II: THE SINCERE CONFESSION LETTER (STATIONARY VELLUM)-->
+      <!-- SCENE 1: THE CANDLELIT SANCTUARY (ACT I)                -->
       <!-- ======================================================== -->
-      <section class="sanctuary-letter-section" id="sec-letter">
-        <div class="parchment-letter-card" id="parchmentCard">
+      <section class="sorry-fullscreen-scene scene-hero-fullscreen active" data-scene="1" id="scene1">
+        <div class="scene-inner-frame">
           
-          <!-- Wax Seal Button (Cracks Open) -->
-          <div class="wax-seal-crest" id="waxSealCrest" role="button" tabindex="0" title="Tap to open the letter">
-            <span class="wax-icon">🕊️</span>
-            <span class="wax-ripple"></span>
+          <!-- Interactive Flickering Candle Gateway -->
+          <div class="candle-gateway" id="candleGateway" role="button" tabindex="0" title="Tap to light the candle & hear my heart">
+            <div class="candle-glow-aura" id="candleAura"></div>
+            <div class="candle-flame" id="candleFlame">
+              <span class="flame-inner"></span>
+            </div>
+            <div class="candle-body"></div>
+            <div class="candle-label" id="candleLabel">
+              🕯️ Tap to light candle
+            </div>
           </div>
 
-          <div class="parchment-inner">
-            <div class="parchment-greeting">Dearest ${recipientName},</div>
-            <div class="parchment-body" id="parchmentBody">
-              ${apologyMessage}
-            </div>
-            <div class="parchment-valediction">
-              <span>Forever yours with all my love,</span>
-              <strong class="parchment-sign">${senderName} 🫶</strong>
-            </div>
+          <div class="hero-text-block">
+            <span class="scene-chapter-badge">CHAPTER I • SINCERE ATONEMENT</span>
+            <h1 class="hero-confession-title" id="heroConfessionTitle">${heroTitle}</h1>
+            <p class="hero-confession-sub">${heroSubtitle}</p>
           </div>
+
+          <div class="scene-cta-dock">
+            <button type="button" class="btn-scene-next" data-next-scene="2">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Read My Sincere Letter</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
+          </div>
+
         </div>
       </section>
 
       <!-- ======================================================== -->
-      <!-- ACT III: THE 4 SACRED REFLECTIONS (LOVABLE CARDS)        -->
+      <!-- SCENE 2: THE SINCERE CONFESSION LETTER (ACT II)         -->
       <!-- ======================================================== -->
-      <section class="sanctuary-reflections-section" id="sec-reflections">
-        <div class="section-label-header">
-          <span class="section-micro-badge">FOUR PILLARS OF UNDERSTANDING</span>
-          <h2 class="section-main-heading">What I Realize & Promise</h2>
-          <p class="section-sub-desc">No excuses, no defenses—just honest vulnerability and growth for us.</p>
-        </div>
+      <section class="sorry-fullscreen-scene scene-letter-fullscreen" data-scene="2" id="scene2" style="display:none; opacity:0;">
+        <div class="scene-inner-frame">
+          
+          <div class="scene-top-nav">
+            <button type="button" class="btn-scene-back" data-prev-scene="1">❮ Back</button>
+            <span class="scene-chapter-badge">CHAPTER II • THE CONFESSION</span>
+          </div>
 
-        <div class="reflections-grid">
-          ${reflections.map((r, idx) => `
-            <div class="reflection-card" data-idx="${idx}">
-              <div class="reflection-header">
-                <span class="reflection-icon">${r.icon}</span>
-                <span class="reflection-tag">${r.tag}</span>
+          <!-- 3D Wax-Sealed Parchment Envelope -->
+          <div class="parchment-letter-card" id="parchmentCard">
+            <div class="wax-seal-crest" id="waxSealCrest" role="button" tabindex="0" title="Tap to crack seal and open letter">
+              <span class="wax-icon">🕊️</span>
+              <span class="wax-ripple"></span>
+            </div>
+
+            <div class="parchment-inner">
+              <div class="parchment-greeting">Dearest ${recipientName},</div>
+              <div class="parchment-body">
+                ${apologyMessage}
               </div>
-              <h3 class="reflection-title">${r.title}</h3>
-              <p class="reflection-desc">${r.desc}</p>
+              <div class="parchment-valediction">
+                <span>Forever yours with all my love,</span>
+                <strong class="parchment-sign">${senderName} 🫶</strong>
+              </div>
             </div>
-          `).join('')}
+            <div class="parchment-hint" id="parchmentHint">👆 Tap the crimson wax seal to unseal the letter</div>
+          </div>
+
+          <div class="scene-cta-dock">
+            <button type="button" class="btn-scene-next" data-next-scene="3">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Enter The Venting Room</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
+          </div>
+
         </div>
       </section>
 
       <!-- ======================================================== -->
-      <!-- ACT IV: KEEPSAKE MEMORIES & VOICE NOTE                   -->
+      <!-- SCENE 3: THE REALISTIC VENTING ROOM (ACT III)           -->
       <!-- ======================================================== -->
-      <section class="sanctuary-memories-section" id="sec-memories">
-        <div class="section-label-header">
-          <span class="section-micro-badge">CHERISHED MOMENTS</span>
-          <h2 class="section-main-heading">Remember Our Sweetest Days 📸</h2>
-          <p class="section-sub-desc">Tap any polaroid to flip and read the secret note on the back:</p>
-        </div>
+      <section class="sorry-fullscreen-scene scene-vent-fullscreen" data-scene="3" id="scene3" style="display:none; opacity:0;">
+        <div class="scene-inner-frame">
+          
+          <div class="scene-top-nav">
+            <button type="button" class="btn-scene-back" data-prev-scene="2">❮ Back</button>
+            <span class="scene-chapter-badge">CHAPTER III • CATHARTIC SMACKDOWN</span>
+          </div>
 
-        <!-- Voice Note Player -->
-        <div class="sanctuary-voice-card">
-          <button type="button" class="btn-voice-toggle" id="btnVoiceToggle" aria-label="Play voice confession">
-            <span id="voicePlayIcon">▶</span>
-          </button>
-          <div class="voice-meta">
-            <div class="voice-title">Voice Note from ${senderName} 🎙️</div>
-            <div class="voice-sub" id="voiceSub">Tap to listen to my voice confession (0:45)</div>
-            <div class="voice-bars" id="voiceBars">
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <div class="vent-chamber-header">
+            <h2 class="vent-chamber-title">Take Your Frustration Out On Me! 🥊</h2>
+            <p class="vent-chamber-sub">You have every right to be angry. Fling items directly at the target—zero complaints!</p>
+          </div>
+
+          <div class="vent-chamber-box" id="ventChamberBox">
+            <!-- Tension Release Thermometer -->
+            <div class="vent-tension-track-wrap">
+              <div class="vent-tension-header">
+                <span class="vent-tension-label">🔥 ANGER LEVEL:</span>
+                <span class="vent-tension-val" id="ventTensionVal">100% FURIOUS</span>
+              </div>
+              <div class="vent-tension-track">
+                <div class="vent-tension-fill" id="ventTensionFill" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <!-- Realistic Framed Target with Glass Overlay -->
+            <div class="vent-framed-target-wrap" id="ventTargetFrame">
+              <div class="vent-target-chassis" id="ventTargetChassis">
+                <img src="${creatorPhoto}" alt="${senderName}" class="vent-photo-img" id="ventPhotoImg" onerror="this.src='/images/always_you.jpg'" />
+                <!-- Glass overlay where liquid splats and dents stick -->
+                <div class="vent-glass-decal-layer" id="ventDecalLayer"></div>
+                <div class="vent-mood-pill" id="ventMoodPill">🥺</div>
+              </div>
+              
+              <div class="vent-reaction-bubble" id="ventBubble">
+                "I know you're mad at me... I'm listening 🥺"
+              </div>
+
+              <button type="button" class="btn-wipe-glass" id="btnWipeGlass">
+                🧻 Wipe Glass Clean
+              </button>
+            </div>
+
+            <!-- Realistic Tactile Throwable Arsenal -->
+            <div class="realistic-arsenal-grid" id="arsenalGrid">
+              <button type="button" class="btn-real-arsenal" data-type="punch" title="Boxing Glove Punch">
+                <span class="arsenal-icon">🥊</span>
+                <span class="arsenal-name">Boxing Punch</span>
+                <span class="arsenal-fx">Heavy Thud!</span>
+              </button>
+              <button type="button" class="btn-real-arsenal" data-type="tomato" title="Juicy Red Tomato">
+                <span class="arsenal-icon">🍅</span>
+                <span class="arsenal-name">Ripe Tomato</span>
+                <span class="arsenal-fx">Juicy Splat!</span>
+              </button>
+              <button type="button" class="btn-real-arsenal" data-type="whack" title="The Flying Slipper / Chappal">
+                <span class="arsenal-icon">🩴</span>
+                <span class="arsenal-name">The Chappal</span>
+                <span class="arsenal-fx">Sharp Whack!</span>
+              </button>
+              <button type="button" class="btn-real-arsenal" data-type="splash" title="Water Splash">
+                <span class="arsenal-icon">💧</span>
+                <span class="arsenal-name">Water Splash</span>
+                <span class="arsenal-fx">Wet Drip!</span>
+              </button>
+              <button type="button" class="btn-real-arsenal" data-type="boba" title="Spilled Iced Boba">
+                <span class="arsenal-icon">🧋</span>
+                <span class="arsenal-name">Boba Cup</span>
+                <span class="arsenal-fx">Sweet Stain!</span>
+              </button>
+              <button type="button" class="btn-real-arsenal" data-type="teddy" title="Soft Fluffy Teddy">
+                <span class="arsenal-icon">🧸</span>
+                <span class="arsenal-name">Soft Teddy</span>
+                <span class="arsenal-fx">Gentle Boing!</span>
+              </button>
+            </div>
+
+            <div class="vent-hits-counter" id="ventHitsCounter">
+              Hits landed: <strong>0</strong> times
             </div>
           </div>
-        </div>
 
-        <!-- Lovable Staggered Polaroid Cascade -->
-        <div class="sanctuary-polaroids-cascade">
-          ${polaroids.map((p, idx) => {
-            const tilt = [-3, 3, -2, 4][idx % 4];
-            return `
-              <div class="sanctuary-polaroid-item" data-idx="${idx}" style="--tilt:${tilt}deg;">
-                <div class="polaroid-flipper-3d">
-                  <!-- Front -->
-                  <div class="polaroid-face front">
-                    <div class="tape-strip"></div>
-                    <div class="photo-chassis">
-                      <img src="${p.image}" alt="Memory" loading="lazy" onerror="this.src='/images/sunset.jpg'" />
-                      <span class="flip-hint-badge">Tap to flip 🔄</span>
+          <div class="scene-cta-dock">
+            <button type="button" class="btn-scene-next" data-next-scene="4">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Review My Four Sacred Promises</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCENE 4: FOUR SACRED PROMISES (ACT IV)                  -->
+      <!-- ======================================================== -->
+      <section class="sorry-fullscreen-scene scene-reflections-fullscreen" data-scene="4" id="scene4" style="display:none; opacity:0;">
+        <div class="scene-inner-frame">
+          
+          <div class="scene-top-nav">
+            <button type="button" class="btn-scene-back" data-prev-scene="3">❮ Back</button>
+            <span class="scene-chapter-badge">CHAPTER IV • SACRED COMMITMENT</span>
+          </div>
+
+          <div class="scene-header-block">
+            <h2 class="scene-title">What I Understand & Promise</h2>
+            <p class="scene-desc">No excuses, no defenses—just honest vulnerability and growth for us.</p>
+          </div>
+
+          <div class="reflections-grid">
+            ${reflections.map((r, idx) => `
+              <div class="reflection-card" data-idx="${idx}">
+                <div class="reflection-header">
+                  <span class="reflection-icon">${r.icon}</span>
+                  <span class="reflection-tag">${r.tag}</span>
+                </div>
+                <h3 class="reflection-title">${r.title}</h3>
+                <p class="reflection-desc">${r.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="scene-cta-dock">
+            <button type="button" class="btn-scene-next" data-next-scene="5">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">Look Back At Our Sweetest Memories</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCENE 5: CHERISHED MEMORIES & VOICE NOTE (ACT V)        -->
+      <!-- ======================================================== -->
+      <section class="sorry-fullscreen-scene scene-memories-fullscreen" data-scene="5" id="scene5" style="display:none; opacity:0;">
+        <div class="scene-inner-frame">
+          
+          <div class="scene-top-nav">
+            <button type="button" class="btn-scene-back" data-prev-scene="4">❮ Back</button>
+            <span class="scene-chapter-badge">CHAPTER V • CHERISHED MEMORIES</span>
+          </div>
+
+          <div class="scene-header-block">
+            <h2 class="scene-title">Remember Why We Fell In Love 📸</h2>
+            <p class="scene-desc">Tap any polaroid to flip and read the secret note on the back:</p>
+          </div>
+
+          <!-- Voice Note Simulator Card -->
+          <div class="sanctuary-voice-card">
+            <button type="button" class="btn-voice-toggle" id="btnVoiceToggle" aria-label="Play voice confession">
+              <span id="voicePlayIcon">▶</span>
+            </button>
+            <div class="voice-meta">
+              <div class="voice-title">Voice Note from ${senderName} 🎙️</div>
+              <div class="voice-sub" id="voiceSub">Tap to listen to my voice confession (0:45)</div>
+              <div class="voice-bars" id="voiceBars">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lovable Cascading Polaroids -->
+          <div class="sanctuary-polaroids-cascade">
+            ${polaroids.map((p, idx) => {
+              const tilt = [-3, 3, -2, 4][idx % 4];
+              return `
+                <div class="sanctuary-polaroid-item" data-idx="${idx}" style="--tilt:${tilt}deg;">
+                  <div class="polaroid-flipper-3d">
+                    <div class="polaroid-face front">
+                      <div class="tape-strip"></div>
+                      <div class="photo-chassis">
+                        <img src="${p.image}" alt="Memory" loading="lazy" onerror="this.src='/images/sunset.jpg'" />
+                        <span class="flip-hint-badge">Tap to flip 🔄</span>
+                      </div>
+                      <div class="polaroid-caption-text">${p.caption}</div>
+                      <button type="button" class="btn-save-memory" title="Save keepsake">
+                        📸 Save Keepsake
+                      </button>
                     </div>
-                    <div class="polaroid-caption-text">${p.caption}</div>
-                    <button type="button" class="btn-save-memory" title="Save keepsake">
-                      📸 Save Keepsake
-                    </button>
-                  </div>
-                  <!-- Back -->
-                  <div class="polaroid-face back">
-                    <div class="back-note-wrap">
-                      <span class="back-quote">“</span>
-                      <p class="back-text">${p.note || p.caption}</p>
-                      <span class="back-author">— Always Yours ❤️</span>
+                    <div class="polaroid-face back">
+                      <div class="back-note-wrap">
+                        <span class="back-quote">“</span>
+                        <p class="back-text">${p.note || p.caption}</p>
+                        <span class="back-author">— Always Yours ❤️</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            `;
-          }).join('')}
+              `;
+            }).join('')}
+          </div>
+
+          <div class="scene-cta-dock">
+            <button type="button" class="btn-scene-next" data-next-scene="6">
+              <span class="btn-next-spark">✦</span>
+              <span class="btn-next-text">The Final Step: Hold to Heal</span>
+              <span class="btn-next-arrow">❯</span>
+            </button>
+          </div>
+
         </div>
       </section>
 
       <!-- ======================================================== -->
-      <!-- ACT V: THE OLIVE BRANCH (HOLD TO HEAL)                   -->
+      <!-- SCENE 6: THE OLIVE BRANCH (HOLD TO HEAL FINALE) (ACT VI) -->
       <!-- ======================================================== -->
-      <section class="sanctuary-healing-section" id="sec-heal">
-        <div class="healing-center-card" id="healingCard">
-          <div class="olive-branch-icon">🕊️❤️‍🩹</div>
-          <h2 class="healing-title rb-shiny-text">Will You Give Me A Chance To Make It Right?</h2>
-          <p class="healing-subtitle">
-            I promise to love you with patience, kindness, and understanding. Whenever you are ready to heal:
-          </p>
-
-          <!-- 2-Second Hold-to-Heal Button -->
-          <div class="hold-to-heal-dock" id="holdToHealDock">
-            <div class="hold-ring-wrapper">
-              <svg class="hold-svg-ring" width="110" height="110" viewBox="0 0 110 110">
-                <circle cx="55" cy="55" r="48" stroke="rgba(245, 158, 11, 0.2)" stroke-width="6" fill="none" />
-                <circle id="healProgressRing" cx="55" cy="55" r="48" stroke="#f59e0b" stroke-width="6" stroke-linecap="round" fill="none"
-                  stroke-dasharray="301" stroke-dashoffset="301" />
-              </svg>
-              <button type="button" class="btn-hold-heal" id="btnHoldHeal" aria-label="Hold for 2 seconds to accept apology">
-                <span class="heal-btn-icon" id="healBtnIcon">❤️</span>
-              </button>
-            </div>
-            <div class="heal-instruction" id="healInstruction">
-              👆 Press & Hold for 2 seconds to heal our bond
-            </div>
+      <section class="sorry-fullscreen-scene scene-healing-fullscreen" data-scene="6" id="scene6" style="display:none; opacity:0;">
+        <div class="scene-inner-frame">
+          
+          <div class="scene-top-nav">
+            <button type="button" class="btn-scene-back" data-prev-scene="5">❮ Back</button>
+            <span class="scene-chapter-badge">FINAL CHAPTER • THE OLIVE BRANCH</span>
           </div>
 
-          <!-- Celebratory Healing Reveal (Appears upon hold completion) -->
-          <div class="healing-completed-banner" id="healingCompletedBanner" style="display: none;">
-            <div class="banner-emoji">🎉🫂✨</div>
-            <h3 class="banner-title">Our Hearts Are Reunited ❤️</h3>
-            <p class="banner-msg">
-              Thank you for having the grace to forgive me. I promise to cherish you, respect you, and hold you tighter every single day.
+          <div class="healing-center-card" id="healingCard">
+            <div class="olive-branch-icon">🕊️❤️‍🩹</div>
+            <h2 class="healing-title rb-shiny-text">Will You Give Me A Chance To Make It Right?</h2>
+            <p class="healing-subtitle">
+              I promise to love you with patience, kindness, and understanding. Whenever you are ready to heal:
             </p>
-            <div class="banner-actions">
-              <a href="https://wa.me/?text=${encodeURIComponent(`I forgive you baby! ❤️🫂 Let's hug and never stay upset at each other again ✨`)}" 
-                 target="_blank" rel="noopener" class="btn-whatsapp-quiet">
-                💬 Send a Quiet Hug on WhatsApp
-              </a>
+
+            <!-- 2-Second Hold-to-Heal Button -->
+            <div class="hold-to-heal-dock" id="holdToHealDock">
+              <div class="hold-ring-wrapper">
+                <svg class="hold-svg-ring" width="114" height="114" viewBox="0 0 114 114">
+                  <circle cx="57" cy="57" r="50" stroke="rgba(245, 158, 11, 0.2)" stroke-width="7" fill="none" />
+                  <circle id="healProgressRing" cx="57" cy="57" r="50" stroke="#f59e0b" stroke-width="7" stroke-linecap="round" fill="none"
+                    stroke-dasharray="314" stroke-dashoffset="314" />
+                </svg>
+                <button type="button" class="btn-hold-heal" id="btnHoldHeal" aria-label="Hold for 2 seconds to accept apology">
+                  <span class="heal-btn-icon" id="healBtnIcon">❤️</span>
+                </button>
+              </div>
+              <div class="heal-instruction" id="healInstruction">
+                👆 Press & Hold for 2 seconds to heal our bond
+              </div>
             </div>
+
+            <!-- Celebratory Healing Reveal Banner -->
+            <div class="healing-completed-banner" id="healingCompletedBanner" style="display: none;">
+              <div class="banner-emoji">🎉🫂✨</div>
+              <h3 class="banner-title">Our Hearts Are Reunited ❤️</h3>
+              <p class="banner-msg">
+                Thank you for having the grace to forgive me. I promise to cherish you, respect you, and hold you tighter every single day.
+              </p>
+              <div class="banner-actions">
+                <a href="https://wa.me/?text=${encodeURIComponent(`I forgive you baby! ❤️🫂 Let's hug and never stay upset at each other again ✨`)}" 
+                   target="_blank" rel="noopener" class="btn-whatsapp-quiet">
+                  💬 Send a Quiet Hug on WhatsApp
+                </a>
+              </div>
+            </div>
+
           </div>
 
         </div>
@@ -326,7 +561,62 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
   });
 
   // =========================================================================
-  // REACT BITS ENHANCEMENTS (BlurText, ShinyText, StarBorder, MagneticButton)
+  // PAGE-BY-PAGE SCENE ENGINE (LIKE BLOSSOM TEMPLATE)
+  // =========================================================================
+  function goToScene(targetSceneNum) {
+    const targetNum = Math.max(1, Math.min(totalScenes, targetSceneNum));
+    const currentSceneEl = container.querySelector('.sorry-fullscreen-scene.active');
+    const targetSceneEl = container.querySelector(`.sorry-fullscreen-scene[data-scene="${targetNum}"]`);
+
+    if (!targetSceneEl || currentSceneEl === targetSceneEl) return;
+
+    playSound('chime');
+
+    gsap.to(currentSceneEl, {
+      opacity: 0,
+      y: -15,
+      duration: 0.32,
+      ease: 'power2.in',
+      onComplete: () => {
+        currentSceneEl.style.display = 'none';
+        currentSceneEl.classList.remove('active');
+
+        targetSceneEl.style.display = 'flex';
+        targetSceneEl.style.opacity = '0';
+        targetSceneEl.classList.add('active');
+
+        // Reset scroll position to top of chassis
+        const chassis = container.closest('.preview-frame-container') || container.closest('#previewContainer') || window;
+        if (chassis === window) window.scrollTo({ top: 0, behavior: 'instant' });
+        else chassis.scrollTo({ top: 0, behavior: 'instant' });
+
+        gsap.fromTo(targetSceneEl,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' }
+        );
+
+        activeScene = targetNum;
+      }
+    });
+  }
+
+  // Bind all scene navigation buttons
+  container.querySelectorAll('.btn-scene-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nextNum = parseInt(btn.getAttribute('data-next-scene'), 10);
+      goToScene(nextNum);
+    });
+  });
+
+  container.querySelectorAll('.btn-scene-back').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prevNum = parseInt(btn.getAttribute('data-prev-scene'), 10);
+      goToScene(prevNum);
+    });
+  });
+
+  // =========================================================================
+  // REACT BITS ENHANCEMENTS
   // =========================================================================
   try {
     initBlurText(container.querySelector('#heroConfessionTitle'), {
@@ -337,14 +627,13 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
 
     initShinyText(container.querySelectorAll('.rb-shiny-text'));
     initStarBorder(container.querySelector('#healingCard'));
-    initStarBorder(container.querySelector('#parchmentCard'));
     initMagneticButton(container.querySelector('#btnHoldHeal'), 0.25);
   } catch (err) {
     console.warn('React Bits warning:', err);
   }
 
   // =========================================================================
-  // ACT I: CANDLE GATEWAY INTERACTION
+  // SCENE 1: CANDLE GATEWAY
   // =========================================================================
   const candleGateway = container.querySelector('#candleGateway');
   const candleAura = container.querySelector('#candleAura');
@@ -365,8 +654,8 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
       }
 
       confetti({
-        particleCount: 40,
-        spread: 60,
+        particleCount: 35,
+        spread: 55,
         origin: { y: 0.35 },
         colors: ['#f59e0b', '#fbbf24', '#f87171']
       });
@@ -374,36 +663,11 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
   }
 
   // =========================================================================
-  // DOCK NAVIGATION SMOOTH SCROLLING
-  // =========================================================================
-  const navPills = container.querySelectorAll('.dock-nav-pill');
-  navPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      playSound('candle');
-      const targetId = pill.getAttribute('data-target');
-      const targetEl = container.querySelector(`#${targetId}`);
-      if (!targetEl) return;
-
-      navPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-
-      const chassis = container.closest('.preview-frame-container') || container.closest('#previewContainer') || window;
-      const offset = 70;
-      if (chassis === window) {
-        const top = targetEl.getBoundingClientRect().top + window.pageYOffset - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
-      } else {
-        const top = targetEl.offsetTop - offset;
-        chassis.scrollTo({ top, behavior: 'smooth' });
-      }
-    });
-  });
-
-  // =========================================================================
-  // ACT II: WAX SEAL CRACK & LETTER INTERACTION
+  // SCENE 2: WAX SEAL CRACK & UNSEAL
   // =========================================================================
   const waxSeal = container.querySelector('#waxSealCrest');
   const parchmentCard = container.querySelector('#parchmentCard');
+  const parchmentHint = container.querySelector('#parchmentHint');
 
   if (waxSeal && parchmentCard) {
     waxSeal.addEventListener('click', () => {
@@ -418,6 +682,7 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
         onComplete: () => {
           waxSeal.style.display = 'none';
           parchmentCard.classList.add('unsealed');
+          if (parchmentHint) parchmentHint.textContent = 'Letter unsealed with all my love ❤️';
           confetti({
             particleCount: 35,
             spread: 50,
@@ -430,7 +695,126 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
   }
 
   // =========================================================================
-  // ACT IV: POLAROID FLIP & VOICE NOTE
+  // SCENE 3: REALISTIC VENTING ROOM ENGINE
+  // =========================================================================
+  const ventTargetFrame = container.querySelector('#ventTargetFrame');
+  const ventTargetChassis = container.querySelector('#ventTargetChassis');
+  const ventDecalLayer = container.querySelector('#ventDecalLayer');
+  const ventMoodPill = container.querySelector('#ventMoodPill');
+  const ventBubble = container.querySelector('#ventBubble');
+  const ventTensionFill = container.querySelector('#ventTensionFill');
+  const ventTensionVal = container.querySelector('#ventTensionVal');
+  const ventHitsCounter = container.querySelector('#ventHitsCounter');
+  const btnWipeGlass = container.querySelector('#btnWipeGlass');
+
+  const projectileIcons = {
+    punch: '🥊',
+    tomato: '🍅',
+    whack: '🩴',
+    splash: '💧',
+    boba: '🧋',
+    teddy: '🧸'
+  };
+
+  const reactionQuotes = [
+    "Ouch! Okay, I completely deserved that 🥺",
+    "Direct hit! You have great aim baby 🎯",
+    "I'm listening and I hear your anger 🥺❤️",
+    "Throw another one if it helps you feel lighter! 🥊",
+    "I'm so sorry for making you upset... 💔",
+    "Are you feeling even a tiny bit better now? 🥺"
+  ];
+
+  function launchRealisticThrowable(type, btnEl) {
+    ventCount++;
+    angerLevel = Math.max(0, angerLevel - 18);
+
+    // Audio synthesis
+    playSound(type);
+
+    const btnRect = btnEl.getBoundingClientRect();
+    const targetRect = ventTargetChassis.getBoundingClientRect();
+
+    // Create flying projectile element
+    const proj = document.createElement('div');
+    proj.className = 'real-flying-projectile';
+    proj.textContent = projectileIcons[type] || '🍅';
+    proj.style.left = `${btnRect.left + btnRect.width / 2}px`;
+    proj.style.top = `${btnRect.top + btnRect.height / 2}px`;
+    document.body.appendChild(proj);
+
+    const destX = targetRect.left + targetRect.width / 2 - 18;
+    const destY = targetRect.top + targetRect.height / 2 - 18;
+
+    gsap.to(proj, {
+      left: destX,
+      top: destY,
+      duration: 0.28,
+      ease: 'power2.in',
+      rotation: type === 'whack' ? 720 : 360,
+      onComplete: () => {
+        proj.remove();
+
+        // Directional recoil & screen shake
+        const recoilAngle = (Math.random() - 0.5) * 16;
+        gsap.fromTo(ventTargetChassis,
+          { scale: 0.9, rotation: recoilAngle },
+          { scale: 1, rotation: 0, duration: 0.35, ease: 'elastic.out(1.2, 0.4)' }
+        );
+
+        // Screen shake
+        gsap.fromTo(ventTargetFrame,
+          { x: (Math.random() - 0.5) * 12 },
+          { x: 0, duration: 0.2, ease: 'rough' }
+        );
+
+        // Stick realistic decal onto glass overlay
+        const decal = document.createElement('div');
+        decal.className = `real-glass-decal decal-${type}`;
+        decal.textContent = projectileIcons[type];
+        decal.style.left = `${20 + Math.random() * 60}%`;
+        decal.style.top = `${20 + Math.random() * 60}%`;
+        if (ventDecalLayer) ventDecalLayer.appendChild(decal);
+
+        // Update mood pill & speech bubble
+        if (ventMoodPill) ventMoodPill.textContent = angerLevel === 0 ? '🥹' : '🥺';
+        if (ventBubble) {
+          ventBubble.textContent = reactionQuotes[ventCount % reactionQuotes.length];
+        }
+
+        // Update frustration thermometer
+        if (ventTensionFill) ventTensionFill.style.width = `${angerLevel}%`;
+        if (ventTensionVal) {
+          if (angerLevel > 60) ventTensionVal.textContent = `${angerLevel}% FURIOUS 🔥`;
+          else if (angerLevel > 20) ventTensionVal.textContent = `${angerLevel}% VENTED 😤`;
+          else ventTensionVal.textContent = `0% SOOTHED & CALM 🥰`;
+        }
+
+        if (ventHitsCounter) {
+          ventHitsCounter.innerHTML = `Hits landed: <strong>${ventCount}</strong> times`;
+        }
+      }
+    });
+  }
+
+  container.querySelectorAll('.btn-real-arsenal').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.getAttribute('data-type');
+      launchRealisticThrowable(type, btn);
+    });
+  });
+
+  if (btnWipeGlass) {
+    btnWipeGlass.addEventListener('click', () => {
+      playSound('unseal');
+      if (ventDecalLayer) ventDecalLayer.innerHTML = '';
+      if (ventMoodPill) ventMoodPill.textContent = '🥺';
+      if (ventBubble) ventBubble.textContent = '"Glass wiped clean! Ready to hear your verdict 🥺"';
+    });
+  }
+
+  // =========================================================================
+  // SCENE 5: POLAROIDS & VOICE NOTE
   // =========================================================================
   container.querySelectorAll('.sanctuary-polaroid-item').forEach(item => {
     item.addEventListener('click', (e) => {
@@ -476,7 +860,7 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
   }
 
   // =========================================================================
-  // ACT V: 2-SECOND HOLD TO HEAL
+  // SCENE 6: 2-SECOND HOLD TO HEAL
   // =========================================================================
   const btnHoldHeal = container.querySelector('#btnHoldHeal');
   const healRing = container.querySelector('#healProgressRing');
@@ -501,7 +885,7 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
       const progress = Math.min(1, elapsed / holdTargetMs);
 
       if (healRing) {
-        const offset = 301 - progress * 301;
+        const offset = 314 - progress * 314;
         healRing.style.strokeDashoffset = offset;
       }
 
@@ -518,12 +902,12 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
     if (healDone) return;
     if (holdAnim) cancelAnimationFrame(holdAnim);
     btnHoldHeal.classList.remove('holding');
-    if (healRing) healRing.style.strokeDashoffset = '301';
+    if (healRing) healRing.style.strokeDashoffset = '314';
   }
 
   function onHealComplete() {
     healDone = true;
-    playSound('healSuccess');
+    playSound('victory');
 
     if (holdDock) holdDock.style.display = 'none';
     if (healCompleted) {
