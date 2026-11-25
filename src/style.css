@@ -23280,3 +23280,97 @@ body:has(#bloomContainer) {
 .btn-rotate-dismiss:hover {
   color: #e5ded5;
 }
+
+
+/* Walk Interactive Prompts (Bench & Artworks) */
+.museum-walk-prompts {
+  position: absolute;
+  bottom: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 26;
+  width: calc(100% - 32px);
+  max-width: 480px;
+}
+
+.museum-bench-prompt,
+.museum-stand-prompt {
+  pointer-events: auto;
+}
+
+.btn-sit-bench {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.95) 0%, rgba(184, 143, 40, 0.95) 100%);
+  color: #171007;
+  border: 1.5px solid #fff;
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: pulseBenchGlow 2.5s infinite alternate;
+}
+
+@keyframes pulseBenchGlow {
+  0% { transform: scale(1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(212, 175, 55, 0.4); }
+  100% { transform: scale(1.03); box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 28px rgba(212, 175, 55, 0.75); }
+}
+
+.btn-sit-bench:hover {
+  transform: scale(1.06);
+}
+
+.btn-stand-bench {
+  background: rgba(18, 14, 12, 0.9);
+  border: 1.5px solid #d4af37;
+  color: #f5e6ca;
+  border-radius: 20px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease;
+}
+
+.btn-stand-bench:hover {
+  background: #d4af37;
+  color: #171007;
+  transform: scale(1.05);
+}
+
+.museum-art-prompt-badge {
+  background: rgba(18, 14, 12, 0.88);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #f7ede1;
+  border-radius: 18px;
+  padding: 7px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeInPrompt 0.3s ease-out;
+}
+
+@keyframes fadeInPrompt {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

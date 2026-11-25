@@ -419,6 +419,25 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         </div>
       </div>
 
+      <!-- Interactive Walk Prompts (Bench & Nearby Artworks) -->
+      <div class="museum-walk-prompts" id="museumWalkPrompts">
+        <div class="museum-bench-prompt" id="benchPrompt" style="display:none;">
+          <button type="button" class="btn-sit-bench" id="btnSitBench" title="Take a seat on the gallery bench">
+            <span class="sit-icon">🛋️</span>
+            <span class="sit-label">Take a Seat on the Gallery Bench</span>
+          </button>
+        </div>
+        <div class="museum-stand-prompt" id="standPrompt" style="display:none;">
+          <button type="button" class="btn-stand-bench" id="btnStandBench" title="Stand up and continue walking">
+            <span class="stand-icon">🚶</span>
+            <span>Stand Up & Explore Gallery</span>
+          </button>
+        </div>
+        <div class="museum-art-prompt-badge" id="artPromptBadge" style="display:none;">
+          <span>🔍 Tap artwork to inspect</span>
+        </div>
+      </div>
+
       <!-- Artwork Inspection Overlay Modal -->
       <div class="museum-artwork-modal" id="artworkModal" style="display:none;">
         <div class="artwork-modal-backdrop" id="artworkModalBackdrop"></div>
@@ -1012,6 +1031,75 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const moveDirection = { forward: 0, right: 0 };
   const keysDown = {};
 
+  // Interactive Prompts (Bench & Artworks)
+  const benchPrompt = container.querySelector('#benchPrompt');
+  const standPrompt = container.querySelector('#standPrompt');
+  const artPromptBadge = container.querySelector('#artPromptBadge');
+  const btnSitBench = container.querySelector('#btnSitBench');
+  const btnStandBench = container.querySelector('#btnStandBench');
+
+  let isSeatedOnBench = false;
+
+  function sitOnBench() {
+    soundFx.pop(480);
+    isSeatedOnBench = true;
+    if (benchPrompt) benchPrompt.style.display = 'none';
+    if (standPrompt) standPrompt.style.display = 'block';
+
+    // Cinematic mood lighting (dim ambient spotlights)
+    gsap.to(ambientLight, { intensity: 0.22, duration: 1.4 });
+    gsap.to(hemiLight, { intensity: 0.15, duration: 1.4 });
+    gsap.to(cpSpot, { intensity: 5.5, duration: 1.4 });
+
+    // Smoothly drop camera to seated height on the leather bench facing the screen
+    gsap.to(camera.position, {
+      x: 0,
+      y: 1.35,
+      z: rotundaZ + 5.8,
+      duration: 1.8,
+      ease: 'power2.inOut'
+    });
+    gsap.to(currentLookAtTarget, {
+      x: 0,
+      y: 2.8,
+      z: rotundaZ + 0.18,
+      duration: 1.8,
+      ease: 'power2.inOut',
+      onUpdate: () => camera.lookAt(currentLookAtTarget),
+      onComplete: () => {
+        setTimeout(showProposalModal, 500);
+      }
+    });
+  }
+
+  function standUpFromBench() {
+    soundFx.pop(520);
+    isSeatedOnBench = false;
+    if (standPrompt) standPrompt.style.display = 'none';
+
+    // Restore museum lighting
+    gsap.to(ambientLight, { intensity: 0.75, duration: 1.2 });
+    gsap.to(hemiLight, { intensity: 0.45, duration: 1.2 });
+    gsap.to(cpSpot, { intensity: 4.5, duration: 1.2 });
+
+    gsap.to(camera.position, {
+      x: 0,
+      y: 1.7,
+      z: rotundaZ + 7.5,
+      duration: 1.2,
+      ease: 'power2.out',
+      onComplete: () => {
+        const camDir = new THREE.Vector3();
+        camera.getWorldDirection(camDir);
+        walkYaw = Math.atan2(camDir.x, camDir.z);
+        walkPitch = 0;
+      }
+    });
+  }
+
+  btnSitBench?.addEventListener('click', sitOnBench);
+  btnStandBench?.addEventListener('click', standUpFromBench);
+
   function setMode(mode) {
     currentMode = mode;
     clearTimeout(tourAdvanceTimeout);
@@ -1022,6 +1110,9 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       museumTourDock.style.display = 'block';
       mobileControls.style.display = 'none';
       desktopHint.style.display = 'none';
+      if (standPrompt) standPrompt.style.display = 'none';
+      if (benchPrompt) benchPrompt.style.display = 'none';
+      isSeatedOnBench = false;
       isTourPlaying = true;
       if (tourPlayIcon) tourPlayIcon.textContent = '⏸';
       goToWaypoint(tourIndex);
@@ -1035,9 +1126,11 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         desktopHint.style.display = 'block';
       }
       isTourPlaying = false;
-      // Initialize walk orientation from current camera position
-      walkYaw = Math.atan2(currentLookAtTarget.x - camera.position.x, currentLookAtTarget.z - camera.position.z);
-      walkPitch = 0;
+      // Initialize walk orientation accurately from current camera world direction
+      const camDir = new THREE.Vector3();
+      camera.getWorldDirection(camDir);
+      walkYaw = Math.atan2(camDir.x, camDir.z);
+      walkPitch = Math.asin(Math.max(-0.95, Math.min(0.95, camDir.y)));
     }
   }
 
@@ -1061,20 +1154,21 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   let prevMouseY = 0;
 
   canvasContainer.addEventListener('mousedown', (e) => {
-    if (currentMode !== 'walk') return;
+    if (currentMode !== 'walk' || isSeatedOnBench) return;
     isPointerDragging = true;
     prevMouseX = e.clientX;
     prevMouseY = e.clientY;
   });
 
   window.addEventListener('mousemove', (e) => {
-    if (!isPointerDragging || currentMode !== 'walk') return;
+    if (!isPointerDragging || currentMode !== 'walk' || isSeatedOnBench) return;
     const dx = e.clientX - prevMouseX;
     const dy = e.clientY - prevMouseY;
     prevMouseX = e.clientX;
     prevMouseY = e.clientY;
 
-    walkYaw -= dx * 0.004;
+    // Moving mouse to the right rotates camera to the right
+    walkYaw += dx * 0.0035;
     walkPitch -= dy * 0.003;
     walkPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, walkPitch));
   });
@@ -1104,13 +1198,14 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         const touch = e.changedTouches[i];
         if (touch.identifier === joystickTouchId) {
           handleJoystickMove(touch);
-        } else if (touch.identifier === lookTouchId && currentMode === 'walk') {
+        } else if (touch.identifier === lookTouchId && currentMode === 'walk' && !isSeatedOnBench) {
           const dx = touch.clientX - prevTouchLookX;
           const dy = touch.clientY - prevTouchLookY;
           prevTouchLookX = touch.clientX;
           prevTouchLookY = touch.clientY;
-          walkYaw -= dx * 0.005;
-          walkPitch -= dy * 0.004;
+          // Swiping to the right rotates camera to the right
+          walkYaw += dx * 0.0045;
+          walkPitch -= dy * 0.0035;
           walkPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, walkPitch));
         }
       }
@@ -1193,6 +1288,17 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     if (cpHit.length > 0) {
       soundFx.sparkle();
       showProposalModal();
+      return;
+    }
+
+    // Check click on Gallery Bench
+    const benchHit = raycaster.intersectObject(benchSeat);
+    if (benchHit.length > 0) {
+      if (isSeatedOnBench) {
+        standUpFromBench();
+      } else {
+        sitOnBench();
+      }
       return;
     }
 
@@ -1400,7 +1506,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     animationFrameId = requestAnimationFrame(animate);
 
     // If in Free Walk Mode, process movement
-    if (currentMode === 'walk') {
+    if (currentMode === 'walk' && !isSeatedOnBench) {
       let forwardDelta = 0;
       let strafeDelta = 0;
 
@@ -1420,11 +1526,17 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         const normFwd = (forwardDelta / Math.max(1, mag)) * walkSpeed;
         const normStf = (strafeDelta / Math.max(1, mag)) * walkSpeed;
 
-        const sinYaw = Math.sin(walkYaw);
-        const cosYaw = Math.cos(walkYaw);
+        // Obtain camera forward vector projected on horizontal floor (Y = 0)
+        const forwardVec = new THREE.Vector3();
+        camera.getWorldDirection(forwardVec);
+        forwardVec.y = 0;
+        forwardVec.normalize();
 
-        camera.position.x += normFwd * sinYaw + normStf * cosYaw;
-        camera.position.z += normFwd * cosYaw - normStf * sinYaw;
+        // Right horizontal vector is forward cross UP (0, 1, 0)
+        const rightVec = new THREE.Vector3().crossVectors(forwardVec, new THREE.Vector3(0, 1, 0)).normalize();
+
+        camera.position.addScaledVector(forwardVec, normFwd);
+        camera.position.addScaledVector(rightVec, normStf);
 
         // Collision bounds (keep inside gallery hall)
         camera.position.x = Math.max(-hallWidth / 2 + 1.2, Math.min(hallWidth / 2 - 1.2, camera.position.x));
@@ -1446,6 +1558,38 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         camera.position.z + Math.cos(walkYaw) * Math.cos(walkPitch) * lookDist
       );
       camera.lookAt(currentLookAtTarget);
+    }
+
+    // Proximity checks when in walk mode
+    if (currentMode === 'walk') {
+      const benchPos = new THREE.Vector3(0, 1.7, rotundaZ + 5.8);
+      const distToBench = camera.position.distanceTo(benchPos);
+      if (distToBench < 4.5 && !isSeatedOnBench) {
+        if (benchPrompt) benchPrompt.style.display = 'block';
+      } else {
+        if (benchPrompt) benchPrompt.style.display = 'none';
+      }
+
+      // Nearby artwork hint badge
+      let nearArt = null;
+      for (const art of interactiveArtworks) {
+        const d = camera.position.distanceTo(art.targetLookAt);
+        if (d < 3.8) {
+          nearArt = art;
+          break;
+        }
+      }
+      if (nearArt && !isSeatedOnBench) {
+        if (artPromptBadge) {
+          artPromptBadge.style.display = 'block';
+          artPromptBadge.innerHTML = `<span>🔍 Tap to view Exhibit #${nearArt.index + 1}: ${nearArt.data.title}</span>`;
+        }
+      } else {
+        if (artPromptBadge) artPromptBadge.style.display = 'none';
+      }
+    } else {
+      if (benchPrompt) benchPrompt.style.display = 'none';
+      if (artPromptBadge) artPromptBadge.style.display = 'none';
     }
 
     renderer.render(scene, camera);
