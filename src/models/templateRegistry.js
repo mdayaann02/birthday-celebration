@@ -403,8 +403,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     icon: "🥺",
     description: "Ultra-aesthetic heartfelt reconciliation: Interactive Kintsugi heart mending, cathartic venting room with projectile arsenal, legally binding penance deed, flip memories polaroids with voice apology memo, The Sweetheart Accords peace treaty with royal signature canvas, scratch-off reconciliation coupons, and runaway verdict.",
     defaultTheme: {
-      primary: "#6366f1",
-      bgGradient: "radial-gradient(circle at 50% 15%, #181c33 0%, #0f1222 55%, #070913 100%)",
+      primary: "#e07a5f",
+      bgGradient: "radial-gradient(120% 90% at 50% 10%, #24191d 0%, #171115 50%, #0d090c 100%)",
       accent: "#fbbf24"
     },
     defaultData: {

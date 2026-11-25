@@ -993,7 +993,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     ];
 
     specificBox.innerHTML = `
-      <div class="section-title">🥺 Multi-Page Apology Details (Stage 1 to 7)</div>
+      <div class="section-title">🥺 Sincere Apology Chapters & Details (Chapters 1 to 8)</div>
 
       <!-- Target Face Photo for Stage 2 Vent Room -->
       <div class="form-group" style="background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.32); border-radius: 14px; padding: 14px; margin-bottom: 18px;">
