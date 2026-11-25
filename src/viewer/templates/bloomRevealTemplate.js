@@ -252,27 +252,32 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
           </div>
         </section>
 
-        <!-- SECTION 2: POLAROIDS GALLERY (Cd) -->
+        <!-- SECTION 2: POLAROIDS GALLERY (Cd - Memories Cascade) -->
         <section class="bloom-anim-sec relative flex min-h-screen w-full items-center justify-center px-6 py-24"
           style="background-color: #DDB8DD; color: #360f5a;">
-          <div class="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 sm:grid-cols-3 md:gap-10 lg:grid-cols-5">
-            ${polaroids.map((imgSrc, idx) => `
-              <figure class="mx-auto" style="padding: 12px 12px 42px 12px; background: #fff; box-shadow: 0 14px 32px -10px rgba(54,15,90,0.4), 0 6px 12px rgba(0,0,0,0.18); border-radius: 3px; transform: rotate(${POLAROID_TILTS[idx % POLAROID_TILTS.length]}deg); transition: transform 0.3s ease, box-shadow 0.3s ease;">
-                <img src="${imgSrc}" alt="" draggable="false" class="block h-40 w-40 object-cover sm:h-44 sm:w-44 md:h-48 md:w-48" loading="lazy" />
-              </figure>
-            `).join('')}
+          <div class="bloom-polaroids-grid mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 sm:grid-cols-3 md:gap-10 lg:grid-cols-5">
+            ${polaroids.map((imgSrc, idx) => {
+              const tilt = POLAROID_TILTS[idx % POLAROID_TILTS.length];
+              const delay = (idx * 0.35).toFixed(2);
+              return `
+                <figure class="bloom-polaroid-item mx-auto" data-idx="${idx}"
+                  style="padding: 12px 12px 42px 12px; background: #fff; box-shadow: 0 14px 32px -10px rgba(54,15,90,0.4), 0 6px 12px rgba(0,0,0,0.18); border-radius: 3px; --tilt: ${tilt}deg; --delay: ${delay}s;">
+                  <img src="${imgSrc}" alt="" draggable="false" class="block h-40 w-40 object-cover sm:h-44 sm:w-44 md:h-48 md:w-48" loading="lazy" />
+                </figure>
+              `;
+            }).join('')}
           </div>
         </section>
 
         <!-- SECTION 3: THE LOVE LETTER (Td - 260vh Sticky Scroll Reveal) -->
         <section id="bloomSecLetter" class="bloom-sec-letter relative w-full" style="height: 260vh; background-image: url('/bloom/section3-bg.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-          <div id="bloomLetterStickyFrame" class="bloom-letter-sticky-frame sticky top-0 z-10 flex h-screen w-full items-center justify-center px-6" style="height: 100vh; height: 100dvh;">
-            <div class="w-full max-w-3xl">
+          <div id="bloomLetterStickyFrame" class="bloom-letter-sticky-frame sticky top-0 z-10 flex h-screen w-full items-center justify-center px-6">
+            <div class="bloom-anim-sec w-full max-w-3xl">
               <div class="bloom-letter-card relative mx-auto w-full rounded-sm"
-                style="background: linear-gradient(180deg, #fdfaf3 0%, #f8f1e4 100%); padding: clamp(1.25rem, 4vw, 3.5rem) clamp(1rem, 4vw, 3rem); box-shadow: 0 30px 60px -20px rgba(54,15,90,0.35), 0 12px 24px -12px rgba(54,15,90,0.25), inset 0 0 40px rgba(180,150,90,0.08); border: 1px solid rgba(180,150,90,0.18);">
-                <p class="text-center" style="font-family: 'Caveat', cursive; color: #360f5a; font-size: clamp(1.05rem, 2.3vw, 1.85rem); line-height: 1.6; letter-spacing: 0.01em;">
+                style="background: linear-gradient(180deg, #fdfaf3 0%, #f8f1e4 100%); padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 3.5rem); box-shadow: 0 30px 60px -20px rgba(54,15,90,0.35), 0 12px 24px -12px rgba(54,15,90,0.25), inset 0 0 40px rgba(180,150,90,0.08); border: 1px solid rgba(180,150,90,0.18);">
+                <p class="text-center" style="font-family: 'Caveat', cursive; color: #360f5a; font-size: clamp(1.2rem, 2.4vw, 1.9rem); line-height: 1.7; letter-spacing: 0.01em;">
                   ${words.map((word, i) => `
-                    <span class="bloom-letter-word" data-w="${i}" style="opacity: 0.08; display: inline-block; margin-right: 0.3em; transition: opacity 0.25s ease;">${word}</span>
+                    <span class="bloom-letter-word" data-w="${i}" style="opacity: 0.08; display: inline-block; margin-right: 0.35em; transition: opacity 0.25s ease;">${word}</span>
                   `).join('')}
                 </p>
               </div>
@@ -541,12 +546,6 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
       });
     });
 
-    // 2. Scroll-Illuminated Letter (Td - Stationary Pinned Card with Word-by-Word Reveal)
-    const secLetter = container.querySelector('#bloomSecLetter');
-    const stickyFrame = container.querySelector('#bloomLetterStickyFrame');
-    const wordSpans = container.querySelectorAll('.bloom-letter-word');
-    const totalWords = wordSpans.length;
-
     // Detect scroll parent (window in viewer, or .preview-frame-container in studio editor)
     function findScrollParent(el) {
       let cur = el ? el.parentElement : null;
@@ -563,13 +562,49 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
     const scrollParent = findScrollParent(container);
     const isWindowScroll = scrollParent === window;
 
-    // Inside phone chassis or custom container, match sticky frame height to the chassis viewport
-    if (!isWindowScroll && stickyFrame) {
-      stickyFrame.style.height = `${scrollParent.clientHeight}px`;
+    // 2. Section In-View Scale & Fade Transitions (vd from Lovable)
+    const animSections = container.querySelectorAll('.bloom-anim-sec');
+    const secObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+        } else {
+          entry.target.classList.remove('in-view');
+        }
+      });
+    }, { threshold: 0.15, root: isWindowScroll ? null : scrollParent });
+    animSections.forEach(sec => secObserver.observe(sec));
+
+    // 3. Polaroids / Memories Cascading Entrance (Cd from Lovable)
+    const polaroidsGrid = container.querySelector('.bloom-polaroids-grid');
+    const polaroidItems = container.querySelectorAll('.bloom-polaroid-item');
+    if (polaroidsGrid && polaroidItems.length > 0) {
+      const polObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            polaroidItems.forEach(item => item.classList.add('in-view'));
+            polObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, root: isWindowScroll ? null : scrollParent });
+      polObserver.observe(polaroidsGrid);
+    }
+
+    // 4. Scroll-Illuminated Letter (Td from Lovable - Native Sticky Card with Word-by-Word Reveal)
+    const secLetter = container.querySelector('#bloomSecLetter');
+    const stickyFrame = container.querySelector('#bloomLetterStickyFrame');
+    const wordSpans = container.querySelectorAll('.bloom-letter-word');
+    const totalWords = wordSpans.length;
+
+    // Inside phone chassis or custom container, match height to container
+    if (!isWindowScroll && secLetter && stickyFrame) {
+      const ch = scrollParent.clientHeight;
+      secLetter.style.height = `${ch * 2.6}px`;
+      stickyFrame.style.height = `${ch}px`;
     }
 
     function handleLetterScroll() {
-      if (!secLetter || !stickyFrame) return;
+      if (!secLetter) return;
 
       const secRect = secLetter.getBoundingClientRect();
       const viewportH = isWindowScroll ? window.innerHeight : scrollParent.clientHeight;
@@ -588,33 +623,6 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
       wordSpans.forEach((span, i) => {
         span.style.opacity = i < illuminatedCount ? '1' : '0.08';
       });
-
-      // Rock-solid stationary pinning guarantee:
-      // In all standard browsers, CSS position:sticky keeps the frame pinned at top: 0.
-      // If any ancestor container (e.g. editor phone chassis) interferes with sticky,
-      // fallback translation ensures the letter card stays completely stationary in viewport.
-      const frameRect = stickyFrame.getBoundingClientRect();
-      const frameRelTop = frameRect.top - viewportTop;
-
-      if (relativeTop <= 0 && relativeTop >= -maxScroll) {
-        // Section 3 is actively scrolling in the viewport
-        if (Math.abs(frameRelTop) > 4) {
-          // Sticky not holding natively -> apply JS compensation so letter card does NOT move
-          stickyFrame.style.transform = `translate3d(0, ${-relativeTop}px, 0)`;
-        } else {
-          stickyFrame.style.transform = '';
-        }
-      } else if (relativeTop < -maxScroll) {
-        // Passed section end -> scroll off with section
-        if (stickyFrame.style.transform) {
-          stickyFrame.style.transform = `translate3d(0, ${maxScroll}px, 0)`;
-        }
-      } else {
-        // Before section start
-        if (stickyFrame.style.transform) {
-          stickyFrame.style.transform = '';
-        }
-      }
     }
 
     const scrollTarget = isWindowScroll ? window : scrollParent;
@@ -626,7 +634,7 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
     // Call once immediately to set initial state
     handleLetterScroll();
 
-    // 3. Typewriter Effect (Od)
+    // 5. Typewriter Effect (Od)
     const typewriterContent = container.querySelector('#bloomTypewriterContent');
     const secEnding = container.querySelector('#bloomSecEnding');
     if (typewriterContent && secEnding) {
@@ -647,7 +655,7 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
             }, 60);
           }
         });
-      }, { threshold: 0.35 });
+      }, { threshold: 0.35, root: isWindowScroll ? null : scrollParent });
 
       observer.observe(secEnding);
     }
@@ -657,6 +665,7 @@ export function renderBloomRevealTemplate(container, data = {}, isMakerReview = 
       if (!isWindowScroll) {
         window.removeEventListener('scroll', handleLetterScroll);
       }
+      secObserver.disconnect();
     };
   }
 

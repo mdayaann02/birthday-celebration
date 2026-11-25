@@ -3349,7 +3349,7 @@ select option {
   background: #000000;
   border-radius: 18px;
   overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   -webkit-overflow-scrolling: touch !important;
   overscroll-behavior-y: contain !important;
   position: relative;
@@ -3397,7 +3397,7 @@ select option {
   box-shadow: var(--neu-shadow-lg), 0 25px 60px rgba(0, 0, 0, 0.45);
   position: relative;
   overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   -webkit-overflow-scrolling: touch !important;
   overscroll-behavior-y: contain !important;
   background: #000000;
@@ -5132,7 +5132,7 @@ select option {
 /* Mobile responsive adjustments (Screens <= 900px) */
 @media (max-width: 900px) {
   html, body {
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
     max-width: 100% !important;
     width: 100% !important;
     position: relative !important;
@@ -5150,7 +5150,7 @@ select option {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
   }
 
   .studio-navbar-glass {
@@ -15248,7 +15248,7 @@ select option {
 .preview-frame-container {
   border-radius: 28px;
   overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   -webkit-overflow-scrolling: touch !important;
   overscroll-behavior-y: contain !important;
   background: #000000;
@@ -15259,7 +15259,7 @@ select option {
   .preview-frame-container {
     border-radius: 20px;
     overflow-y: auto !important;
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
     -webkit-overflow-scrolling: touch !important;
   }
 }
@@ -21748,7 +21748,7 @@ html, body {
   background-color: #fbf7f5;
   font-family: 'Dancing Script', cursive;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .bloom-player-slot {
@@ -22455,6 +22455,44 @@ html, body {
 .sticky { position: -webkit-sticky; position: sticky; }
 .top-0 { top: 0; }
 
+/* ==========================================================================
+   BLOOM EXACT LOVABLE REVEAL ANIMATIONS & SYSTEM
+   ========================================================================== */
+
+/* Section In-View Animation (vd from Lovable: scale 0.85 -> 1.0, opacity 0 -> 1) */
+.bloom-anim-sec {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 1.1s cubic-bezier(0.22, 0.61, 0.36, 1), transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.bloom-anim-sec.in-view {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Section 2: Polaroids / Memories Cascading Entrance (Cd from Lovable) */
+.bloom-polaroid-item {
+  opacity: 0;
+  transform: translateY(24px) rotate(var(--tilt, 0deg));
+  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.3s ease;
+  transition-delay: var(--delay, 0s);
+  will-change: transform, opacity;
+}
+
+.bloom-polaroid-item.in-view {
+  opacity: 1;
+  transform: translateY(0) rotate(var(--tilt, 0deg));
+}
+
+.bloom-polaroid-item:hover {
+  transform: translateY(-8px) rotate(0deg) scale(1.05) !important;
+  box-shadow: 0 20px 40px -10px rgba(54, 15, 90, 0.5), 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+  transition-delay: 0s !important;
+  z-index: 10;
+}
+
 /* Section 3 Love Letter Sticky Pinning & Viewport Stability */
 #bloomContainer {
   overflow-x: clip !important;
@@ -22465,8 +22503,12 @@ html, body {
   overflow: hidden !important;
 }
 
-#templateRoot:has(#bloomContainer) {
-  overflow: visible !important;
+#templateRoot:has(#bloomContainer),
+#app:has(#bloomContainer),
+html:has(#bloomContainer),
+body:has(#bloomContainer) {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
 }
 
 .bloom-sec-letter {
@@ -22489,7 +22531,6 @@ html, body {
   justify-content: center !important;
   box-sizing: border-box !important;
   pointer-events: auto !important;
-  will-change: transform;
 }
 .z-0 { z-index: 0; }
 .z-10 { z-index: 10; }
