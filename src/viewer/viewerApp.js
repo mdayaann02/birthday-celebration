@@ -13,6 +13,7 @@ import { renderBloomRevealTemplate } from './templates/bloomRevealTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
 import { renderSorryTemplate } from './templates/sorryTemplate.js';
 import { renderMuseumTemplate } from './templates/museumTemplate.js';
+import { renderPaigaamTemplate } from './templates/paigaamTemplate.js';
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
   if (data?.primaryColor) {
@@ -35,6 +36,13 @@ export function renderViewerApp(container, templateId, data, isMakerReviewParam 
 }
 
 function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
+  if (templateId === 'birthday_paigaam' || templateId === 'paigaam') {
+    container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
+    const root = container.querySelector('#templateRoot');
+    renderPaigaamTemplate(root, data, isMakerReview);
+    return;
+  }
+
   if (templateId === 'bloom_reveal') {
     container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
     const root = container.querySelector('#templateRoot');

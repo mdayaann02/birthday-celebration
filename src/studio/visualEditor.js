@@ -1511,6 +1511,160 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         </div>
       </div>
     `;
+  } else if (templateId === 'birthday_paigaam' || templateId === 'paigaam') {
+    const paigaamPols = (data.polaroids && data.polaroids.length > 0) ? data.polaroids.map(p => ({
+      title: p.caption || p.title || '',
+      image: p.image || '/paigaam/bp-memory-1.jpg',
+      note: p.note || ''
+    })) : [
+      { title: "sunset ice-creams 🍦", image: "/paigaam/bp-memory-1.jpg", note: "You stole a bite of mine and pretended you didn’t." },
+      { title: "our cafe ☕", image: "/paigaam/bp-memory-2.jpg", note: "Same table, same order, every single time." },
+      { title: "rain walk ☔", image: "/paigaam/bp-memory-3.jpg", note: "Best soggy shoes of my life." },
+      { title: "the road trip!", image: "/paigaam/bp-memory-4.jpg", note: "Singing at the top of our lungs off-key." },
+      { title: "picnic day 🌸", image: "/paigaam/bp-memory-5.jpg", note: "Sandwiches, sunshine, and your giggles." },
+      { title: "movie night", image: "/paigaam/bp-memory-6.jpg", note: "You fell asleep 10 minutes in. A record." }
+    ];
+
+    const loveNotes = (data.loveNotes && data.loveNotes.length > 0) ? data.loveNotes.join('\n') : [
+      "Your laugh (especially the snort)",
+      "How you remember the tiny things",
+      "Your terrible-but-perfect dance moves",
+      "The way you make everyone feel at home",
+      "Your 2am thoughts",
+      "How brave you are, even when you’re scared"
+    ].join('\n');
+
+    const reasons = (data.reasonsList && data.reasonsList.length > 0) ? data.reasonsList.map(r => typeof r === 'object' ? (r.title || r.body) : r).join('\n') : (data.reasons && data.reasons.length > 0 ? data.reasons.join('\n') : [
+      "You make ordinary days feel like little adventures.",
+      "You are kind even when nobody is watching.",
+      "You turn my bad days around without even trying.",
+      "You are the first person I want to tell everything.",
+      "The world is softer with you in it."
+    ].join('\n'));
+
+    const noMsgs = (data.noMessages && data.noMessages.length > 0) ? data.noMessages.join('\n') : [
+      "How dare you click NO!",
+      "Excuse me?? Try that again 😤",
+      "Wrong button, birthday star 🙄",
+      "I’m telling everyone you said no 😭",
+      "My heart just did a tiny crack 💔",
+      "The YES button is getting lonely…",
+      "Okay now you’re just being silly 🙈",
+      "Fine. NO is officially out of order."
+    ].join('\n');
+
+    specificBox.innerHTML = `
+      <div class="section-title">💌 Birthday Paigaam Experience Settings</div>
+      
+      <!-- 1. Passcode & Cameo Photo -->
+      <div style="background:rgba(194,24,91,0.08); border:1px solid rgba(194,24,91,0.2); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#C2185B; font-size:14px; font-weight:700; margin-bottom:8px;">🔐 Screen 1: Passcode & Cameo Frame</h4>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">4-Digit Passcode</label>
+            <input type="text" maxlength="4" class="form-input" id="edPaigaamPasscode" value="${data.passcode || '1234'}" placeholder="1234" style="font-size:18px; font-weight:700; letter-spacing:4px;" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Passcode Hint</label>
+            <input type="text" class="form-input" id="edPaigaamPasscodeHint" value="${data.passcodeHint || 'Psst… it’s 1 2 3 4'}" placeholder="Psst… it’s 1 2 3 4" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Cameo Photo URL</label>
+          <input type="text" class="form-input" id="edPaigaamCameoImage" value="${data.cameoImage || data.recipientPhoto || '/paigaam/bp-share.jpg'}" placeholder="Image URL (or /paigaam/bp-share.jpg)" />
+        </div>
+      </div>
+
+      <!-- 2. Mascot & Playful Question -->
+      <div style="background:rgba(255,193,7,0.08); border:1px solid rgba(255,193,7,0.25); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#b45309; font-size:14px; font-weight:700; margin-bottom:8px;">🐰 Screen 2: Mascot Question & Escaping NO Button</h4>
+        <div class="form-group">
+          <label class="form-label">Question Text</label>
+          <input type="text" class="form-input" id="edPaigaamQuestion" value="${data.questionPrompt || 'I have a little surprise for you. Wanna see it?'}" />
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">NO Button Funny Escalations (One per line)</label>
+          <textarea rows="4" class="form-textarea" id="edPaigaamNoMessages">${noMsgs}</textarea>
+        </div>
+      </div>
+
+      <!-- 3. Wax-Sealed Unfolding Love Letter -->
+      <div style="background:rgba(238,157,180,0.12); border:1px solid rgba(238,157,180,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#C2185B; font-size:14px; font-weight:700; margin-bottom:8px;">✉️ Screen 3: Wax-Sealed Unfolding Letter</h4>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Salutation</label>
+            <input type="text" class="form-input" id="edPaigaamLetterSalutation" value="${data.letterSalutation || 'Dear ' + (data.recipientName || 'Meher') + ','}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sign-Off</label>
+            <input type="text" class="form-input" id="edPaigaamLetterSignoff" value="${data.letterSignoff || 'Forever yours,'}" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Letter Body (Separate paragraphs with double Enter)</label>
+          <textarea rows="6" class="form-textarea" id="edPaigaamLetterText">${data.letterText || 'Happy birthday, my favourite human.\n\nI wanted to give you something you can open again and again — so I made you this little corner of the internet, full of us.\n\nThank you for the laughs that make my stomach hurt, the late-night talks, and for being exactly, wonderfully you. I hope this year is soft on you, and full of everything you wish for.\n\nNow keep going — there’s more.'}</textarea>
+        </div>
+      </div>
+
+      <!-- 4. Cassette Voice Note & 5. Retro Vinyl Song -->
+      <div style="background:rgba(169,142,216,0.12); border:1px solid rgba(169,142,216,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#7c3aed; font-size:14px; font-weight:700; margin-bottom:8px;">📼 Screens 4 & 5: Voice Note & Music Box Soundtrack</h4>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Voice Note Heading</label>
+            <input type="text" class="form-input" id="edPaigaamVoiceTitle" value="${data.voiceTitle || 'Press play, I have something to say'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Voice Note Audio URL</label>
+            <input type="text" class="form-input" id="edPaigaamVoiceUrl" value="${data.voiceUrl || '/paigaam/bp-voice-demo.mp3'}" placeholder="/paigaam/bp-voice-demo.mp3" />
+          </div>
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Song Title</label>
+            <input type="text" class="form-input" id="edPaigaamSongTitle" value="${data.songTitle || 'Happy Birthday'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Custom Song Audio URL (leave blank for music box)</label>
+            <input type="text" class="form-input" id="edPaigaamSongUrl" value="${data.songUrl || ''}" placeholder="Leave empty for synthesized music box" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Scrapbook Memories & Love Notes -->
+      <div style="background:rgba(254,243,199,0.2); border:1px solid rgba(245,158,11,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#d97706; font-size:14px; font-weight:700; margin-bottom:8px;">📖 Screen 6: Scrapbook Polaroids & Love Notes</h4>
+        ${renderGenPolaroidsBlock('paigaam', 'Scrapbook Polaroids (tap card to see note on back)', paigaamPols)}
+        <div class="form-group" style="margin-top:14px;">
+          <label class="form-label">Things I Love About You (One per line)</label>
+          <textarea rows="4" class="form-textarea" id="edPaigaamLoveNotes">${loveNotes}</textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Reasons You’re Special Checklist (One per line)</label>
+          <textarea rows="4" class="form-textarea" id="edPaigaamReasons">${reasons}</textarea>
+        </div>
+      </div>
+
+      <!-- 7. Cake & Finale -->
+      <div style="background:rgba(244,114,182,0.1); border:1px solid rgba(244,114,182,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#db2777; font-size:14px; font-weight:700; margin-bottom:8px;">🎂 Screen 7: Birthday Cake & WhatsApp Thank-You</h4>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Finale Greeting</label>
+            <input type="text" class="form-input" id="edPaigaamFinaleTitle" value="${data.finaleTitle || 'Happy Birthday, ' + (data.recipientName || 'Meher') + '!'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Closing Line</label>
+            <input type="text" class="form-input" id="edPaigaamFinaleLine" value="${data.finaleLine || 'Here’s to you — today, and every day after.'}" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">WhatsApp Thank-You Message</label>
+          <input type="text" class="form-input" id="edPaigaamThankYouText" value="${data.thankYouText || 'I just opened my birthday surprise 🥹💕 Thank you, ' + (data.senderName || 'Rahul') + '!'}" />
+        </div>
+      </div>
+    `;
   }
 
   // Bind song preset buttons
@@ -2186,6 +2340,52 @@ export function renderVisualEditor(container, templateId, data, onChange) {
 
       const bloomPols = extractGenPols('bloom');
       if (Array.isArray(bloomPols)) updated.polaroids = bloomPols;
+    } else if (templateId === 'birthday_paigaam' || templateId === 'paigaam') {
+      const elPass = container.querySelector('#edPaigaamPasscode');
+      const elHint = container.querySelector('#edPaigaamPasscodeHint');
+      const elCameo = container.querySelector('#edPaigaamCameoImage');
+      const elQ = container.querySelector('#edPaigaamQuestion');
+      const elNo = container.querySelector('#edPaigaamNoMessages');
+      const elLSal = container.querySelector('#edPaigaamLetterSalutation');
+      const elLSig = container.querySelector('#edPaigaamLetterSignoff');
+      const elLText = container.querySelector('#edPaigaamLetterText');
+      const elVTit = container.querySelector('#edPaigaamVoiceTitle');
+      const elVUrl = container.querySelector('#edPaigaamVoiceUrl');
+      const elSTit = container.querySelector('#edPaigaamSongTitle');
+      const elSUrl = container.querySelector('#edPaigaamSongUrl');
+      const elNotes = container.querySelector('#edPaigaamLoveNotes');
+      const elReasons = container.querySelector('#edPaigaamReasons');
+      const elFTit = container.querySelector('#edPaigaamFinaleTitle');
+      const elFLine = container.querySelector('#edPaigaamFinaleLine');
+      const elTY = container.querySelector('#edPaigaamThankYouText');
+
+      if (elPass) updated.passcode = elPass.value.trim();
+      if (elHint) updated.passcodeHint = elHint.value;
+      if (elCameo) updated.cameoImage = elCameo.value;
+      if (elQ) updated.questionPrompt = elQ.value;
+      if (elNo) updated.noMessages = elNo.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (elLSal) updated.letterSalutation = elLSal.value;
+      if (elLSig) updated.letterSignoff = elLSig.value;
+      if (elLText) updated.letterText = elLText.value;
+      if (elVTit) updated.voiceTitle = elVTit.value;
+      if (elVUrl) updated.voiceUrl = elVUrl.value;
+      if (elSTit) updated.songTitle = elSTit.value;
+      if (elSUrl) updated.songUrl = elSUrl.value;
+      if (elNotes) updated.loveNotes = elNotes.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (elReasons) updated.reasonsList = elReasons.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (elFTit) updated.finaleTitle = elFTit.value;
+      if (elFLine) updated.finaleLine = elFLine.value;
+      if (elTY) updated.thankYouText = elTY.value;
+
+      const paigaamPols = extractGenPols('paigaam');
+      if (Array.isArray(paigaamPols) && paigaamPols.length > 0) {
+        updated.polaroids = paigaamPols.map(p => ({
+          image: p.image,
+          caption: p.title,
+          title: p.title,
+          note: p.note
+        }));
+      }
     }
 
     onChange(updated);

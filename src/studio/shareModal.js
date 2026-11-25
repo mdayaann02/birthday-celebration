@@ -76,6 +76,12 @@ export function getOccasionWhatsAppMessage(templateId, data, safeUrl) {
     return `Hey ${recipientName}, I made a little surprise for you... 🌸💜\n\nEnter the secret password to unlock your flowers and memories:\n${safeUrl}\n\nMade with all my love! ✨`;
   }
 
+  // 7. Birthday Paigaam (Love Letter Scrapbook)
+  if (tid === 'birthday_paigaam' || tid === 'paigaam') {
+    const pin = data.passcode || '1234';
+    return `Hey ${recipientName}, I made you a special birthday surprise! 🎂💌✨\n\nYou'll need the secret passcode to unlock it: *${pin}*\n\nTap here to unwrap your surprise:\n${safeUrl}\n\nMade with all my love! ♡`;
+  }
+
   // Default fallback
   return `I made something very special just for you, ${recipientName}! ❤️✨\n\nOpen your surprise celebration website here:\n${safeUrl}`;
 }

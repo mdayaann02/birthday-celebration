@@ -17,7 +17,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
   function getTemplateCategory(tid) {
     if (['our_museum'].includes(tid)) return 'museum';
     if (['long_romance', 'tree', 'blossom', 'bloom_reveal'].includes(tid)) return 'romance';
-    if (['birthday'].includes(tid)) return 'birthday';
+    if (['birthday', 'birthday_paigaam', 'paigaam'].includes(tid)) return 'birthday';
     if (['sorry'].includes(tid)) return 'sorry';
     return 'all';
   }

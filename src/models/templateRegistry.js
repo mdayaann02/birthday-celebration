@@ -550,5 +550,80 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         }
       ]
     }
+  },
+
+  birthday_paigaam: {
+    id: "birthday_paigaam",
+    name: "Birthday Paigaam (Love Letter Scrapbook)",
+    badge: "Paigaam Love Letter 💌🎂",
+    icon: "💌",
+    description: "Authentic Paigaam-style 7-stage celebration: Secret PIN Cameo unlock, playful bunny question with escaping NO button, wax-sealed unfolding love letter, nostalgic cassette voice note, retro turntable music box, flipbook polaroid memory scrapbook with love notes, and blowable cake candles with confetti & fireworks.",
+    defaultTheme: {
+      primary: "#C2185B",
+      bgGradient: "radial-gradient(120% 88% at 50% 24%, #FFF4D6 0%, #F9C6D4 50%, #FFD9B8 100%)",
+      accent: "#C2185B",
+      blush: "#F9C6D4",
+      cream: "#FFF4D6",
+      peach: "#FFD9B8",
+      lavender: "#D9C8F5"
+    },
+    defaultData: {
+      recipientName: "Meher",
+      senderName: "Rahul",
+      eventDate: "2026-11-25T00:00",
+      enableCountdownLock: false,
+      passcode: "1234",
+      passcodeHint: "Psst… it’s 1 2 3 4",
+      cameoImage: "/paigaam/bp-share.jpg",
+      questionPrompt: "I have a little surprise for you. Wanna see it?",
+      noMessages: [
+        "How dare you click NO!",
+        "Excuse me?? Try that again 😤",
+        "Wrong button, birthday star 🙄",
+        "I’m telling everyone you said no 😭",
+        "My heart just did a tiny crack 💔",
+        "The YES button is getting lonely…",
+        "Okay now you’re just being silly 🙈",
+        "Fine. NO is officially out of order."
+      ],
+      letterTitle: "for Meher",
+      letterSalutation: "Dear Meher,",
+      letterText: "Happy birthday, my favourite human.\n\nI wanted to give you something you can open again and again — so I made you this little corner of the internet, full of us.\n\nThank you for the laughs that make my stomach hurt, the late-night talks, and for being exactly, wonderfully you. I hope this year is soft on you, and full of everything you wish for.\n\nNow keep going — there’s more.",
+      letterSignoff: "Forever yours,",
+      voiceTitle: "Press play, I have something to say",
+      voiceSubtitle: "a voice note, just for you",
+      voiceUrl: "/paigaam/bp-voice-demo.mp3",
+      voiceLabel: "for Meher ♡ side A",
+      songTitle: "Happy Birthday",
+      songArtist: "a little music box",
+      songUrl: "",
+      polaroids: [
+        { image: "/paigaam/bp-memory-1.jpg", caption: "sunset ice-creams 🍦", note: "You stole a bite of mine and pretended you didn’t." },
+        { image: "/paigaam/bp-memory-2.jpg", caption: "our cafe ☕", note: "Same table, same order, every single time." },
+        { image: "/paigaam/bp-memory-3.jpg", caption: "rain walk ☔", note: "Best soggy shoes of my life." },
+        { image: "/paigaam/bp-memory-4.jpg", caption: "the road trip!", note: "Singing at the top of our lungs off-key." },
+        { image: "/paigaam/bp-memory-5.jpg", caption: "picnic day 🌸", note: "Sandwiches, sunshine, and your giggles." },
+        { image: "/paigaam/bp-memory-6.jpg", caption: "movie night", note: "You fell asleep 10 minutes in. A record." }
+      ],
+      loveNotes: [
+        "Your laugh (especially the snort)",
+        "How you remember the tiny things",
+        "Your terrible-but-perfect dance moves",
+        "The way you make everyone feel at home",
+        "Your 2am thoughts",
+        "How brave you are, even when you’re scared"
+      ],
+      reasonsList: [
+        "You make ordinary days feel like little adventures.",
+        "You are kind even when nobody is watching.",
+        "You turn my bad days around without even trying.",
+        "You are the first person I want to tell everything.",
+        "The world is softer with you in it."
+      ],
+      finaleTitle: "Happy Birthday, Meher!",
+      finaleLine: "Here’s to you — today, and every day after.",
+      cakeHint: "Make a wish… then tap the candles to blow them out 🕯️",
+      thankYouText: "I just opened my birthday surprise 🥹💕 Thank you, Rahul!"
+    }
   }
 };
