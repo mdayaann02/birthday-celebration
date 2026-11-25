@@ -24299,3 +24299,133 @@ body:has(#bloomContainer) {
     font-size: 12.5px;
   }
 }
+
+
+/* ==========================================================================
+   INTERACTIVE PROPOSAL BULLET NOTIFICATION & RUNAWAY NO BUTTON
+   ========================================================================== */
+
+.proposal-bullet {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1550;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(38, 12, 24, 0.95), rgba(18, 6, 12, 0.98));
+  border: 1.5px solid rgba(244, 114, 182, 0.7);
+  box-shadow: 0 8px 30px rgba(225, 29, 72, 0.45), 0 0 24px rgba(244, 114, 182, 0.4);
+  border-radius: 999px;
+  padding: 8px 18px 8px 14px;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: bulletFloatingPulse 2.4s infinite ease-in-out;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  user-select: none;
+}
+
+@keyframes bulletFloatingPulse {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    box-shadow: 0 8px 30px rgba(225, 29, 72, 0.45), 0 0 16px rgba(244, 114, 182, 0.35);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-5px);
+    box-shadow: 0 12px 38px rgba(225, 29, 72, 0.65), 0 0 28px rgba(244, 114, 182, 0.6);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+    box-shadow: 0 8px 30px rgba(225, 29, 72, 0.45), 0 0 16px rgba(244, 114, 182, 0.35);
+  }
+}
+
+.proposal-bullet:hover {
+  transform: translateX(-50%) scale(1.04);
+  border-color: #ffd700;
+  box-shadow: 0 12px 40px rgba(225, 29, 72, 0.75), 0 0 32px rgba(212, 175, 55, 0.55);
+}
+
+.bullet-sparkle {
+  font-size: 24px;
+  animation: sparkleTwist 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes sparkleTwist {
+  0% { transform: rotate(-8deg) scale(0.95); }
+  100% { transform: rotate(10deg) scale(1.1); }
+}
+
+.bullet-text-wrap {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.bullet-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #f472b6;
+}
+
+.bullet-title {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.bullet-badge-tap {
+  background: linear-gradient(135deg, #e11d48, #d4af37);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 10px rgba(225, 29, 72, 0.4);
+}
+
+/* Runaway No Button */
+.btn-banner-runaway-no {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+  touch-action: manipulation;
+  position: relative;
+}
+
+.btn-banner-runaway-no:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
+
+@media (max-height: 540px), (orientation: landscape) and (max-height: 600px) {
+  .proposal-bullet {
+    top: 10px;
+    padding: 6px 14px;
+    gap: 8px;
+  }
+  .bullet-sparkle {
+    font-size: 18px;
+  }
+  .bullet-title {
+    font-size: 12px;
+  }
+  .bullet-badge-tap {
+    padding: 4px 10px;
+    font-size: 10.5px;
+  }
+}

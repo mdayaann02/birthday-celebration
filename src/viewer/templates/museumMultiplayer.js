@@ -15,6 +15,11 @@ export class MuseumMultiplayer {
     this.bc = null;
     this.isDestroyed = false;
     this.pollingInterval = null;
+    this.outboundActions = [];
+    this.lastActionId = 0;
+    this.seenActionIds = new Set();
+    this.isPollingInProgress = false;
+    this.currentState = null;
 
     this.init();
   }
@@ -32,13 +37,13 @@ export class MuseumMultiplayer {
       }
     }
 
-    // 2. Layer 2: WebSockets to backend server
+    // 2. Layer 2: WebSockets to backend server (when on direct host or matching protocol)
     this.connectWebSocket();
 
-    // 3. Layer 3: HTTP Polling Fallback to Oracle VM server
+    // 3. Layer 3: Ultra-Fast HTTP Sync (every 300ms) with Action Queuing
     this.pollingInterval = setInterval(() => {
       this.pollHttpFallback();
-    }, 450);
+    }, 300);
 
     // Announce Join
     this.broadcast({
@@ -119,19 +124,21 @@ export class MuseumMultiplayer {
   }
 
   async pollHttpFallback() {
-    if (this.isDestroyed) return;
+    if (this.isDestroyed || this.isPollingInProgress) return;
+    this.isPollingInProgress = true;
     try {
-      const apiEndpoint = (window.location.hostname === '155.248.255.29' || window.location.hostname === 'localhost')
-        ? '/api/museum/sync'
-        : 'http://155.248.255.29:3000/api/museum/sync';
+      const actionsToSend = [...this.outboundActions];
+      this.outboundActions = [];
 
-      const res = await fetch(apiEndpoint, {
+      const res = await fetch('/api/museum/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           room: this.room,
           userId: this.userId,
-          state: this.currentState
+          state: this.currentState,
+          actions: actionsToSend,
+          lastActionId: this.lastActionId
         })
       });
 
@@ -148,9 +155,33 @@ export class MuseumMultiplayer {
           });
           this.onPeerUpdate(new Map(this.peers));
         }
+
+        if (body.latestActionId) {
+          this.lastActionId = Math.max(this.lastActionId, body.latestActionId);
+        }
+
+        if (body.actions && Array.isArray(body.actions)) {
+          body.actions.forEach(act => {
+            const actKey = act._actionId || (act.userId + '_' + act.action + '_' + (act.timestamp || Date.now()));
+            if (!this.seenActionIds.has(actKey)) {
+              this.seenActionIds.add(actKey);
+              if (this.seenActionIds.size > 200) {
+                const first = this.seenActionIds.values().next().value;
+                this.seenActionIds.delete(first);
+              }
+              this.handleIncomingMessage(act);
+            }
+          });
+        }
+      } else {
+        if (actionsToSend.length > 0) {
+          this.outboundActions = [...actionsToSend, ...this.outboundActions];
+        }
       }
     } catch (e) {
       // Offline fallback silent
+    } finally {
+      this.isPollingInProgress = false;
     }
   }
 
@@ -178,9 +209,13 @@ export class MuseumMultiplayer {
       name: this.userProfile.name,
       gender: this.userProfile.gender,
       action,
+      timestamp: Date.now(),
       ...extra
     };
     this.broadcast(payload);
+    this.outboundActions.push(payload);
+    // Immediately trigger sync for real-time delivery
+    this.pollHttpFallback();
   }
 
   sendChat(text) {
@@ -190,9 +225,12 @@ export class MuseumMultiplayer {
       userId: this.userId,
       name: this.userProfile.name,
       gender: this.userProfile.gender,
-      text
+      text,
+      timestamp: Date.now()
     };
     this.broadcast(payload);
+    this.outboundActions.push(payload);
+    this.pollHttpFallback();
   }
 
   broadcast(payload) {

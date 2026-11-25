@@ -8,6 +8,10 @@
       "destination": "http://155.248.255.29:3000/uploads/$1"
     },
     {
+      "source": "/api/museum/(.*)",
+      "destination": "http://155.248.255.29:3000/api/museum/$1"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

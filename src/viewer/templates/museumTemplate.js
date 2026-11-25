@@ -540,7 +540,19 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         </div>
       </div>
 
-      <!-- Real-Time Interactive Kneeling Proposal Banner -->
+      <!-- Floating Interactive Proposal Notification Bullet (Shown to girl first) -->
+      <div class="proposal-bullet" id="proposalBullet" style="display:none;" role="button" tabindex="0" title="Click to open proposal">
+        <div class="bullet-sparkle">💍 ✨</div>
+        <div class="bullet-text-wrap">
+          <span class="bullet-eyebrow" id="bulletEyebrow">PROPOSAL FOR YOU</span>
+          <span class="bullet-title" id="bulletTitle">A Special Question Awaits...</span>
+        </div>
+        <div class="bullet-badge-tap">
+          <span>Tap to Open 💌</span>
+        </div>
+      </div>
+
+      <!-- Real-Time Interactive Kneeling Proposal Banner / Full Message Modal -->
       <div class="realtime-proposal-banner" id="realtimeProposalBanner" style="display:none;">
         <div class="proposal-banner-backdrop" id="realtimeProposalBackdrop"></div>
         <div class="proposal-banner-card">
@@ -553,7 +565,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             <button type="button" class="btn-banner-accept" id="btnAcceptRealtimeProposal">
               <span>${proposalYesBtn}</span>
             </button>
-            <button type="button" class="btn-banner-stand" id="btnStandRealtimeProposal">
+            <button type="button" class="btn-banner-runaway-no" id="btnRunawayNoProposal">
+              <span>No 💔</span>
+            </button>
+            <button type="button" class="btn-banner-stand" id="btnStandRealtimeProposal" style="display:none;">
               <span>Stand Up</span>
             </button>
           </div>
@@ -1194,10 +1209,14 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const myAvatarTag = container.querySelector('#myAvatarTag');
 
   // Real-Time Proposal Banner Elements
+  const proposalBullet = container.querySelector('#proposalBullet');
+  const bulletEyebrow = container.querySelector('#bulletEyebrow');
+  const bulletTitle = container.querySelector('#bulletTitle');
   const realtimeProposalBanner = container.querySelector('#realtimeProposalBanner');
   const realtimeProposalBackdrop = container.querySelector('#realtimeProposalBackdrop');
   const btnCloseRealtimeBanner = container.querySelector('#btnCloseRealtimeBanner');
   const btnAcceptRealtimeProposal = container.querySelector('#btnAcceptRealtimeProposal');
+  const btnRunawayNoProposal = container.querySelector('#btnRunawayNoProposal');
   const btnStandRealtimeProposal = container.querySelector('#btnStandRealtimeProposal');
   const btnDoneRealtimeProposal = container.querySelector('#btnDoneRealtimeProposal');
   const realtimeBannerActions = container.querySelector('#realtimeBannerActions');
@@ -1324,29 +1343,21 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         localAvatar.setSurprise(true);
       }
 
+      activeProposalData = data;
       soundFx.sparkle();
 
-      // Display real-time banner for recipient with yes button
-      if (realtimeProposalBanner) {
-        if (realtimeBannerEyebrow) realtimeBannerEyebrow.textContent = `💍 ${data.proposerName || 'YOUR LOVE'} IS PROPOSING!`;
-        if (realtimeBannerTitle) realtimeBannerTitle.textContent = `${data.proposerName || 'Your Love'} Drops Down On One Knee`;
-        if (realtimeBannerQuestion) realtimeBannerQuestion.textContent = data.question || proposalQuestion;
-        if (realtimeBannerActions) realtimeBannerActions.style.display = 'flex';
-        if (realtimeCelebrateBox) realtimeCelebrateBox.style.display = 'none';
-        if (btnStandRealtimeProposal) btnStandRealtimeProposal.style.display = 'none';
-        if (btnAcceptRealtimeProposal) btnAcceptRealtimeProposal.style.display = 'inline-flex';
-        realtimeProposalBanner.style.display = 'flex';
+      // Show floating interactive proposal notification bullet to recipient
+      if (proposalBullet) {
+        if (bulletEyebrow) bulletEyebrow.textContent = `💍 ${data.proposerName ? data.proposerName.toUpperCase() : 'YOUR LOVE'} IS ASKING...`;
+        if (bulletTitle) bulletTitle.textContent = 'Special Proposal For You ✨';
+        proposalBullet.style.display = 'flex';
+        gsap.fromTo(proposalBullet,
+          { scale: 0.7, opacity: 0, y: -25 },
+          { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: 'back.out(2)' }
+        );
       }
     } else if (data.action === 'propose_accept') {
-      soundFx.sparkle();
-      // Grand celebratory confetti
-      const end = Date.now() + 5 * 1000;
-      const colors = ['#e63946', '#ffb703', '#f4a261', '#e76f51', '#ffffff', '#ffd166', '#ec4899'];
-      (function frame() {
-        confetti({ particleCount: 7, angle: 60, spread: 60, origin: { x: 0 }, colors });
-        confetti({ particleCount: 7, angle: 120, spread: 60, origin: { x: 1 }, colors });
-        if (Date.now() < end) requestAnimationFrame(frame);
-      }());
+      triggerConfettiBlasters();
 
       if (localAvatar) {
         localAvatar.burstHearts(scene, rec.avatar.group.position);
@@ -1355,9 +1366,15 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       }
       rec.avatar.burstHearts(scene, localAvatar ? localAvatar.group.position : null);
 
+      if (proposalBullet) proposalBullet.style.display = 'none';
+
       if (realtimeProposalBanner) {
         if (realtimeBannerActions) realtimeBannerActions.style.display = 'none';
         if (realtimeCelebrateBox) {
+          const cTitle = realtimeCelebrateBox.querySelector('.celebrate-title');
+          const cMsg = realtimeCelebrateBox.querySelector('.celebrate-text');
+          if (cTitle) cTitle.textContent = 'She Said YES! 💍💖';
+          if (cMsg) cMsg.textContent = `${data.acceptorName || 'She'} accepted your proposal! A lifetime of happiness begins now.`;
           realtimeCelebrateBox.style.display = 'block';
           gsap.fromTo(realtimeCelebrateBox,
             { scale: 0.88, opacity: 0, y: 20 },
@@ -1369,6 +1386,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     } else if (data.action === 'propose_stand') {
       rec.avatar.setKneeling(false);
       if (localAvatar) localAvatar.setSurprise(false);
+      if (proposalBullet) proposalBullet.style.display = 'none';
       if (realtimeProposalBanner) realtimeProposalBanner.style.display = 'none';
     }
   }
@@ -1508,8 +1526,137 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   });
 
   // --------------------------------------------------------------------------
-  // REAL-TIME 3D PROPOSAL SYSTEM (ONE KNEE + VELVET RING BOX)
+  // REAL-TIME 3D PROPOSAL SYSTEM (ONE KNEE + VELVET RING BOX + BULLET & RUNAWAY NO)
   // --------------------------------------------------------------------------
+  let activeProposalData = null;
+  let runawayNoCount = 0;
+  const runawayPhrases = [
+    "Are you sure? 😜",
+    "Can't click me! 🥰",
+    "You have to say YES! 💍",
+    "Only YES is allowed! 💖",
+    "Nice try! 😘",
+    "Destiny says YES! ✨"
+  ];
+
+  function triggerConfettiBlasters() {
+    soundFx.sparkle();
+    const end = Date.now() + 6 * 1000;
+    const colors = ['#e63946', '#ffb703', '#f4a261', '#e76f51', '#ffffff', '#ffd166', '#ec4899', '#f43f5e', '#a855f7'];
+
+    // Heavy initial blast from bottom-left and bottom-right cannons
+    confetti({
+      particleCount: 85,
+      angle: 60,
+      spread: 75,
+      origin: { x: 0, y: 0.88 },
+      colors
+    });
+    confetti({
+      particleCount: 85,
+      angle: 120,
+      spread: 75,
+      origin: { x: 1, y: 0.88 },
+      colors
+    });
+    confetti({
+      particleCount: 65,
+      spread: 95,
+      origin: { x: 0.5, y: 0.65 },
+      colors
+    });
+
+    // Repeating barrage waves
+    (function blasterVolley() {
+      confetti({
+        particleCount: 8,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.88 },
+        colors
+      });
+      confetti({
+        particleCount: 8,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.88 },
+        colors
+      });
+      if (Math.random() < 0.35) {
+        confetti({
+          particleCount: 10,
+          spread: 80,
+          origin: { x: 0.5, y: 0.6 },
+          colors
+        });
+      }
+
+      if (Date.now() < end) {
+        requestAnimationFrame(blasterVolley);
+      }
+    }());
+  }
+
+  function dodgeRunawayButton(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    soundFx.pop(440);
+    runawayNoCount++;
+
+    const randomX = (Math.random() - 0.5) * 240;
+    const randomY = (Math.random() - 0.5) * 120;
+
+    const phrase = runawayPhrases[(runawayNoCount - 1) % runawayPhrases.length];
+    const span = btnRunawayNoProposal?.querySelector('span');
+    if (span) span.textContent = phrase;
+
+    gsap.to(btnRunawayNoProposal, {
+      x: randomX,
+      y: randomY,
+      duration: 0.22,
+      ease: 'power2.out'
+    });
+  }
+
+  btnRunawayNoProposal?.addEventListener('mouseenter', dodgeRunawayButton);
+  btnRunawayNoProposal?.addEventListener('pointerenter', dodgeRunawayButton);
+  btnRunawayNoProposal?.addEventListener('touchstart', dodgeRunawayButton, { passive: false });
+  btnRunawayNoProposal?.addEventListener('click', dodgeRunawayButton);
+
+  function openFullProposalMessage() {
+    soundFx.sparkle();
+    if (proposalBullet) proposalBullet.style.display = 'none';
+
+    if (realtimeProposalBanner) {
+      const proposerName = activeProposalData?.proposerName || 'Your Love';
+      const question = activeProposalData?.question || proposalQuestion;
+
+      if (realtimeBannerEyebrow) realtimeBannerEyebrow.textContent = `💍 ${proposerName.toUpperCase()} ASKS FOR YOUR HAND`;
+      if (realtimeBannerTitle) realtimeBannerTitle.textContent = `${proposerName} On Bended Knee`;
+      if (realtimeBannerQuestion) realtimeBannerQuestion.textContent = question;
+      if (realtimeBannerActions) realtimeBannerActions.style.display = 'flex';
+      if (realtimeCelebrateBox) realtimeCelebrateBox.style.display = 'none';
+      if (btnStandRealtimeProposal) btnStandRealtimeProposal.style.display = 'none';
+      if (btnAcceptRealtimeProposal) btnAcceptRealtimeProposal.style.display = 'inline-flex';
+      if (btnRunawayNoProposal) {
+        btnRunawayNoProposal.style.display = 'inline-flex';
+        gsap.set(btnRunawayNoProposal, { x: 0, y: 0 });
+        const span = btnRunawayNoProposal.querySelector('span');
+        if (span) span.textContent = 'No 💔';
+        runawayNoCount = 0;
+      }
+      realtimeProposalBanner.style.display = 'flex';
+      gsap.fromTo('#realtimeProposalBanner .proposal-banner-card',
+        { scale: 0.85, opacity: 0, y: 30 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: 'back.out(1.5)' }
+      );
+    }
+  }
+
+  proposalBullet?.addEventListener('click', openFullProposalMessage);
+
   function toggleKneelingProposal() {
     if (!localAvatar) return;
     soundFx.sparkle();
@@ -1534,14 +1681,16 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       localAvatar.setKneeling(true);
       if (btnDockPropose) btnDockPropose.classList.add('active');
 
+      // Proposer sees status banner waiting for partner
       if (realtimeProposalBanner) {
-        if (realtimeBannerEyebrow) realtimeBannerEyebrow.textContent = '💍 REAL-TIME 3D PROPOSAL';
-        if (realtimeBannerTitle) realtimeBannerTitle.textContent = 'On Bended Knee For You';
-        if (realtimeBannerQuestion) realtimeBannerQuestion.textContent = proposalQuestion;
+        if (realtimeBannerEyebrow) realtimeBannerEyebrow.textContent = '💍 YOU ARE PROPOSING ON ONE KNEE';
+        if (realtimeBannerTitle) realtimeBannerTitle.textContent = 'Presenting The Ring Box ✨';
+        if (realtimeBannerQuestion) realtimeBannerQuestion.textContent = `${proposalQuestion}\n(Waiting for her reply 💖)`;
         if (realtimeBannerActions) realtimeBannerActions.style.display = 'flex';
         if (realtimeCelebrateBox) realtimeCelebrateBox.style.display = 'none';
         if (btnStandRealtimeProposal) btnStandRealtimeProposal.style.display = 'inline-flex';
-        if (btnAcceptRealtimeProposal) btnAcceptRealtimeProposal.style.display = 'inline-flex';
+        if (btnAcceptRealtimeProposal) btnAcceptRealtimeProposal.style.display = 'none';
+        if (btnRunawayNoProposal) btnRunawayNoProposal.style.display = 'none';
         realtimeProposalBanner.style.display = 'flex';
       }
 
@@ -1561,6 +1710,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       localAvatar.setSurprise(false);
     }
     if (btnDockPropose) btnDockPropose.classList.remove('active');
+    if (proposalBullet) proposalBullet.style.display = 'none';
     if (realtimeProposalBanner) realtimeProposalBanner.style.display = 'none';
     if (multiplayer) {
       multiplayer.sendAction('propose_stand');
@@ -1568,14 +1718,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   }
 
   function acceptProposal() {
-    soundFx.sparkle();
-    const end = Date.now() + 5 * 1000;
-    const colors = ['#e63946', '#ffb703', '#f4a261', '#e76f51', '#ffffff', '#ffd166', '#ec4899'];
-    (function frame() {
-      confetti({ particleCount: 7, angle: 60, spread: 60, origin: { x: 0 }, colors });
-      confetti({ particleCount: 7, angle: 120, spread: 60, origin: { x: 1 }, colors });
-      if (Date.now() < end) requestAnimationFrame(frame);
-    }());
+    triggerConfettiBlasters();
 
     let targetPos = null;
     if (peerAvatarsMap.size > 0) {
@@ -1589,8 +1732,14 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       localAvatar.playGesture('wave');
     }
 
+    if (proposalBullet) proposalBullet.style.display = 'none';
+
     if (realtimeBannerActions) realtimeBannerActions.style.display = 'none';
     if (realtimeCelebrateBox) {
+      const cTitle = realtimeCelebrateBox.querySelector('.celebrate-title');
+      const cMsg = realtimeCelebrateBox.querySelector('.celebrate-text');
+      if (cTitle) cTitle.textContent = proposalCelebrateTitle || 'She Said YES! 💍🥂💖';
+      if (cMsg) cMsg.textContent = proposalCelebrateMsg || 'Accepted in real-time. A lifetime of happiness begins now!';
       realtimeCelebrateBox.style.display = 'block';
       gsap.fromTo(realtimeCelebrateBox,
         { scale: 0.88, opacity: 0, y: 20 },

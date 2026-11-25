@@ -341,14 +341,53 @@ app.get('/api/health', (req, res) => {
 });
 
 // ============================================================================
-// MUSEUM REAL-TIME MULTIPLAYER SYSTEM (WebSocket + HTTP Fallback)
+// MUSEUM REAL-TIME MULTIPLAYER SYSTEM (WebSocket + HTTP Sync + Action Buffer)
 // ============================================================================
 const museumRooms = new Map(); // roomId -> Set of ws clients
 const museumState = new Map(); // roomId -> Map(userId -> { user state, lastSeen })
+const museumActions = new Map(); // roomId -> Array of { id, senderId, data, timestamp }
+let nextActionId = 1;
 
-// HTTP polling fallback for clients unable to establish WebSockets
+function pushRoomAction(room, senderId, actionData) {
+  if (!museumActions.has(room)) museumActions.set(room, []);
+  const list = museumActions.get(room);
+  const actionEntry = {
+    id: nextActionId++,
+    senderId,
+    data: actionData,
+    timestamp: Date.now()
+  };
+  list.push(actionEntry);
+
+  // Keep only last 60 actions within 30s
+  const cutoff = Date.now() - 30000;
+  while (list.length > 60 || (list.length > 0 && list[0].timestamp < cutoff)) {
+    list.shift();
+  }
+
+  // Also broadcast to WebSocket clients in the room
+  const roomClients = museumRooms.get(room);
+  if (roomClients) {
+    const payloadStr = JSON.stringify(actionData);
+    for (const client of roomClients) {
+      if (client.readyState === 1 && client.userId !== senderId) {
+        try { client.send(payloadStr); } catch (e) {}
+      }
+    }
+  }
+}
+
+// HTTP sync endpoint (CORS enabled for cross-origin or proxy calls)
+app.options('/api/museum/sync', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.sendStatus(204);
+});
+
 app.post('/api/museum/sync', (req, res) => {
-  const { room = 'default', userId, state, action } = req.body;
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  const { room = 'default', userId, state, action, actions, lastActionId = 0 } = req.body;
   if (!userId) return res.status(400).json({ error: "Missing userId" });
 
   if (!museumState.has(room)) museumState.set(room, new Map());
@@ -358,10 +397,16 @@ app.post('/api/museum/sync', (req, res) => {
     rMap.set(userId, { ...state, userId, lastSeen: Date.now() });
   }
 
-  // Purge peers inactive for > 8s
+  // Handle incoming actions from HTTP client
+  const incomingActions = actions || (action ? [action] : []);
+  for (const act of incomingActions) {
+    pushRoomAction(room, userId, act);
+  }
+
+  // Purge peers inactive for > 6s
   const now = Date.now();
   for (const [uid, udata] of rMap.entries()) {
-    if (now - udata.lastSeen > 8000) rMap.delete(uid);
+    if (now - udata.lastSeen > 6000) rMap.delete(uid);
   }
 
   const peers = [];
@@ -369,7 +414,15 @@ app.post('/api/museum/sync', (req, res) => {
     if (uid !== userId) peers.push(udata);
   }
 
-  return res.json({ success: true, peers });
+  // Collect new actions for this user
+  const roomActionList = museumActions.get(room) || [];
+  const pendingActions = roomActionList
+    .filter(a => a.id > lastActionId && a.senderId !== userId)
+    .map(a => ({ ...a.data, _actionId: a.id }));
+
+  const maxId = roomActionList.length > 0 ? roomActionList[roomActionList.length - 1].id : lastActionId;
+
+  return res.json({ success: true, peers, actions: pendingActions, latestActionId: maxId });
 });
 
 // Serve Vite Frontend
@@ -403,12 +456,16 @@ wss.on('connection', (ws) => {
         return;
       }
 
-      // Broadcast to other peers in the room
-      const roomClients = museumRooms.get(userRoom);
-      if (roomClients) {
-        for (const client of roomClients) {
-          if (client !== ws && client.readyState === 1) { // 1 = OPEN
-            client.send(message.toString());
+      if (data.type === 'action' || data.type === 'chat') {
+        pushRoomAction(userRoom, userId, data);
+      } else {
+        // Broadcast move directly
+        const roomClients = museumRooms.get(userRoom);
+        if (roomClients) {
+          for (const client of roomClients) {
+            if (client !== ws && client.readyState === 1) { // 1 = OPEN
+              client.send(message.toString());
+            }
           }
         }
       }
