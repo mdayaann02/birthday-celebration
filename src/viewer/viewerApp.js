@@ -116,6 +116,9 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   }
 
   if (templateId === 'sorry') {
+    if (container._cleanup) {
+      try { container._cleanup(); } catch (e) {}
+    }
     container.innerHTML = `
       ${isMakerReview ? `
         <div class="maker-review-banner" id="makerReviewBanner">
@@ -129,6 +132,9 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     `;
     const root = container.querySelector('#templateRoot');
     renderSorryTemplate(root, data, isMakerReview);
+    container._cleanup = () => {
+      if (root && root._cleanup) root._cleanup();
+    };
     return;
   }
 
