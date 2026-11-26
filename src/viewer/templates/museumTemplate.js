@@ -1611,7 +1611,11 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
           peerAvatarsMap.set(userId, {
             avatar: pAvatar,
             targetPos: new THREE.Vector3(peer.x || 0, peer.y || 0, peer.z || 3.2),
+            predPos: new THREE.Vector3(peer.x || 0, peer.y || 0, peer.z || 3.2),
             targetRotY: peer.rotY || Math.PI,
+            vx: typeof peer.vx === 'number' ? peer.vx : 0,
+            vz: typeof peer.vz === 'number' ? peer.vz : 0,
+            lastNetAt: performance.now(),
             isWalking: Boolean(peer.isWalking)
           });
           if (peer.isSeated) {
@@ -1629,8 +1633,18 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         }
       } else {
         const rec = peerAvatarsMap.get(userId);
-        rec.targetPos.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
+        const nowMs = performance.now();
+        const px = typeof peer.x === 'number' ? peer.x : 0;
+        const py = typeof peer.y === 'number' ? peer.y : 0;
+        const pz = typeof peer.z === 'number' ? peer.z : 3.2;
+        const dtNet = Math.max(0.05, (nowMs - (rec.lastNetAt || nowMs)) / 1000);
+        const fallbackVx = (px - rec.targetPos.x) / dtNet;
+        const fallbackVz = (pz - rec.targetPos.z) / dtNet;
+        rec.vx = typeof peer.vx === 'number' ? peer.vx : (peer.isWalking ? THREE.MathUtils.clamp(fallbackVx, -6, 6) : 0);
+        rec.vz = typeof peer.vz === 'number' ? peer.vz : (peer.isWalking ? THREE.MathUtils.clamp(fallbackVz, -6, 6) : 0);
+        rec.targetPos.set(px, py, pz);
         rec.targetRotY = typeof peer.rotY === 'number' ? peer.rotY : rec.targetRotY;
+        rec.lastNetAt = nowMs;
         rec.isWalking = Boolean(peer.isWalking);
         if (peer.isSeated) {
           peerSeatedMap.set(userId, true);
@@ -2866,6 +2880,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const walkSpeedPerSec = 5.4;
   let footstepTimer = 0;
   let spotUpdateTick = 0;
+  let lastSentWalkState = false;
   const fpsScaler = createAdaptiveFpsScaler(renderer, tier);
 
   const _camFwd = new THREE.Vector3();
@@ -2933,6 +2948,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
           standFromProposal();
         }
 
+        let curVx = 0;
+        let curVz = 0;
         if (isWalking) {
           const step = walkSpeedPerSec * delta;
           const normFwd = (forwardDelta / Math.max(1, mag)) * step;
@@ -2942,7 +2959,11 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
           _camRight.crossVectors(_camFwd, _upVec).normalize();
 
           _moveVec.set(0, 0, 0).addScaledVector(_camFwd, normFwd).addScaledVector(_camRight, normStf);
+          const prevX = localAvatar.group.position.x;
+          const prevZ = localAvatar.group.position.z;
           localAvatar.group.position.add(_moveVec);
+          curVx = (localAvatar.group.position.x - prevX) / Math.max(delta, 0.001);
+          curVz = (localAvatar.group.position.z - prevZ) / Math.max(delta, 0.001);
 
           const targetAngle = Math.atan2(_moveVec.x, _moveVec.z);
           let diffAngle = targetAngle - localAvatar.group.rotation.y;
@@ -2963,8 +2984,14 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
         localAvatar.update(delta, isWalking, 1.0);
 
-        if (multiplayer && (isWalking || now - lastMoveBroadcastTime > 200)) {
+        if (
+          multiplayer &&
+          (isWalking !== lastSentWalkState ||
+            now - lastMoveBroadcastTime > 1000 ||
+            (isWalking && now - lastMoveBroadcastTime > 65))
+        ) {
           lastMoveBroadcastTime = now;
+          lastSentWalkState = isWalking;
           multiplayer.sendMove(
             localAvatar.group.position.x,
             localAvatar.group.position.y,
@@ -2972,7 +2999,9 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             localAvatar.group.rotation.y,
             isWalking,
             isSeatedOnBench,
-            localAvatar.isKneeling()
+            localAvatar.isKneeling(),
+            curVx,
+            curVz
           );
         }
 
@@ -3004,14 +3033,23 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       }
     }
 
-    // Frame-rate-independent remote peer interpolation
-    const peerDamp = 1 - Math.exp(-12 * delta);
+    // Velocity-assisted remote peer interpolation (dead reckoning)
+    const peerDamp = 1 - Math.exp(-9 * delta);
+    const peerRotDamp = 1 - Math.exp(-12 * delta);
     peerAvatarsMap.forEach((val) => {
-      val.avatar.group.position.lerp(val.targetPos, peerDamp);
+      const sincePacket = Math.min(0.28, Math.max(0, (now - (val.lastNetAt || now)) / 1000));
+      if (val.isWalking && val.predPos) {
+        const px = Math.max(-hallWidth / 2 + 1.8, Math.min(hallWidth / 2 - 1.8, val.targetPos.x + val.vx * sincePacket));
+        const pz = Math.max(rotundaZ + 2.8, Math.min(6.5, val.targetPos.z + val.vz * sincePacket));
+        val.predPos.set(px, val.targetPos.y, pz);
+        val.avatar.group.position.lerp(val.predPos, peerDamp);
+      } else {
+        val.avatar.group.position.lerp(val.targetPos, peerDamp);
+      }
       let dRot = val.targetRotY - val.avatar.group.rotation.y;
       while (dRot < -Math.PI) dRot += Math.PI * 2;
       while (dRot > Math.PI) dRot -= Math.PI * 2;
-      val.avatar.group.rotation.y += dRot * peerDamp;
+      val.avatar.group.rotation.y += dRot * peerRotDamp;
       val.avatar.update(delta, val.isWalking, 1.0);
     });
 

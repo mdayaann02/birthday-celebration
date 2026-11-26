@@ -1870,14 +1870,25 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
             entry = {
               avatar: av,
               targetPos: new THREE.Vector3(px, py, pz),
+              predPos: new THREE.Vector3(px, py, pz),
               targetRotY: p.rotY || Math.PI,
+              vx: typeof p.vx === 'number' ? p.vx : 0,
+              vz: typeof p.vz === 'number' ? p.vz : 0,
+              lastNetAt: performance.now(),
               isWalking: Boolean(p.isWalking),
               gender: p.gender || 'female',
             };
             peerAvatars.set(uid, entry);
           } else {
+            const nowMs = performance.now();
+            const dtNet = Math.max(0.05, (nowMs - (entry.lastNetAt || nowMs)) / 1000);
+            const fallbackVx = (px - entry.targetPos.x) / dtNet;
+            const fallbackVz = (pz - entry.targetPos.z) / dtNet;
+            entry.vx = typeof p.vx === 'number' ? p.vx : (p.isWalking ? THREE.MathUtils.clamp(fallbackVx, -6, 6) : 0);
+            entry.vz = typeof p.vz === 'number' ? p.vz : (p.isWalking ? THREE.MathUtils.clamp(fallbackVz, -6, 6) : 0);
             entry.targetPos.set(px, py, pz);
             entry.targetRotY = typeof p.rotY === 'number' ? p.rotY : entry.targetRotY;
+            entry.lastNetAt = nowMs;
             entry.isWalking = Boolean(p.isWalking);
           }
           if (Boolean(p.isSeated) !== entry.avatar.isSeated()) {
@@ -2470,6 +2481,8 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
 
     // Local Avatar Movement & Camera-Relative Physics (Walk Mode)
     let isWalking = false;
+    let curVx = 0;
+    let curVz = 0;
     if (localAvatar && currentMode === 'walk') {
       let fwd = 0;
       let strafe = 0;
@@ -2499,9 +2512,13 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
         const dist = Math.hypot(desiredX - localPos.x, desiredZ - localPos.z);
         if (dist > 0.14) {
           const followAlpha = 1 - Math.exp(-8 * dt);
+          const prevX = localPos.x;
+          const prevZ = localPos.z;
           localPos.x = THREE.MathUtils.lerp(localPos.x, desiredX, followAlpha);
           localPos.z = THREE.MathUtils.lerp(localPos.z, desiredZ, followAlpha);
           resolveMovementAndBounds(localPos);
+          curVx = (localPos.x - prevX) / Math.max(dt, 0.001);
+          curVz = (localPos.z - prevZ) / Math.max(dt, 0.001);
           isWalking = true;
         }
         let dRot = pRot - localRotY;
@@ -2517,9 +2534,13 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
         _camRight.crossVectors(_camFwd, _upAxis).normalize();
         _moveVec.set(0, 0, 0).addScaledVector(_camFwd, normFwd).addScaledVector(_camRight, normStrafe);
 
+        const prevX = localPos.x;
+        const prevZ = localPos.z;
         localPos.x += _moveVec.x;
         localPos.z += _moveVec.z;
         resolveMovementAndBounds(localPos);
+        curVx = (localPos.x - prevX) / Math.max(dt, 0.001);
+        curVz = (localPos.z - prevZ) / Math.max(dt, 0.001);
 
         const targetRot = Math.atan2(_moveVec.x, _moveVec.z);
         let dRot = targetRot - localRotY;
@@ -2579,15 +2600,15 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
       const nearCinema = Math.hypot(localPos.x - PIER_X, localPos.z + 18.5) < 5.0;
       promptCinema.style.display = nearCinema ? 'inline-flex' : 'none';
 
-      // Throttled Multiplayer Sync (~12Hz when moving + 1.2s heartbeat)
+      // Throttled Multiplayer Sync (~15Hz when moving, immediate on walk start/stop, 1.0s heartbeat)
       const now = performance.now();
       if (
         multiplayer &&
-        (now - lastNetSync > 1200 ||
-          (now - lastNetSync > 80 &&
-            (Math.abs(localPos.x - lastSentX) > 0.03 ||
-              Math.abs(localPos.z - lastSentZ) > 0.03 ||
-              isWalking !== lastSentWalk)))
+        (isWalking !== lastSentWalk ||
+          now - lastNetSync > 1000 ||
+          (now - lastNetSync > 65 &&
+            (Math.abs(localPos.x - lastSentX) > 0.02 ||
+              Math.abs(localPos.z - lastSentZ) > 0.02)))
       ) {
         lastNetSync = now;
         lastSentX = localPos.x;
@@ -2600,21 +2621,33 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
           localRotY,
           isWalking,
           Boolean(activeBench),
-          localAvatar.isKneeling()
+          localAvatar.isKneeling(),
+          curVx,
+          curVz
         );
       }
     } else if (localAvatar) {
       localAvatar.update(dt, false, 1.0);
     }
 
-    // Smooth Frame-Rate-Independent Remote Peer Interpolation
-    const peerAlpha = 1 - Math.exp(-12 * dt);
+    // Smooth Velocity-Assisted Remote Peer Interpolation (Dead Reckoning)
+    const peerAlpha = 1 - Math.exp(-9 * dt);
+    const rotAlpha = 1 - Math.exp(-12 * dt);
+    const nowMs = performance.now();
     for (const entry of peerAvatars.values()) {
-      entry.avatar.group.position.lerp(entry.targetPos, peerAlpha);
+      const sincePacket = Math.min(0.28, Math.max(0, (nowMs - (entry.lastNetAt || nowMs)) / 1000));
+      if (entry.isWalking) {
+        const px = entry.targetPos.x + entry.vx * sincePacket;
+        const pz = entry.targetPos.z + entry.vz * sincePacket;
+        entry.predPos.set(px, getSurfaceHeight(px, pz), pz);
+      } else {
+        entry.predPos.copy(entry.targetPos);
+      }
+      entry.avatar.group.position.lerp(entry.predPos, peerAlpha);
       let dRot = entry.targetRotY - entry.avatar.group.rotation.y;
       while (dRot < -Math.PI) dRot += Math.PI * 2;
       while (dRot > Math.PI) dRot -= Math.PI * 2;
-      entry.avatar.group.rotation.y += dRot * peerAlpha;
+      entry.avatar.group.rotation.y += dRot * rotAlpha;
       entry.avatar.update(dt, entry.isWalking, 1.0);
     }
 

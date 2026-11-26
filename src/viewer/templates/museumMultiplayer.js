@@ -28,8 +28,11 @@ export class MuseumMultiplayer {
       rotY: Math.PI,
       isWalking: false,
       isSeated: false,
-      isKneeling: false
+      isKneeling: false,
+      vx: 0,
+      vz: 0
     };
+    this._wasWalking = false;
 
     this._onUnload = () => this.sendLeaveBeacon();
     this.init();
@@ -72,7 +75,13 @@ export class MuseumMultiplayer {
     if (this.isDestroyed) return;
     clearTimeout(this.pollTimeout);
     const wsConnected = this.ws && this.ws.readyState === WebSocket.OPEN;
-    const wait = delayMs !== null ? delayMs : (wsConnected ? 1200 : 280);
+    let anyPeerWalking = false;
+    for (const p of this.peers.values()) {
+      if (p.isWalking) { anyPeerWalking = true; break; }
+    }
+    const activeMotion = Boolean(this.currentState?.isWalking) || anyPeerWalking;
+    const defaultWait = wsConnected ? 1200 : (activeMotion ? 110 : 380);
+    const wait = delayMs !== null ? delayMs : defaultWait;
     this.pollTimeout = setTimeout(async () => {
       await this.pollHttpFallback();
       this.scheduleNextPoll();
@@ -142,6 +151,8 @@ export class MuseumMultiplayer {
         y: typeof data.y === 'number' ? data.y : (prev?.y || 0),
         z: typeof data.z === 'number' ? data.z : (prev?.z || 0),
         rotY: typeof data.rotY === 'number' ? data.rotY : (prev?.rotY || 0),
+        vx: typeof data.vx === 'number' ? data.vx : 0,
+        vz: typeof data.vz === 'number' ? data.vz : 0,
         isWalking: Boolean(data.isWalking),
         isSeated: Boolean(data.isSeated),
         isKneeling: Boolean(data.isKneeling),
@@ -246,11 +257,11 @@ export class MuseumMultiplayer {
     }
   }
 
-  sendMove(x, y, z, rotY, isWalking, isSeated = false, isKneeling = false) {
+  sendMove(x, y, z, rotY, isWalking, isSeated = false, isKneeling = false, vx = 0, vz = 0) {
     this.currentState = {
       name: this.userProfile.name,
       gender: this.userProfile.gender,
-      x, y, z, rotY, isWalking, isSeated, isKneeling
+      x, y, z, rotY, isWalking, isSeated, isKneeling, vx, vz
     };
 
     const payload = {
@@ -260,6 +271,15 @@ export class MuseumMultiplayer {
       ...this.currentState
     };
     this.broadcast(payload);
+
+    // If walking state just started or stopped and WS is inactive, flush HTTP sync immediately
+    const wsConnected = this.ws && this.ws.readyState === WebSocket.OPEN;
+    if (!wsConnected && Boolean(isWalking) !== this._wasWalking) {
+      this._wasWalking = Boolean(isWalking);
+      this.pollHttpFallback();
+    } else {
+      this._wasWalking = Boolean(isWalking);
+    }
   }
 
   sendAction(action, extra = {}) {
