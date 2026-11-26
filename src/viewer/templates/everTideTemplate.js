@@ -2600,15 +2600,15 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
       const nearCinema = Math.hypot(localPos.x - PIER_X, localPos.z + 18.5) < 5.0;
       promptCinema.style.display = nearCinema ? 'inline-flex' : 'none';
 
-      // Throttled Multiplayer Sync (~15Hz when moving, immediate on walk start/stop, 1.0s heartbeat)
+      // Throttled Multiplayer Sync (20Hz when moving, immediate on walk start/stop, 1.0s heartbeat)
       const now = performance.now();
       if (
         multiplayer &&
         (isWalking !== lastSentWalk ||
           now - lastNetSync > 1000 ||
-          (now - lastNetSync > 65 &&
-            (Math.abs(localPos.x - lastSentX) > 0.02 ||
-              Math.abs(localPos.z - lastSentZ) > 0.02)))
+          (now - lastNetSync > 50 &&
+            (Math.abs(localPos.x - lastSentX) > 0.015 ||
+              Math.abs(localPos.z - lastSentZ) > 0.015)))
       ) {
         lastNetSync = now;
         lastSentX = localPos.x;
@@ -2630,12 +2630,12 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
       localAvatar.update(dt, false, 1.0);
     }
 
-    // Smooth Velocity-Assisted Remote Peer Interpolation (Dead Reckoning)
-    const peerAlpha = 1 - Math.exp(-9 * dt);
-    const rotAlpha = 1 - Math.exp(-12 * dt);
+    // Smooth Velocity-Assisted Remote Peer Interpolation (20Hz WSS + Dead Reckoning)
+    const peerAlpha = 1 - Math.exp(-14 * dt);
+    const rotAlpha = 1 - Math.exp(-14 * dt);
     const nowMs = performance.now();
     for (const entry of peerAvatars.values()) {
-      const sincePacket = Math.min(0.28, Math.max(0, (nowMs - (entry.lastNetAt || nowMs)) / 1000));
+      const sincePacket = Math.min(0.18, Math.max(0, (nowMs - (entry.lastNetAt || nowMs)) / 1000));
       if (entry.isWalking) {
         const px = entry.targetPos.x + entry.vx * sincePacket;
         const pz = entry.targetPos.z + entry.vz * sincePacket;

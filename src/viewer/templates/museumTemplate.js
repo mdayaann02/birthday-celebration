@@ -2988,7 +2988,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
           multiplayer &&
           (isWalking !== lastSentWalkState ||
             now - lastMoveBroadcastTime > 1000 ||
-            (isWalking && now - lastMoveBroadcastTime > 65))
+            (isWalking && now - lastMoveBroadcastTime > 50))
         ) {
           lastMoveBroadcastTime = now;
           lastSentWalkState = isWalking;
@@ -3033,11 +3033,11 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       }
     }
 
-    // Velocity-assisted remote peer interpolation (dead reckoning)
-    const peerDamp = 1 - Math.exp(-9 * delta);
-    const peerRotDamp = 1 - Math.exp(-12 * delta);
+    // Velocity-assisted remote peer interpolation (20Hz WSS + dead reckoning)
+    const peerDamp = 1 - Math.exp(-14 * delta);
+    const peerRotDamp = 1 - Math.exp(-14 * delta);
     peerAvatarsMap.forEach((val) => {
-      const sincePacket = Math.min(0.28, Math.max(0, (now - (val.lastNetAt || now)) / 1000));
+      const sincePacket = Math.min(0.18, Math.max(0, (now - (val.lastNetAt || now)) / 1000));
       if (val.isWalking && val.predPos) {
         const px = Math.max(-hallWidth / 2 + 1.8, Math.min(hallWidth / 2 - 1.8, val.targetPos.x + val.vx * sincePacket));
         const pz = Math.max(rotundaZ + 2.8, Math.min(6.5, val.targetPos.z + val.vz * sincePacket));

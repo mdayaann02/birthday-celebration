@@ -96,16 +96,10 @@ export class MuseumMultiplayer {
         window.location.hostname === 'localhost' ||
         window.location.hostname === '127.0.0.1';
 
-      // Oracle backend runs HTTP/WS on port 3000 without TLS; skip broken wss:// attempts on HTTPS Vercel
-      if (isHttps && !isDirectOracleOrLocal) {
-        return;
-      }
+      const wsUrl = isDirectOracleOrLocal
+        ? `${isHttps ? 'wss://' : 'ws://'}${window.location.host}/ws`
+        : `wss://155.248.255.29.sslip.io/ws`;
 
-      const wsHost = isDirectOracleOrLocal
-        ? `${window.location.host}/ws`
-        : `155.248.255.29:3000/ws`;
-
-      const wsUrl = (isHttps ? 'wss://' : 'ws://') + wsHost;
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
@@ -115,12 +109,19 @@ export class MuseumMultiplayer {
           userId: this.userId,
           ...this.currentState
         }));
+        // Immediately announce initial position to peers already in room
+        this.ws.send(JSON.stringify({
+          type: 'move',
+          room: this.room,
+          userId: this.userId,
+          ...this.currentState
+        }));
       };
 
       this.ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          this.handleIncomingMessage(data, false);
+          this.handleIncomingMessage(data, false, true);
         } catch (e) {}
       };
 
@@ -130,7 +131,7 @@ export class MuseumMultiplayer {
 
       this.ws.onclose = () => {
         if (!this.isDestroyed) {
-          setTimeout(() => this.connectWebSocket(), 4000);
+          setTimeout(() => this.connectWebSocket(), 3000);
         }
       };
     } catch (e) {
@@ -138,11 +139,12 @@ export class MuseumMultiplayer {
     }
   }
 
-  handleIncomingMessage(data, viaBc = false) {
+  handleIncomingMessage(data, viaBc = false, viaWs = false) {
     if (!data || data.userId === this.userId) return;
 
     if (data.type === 'move' || data.type === 'join') {
       const prev = this.peers.get(data.userId);
+      const now = Date.now();
       this.peers.set(data.userId, {
         userId: data.userId,
         name: data.name || prev?.name || 'Visitor',
@@ -156,7 +158,8 @@ export class MuseumMultiplayer {
         isWalking: Boolean(data.isWalking),
         isSeated: Boolean(data.isSeated),
         isKneeling: Boolean(data.isKneeling),
-        lastSeen: Date.now(),
+        lastSeen: now,
+        lastWsMoveAt: viaWs ? now : (prev?.lastWsMoveAt || 0),
         viaBc: viaBc || Boolean(prev?.viaBc)
       });
       this.onPeerUpdate(new Map(this.peers));
@@ -191,7 +194,16 @@ export class MuseumMultiplayer {
       const actionsToSend = [...this.outboundActions];
       this.outboundActions = [];
 
-      const res = await fetch('/api/museum/sync', {
+      const isDirectHost =
+        window.location.hostname === '155.248.255.29' ||
+        window.location.hostname === '155.248.255.29.sslip.io' ||
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1';
+      const syncEndpoint = isDirectHost
+        ? '/api/museum/sync'
+        : 'https://155.248.255.29.sslip.io/api/museum/sync';
+
+      const res = await fetch(syncEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -214,12 +226,19 @@ export class MuseumMultiplayer {
             if (p.userId && p.userId !== this.userId) {
               serverIds.add(p.userId);
               const existing = this.peers.get(p.userId);
-              this.peers.set(p.userId, {
-                ...p,
-                lastSeen: now,
-                viaBc: Boolean(existing?.viaBc)
-              });
-              changed = true;
+              // Never overwrite fresh WebSocket movement with stale HTTP snapshot
+              const hasFreshWs = existing && (now - (existing.lastWsMoveAt || 0) < 2000);
+              if (hasFreshWs) {
+                existing.lastSeen = now;
+              } else {
+                this.peers.set(p.userId, {
+                  ...p,
+                  lastSeen: now,
+                  lastWsMoveAt: existing?.lastWsMoveAt || 0,
+                  viaBc: Boolean(existing?.viaBc)
+                });
+                changed = true;
+              }
             }
           });
 
