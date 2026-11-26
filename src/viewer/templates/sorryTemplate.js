@@ -1,13 +1,9 @@
-// src/viewer/templates/sorryTemplate.js — Long Romance Apology & Reconciliation Sanctuary
-// Powered by:
-// 1. Three.js Persistent WebGL Twilight Embers, Rose Petals & Healing Lanterns (Adaptive GPU Tier)
-// 2. Lovable Scroll-Driven Architecture (overflow-x: clip, Sticky Illuminated Parchment Td, Cascading Polaroids Cd)
-// 3. Lenis Smooth Momentum Scrolling + Sticky Chapter Navigation Dock
-// 4. Tactile Venting Room (Physics, Glass Splats, Anger Thermometer, Synthesized Audio)
-// 5. Sacred Promises, Interactive Penances, Peace Treaty Stamp, Coupons & Hold-to-Heal Certificate
+// src/viewer/templates/sorryTemplate.js — Page-by-Page Three.js Midnight Rose Apology Sanctuary
+// Zero page-scroll: 7 full-screen animated chapters with GSAP dynamic transitions,
+// Three.js moonlit starlight + drifting rose petals + 3D healing lanterns,
+// auto-illuminated wax-sealed letter, tactile venting room, flip polaroids, peace treaty & hold-to-heal finale.
 
 import * as THREE from 'three';
-import Lenis from 'lenis';
 import gsap from 'gsap';
 import confetti from 'canvas-confetti';
 import html2canvas from 'html2canvas';
@@ -19,102 +15,113 @@ import {
   disposeThreeScene,
 } from './threePerf.js';
 
-const STYLE_ID = 'sorry-long-romance-styles';
+const STYLE_ID = 'sorry-midnight-rose-styles';
 
 function ensureStyles() {
   if (document.getElementById(STYLE_ID)) return;
   const style = document.createElement('style');
   style.id = STYLE_ID;
   style.textContent = `
-    .slr-root {
+    .smr-stage {
       position: relative;
       width: 100%;
-      min-height: 100vh;
-      overflow-x: clip;
-      background: #100b12;
-      color: #f8efe6;
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(125% 95% at 50% 12%, #191f42 0%, #0d1026 55%, #060814 100%);
+      color: #f8f5ff;
       font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+      transition: background 1.1s ease;
     }
-    .slr-webgl-bg {
-      position: fixed;
+    .smr-stage.healed {
+      background: radial-gradient(125% 95% at 50% 12%, #2a1738 0%, #19122d 55%, #0a0918 100%);
+    }
+    .smr-webgl {
+      position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       z-index: 0;
       pointer-events: none;
     }
-    .slr-ambient-tint {
-      position: fixed;
+    .smr-aurora {
+      position: absolute;
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      background: radial-gradient(circle at 50% 18%, rgba(224, 122, 95, 0.16), transparent 60%);
-      transition: background 1.2s ease;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(251, 113, 133, 0.14), transparent 45%),
+        radial-gradient(circle at 80% 75%, rgba(167, 139, 250, 0.14), transparent 50%);
+      transition: opacity 0.8s ease;
     }
-    .slr-ambient-tint.healed {
-      background: radial-gradient(circle at 50% 18%, rgba(251, 191, 36, 0.22), rgba(244, 63, 94, 0.08) 55%, transparent 80%);
-    }
-    .slr-chapter-nav {
-      position: sticky;
-      top: 10px;
-      z-index: 40;
-      width: min(760px, 94%);
-      margin: 0 auto;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(20, 14, 22, 0.72);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 220, 190, 0.16);
+    .smr-topbar {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      z-index: 30;
       display: flex;
       align-items: center;
-      gap: 4px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      justify-content: space-between;
+      gap: 8px;
+      pointer-events: none;
     }
-    .slr-chapter-nav::-webkit-scrollbar { display: none; }
-    .slr-nav-pill {
-      flex-shrink: 0;
-      border: none;
-      background: transparent;
-      color: rgba(255, 240, 230, 0.68);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 6px 11px;
+    .smr-topbar > * {
+      pointer-events: auto;
+    }
+    .smr-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
       border-radius: 999px;
+      background: rgba(13, 16, 38, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(251, 113, 133, 0.24);
+    }
+    .smr-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: none;
+      padding: 0;
+      background: rgba(255, 255, 255, 0.25);
       cursor: pointer;
-      transition: all 0.25s ease;
-      white-space: nowrap;
+      transition: all 0.3s ease;
     }
-    .slr-nav-pill.active, .slr-nav-pill:hover {
-      background: rgba(224, 122, 95, 0.28);
-      color: #fff5eb;
+    .smr-dot.active {
+      width: 24px;
+      background: linear-gradient(90deg, #fb7185, #f5d08a);
+      box-shadow: 0 0 10px rgba(251, 113, 133, 0.65);
     }
-    .slr-music-slot {
-      position: fixed;
-      top: 58px;
-      right: 14px;
-      z-index: 42;
-    }
-    .slr-content {
+    .smr-pages {
       position: relative;
-      z-index: 5;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
     }
-    .slr-section {
-      position: relative;
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 76px 20px;
-      opacity: 0;
-      transform: scale(0.94) translateY(22px);
-      transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+    .smr-page {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 68px 16px 26px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      scrollbar-width: none;
     }
-    .slr-section.in-view {
-      opacity: 1;
-      transform: scale(1) translateY(0);
+    .smr-page::-webkit-scrollbar { display: none; }
+    .smr-page.active {
+      display: flex;
     }
-    .slr-eyebrow {
+    .smr-inner {
+      width: 100%;
+      max-width: 820px;
+      margin: auto;
+      text-align: center;
+    }
+    .smr-eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -122,377 +129,282 @@ function ensureStyles() {
       font-weight: 800;
       letter-spacing: 1.8px;
       text-transform: uppercase;
-      color: #f4a261;
+      color: #fda4af;
       padding: 5px 14px;
       border-radius: 999px;
-      background: rgba(244, 162, 97, 0.12);
-      border: 1px solid rgba(244, 162, 97, 0.28);
-      margin-bottom: 14px;
+      background: rgba(251, 113, 133, 0.14);
+      border: 1px solid rgba(251, 113, 133, 0.32);
+      margin-bottom: 12px;
     }
-    .slr-h1 {
+    .smr-h1 {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(2.2rem, 6vw, 4.1rem);
+      font-size: clamp(2.1rem, 5.5vw, 3.8rem);
       font-weight: 800;
       line-height: 1.1;
-      margin: 0 0 14px;
-      background: linear-gradient(135deg, #fff5eb 0%, #f7b299 55%, #fbbf24 100%);
+      margin: 0 0 12px;
+      background: linear-gradient(135deg, #ffffff 0%, #fda4af 52%, #f5d08a 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .slr-h2 {
+    .smr-h2 {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(1.65rem, 4vw, 2.55rem);
+      font-size: clamp(1.5rem, 3.8vw, 2.3rem);
       font-weight: 800;
-      margin: 0 0 10px;
-      color: #fff4ea;
+      margin: 0 0 8px;
+      color: #fff;
     }
-    .slr-sub {
-      font-size: clamp(0.98rem, 2.2vw, 1.15rem);
-      color: rgba(248, 232, 220, 0.78);
-      line-height: 1.65;
-      max-width: 620px;
+    .smr-sub {
+      font-size: clamp(0.92rem, 2vw, 1.06rem);
+      color: rgba(236, 232, 255, 0.78);
+      line-height: 1.6;
+      max-width: 580px;
       margin: 0 auto;
     }
-
-    /* Act I: Candlelit Gateway */
-    .slr-hero {
-      min-height: 86vh;
+    .smr-glass {
+      background: rgba(16, 20, 46, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(251, 113, 133, 0.24);
+      border-radius: 24px;
+      padding: clamp(18px, 3vw, 30px);
+      box-shadow: 0 22px 54px rgba(3, 5, 16, 0.6);
+    }
+    .smr-nav-row {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding-top: 36px;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
     }
-    .slr-candle-wrap {
-      position: relative;
-      width: 120px;
-      height: 168px;
-      margin: 0 auto 24px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-    }
-    .slr-candle-aura {
-      position: absolute;
-      top: 6px;
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(251, 191, 36, 0.55) 0%, rgba(224, 122, 95, 0.18) 50%, transparent 75%);
-      filter: blur(8px);
-      opacity: 0.45;
-      transition: all 0.6s ease;
-    }
-    .slr-candle-wrap.lit .slr-candle-aura {
-      opacity: 1;
-      transform: scale(1.45);
-    }
-    .slr-candle-flame {
-      width: 22px;
-      height: 36px;
-      border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
-      background: linear-gradient(180deg, #fffbeb 0%, #fbbf24 55%, #ea580c 100%);
-      box-shadow: 0 0 22px #fbbf24, 0 0 42px rgba(234, 88, 12, 0.7);
-      animation: slrFlicker 1.6s infinite alternate ease-in-out;
-      margin-bottom: -2px;
-      z-index: 2;
-    }
-    @keyframes slrFlicker {
-      0% { transform: scale(1) rotate(-2deg); }
-      50% { transform: scale(1.06, 0.95) rotate(2deg); }
-      100% { transform: scale(0.97, 1.05) rotate(-1deg); }
-    }
-    .slr-candle-pillar {
-      width: 54px;
-      height: 92px;
-      border-radius: 10px 10px 6px 6px;
-      background: linear-gradient(180deg, #fff7ed 0%, #e7d3be 100%);
-      box-shadow: inset 0 8px 14px rgba(251, 191, 36, 0.25), 0 14px 28px rgba(0, 0, 0, 0.45);
-    }
-    .slr-candle-tip {
-      margin-top: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #fde68a;
-    }
-    .slr-btn-primary {
+    .smr-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: 26px;
-      padding: 13px 26px;
+      padding: 12px 24px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 220, 180, 0.4);
-      background: linear-gradient(135deg, #e07a5f, #d95d39);
+      border: 1px solid rgba(253, 164, 175, 0.45);
+      background: linear-gradient(135deg, #f43f5e, #ec4899);
       color: #fff;
       font-size: 14px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 12px 28px rgba(224, 122, 95, 0.35);
+      box-shadow: 0 10px 26px rgba(244, 63, 94, 0.36);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .slr-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(224, 122, 95, 0.48); }
-
-    /* Act II: Lovable Sticky Scroll-Illuminated Confession Letter (Td) */
-    .slr-letter-track {
-      position: relative;
-      height: 220vh;
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 0 16px;
-    }
-    .slr-letter-sticky {
-      position: -webkit-sticky;
-      position: sticky;
-      top: 66px;
-      min-height: calc(100vh - 90px);
-      display: flex;
+    .smr-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(244, 63, 94, 0.5); }
+    .smr-btn-ghost {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-    }
-    .slr-parchment {
-      position: relative;
-      width: 100%;
-      background: linear-gradient(160deg, rgba(44, 30, 36, 0.92), rgba(24, 16, 22, 0.96));
-      border: 1px solid rgba(244, 162, 97, 0.32);
-      border-radius: 26px;
-      padding: clamp(24px, 4vw, 44px);
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 235, 210, 0.12);
-    }
-    .slr-wax-seal {
-      position: absolute;
-      top: -22px;
-      right: 28px;
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #ef4444, #991b1b);
-      border: 2px solid rgba(254, 202, 202, 0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
+      gap: 6px;
+      padding: 11px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 10px 24px rgba(185, 28, 28, 0.5);
-      transition: transform 0.35s ease, opacity 0.35s ease;
-    }
-    .slr-wax-seal.unsealed {
-      transform: scale(0.82) rotate(18deg);
-      background: radial-gradient(circle at 35% 35%, #fbbf24, #d97706);
-    }
-    .slr-letter-word {
-      display: inline-block;
-      margin-right: 0.28em;
-      opacity: 0.14;
-      transition: opacity 0.25s ease, text-shadow 0.25s ease;
-    }
-    .slr-letter-word.lit {
-      opacity: 1;
-      text-shadow: 0 0 14px rgba(251, 191, 36, 0.22);
     }
 
-    /* Act III: Venting Room */
-    .slr-card {
-      background: rgba(26, 18, 28, 0.84);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 220, 195, 0.15);
-      border-radius: 24px;
-      padding: clamp(20px, 3.5vw, 32px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42);
+    /* Page 1: Moonlit Rose & Candle */
+    .smr-moon-orb {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff1f2 0%, #fda4af 45%, #be185d 100%);
+      box-shadow: 0 0 36px rgba(251, 113, 133, 0.55), 0 0 80px rgba(244, 63, 94, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 46px;
+      cursor: pointer;
+      animation: smrFloat 3.4s ease-in-out infinite;
     }
-    .slr-meter-track {
+    @keyframes smrFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.04); }
+    }
+
+    /* Page 2: Animated Confession Letter */
+    .smr-seal {
+      width: 56px;
+      height: 56px;
+      margin: -46px auto 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fb7185, #be123c);
+      border: 2px solid rgba(255, 228, 230, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(190, 18, 60, 0.55);
+      transition: transform 0.35s ease;
+    }
+    .smr-seal.open {
+      transform: scale(0.9) rotate(16deg);
+      background: radial-gradient(circle at 35% 35%, #fde68a, #d97706);
+    }
+    .smr-word {
+      display: inline-block;
+      margin-right: 0.26em;
+      opacity: 0.14;
+      transform: translateY(4px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .smr-word.lit {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Page 3: Venting Room */
+    .smr-meter {
       width: 100%;
-      height: 12px;
+      height: 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.1);
       overflow: hidden;
-      margin-top: 8px;
+      margin: 8px 0 14px;
     }
-    .slr-meter-fill {
+    .smr-meter-fill {
       height: 100%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #4ade80, #fbbf24, #ef4444);
-      transition: width 0.35s ease;
+      background: linear-gradient(90deg, #34d399, #f5d08a, #fb7185);
+      transition: width 0.3s ease;
     }
-    .slr-target-frame {
+    .smr-target {
       position: relative;
-      width: 220px;
-      height: 220px;
-      margin: 22px auto 12px;
-      border-radius: 22px;
+      width: 175px;
+      height: 175px;
+      margin: 0 auto 10px;
+      border-radius: 20px;
       overflow: hidden;
-      border: 3px solid rgba(244, 162, 97, 0.45);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+      border: 2.5px solid rgba(251, 113, 133, 0.55);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
     }
-    .slr-target-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+    .smr-target img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .smr-decal-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .smr-decal { position: absolute; font-size: 28px; transform: translate(-50%, -50%); }
+    .smr-arsenal {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
     }
-    .slr-decal-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
+    .smr-arsenal-btn {
+      padding: 8px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
     }
-    .slr-decal {
-      position: absolute;
-      font-size: 32px;
-      transform: translate(-50%, -50%);
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
-      pointer-events: none;
-    }
-    .slr-arsenal-grid {
+    .smr-arsenal-btn:hover { background: rgba(251, 113, 133, 0.25); }
+
+    /* Page 4 & 6 Grids */
+    .smr-grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+      text-align: left;
+    }
+    .smr-pill-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(251, 113, 133, 0.22);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    /* Page 5: Flip Polaroid Carousel/Grid */
+    .smr-pol-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 16px;
       margin-top: 18px;
     }
-    .slr-arsenal-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 12px 10px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.06);
-      color: #fff;
+    .smr-pol {
+      perspective: 900px;
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease;
     }
-    .slr-arsenal-btn:hover { background: rgba(224, 122, 95, 0.25); transform: translateY(-2px); }
-
-    /* Act IV & VI: Grids */
-    .slr-grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 16px;
-      margin-top: 24px;
-    }
-    .slr-pillar {
-      background: rgba(28, 20, 30, 0.78);
-      border: 1px solid rgba(244, 162, 97, 0.2);
-      border-radius: 20px;
-      padding: 20px;
-      transition: transform 0.25s ease, border-color 0.25s ease;
-    }
-    .slr-pillar:hover { transform: translateY(-3px); border-color: rgba(251, 191, 36, 0.48); }
-
-    /* Act V: Lovable Cascading Flip Polaroids (Cd) */
-    .slr-polaroids-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 24px;
-      margin-top: 28px;
-    }
-    .slr-polaroid {
-      perspective: 1000px;
-      cursor: pointer;
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.75s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
-    }
-    .slr-polaroid.shown {
-      opacity: 1;
-      transform: translateY(0) rotate(var(--tilt, 0deg));
-    }
-    .slr-polaroid-inner {
+    .smr-pol-inner {
       position: relative;
       width: 100%;
-      height: 300px;
+      height: 245px;
       transform-style: preserve-3d;
-      transition: transform 0.65s cubic-bezier(0.22, 0.61, 0.36, 1);
+      transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
     }
-    .slr-polaroid.flipped .slr-polaroid-inner {
-      transform: rotateY(180deg);
-    }
-    .slr-pol-face {
+    .smr-pol.flipped .smr-pol-inner { transform: rotateY(180deg); }
+    .smr-pol-face {
       position: absolute;
       inset: 0;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       border-radius: 14px;
-      padding: 12px 12px 20px;
-      background: #fffaf3;
-      color: #2b1f23;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      padding: 10px 10px 14px;
+      background: #fff8fa;
+      color: #1f172b;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.48);
       display: flex;
       flex-direction: column;
     }
-    .slr-pol-front img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    .slr-pol-cap {
-      margin-top: 10px;
-      font-size: 13px;
-      font-weight: 800;
-      text-align: center;
-    }
-    .slr-pol-back {
+    .smr-pol-front img { width: 100%; height: 175px; object-fit: cover; border-radius: 8px; }
+    .smr-pol-back {
       transform: rotateY(180deg);
-      background: linear-gradient(150deg, #fff5eb, #fde8df);
+      background: linear-gradient(150deg, #fff1f5, #fce7f3);
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 22px;
+      padding: 18px;
     }
 
-    /* Act VI: Interactive Penances, Peace Treaty & Coupons */
-    .slr-check-item {
+    /* Page 6: Penances */
+    .smr-check {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: 14px;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
       cursor: pointer;
-      transition: all 0.2s ease;
+      font-size: 12.5px;
     }
-    .slr-check-item.claimed {
-      background: rgba(74, 222, 128, 0.14);
-      border-color: rgba(74, 222, 128, 0.45);
+    .smr-check.claimed {
+      background: rgba(52, 211, 153, 0.16);
+      border-color: rgba(52, 211, 153, 0.45);
     }
 
-    /* Act VII: Hold-to-Heal Olive Branch */
-    .slr-hold-btn {
+    /* Page 7: Hold-to-Heal */
+    .smr-hold-btn {
       position: relative;
-      width: min(320px, 90%);
-      height: 62px;
-      margin: 24px auto 0;
+      width: min(300px, 90%);
+      height: 58px;
+      margin: 20px auto 0;
       border-radius: 999px;
-      border: 1.5px solid rgba(251, 191, 36, 0.55);
-      background: rgba(34, 22, 30, 0.9);
+      border: 1.5px solid rgba(245, 208, 138, 0.6);
+      background: rgba(18, 22, 48, 0.9);
       color: #fff;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       cursor: pointer;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      user-select: none;
       touch-action: none;
     }
-    .slr-hold-fill {
+    .smr-hold-fill {
       position: absolute;
       inset: 0;
       width: 0%;
-      background: linear-gradient(90deg, #e07a5f, #fbbf24);
+      background: linear-gradient(90deg, #f43f5e, #f5d08a);
       z-index: 0;
-    }
-    .slr-hold-label {
-      position: relative;
-      z-index: 1;
     }
   `;
   document.head.appendChild(style);
@@ -506,43 +418,43 @@ function playSound(type) {
     if (ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
 
-    if (type === 'candle' || type === 'chime') {
-      [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+    if (type === 'chime') {
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.06);
-        gain.gain.setValueAtTime(0.14, now + idx * 0.06);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.35);
+        osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+        gain.gain.setValueAtTime(0.13, now + idx * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.3);
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(now + idx * 0.06);
-        osc.stop(now + idx * 0.06 + 0.38);
+        osc.start(now + idx * 0.05);
+        osc.stop(now + idx * 0.05 + 0.34);
       });
     } else if (type === 'punch' || type === 'splat' || type === 'whack' || type === 'boing') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = type === 'whack' ? 'sawtooth' : type === 'splat' ? 'triangle' : 'sine';
-      osc.frequency.setValueAtTime(type === 'punch' ? 140 : 380, now);
-      osc.frequency.exponentialRampToValueAtTime(type === 'boing' ? 420 : 55, now + 0.2);
-      gain.gain.setValueAtTime(0.35, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.type = type === 'whack' ? 'sawtooth' : 'triangle';
+      osc.frequency.setValueAtTime(type === 'punch' ? 140 : 360, now);
+      osc.frequency.exponentialRampToValueAtTime(type === 'boing' ? 420 : 60, now + 0.18);
+      gain.gain.setValueAtTime(0.32, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.24);
+      osc.stop(now + 0.22);
     } else if (type === 'victory') {
       [392, 523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-        gain.gain.setValueAtTime(0.18, now + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.55);
+        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+        gain.gain.setValueAtTime(0.16, now + idx * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.5);
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 0.6);
+        osc.start(now + idx * 0.07);
+        osc.stop(now + idx * 0.07 + 0.55);
       });
     }
   } catch {}
@@ -560,7 +472,7 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
   const recipientName = data.recipientName || 'My Dearest';
   const senderName = data.senderName || 'Sincerely Yours';
   const heroTitle = data.heroTitle || "I'm Really Sorry";
-  const heroSubtitle = data.heroSubtitle || "My world feels heavy and quiet whenever you are hurt 🥺";
+  const heroSubtitle = data.heroSubtitle || "The night feels quiet and incomplete whenever you're hurt 🥺";
   const apologyMessage =
     data.apologyMessage ||
     "I know I messed up, and seeing you upset hurts me more than anything. My intention was never to make you feel hurt or unheard. You mean everything to me, and I take full accountability. I promise to listen with an open heart, protect your peace above my pride, and cherish you better every single day.";
@@ -619,255 +531,211 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
       ];
 
   const letterWords = apologyMessage.trim().split(/\s+/);
-  const tilts = ['-2.5deg', '2deg', '-1.5deg', '2.4deg', '-2deg', '1.8deg'];
 
   container.innerHTML = `
-    <div class="slr-root" id="slrRoot">
-      <div class="slr-webgl-bg" id="slrWebglBg"></div>
-      <div class="slr-ambient-tint" id="slrAmbientTint"></div>
+    <div class="smr-stage" id="smrStage">
+      <div class="smr-webgl" id="smrWebgl"></div>
+      <div class="smr-aurora"></div>
 
-      <!-- Sticky Top Chapter Dock -->
-      <nav class="slr-chapter-nav" aria-label="Story Chapters">
-        <button type="button" class="slr-nav-pill active" data-target="#slrAct1">I. Candlelight</button>
-        <button type="button" class="slr-nav-pill" data-target="#slrAct2">II. Letter</button>
-        <button type="button" class="slr-nav-pill" data-target="#slrAct3">III. Vent Room</button>
-        <button type="button" class="slr-nav-pill" data-target="#slrAct4">IV. Promises</button>
-        <button type="button" class="slr-nav-pill" data-target="#slrAct5">V. Memories</button>
-        <button type="button" class="slr-nav-pill" data-target="#slrAct6">VI. Peace Treaty</button>
-        <button type="button" class="slr-nav-pill" data-target="#slrAct7">VII. Heal</button>
-      </nav>
+      <!-- Top Progress Dots + Audio Player -->
+      <header class="smr-topbar">
+        <div class="smr-dots" id="smrDots">
+          ${[1, 2, 3, 4, 5, 6, 7].map((n) => `<button type="button" class="smr-dot ${n === 1 ? 'active' : ''}" data-go="${n}" title="Page ${n}"></button>`).join('')}
+        </div>
+        <div id="smrMusicMount"></div>
+      </header>
 
-      <div class="slr-music-slot" id="slrMusicSlot"></div>
-
-      <main class="slr-content">
-        <!-- ACT I: CANDLELIT SANCTUARY -->
-        <section class="slr-section slr-hero in-view" id="slrAct1">
-          <div class="slr-candle-wrap" id="slrCandle" role="button" tabindex="0" title="Tap to light candle">
-            <div class="slr-candle-aura"></div>
-            <div class="slr-candle-flame"></div>
-            <div class="slr-candle-pillar"></div>
+      <div class="smr-pages">
+        <!-- PAGE 1: MOONLIT ROSE GATEWAY -->
+        <section class="smr-page active" data-page="1">
+          <div class="smr-inner">
+            <div class="smr-moon-orb" id="smrMoonOrb" role="button" tabindex="0" title="Tap to awaken the moonlight">🌹</div>
+            <span class="smr-eyebrow">PAGE 1 OF 7 • MOONLIT APOLOGY</span>
+            <h1 class="smr-h1">${heroTitle}</h1>
+            <p class="smr-sub">${heroSubtitle}</p>
+            <div class="smr-nav-row">
+              <button type="button" class="smr-btn" data-go="2">Open My Heart ❯</button>
+            </div>
           </div>
-          <div class="slr-candle-tip" id="slrCandleTip">🕯️ Tap the candle to warm this sanctuary</div>
-          <span class="slr-eyebrow" style="margin-top:18px;">CHAPTER I • SINCERE ATONEMENT</span>
-          <h1 class="slr-h1">${heroTitle}</h1>
-          <p class="slr-sub">${heroSubtitle}</p>
-          <button type="button" class="slr-btn-primary" id="slrBtnBegin">
-            <span>Scroll Into My Heart</span>
-            <span>↓</span>
-          </button>
         </section>
 
-        <!-- ACT II: LOVABLE STICKY SCROLL-ILLUMINATED CONFESSION (Td) -->
-        <section id="slrAct2" class="slr-letter-track">
-          <div class="slr-letter-sticky">
-            <div class="slr-parchment">
-              <div class="slr-wax-seal" id="slrWaxSeal" role="button" tabindex="0" title="Tap to unseal">🕊️</div>
-              <span class="slr-eyebrow">CHAPTER II • SCROLL TO ILLUMINATE EVERY WORD</span>
-              <div style="font-family:'Playfair Display',Georgia,serif;font-size:20px;font-weight:700;color:#fde68a;margin-bottom:14px;">
+        <!-- PAGE 2: WAX-SEALED ANIMATED LETTER -->
+        <section class="smr-page" data-page="2">
+          <div class="smr-inner">
+            <div class="smr-glass" style="margin-top:24px;text-align:left;">
+              <div class="smr-seal" id="smrSeal" role="button" tabindex="0" title="Tap to unseal & animate">🕊️</div>
+              <span class="smr-eyebrow">PAGE 2 OF 7 • SINCERE CONFESSION</span>
+              <div style="font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:700;color:#f5d08a;margin-bottom:10px;">
                 Dearest ${recipientName},
               </div>
-              <p id="slrLetterBody" style="font-size:clamp(1.02rem,2.3vw,1.24rem);line-height:1.82;margin:0 0 22px;color:#fff5eb;">
-                ${letterWords.map((w, i) => `<span class="slr-letter-word" data-w="${i}">${w}</span>`).join(' ')}
+              <p id="smrLetterBody" style="font-size:clamp(0.95rem,2vw,1.1rem);line-height:1.72;margin:0 0 16px;">
+                ${letterWords.map((w) => `<span class="smr-word">${w}</span>`).join(' ')}
               </p>
-              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-top:1px solid rgba(255,255,255,0.12);padding-top:14px;">
-                <span style="font-size:13px;color:rgba(255,235,215,0.72);">Forever yours with all my heart,</span>
-                <strong style="font-size:16px;color:#fbbf24;">${senderName} 🫶</strong>
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.12);padding-top:12px;">
+                <span style="font-size:12px;color:rgba(255,255,255,0.7);">Always yours,</span>
+                <strong style="color:#fda4af;">${senderName} 🫶</strong>
               </div>
+            </div>
+            <div class="smr-nav-row">
+              <button type="button" class="smr-btn-ghost" data-go="1">❮ Back</button>
+              <button type="button" class="smr-btn" data-go="3">Enter Vent Room ❯</button>
             </div>
           </div>
         </section>
 
-        <!-- ACT III: TACTILE VENTING ROOM -->
-        <section class="slr-section" id="slrAct3" style="text-align:center;">
-          <span class="slr-eyebrow">CHAPTER III • LET IT ALL OUT</span>
-          <h2 class="slr-h2">Take Your Frustration Out On Me 🥊</h2>
-          <p class="slr-sub">You have every right to be upset. Throw whatever you want — zero complaints!</p>
-
-          <div class="slr-card" style="margin-top:24px;">
-            <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;">
-              <span>🔥 ANGER LEVEL</span>
-              <span id="slrAngerVal" style="color:#fda4af;">100% FURIOUS</span>
+        <!-- PAGE 3: TACTILE VENTING ROOM -->
+        <section class="smr-page" data-page="3">
+          <div class="smr-inner">
+            <span class="smr-eyebrow">PAGE 3 OF 7 • LET IT ALL OUT</span>
+            <h2 class="smr-h2">Take Your Anger Out On Me 🥊</h2>
+            <div class="smr-glass" style="margin-top:12px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;">
+                <span>🔥 ANGER LEVEL</span>
+                <span id="smrAngerVal" style="color:#fda4af;">100% FURIOUS</span>
+              </div>
+              <div class="smr-meter"><div class="smr-meter-fill" id="smrAngerFill" style="width:100%;"></div></div>
+              <div class="smr-target" id="smrTarget">
+                <img src="${creatorPhoto}" alt="${senderName}" onerror="this.src='/images/always_you.jpg'" />
+                <div class="smr-decal-layer" id="smrDecals"></div>
+              </div>
+              <div id="smrVentQuote" style="font-size:12.5px;font-style:italic;color:#f5d08a;margin-bottom:8px;">
+                "I'm right here listening... throw whatever you want 🥺"
+              </div>
+              <button type="button" class="smr-btn-ghost" id="smrWipe" style="padding:5px 12px;font-size:11px;">🧻 Wipe Clean</button>
+              <div class="smr-arsenal">
+                <button type="button" class="smr-arsenal-btn" data-fx="punch" data-emoji="💥">🥊 Punch</button>
+                <button type="button" class="smr-arsenal-btn" data-fx="splat" data-emoji="🍅">🍅 Tomato</button>
+                <button type="button" class="smr-arsenal-btn" data-fx="whack" data-emoji="🩴">🩴 Chappal</button>
+                <button type="button" class="smr-arsenal-btn" data-fx="splat" data-emoji="🧋">🧋 Boba</button>
+                <button type="button" class="smr-arsenal-btn" data-fx="boing" data-emoji="🧸">🧸 Teddy</button>
+              </div>
             </div>
-            <div class="slr-meter-track">
-              <div class="slr-meter-fill" id="slrAngerFill" style="width:100%;"></div>
-            </div>
-
-            <div class="slr-target-frame" id="slrTargetFrame">
-              <img src="${creatorPhoto}" alt="${senderName}" onerror="this.src='/images/always_you.jpg'" />
-              <div class="slr-decal-layer" id="slrDecalLayer"></div>
-            </div>
-            <div id="slrVentBubble" style="font-size:13px;font-style:italic;color:#fde68a;margin-bottom:10px;">
-              "I know I messed up... I'm right here listening 🥺"
-            </div>
-            <button type="button" class="slr-nav-pill active" id="slrWipeBtn" style="font-size:12px;padding:7px 14px;">
-              🧻 Wipe Glass Clean
-            </button>
-
-            <div class="slr-arsenal-grid">
-              <button type="button" class="slr-arsenal-btn" data-fx="punch" data-emoji="💥">
-                <span style="font-size:24px;">🥊</span><strong style="font-size:12px;">Boxing Punch</strong>
-              </button>
-              <button type="button" class="slr-arsenal-btn" data-fx="splat" data-emoji="🍅">
-                <span style="font-size:24px;">🍅</span><strong style="font-size:12px;">Ripe Tomato</strong>
-              </button>
-              <button type="button" class="slr-arsenal-btn" data-fx="whack" data-emoji="🩴">
-                <span style="font-size:24px;">🩴</span><strong style="font-size:12px;">Flying Chappal</strong>
-              </button>
-              <button type="button" class="slr-arsenal-btn" data-fx="splat" data-emoji="🧋">
-                <span style="font-size:24px;">🧋</span><strong style="font-size:12px;">Iced Boba</strong>
-              </button>
-              <button type="button" class="slr-arsenal-btn" data-fx="boing" data-emoji="🧸">
-                <span style="font-size:24px;">🧸</span><strong style="font-size:12px;">Soft Teddy</strong>
-              </button>
+            <div class="smr-nav-row">
+              <button type="button" class="smr-btn-ghost" data-go="2">❮ Back</button>
+              <button type="button" class="smr-btn" data-go="4">My Promises ❯</button>
             </div>
           </div>
         </section>
 
-        <!-- ACT IV: SACRED PROMISES & REASONS -->
-        <section class="slr-section" id="slrAct4">
-          <div style="text-align:center;">
-            <span class="slr-eyebrow">CHAPTER IV • ACCOUNTABILITY &amp; PROMISES</span>
-            <h2 class="slr-h2">Why Us, &amp; What I Promise</h2>
-            <p class="slr-sub">No excuses—only honest growth and protecting your peace.</p>
-          </div>
-          <div class="slr-grid-2">
-            ${reasonsToForgive.map((r, i) => `
-              <div class="slr-pillar">
-                <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;color:#fbbf24;margin-bottom:6px;">WHY WE MATTER • 0${i + 1}</div>
-                <p style="margin:0;font-size:14px;line-height:1.6;color:rgba(255,244,235,0.9);">${r}</p>
-              </div>
-            `).join('')}
-          </div>
-          <div class="slr-card" style="margin-top:20px;">
-            <div style="font-size:12px;font-weight:800;letter-spacing:1.2px;color:#fda4af;margin-bottom:12px;">🛡️ MY SACRED PROMISES TO YOU</div>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              ${promises.map((p) => `
-                <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.55;">
-                  <span>✦</span><span>${p}</span>
+        <!-- PAGE 4: SACRED PROMISES & REASONS -->
+        <section class="smr-page" data-page="4">
+          <div class="smr-inner">
+            <span class="smr-eyebrow">PAGE 4 OF 7 • ACCOUNTABILITY</span>
+            <h2 class="smr-h2">Why Us &amp; What I Promise</h2>
+            <div class="smr-grid-2">
+              ${reasonsToForgive.map((r, i) => `
+                <div class="smr-pill-card">
+                  <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;color:#f5d08a;margin-bottom:4px;">WHY WE MATTER • 0${i + 1}</div>
+                  <p style="margin:0;font-size:13px;line-height:1.5;">${r}</p>
                 </div>
               `).join('')}
             </div>
+            <div class="smr-glass" style="margin-top:14px;text-align:left;padding:16px 20px;">
+              <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;color:#fda4af;margin-bottom:8px;">🛡️ MY SACRED PROMISES</div>
+              ${promises.map((p) => `<div style="font-size:13px;line-height:1.5;margin-bottom:5px;">✦ ${p}</div>`).join('')}
+            </div>
+            <div class="smr-nav-row">
+              <button type="button" class="smr-btn-ghost" data-go="3">❮ Back</button>
+              <button type="button" class="smr-btn" data-go="5">Our Memories ❯</button>
+            </div>
           </div>
         </section>
 
-        <!-- ACT V: LOVABLE CASCADING FLIP POLAROIDS (Cd) -->
-        <section class="slr-section" id="slrAct5">
-          <div style="text-align:center;">
-            <span class="slr-eyebrow">CHAPTER V • CHERISHED MEMORIES</span>
-            <h2 class="slr-h2">Moments I Never Want to Lose</h2>
-            <p class="slr-sub">Tap any Polaroid to flip it and read the hidden note on the back.</p>
-          </div>
-          <div class="slr-polaroids-grid">
-            ${polaroids.map((p, i) => `
-              <figure class="slr-polaroid" style="--tilt:${tilts[i % tilts.length]};transition-delay:${(i * 0.14).toFixed(2)}s;" data-pol="${i}">
-                <div class="slr-polaroid-inner">
-                  <div class="slr-pol-face slr-pol-front">
-                    <img src="${p.image || '/images/sunset.jpg'}" alt="${p.caption || ''}" onerror="this.src='/images/sunset.jpg'" />
-                    <figcaption class="slr-pol-cap">${p.caption || 'Always You 🫶'}</figcaption>
-                  </div>
-                  <div class="slr-pol-face slr-pol-back">
-                    <div style="font-size:26px;margin-bottom:10px;">💌</div>
-                    <p style="font-size:14px;line-height:1.6;margin:0;font-weight:600;">${p.note || p.caption || 'You mean the world to me.'}</p>
-                    <span style="margin-top:14px;font-size:11px;color:#e07a5f;font-weight:800;">Tap to flip back ↺</span>
+        <!-- PAGE 5: 3D FLIP POLAROIDS -->
+        <section class="smr-page" data-page="5">
+          <div class="smr-inner">
+            <span class="smr-eyebrow">PAGE 5 OF 7 • CHERISHED MEMORIES</span>
+            <h2 class="smr-h2">Tap Any Photo to Flip 💌</h2>
+            <div class="smr-pol-grid">
+              ${polaroids.map((p) => `
+                <div class="smr-pol">
+                  <div class="smr-pol-inner">
+                    <div class="smr-pol-face smr-pol-front">
+                      <img src="${p.image || '/images/sunset.jpg'}" alt="" onerror="this.src='/images/sunset.jpg'" />
+                      <div style="margin-top:8px;font-size:12px;font-weight:800;">${p.caption || 'Always You 🫶'}</div>
+                    </div>
+                    <div class="smr-pol-face smr-pol-back">
+                      <div style="font-size:22px;margin-bottom:8px;">💌</div>
+                      <p style="font-size:13px;line-height:1.5;margin:0;font-weight:700;">${p.note || p.caption || 'You mean everything to me.'}</p>
+                    </div>
                   </div>
                 </div>
-              </figure>
-            `).join('')}
+              `).join('')}
+            </div>
+            <div class="smr-nav-row">
+              <button type="button" class="smr-btn-ghost" data-go="4">❮ Back</button>
+              <button type="button" class="smr-btn" data-go="6">Peace Treaty ❯</button>
+            </div>
           </div>
         </section>
 
-        <!-- ACT VI: PENANCES, PEACE TREATY & CARE COUPONS -->
-        <section class="slr-section" id="slrAct6">
-          <div style="text-align:center;">
-            <span class="slr-eyebrow">CHAPTER VI • PEACE TREATY &amp; REWARDS</span>
-            <h2 class="slr-h2">Pick Your Penances &amp; Vouchers</h2>
-            <p class="slr-sub">Tap every penance you want me to fulfill and claim your care coupons.</p>
-          </div>
-
-          <div class="slr-grid-2">
-            <div class="slr-card">
-              <div style="font-size:13px;font-weight:800;color:#fbbf24;margin-bottom:12px;">🧋 TAP TO CLAIM PENANCES</div>
-              <div style="display:flex;flex-direction:column;gap:8px;">
-                ${penances.map((pen, i) => `
-                  <div class="slr-check-item" data-pen="${i}">
-                    <span class="slr-check-box">⬜</span>
-                    <span style="font-size:13px;line-height:1.45;">${pen}</span>
-                  </div>
-                `).join('')}
+        <!-- PAGE 6: PENANCES, PEACE TREATY & COUPONS -->
+        <section class="smr-page" data-page="6">
+          <div class="smr-inner">
+            <span class="smr-eyebrow">PAGE 6 OF 7 • PEACE TREATY</span>
+            <h2 class="smr-h2">Claim Penances &amp; Vouchers</h2>
+            <div class="smr-grid-2">
+              <div class="smr-glass" style="padding:16px;">
+                <div style="font-size:12px;font-weight:800;color:#f5d08a;margin-bottom:8px;">🧋 TAP TO CLAIM PENANCES</div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  ${penances.map((pen) => `<div class="smr-check"><span class="smr-chk">⬜</span><span>${pen}</span></div>`).join('')}
+                </div>
+              </div>
+              <div class="smr-glass" style="padding:16px;">
+                <div style="font-size:12px;font-weight:800;color:#fda4af;margin-bottom:8px;">📜 TREATY &amp; COUPONS</div>
+                ${treatyClauses.slice(0, 3).map((c, i) => `<div style="font-size:12px;line-height:1.45;margin-bottom:6px;"><strong>${i + 1}.</strong> ${c}</div>`).join('')}
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;">
+                  ${coupons.map((cp) => `<button type="button" class="smr-arsenal-btn smr-coupon-btn">${cp.icon || '🎟️'} ${cp.title}</button>`).join('')}
+                </div>
+                <button type="button" class="smr-btn" id="smrTreatyBtn" style="width:100%;justify-content:center;padding:9px 14px;font-size:13px;">✍️ Ratify Peace Treaty</button>
               </div>
             </div>
+            <div class="smr-nav-row">
+              <button type="button" class="smr-btn-ghost" data-go="5">❮ Back</button>
+              <button type="button" class="smr-btn" data-go="7">Final Healing ❯</button>
+            </div>
+          </div>
+        </section>
 
-            <div class="slr-card">
-              <div style="font-size:13px;font-weight:800;color:#fda4af;margin-bottom:12px;">📜 OFFICIAL PEACE TREATY</div>
-              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-                ${treatyClauses.map((c, i) => `
-                  <div style="font-size:12.5px;line-height:1.5;color:rgba(255,240,230,0.86);">
-                    <strong>Clause ${i + 1}:</strong> ${c}
-                  </div>
-                `).join('')}
-              </div>
-              <button type="button" class="slr-btn-primary" id="slrSignTreatyBtn" style="margin-top:6px;width:100%;justify-content:center;">
-                ✍️ Tap to Ratify Treaty
+        <!-- PAGE 7: HOLD-TO-HEAL THREE.JS LANTERNS FINALE -->
+        <section class="smr-page" data-page="7">
+          <div class="smr-inner">
+            <div class="smr-glass" id="smrHealCard">
+              <span class="smr-eyebrow">PAGE 7 OF 7 • THE OLIVE BRANCH</span>
+              <h2 class="smr-h2">Will You Let Me Make It Right?</h2>
+              <p class="smr-sub">Hold for 2 seconds to release the 3D rose lanterns and seal our peace.</p>
+              <button type="button" class="smr-hold-btn" id="smrHoldBtn">
+                <div class="smr-hold-fill" id="smrHoldFill"></div>
+                <span style="position:relative;z-index:1;" id="smrHoldLabel">🕊️ Hold 2s to Forgive &amp; Heal</span>
               </button>
-            </div>
-          </div>
-
-          <div class="slr-grid-2" style="margin-top:18px;">
-            ${coupons.map((cp, i) => `
-              <div class="slr-pillar slr-coupon" data-cp="${i}" style="cursor:pointer;">
-                <div style="font-size:26px;margin-bottom:6px;">${cp.icon || '🎟️'}</div>
-                <div style="font-size:15px;font-weight:800;color:#fff;">${cp.title}</div>
-                <p style="font-size:12.5px;color:rgba(255,235,220,0.75);margin:6px 0 8px;">${cp.desc}</p>
-                <span class="slr-cp-status" style="font-size:11px;font-weight:800;color:#fbbf24;">Tap to Redeem ✨</span>
+              <div id="smrHealedBox" style="display:none;margin-top:18px;">
+                <div style="font-size:38px;margin-bottom:6px;">🌹✨🕊️💖</div>
+                <h3 style="font-size:20px;font-weight:800;color:#f5d08a;margin:0 0 8px;">Thank You, ${recipientName}</h3>
+                <p style="font-size:13px;color:rgba(255,240,250,0.86);margin:0 0 14px;">Our sky is bright again. I promise to cherish your heart gently every day.</p>
+                <button type="button" class="smr-btn" id="smrCertBtn">📸 Save Healing Certificate</button>
               </div>
-            `).join('')}
-          </div>
-        </section>
-
-        <!-- ACT VII: THE OLIVE BRANCH FINALE (HOLD-TO-HEAL + 3D LANTERNS + CERTIFICATE) -->
-        <section class="slr-section" id="slrAct7" style="text-align:center;padding-bottom:110px;">
-          <div class="slr-card" id="slrHealCard">
-            <span class="slr-eyebrow">CHAPTER VII • THE OLIVE BRANCH</span>
-            <h2 class="slr-h2" id="slrHealTitle">Will You Let Me Make It Right?</h2>
-            <p class="slr-sub" id="slrHealSub">
-              Hold the golden olive branch for 2 seconds to release the sky lanterns and heal our sky.
-            </p>
-
-            <button type="button" class="slr-hold-btn" id="slrHoldBtn">
-              <div class="slr-hold-fill" id="slrHoldFill"></div>
-              <span class="slr-hold-label" id="slrHoldLabel">🕊️ Hold 2s to Forgive &amp; Heal</span>
-            </button>
-
-            <div id="slrHealedBox" style="display:none;margin-top:22px;">
-              <div style="font-size:40px;margin-bottom:6px;">🕊️💖🏮✨</div>
-              <h3 style="font-size:22px;font-weight:800;color:#fde68a;margin:0 0 8px;">Thank You For Grace &amp; Love, ${recipientName}</h3>
-              <p style="font-size:14px;color:rgba(255,240,230,0.86);max-width:520px;margin:0 auto 18px;line-height:1.6;">
-                Look at the sky lanterns rising behind this page — I promise to treasure your heart gently every day forward.
-              </p>
-              <button type="button" class="slr-btn-primary" id="slrSaveCertBtn" style="margin-top:0;">
-                📸 Save Healing Certificate
-              </button>
+            </div>
+            <div class="smr-nav-row">
+              <button type="button" class="smr-btn-ghost" data-go="6">❮ Back</button>
             </div>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   `;
 
   // Music Player
-  const musicSlot = container.querySelector('#slrMusicSlot');
-  if (data.audioSrc || true) {
-    initMusicPlayer(musicSlot, {
-      src: data.audioSrc || '/audio/alfaaz.mp3',
-      title: data.audioTitle || 'Alfaaz - Hamza Malik & Zain Zohaib',
-      subtitle: data.audioSubtitle || "I'M SO SORRY",
-    });
-  }
+  const musicMount = container.querySelector('#smrMusicMount');
+  initMusicPlayer(musicMount, {
+    src: data.audioSrc || '/audio/alfaaz.mp3',
+    title: data.audioTitle || 'Alfaaz - Hamza Malik & Zain Zohaib',
+    subtitle: data.audioSubtitle || "I'M SO SORRY",
+  });
 
   /* ═══════════════════════════════════════════
-     THREE.JS PERSISTENT TWILIGHT EMBERS & LANTERNS
+     THREE.JS 3D STARLIGHT + ROSE PETALS + LANTERNS
      ═══════════════════════════════════════════ */
-  const webglHost = container.querySelector('#slrWebglBg');
+  const webglHost = container.querySelector('#smrWebgl');
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(55, (webglHost.clientWidth || window.innerWidth) / (webglHost.clientHeight || window.innerHeight), 0.1, 150);
   camera.position.set(0, 0, 18);
@@ -877,44 +745,43 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
   renderer.setPixelRatio(getOptimalPixelRatio(tier));
   webglHost.appendChild(renderer.domElement);
 
-  const particleCount = lowDetail ? 90 : 180;
-  const positions = new Float32Array(particleCount * 3);
-  const speeds = new Float32Array(particleCount);
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 34;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 24;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 18;
-    speeds[i] = 0.4 + Math.random() * 0.9;
+  const count = lowDetail ? 85 : 170;
+  const pos = new Float32Array(count * 3);
+  const vel = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    pos[i * 3] = (Math.random() - 0.5) * 34;
+    pos[i * 3 + 1] = (Math.random() - 0.5) * 24;
+    pos[i * 3 + 2] = (Math.random() - 0.5) * 16;
+    vel[i] = 0.35 + Math.random() * 0.85;
   }
-  const emberGeo = new THREE.BufferGeometry();
-  emberGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const emberMat = new THREE.PointsMaterial({
-    color: 0xf4a261,
+  const starGeo = new THREE.BufferGeometry();
+  starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const starMat = new THREE.PointsMaterial({
+    color: 0xfda4af,
     size: lowDetail ? 0.24 : 0.2,
     transparent: true,
-    opacity: 0.78,
+    opacity: 0.82,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
-  const embers = new THREE.Points(emberGeo, emberMat);
-  scene.add(embers);
+  const starPoints = new THREE.Points(starGeo, starMat);
+  scene.add(starPoints);
 
-  // 3D Healing Sky Lanterns (released on Hold-to-Heal)
   const lanterns = [];
   const lanternGeo = new THREE.CylinderGeometry(0.24, 0.16, 0.46, 8, 1, true);
-  const lanternMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.92, side: THREE.DoubleSide });
-  function releaseThreeLanterns(count = 10) {
-    for (let i = 0; i < count; i++) {
-      const mesh = new THREE.Mesh(lanternGeo, lanternMat);
-      mesh.position.set((Math.random() - 0.5) * 20, -12 - Math.random() * 5, (Math.random() - 0.5) * 8);
-      mesh.userData = { vy: 1.4 + Math.random() * 1.1, phase: Math.random() * Math.PI * 2, sharedAsset: true };
-      scene.add(mesh);
-      lanterns.push(mesh);
+  const lanternMat = new THREE.MeshBasicMaterial({ color: 0xf5d08a, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+  function spawnLanterns(n = 12) {
+    for (let i = 0; i < n; i++) {
+      const m = new THREE.Mesh(lanternGeo, lanternMat);
+      m.position.set((Math.random() - 0.5) * 20, -11 - Math.random() * 5, (Math.random() - 0.5) * 8);
+      m.userData = { vy: 1.4 + Math.random() * 1.1, phase: Math.random() * Math.PI * 2, sharedAsset: true };
+      scene.add(m);
+      lanterns.push(m);
     }
   }
 
   let isHealed = false;
-  let scrollProgress = 0;
+  let targetCamZ = 18;
   const clock = new THREE.Clock();
   const fpsScaler = createAdaptiveFpsScaler(renderer, tier);
   let rafId = null;
@@ -925,26 +792,24 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
     const elapsed = clock.elapsedTime;
     fpsScaler.tick(dt);
 
-    const posAttr = emberGeo.attributes.position;
-    const arr = posAttr.array;
-    const driftSpeed = isHealed ? 1.55 : 0.65;
-    for (let i = 0; i < particleCount; i++) {
-      arr[i * 3 + 1] += dt * speeds[i] * driftSpeed;
-      arr[i * 3] += Math.sin(elapsed * 0.8 + i) * dt * 0.22;
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetCamZ, 1 - Math.exp(-4 * dt));
+    const arr = starGeo.attributes.position.array;
+    const speedMult = isHealed ? 1.7 : 0.7;
+    for (let i = 0; i < count; i++) {
+      arr[i * 3 + 1] += dt * vel[i] * speedMult;
+      arr[i * 3] += Math.sin(elapsed * 0.7 + i) * dt * 0.25;
       if (arr[i * 3 + 1] > 13) arr[i * 3 + 1] = -13;
     }
-    posAttr.needsUpdate = true;
+    starGeo.attributes.position.needsUpdate = true;
+    starPoints.rotation.y += dt * 0.05;
+    starMat.color.setHex(isHealed ? 0xf5d08a : 0xfda4af);
 
-    emberMat.color.setHex(isHealed ? 0xfbbf24 : 0xf4a261);
-    embers.rotation.y = scrollProgress * 0.45;
-
-    for (let i = lanterns.length - 1; i >= 0; i--) {
+    for (let i = 0; i < lanterns.length; i++) {
       const l = lanterns[i];
       l.position.y += l.userData.vy * dt;
       l.position.x += Math.sin(elapsed + l.userData.phase) * dt * 0.35;
       if (l.position.y > 14) l.position.y = -13;
     }
-
     renderer.render(scene, camera);
   };
   animateThree();
@@ -959,160 +824,137 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
   window.addEventListener('resize', onResize);
 
   /* ═══════════════════════════════════════════
-     LENIS SMOOTH SCROLL + LOVABLE SCROLL-DRIVEN
-     ILLUMINATED LETTER (Td) & IN-VIEW REVEALS
+     PAGE-BY-PAGE DYNAMIC TRANSITIONS (ZERO SCROLL)
      ═══════════════════════════════════════════ */
-  let lenis = null;
-  try {
-    lenis = new Lenis({ duration: 1.15, smoothWheel: true });
-    const lenisRaf = (time) => {
-      lenis?.raf(time);
-      if (lenis) requestAnimationFrame(lenisRaf);
-    };
-    requestAnimationFrame(lenisRaf);
-  } catch {}
+  let currentPage = 1;
+  const pages = Array.from(container.querySelectorAll('.smr-page'));
+  const dots = Array.from(container.querySelectorAll('.smr-dot'));
+  const wordEls = Array.from(container.querySelectorAll('.smr-word'));
+  let letterInterval = null;
 
-  const wordEls = Array.from(container.querySelectorAll('.slr-letter-word'));
-  const letterTrack = container.querySelector('#slrAct2');
-  const navPills = Array.from(container.querySelectorAll('.slr-nav-pill[data-target]'));
-  const sectionEls = ['#slrAct1', '#slrAct2', '#slrAct3', '#slrAct4', '#slrAct5', '#slrAct6', '#slrAct7']
-    .map((sel) => container.querySelector(sel))
-    .filter(Boolean);
-
-  const onScrollUpdate = () => {
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    scrollProgress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
-
-    // Lovable Td sticky letter word illumination
-    if (letterTrack && wordEls.length > 0) {
-      const rect = letterTrack.getBoundingClientRect();
-      const totalDist = Math.max(1, letterTrack.offsetHeight - window.innerHeight);
-      const rawProg = Math.min(1, Math.max(0, -rect.top / totalDist));
-      const norm = Math.min(1, Math.max(0, (rawProg - 0.04) / 0.88));
-      const litCount = Math.round(norm * wordEls.length);
-      for (let i = 0; i < wordEls.length; i++) {
-        wordEls[i].classList.toggle('lit', i < litCount);
+  function animateLetterWords() {
+    clearInterval(letterInterval);
+    wordEls.forEach((w) => w.classList.remove('lit'));
+    let idx = 0;
+    letterInterval = setInterval(() => {
+      if (idx < wordEls.length) {
+        wordEls[idx].classList.add('lit');
+        idx++;
+      } else {
+        clearInterval(letterInterval);
       }
-    }
+    }, 55);
+  }
 
-    // Active chapter pill
-    let activeIdx = 0;
-    for (let i = 0; i < sectionEls.length; i++) {
-      const r = sectionEls[i].getBoundingClientRect();
-      if (r.top <= window.innerHeight * 0.42) activeIdx = i;
-    }
-    navPills.forEach((pill, i) => pill.classList.toggle('active', i === activeIdx));
-  };
-  window.addEventListener('scroll', onScrollUpdate, { passive: true });
-  onScrollUpdate();
+  function goToPage(nextNum) {
+    const n = Math.max(1, Math.min(7, Number(nextNum)));
+    if (n === currentPage) return;
+    const dir = n > currentPage ? 1 : -1;
+    const prevEl = pages[currentPage - 1];
+    const nextEl = pages[n - 1];
+    currentPage = n;
 
-  // In-view Observer for Lovable vd sections & Cd cascading polaroids
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          entry.target.querySelectorAll('.slr-polaroid').forEach((pol) => pol.classList.add('shown'));
-        }
-      });
-    },
-    { threshold: 0.16 }
-  );
-  container.querySelectorAll('.slr-section').forEach((sec) => io.observe(sec));
+    dots.forEach((d, idx) => d.classList.toggle('active', idx + 1 === n));
+    targetCamZ = 18 - (n - 1) * 0.6;
+    gsap.to(starPoints.rotation, { y: starPoints.rotation.y + dir * 0.65, duration: 0.9, ease: 'power2.out' });
 
-  // Chapter Nav + Hero CTA
-  navPills.forEach((pill) => {
-    pill.addEventListener('click', () => {
-      const target = container.querySelector(pill.getAttribute('data-target'));
-      if (target) {
-        if (lenis) lenis.scrollTo(target, { offset: -58 });
-        else target.scrollIntoView({ behavior: 'smooth' });
-      }
+    gsap.killTweensOf(prevEl);
+    gsap.killTweensOf(nextEl);
+    gsap.to(prevEl, {
+      opacity: 0,
+      scale: 0.94,
+      x: -dir * 40,
+      duration: 0.35,
+      ease: 'power2.in',
+      onComplete: () => {
+        prevEl.classList.remove('active');
+        prevEl.style.display = 'none';
+      },
+    });
+
+    nextEl.style.display = 'flex';
+    nextEl.classList.add('active');
+    nextEl.scrollTop = 0;
+    gsap.fromTo(
+      nextEl,
+      { opacity: 0, scale: 1.05, x: dir * 48 },
+      { opacity: 1, scale: 1, x: 0, duration: 0.55, ease: 'power3.out' }
+    );
+
+    if (n === 2) animateLetterWords();
+  }
+
+  container.querySelectorAll('[data-go]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      playSound('chime');
+      goToPage(btn.getAttribute('data-go'));
     });
   });
-  container.querySelector('#slrBtnBegin').addEventListener('click', () => {
-    const act2 = container.querySelector('#slrAct2');
-    if (act2) {
-      if (lenis) lenis.scrollTo(act2, { offset: -20 });
-      else act2.scrollIntoView({ behavior: 'smooth' });
-    }
-  });
 
-  // Candle Gateway + Wax Seal
-  const candleEl = container.querySelector('#slrCandle');
-  const candleTip = container.querySelector('#slrCandleTip');
-  candleEl.addEventListener('click', () => {
-    candleEl.classList.add('lit');
-    candleTip.textContent = '✨ Candle lit — my heart is open to you';
-    playSound('candle');
-    const audioEl = musicSlot.querySelector('audio');
+  // Page 1 Moonlit Orb
+  container.querySelector('#smrMoonOrb').addEventListener('click', () => {
+    playSound('chime');
+    gsap.fromTo('#smrMoonOrb', { scale: 0.85 }, { scale: 1.08, duration: 0.4, ease: 'back.out(2)' });
+    const audioEl = musicMount.querySelector('audio');
     if (audioEl && audioEl.paused) audioEl.play().catch(() => {});
   });
-  const waxSeal = container.querySelector('#slrWaxSeal');
-  waxSeal.addEventListener('click', () => {
-    waxSeal.classList.toggle('unsealed');
+
+  // Page 2 Seal
+  const seal = container.querySelector('#smrSeal');
+  seal.addEventListener('click', () => {
+    seal.classList.add('open');
     playSound('chime');
-    wordEls.forEach((w) => w.classList.add('lit'));
+    animateLetterWords();
   });
 
-  // Act III: Venting Room
+  // Page 3 Venting Room
   let anger = 100;
-  const angerVal = container.querySelector('#slrAngerVal');
-  const angerFill = container.querySelector('#slrAngerFill');
-  const targetFrame = container.querySelector('#slrTargetFrame');
-  const decalLayer = container.querySelector('#slrDecalLayer');
-  const ventBubble = container.querySelector('#slrVentBubble');
-  const ventQuotes = [
-    '"Ouch! Okay I deserved that one 🥺"',
-    '"Still here, still sorry, still yours 💔"',
-    '"Feeling a little lighter yet? 🫶"',
-    '"Zero complaints—take all the time you need 🕊️"',
-  ];
+  const angerVal = container.querySelector('#smrAngerVal');
+  const angerFill = container.querySelector('#smrAngerFill');
+  const decals = container.querySelector('#smrDecals');
+  const target = container.querySelector('#smrTarget');
+  const ventQuote = container.querySelector('#smrVentQuote');
+  const quotes = ['"Okay I deserved that 🥺"', '"Still sorry, still yours 💖"', '"Feeling lighter yet? 🫶"', '"Take all the time you need 🕊️"'];
 
-  container.querySelectorAll('.slr-arsenal-btn').forEach((btn) => {
+  container.querySelectorAll('.smr-arsenal-btn[data-fx]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const fx = btn.getAttribute('data-fx');
-      const emoji = btn.getAttribute('data-emoji');
-      playSound(fx);
-      anger = Math.max(0, anger - 14);
+      playSound(btn.getAttribute('data-fx'));
+      anger = Math.max(0, anger - 16);
       angerFill.style.width = `${anger}%`;
       angerVal.textContent = anger === 0 ? '0% CALM & HEALED 🕊️' : `${anger}% FURIOUS`;
-
-      const decal = document.createElement('span');
-      decal.className = 'slr-decal';
-      decal.textContent = emoji;
-      decal.style.left = `${20 + Math.random() * 60}%`;
-      decal.style.top = `${20 + Math.random() * 60}%`;
-      decalLayer.appendChild(decal);
-
-      gsap.fromTo(targetFrame, { x: -7, rotation: -3 }, { x: 0, rotation: 0, duration: 0.32, ease: 'elastic.out(1, 0.35)' });
-      ventBubble.textContent = ventQuotes[Math.floor(Math.random() * ventQuotes.length)];
+      const d = document.createElement('span');
+      d.className = 'smr-decal';
+      d.textContent = btn.getAttribute('data-emoji');
+      d.style.left = `${20 + Math.random() * 60}%`;
+      d.style.top = `${20 + Math.random() * 60}%`;
+      decals.appendChild(d);
+      gsap.fromTo(target, { x: -8, rotation: -3 }, { x: 0, rotation: 0, duration: 0.3, ease: 'elastic.out(1, 0.35)' });
+      ventQuote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
     });
   });
+  container.querySelector('#smrWipe').addEventListener('click', () => { decals.innerHTML = ''; playSound('chime'); });
 
-  container.querySelector('#slrWipeBtn').addEventListener('click', () => {
-    decalLayer.innerHTML = '';
-    playSound('chime');
+  // Page 5 Flip Polaroids
+  container.querySelectorAll('.smr-pol').forEach((p) => {
+    p.addEventListener('click', () => { p.classList.toggle('flipped'); playSound('chime'); });
   });
 
-  // Act V: Flip Polaroids
-  container.querySelectorAll('.slr-polaroid').forEach((pol) => {
-    pol.addEventListener('click', () => {
-      pol.classList.toggle('flipped');
+  // Page 6 Penances, Coupons & Treaty
+  container.querySelectorAll('.smr-check').forEach((c) => {
+    c.addEventListener('click', () => {
+      const ok = c.classList.toggle('claimed');
+      c.querySelector('.smr-chk').textContent = ok ? '✅' : '⬜';
       playSound('chime');
     });
   });
-
-  // Act VI: Penances, Treaty & Coupons
-  container.querySelectorAll('.slr-check-item').forEach((item) => {
-    item.addEventListener('click', () => {
-      const claimed = item.classList.toggle('claimed');
-      item.querySelector('.slr-check-box').textContent = claimed ? '✅' : '⬜';
+  container.querySelectorAll('.smr-coupon-btn').forEach((b) => {
+    b.addEventListener('click', () => {
+      b.style.borderColor = '#34d399';
+      b.style.background = 'rgba(52,211,153,0.22)';
       playSound('chime');
     });
   });
-
-  const treatyBtn = container.querySelector('#slrSignTreatyBtn');
+  const treatyBtn = container.querySelector('#smrTreatyBtn');
   treatyBtn.addEventListener('click', () => {
     treatyBtn.textContent = `🕊️ Ratified by ${recipientName} & ${senderName} ✓`;
     treatyBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
@@ -1120,34 +962,25 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
     confetti({ particleCount: 45, spread: 65, origin: { y: 0.7 } });
   });
 
-  container.querySelectorAll('.slr-coupon').forEach((cp) => {
-    cp.addEventListener('click', () => {
-      const st = cp.querySelector('.slr-cp-status');
-      st.textContent = '✓ Voucher Claimed — Show Screenshot!';
-      st.style.color = '#4ade80';
-      playSound('chime');
-    });
-  });
-
-  // Act VII: Hold-to-Heal Olive Branch
-  const holdBtn = container.querySelector('#slrHoldBtn');
-  const holdFill = container.querySelector('#slrHoldFill');
-  const holdLabel = container.querySelector('#slrHoldLabel');
-  const healedBox = container.querySelector('#slrHealedBox');
-  const ambientTint = container.querySelector('#slrAmbientTint');
+  // Page 7 Hold-to-Heal
+  const stage = container.querySelector('#smrStage');
+  const holdBtn = container.querySelector('#smrHoldBtn');
+  const holdFill = container.querySelector('#smrHoldFill');
+  const holdLabel = container.querySelector('#smrHoldLabel');
+  const healedBox = container.querySelector('#smrHealedBox');
   let holdTimer = null;
   let holdStart = 0;
 
-  function completeHealing() {
+  function completeHeal() {
     if (isHealed) return;
     isHealed = true;
+    stage.classList.add('healed');
     holdBtn.style.display = 'none';
     healedBox.style.display = 'block';
-    ambientTint.classList.add('healed');
     playSound('victory');
-    releaseThreeLanterns(14);
-    confetti({ particleCount: 80, angle: 60, spread: 70, origin: { x: 0, y: 0.8 } });
-    confetti({ particleCount: 80, angle: 120, spread: 70, origin: { x: 1, y: 0.8 } });
+    spawnLanterns(14);
+    confetti({ particleCount: 75, angle: 60, spread: 70, origin: { x: 0, y: 0.8 } });
+    confetti({ particleCount: 75, angle: 120, spread: 70, origin: { x: 1, y: 0.8 } });
   }
 
   const startHold = (e) => {
@@ -1159,10 +992,7 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
     holdTimer = setInterval(() => {
       const pct = Math.min(100, ((performance.now() - holdStart) / 1800) * 100);
       holdFill.style.width = `${pct}%`;
-      if (pct >= 100) {
-        clearInterval(holdTimer);
-        completeHealing();
-      }
+      if (pct >= 100) { clearInterval(holdTimer); completeHeal(); }
     }, 30);
   };
   const cancelHold = () => {
@@ -1171,17 +1001,14 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
     holdFill.style.width = '0%';
     holdLabel.textContent = '🕊️ Hold 2s to Forgive & Heal';
   };
-
   holdBtn.addEventListener('pointerdown', startHold);
   holdBtn.addEventListener('pointerup', cancelHold);
   holdBtn.addEventListener('pointerleave', cancelHold);
   holdBtn.addEventListener('pointercancel', cancelHold);
 
-  container.querySelector('#slrSaveCertBtn').addEventListener('click', async () => {
-    const card = container.querySelector('#slrHealCard');
-    if (!card) return;
+  container.querySelector('#smrCertBtn').addEventListener('click', async () => {
     try {
-      const canvas = await html2canvas(card, { backgroundColor: '#171115', scale: 2 });
+      const canvas = await html2canvas(container.querySelector('#smrHealCard'), { backgroundColor: '#0d1026', scale: 2 });
       const link = document.createElement('a');
       link.download = `peace-certificate-${recipientName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -1189,17 +1016,11 @@ export function renderSorryTemplate(container, data = {}, isMakerReview = false)
     } catch {}
   });
 
-  // Cleanup
   container._cleanup = () => {
     cancelAnimationFrame(rafId);
+    clearInterval(letterInterval);
     clearInterval(holdTimer);
-    io.disconnect();
     window.removeEventListener('resize', onResize);
-    window.removeEventListener('scroll', onScrollUpdate);
-    if (lenis) {
-      lenis.destroy();
-      lenis = null;
-    }
     disposeThreeScene(scene, renderer);
     if (renderer.domElement.parentNode === webglHost) {
       webglHost.removeChild(renderer.domElement);

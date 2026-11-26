@@ -399,13 +399,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
   sorry: {
     id: "sorry",
     name: "Heartfelt Apology ('I'm Sorry')",
-    badge: "Warm Candlelit Sanctuary 🕯️🕊️",
+    badge: "Midnight Rose 3D Sanctuary 🌹🕯️",
     icon: "🕊️",
-    description: "Ultra-aesthetic intimate sanctuary: Candlelit gateway, illuminated wax-sealed parchment confession, four sacred understanding pillars, Lovable cascading polaroids with audio note, and hold-to-heal olive branch.",
+    description: "Page-by-page Three.js moonlit rose sanctuary: Interactive 3D starlight & floating petals, wax-sealed illuminated confession letter, tactile venting room, sacred promises, 3D flip polaroids, peace treaty, and hold-to-heal finale.",
     defaultTheme: {
-      primary: "#e07a5f",
-      bgGradient: "radial-gradient(120% 90% at 50% 10%, #24191d 0%, #171115 50%, #0d090c 100%)",
-      accent: "#fbbf24"
+      primary: "#fb7185",
+      bgGradient: "radial-gradient(120% 90% at 50% 10%, #151934 0%, #0d1024 55%, #070914 100%)",
+      accent: "#f5d08a"
     },
     defaultData: {
       recipientName: "My Dearest",
