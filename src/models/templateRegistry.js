@@ -793,7 +793,7 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     name: "Ever Tide Island",
     badge: "3D Sunset Multiplayer 🌅✈️",
     icon: "🌅✈️",
-    description: "Explore a romantic 3D sunset beach island together in real-time multiplayer, fly a personalized sky airplane banner, write your names in the sand, hold hands, and propose.",
+    description: "Explore a photoreal Three.js sunset beach cove together in real-time multiplayer: walk the sculpted dunes and wooden pier, inspect seaside memory easels, release sky lanterns, fly a custom airplane banner, sit by the sunset cinema, and propose under the floral gazebo.",
     defaultTheme: {
       primary: "#f43f5e",
       bgGradient: "linear-gradient(135deg, #3b2458 0%, #d86c70 50%, #ffd480 100%)",
@@ -802,13 +802,30 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     defaultData: {
       recipientName: "Sophie",
       senderName: "Daniel",
+      islandTitle: "Ever Tide Island",
+      islandSubtitle: "A Private Sunset Cove Built For Us",
       planeMessage: "Sophie, will you marry me? ~ Daniel",
       sandSender: "Daniel",
       sandRecipient: "Sophie",
       couplePhoto: "/images/sunset.jpg",
+      centerpieceTitle: "Our Sunset Horizon",
+      centerpieceVideo: "/video/couple_memories.mp4",
+      proposalQuestion: "Will you walk every shoreline of life with me?",
+      proposalSubtitle: "From golden sunsets to starlit tides, every wave brings me closer to you.",
+      proposalYesBtn: "Yes, Forever & Always! 💍💖",
+      proposalCelebrateTitle: "She Said YES! 💍🌅",
+      proposalCelebrateMsg: "Under the golden horizon and drifting lanterns, our forever begins.",
       audioTitle: "Ever Tide Sunset",
       audioSubtitle: "ISLAND SERENADE",
-      audioSrc: "/audio/alfaaz.mp3"
+      audioSrc: "/audio/alfaaz.mp3",
+      photos: [
+        { id: 1, image: "/images/sunset.jpg", title: "Golden Horizon", date: "First Sunset", desc: "Standing by the tide watching the sky catch fire while talking for hours." },
+        { id: 2, image: "/images/always_you.jpg", title: "Salt Air & Laughter", date: "Coastal Drive", desc: "Windows rolled down, ocean breeze in your hair, and laughter that never fades." },
+        { id: 3, image: "/images/pretty.jpg", title: "Lantern Twilight", date: "Midnight Cove", desc: "Quiet whispers beside the shoreline bonfire under the emerging stars." },
+        { id: 4, image: "/images/dream_girl.jpg", title: "Breathtaking Grace", date: "Golden Hour", desc: "Even the brightest sunset fades beside the warmth of your smile." },
+        { id: 5, image: "/images/vogue_cover.jpg", title: "Island Footprints", date: "Our Escape", desc: "Two sets of footprints side by side along the wet shore." },
+        { id: 6, image: "/images/queen.jpg", title: "My Forever Tide", date: "Always & Forever", desc: "Like the ocean and the shore, my heart always returns to you." }
+      ]
     }
   }
 };

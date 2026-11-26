@@ -1767,9 +1767,37 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       </div>
     `;
   } else if (templateId === 'ever_tide') {
-    customEditorSection = `
+    const etPols = (data.photos && data.photos.length > 0)
+      ? data.photos.map(p => ({ title: p.title || '', image: p.image || '/images/sunset.jpg', note: p.desc || '' }))
+      : ((data.polaroids && data.polaroids.length > 0)
+          ? data.polaroids.map(p => ({ title: p.caption || p.title || '', image: p.image || '/images/sunset.jpg', note: p.note || '' }))
+          : [
+              { title: "Golden Horizon", image: "/images/sunset.jpg", note: "Standing by the tide watching the sky catch fire while talking for hours." },
+              { title: "Salt Air & Laughter", image: "/images/always_you.jpg", note: "Windows rolled down, ocean breeze in your hair, and laughter that never fades." },
+              { title: "Lantern Twilight", image: "/images/pretty.jpg", note: "Quiet whispers beside the shoreline bonfire under the emerging stars." },
+              { title: "Breathtaking Grace", image: "/images/dream_girl.jpg", note: "Even the brightest sunset fades beside the warmth of your smile." },
+              { title: "Island Footprints", image: "/images/vogue_cover.jpg", note: "Two sets of footprints side by side along the wet shore." },
+              { title: "My Forever Tide", image: "/images/queen.jpg", note: "Like the ocean and the shore, my heart always returns to you." }
+            ]);
+
+    specificBox.innerHTML = `
+      <div class="section-title">🌅✈️ Ever Tide 3D Sunset Island</div>
+      <div class="editor-help-text" style="margin-bottom:14px;">
+        Full-3D coastal sunset island with real-time reflective ocean, sky banner biplane, driftwood memory easels, sunset pier cinema, and live multiplayer proposal.
+      </div>
+
       <div style="background:rgba(251,146,60,0.08); border:1px solid rgba(251,146,60,0.3); border-radius:12px; padding:16px; margin-bottom:18px;">
-        <h4 style="color:#ea580c; font-size:14px; font-weight:700; margin-bottom:10px;">🌅✈️ Ever Tide Sunset Island</h4>
+        <h4 style="color:#ea580c; font-size:14px; font-weight:700; margin-bottom:10px;">🏝️ Island Banner &amp; Carved Sand Heart</h4>
+        <div class="editor-grid-2">
+          <div class="form-group">
+            <label class="form-label">Island Title</label>
+            <input type="text" class="form-input" id="edEtIslandTitle" value="${data.islandTitle || 'Ever Tide Island'}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Island Subtitle</label>
+            <input type="text" class="form-input" id="edEtIslandSubtitle" value="${data.islandSubtitle || 'A Private Sunset Cove Built For Us'}" />
+          </div>
+        </div>
         <div class="form-group">
           <label class="form-label">Sky Airplane Banner Message</label>
           <input type="text" class="form-input" id="edEtPlaneMessage" value="${data.planeMessage || 'Sophie, will you marry me? ~ Daniel'}" />
@@ -1785,13 +1813,58 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           </div>
         </div>
         <div class="form-group" style="margin-bottom:0;">
-          <label class="form-label">Couple Photo URL (on Airplane Banner)</label>
-          <input type="text" class="form-input" id="edEtCouplePhoto" value="${data.couplePhoto || '/images/sunset.jpg'}" />
+          <label class="form-label">Couple Photo (Sky Banner &amp; Pier Screen)</label>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <img src="${data.couplePhoto || '/images/sunset.jpg'}" id="etCoupleThumb" style="width:48px; height:48px; border-radius:8px; object-fit:cover; border:1px solid #fb923c;" onerror="this.src='/images/sunset.jpg'" />
+            <input type="text" class="form-input" id="edEtCouplePhoto" value="${data.couplePhoto || '/images/sunset.jpg'}" style="flex:1;" />
+            <label class="btn-file-upload-sm" title="Upload Couple Photo" style="cursor:pointer; background:rgba(251,146,60,0.16); border:1px solid #fb923c; color:#ea580c; border-radius:8px; padding:8px 12px; display:inline-flex; align-items:center; gap:4px; flex-shrink:0;">
+              <i data-lucide="camera"></i>
+              <input type="file" id="fileUploadEtCouplePhoto" accept="image/*" style="display:none;" />
+            </label>
+          </div>
         </div>
       </div>
+
+      <div style="background:rgba(244,63,94,0.08); border:1px solid rgba(244,63,94,0.28); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#f43f5e; font-size:14px; font-weight:700; margin-bottom:10px;">💍 Pier Cinema &amp; Sunset Proposal</h4>
+        <div class="form-group">
+          <label class="form-label">Proposal / Big Question</label>
+          <input type="text" class="form-input" id="edEtQuestion" value="${data.proposalQuestion || 'Will you walk every shoreline of life with me?'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Proposal Love Note</label>
+          <textarea rows="2" class="form-textarea" id="edEtQuestionSub">${data.proposalSubtitle || 'From golden sunsets to starlit tides, every wave brings me closer to you.'}</textarea>
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Yes Button Label</label>
+            <input type="text" class="form-input" id="edEtYesBtn" value="${data.proposalYesBtn || 'Yes, Forever & Always! 💍💖'}" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Pier Cinema Video URL (MP4)</label>
+            <input type="text" class="form-input" id="edEtCenterpieceVideo" value="${data.centerpieceVideo || '/video/couple_memories.mp4'}" />
+          </div>
+        </div>
+      </div>
+
+      ${renderGenPolaroidsBlock('et', 'Boardwalk Driftwood Memory Frames', etPols)}
     `;
+
+    const etPhotoUpload = specificBox.querySelector('#fileUploadEtCouplePhoto');
+    etPhotoUpload?.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const res = await uploadFile(file);
+      if (res.success && res.url) {
+        const inp = specificBox.querySelector('#edEtCouplePhoto');
+        const thumb = specificBox.querySelector('#etCoupleThumb');
+        if (inp) inp.value = res.url;
+        if (thumb) thumb.src = res.url;
+        emitChange();
+      }
+    });
   } else if (templateId === 'kitten_wish') {
-    customEditorSection = `
+    specificBox.innerHTML = `
       <div style="background:rgba(134,117,244,0.08); border:1px solid rgba(134,117,244,0.28); border-radius:12px; padding:16px; margin-bottom:18px;">
         <h4 style="color:#6d5be6; font-size:14px; font-weight:700; margin-bottom:10px;">🐱💌 Kitten Wish Letter &amp; Question</h4>
         <div class="form-group">
@@ -2517,6 +2590,9 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (idx >= 0 && idx < pols.length) {
         pols.splice(idx, 1);
         data.polaroids = pols;
+        if (prefix === 'et') {
+          data.photos = pols.map((p, i) => ({ id: i + 1, image: p.image, title: p.title, date: 'Coastal Chapter', desc: p.note || '' }));
+        }
         renderVisualEditor(container, templateId, data, onChange);
         emitChange();
       }
@@ -2534,6 +2610,9 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         note: ''
       });
       data.polaroids = pols;
+      if (prefix === 'et') {
+        data.photos = pols.map((p, i) => ({ id: i + 1, image: p.image, title: p.title, date: 'Coastal Chapter', desc: p.note || '' }));
+      }
       renderVisualEditor(container, templateId, data, onChange);
       emitChange();
     });
@@ -2971,14 +3050,37 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       }
     }
     else if (templateId === 'ever_tide') {
+      const elTitle = container.querySelector('#edEtIslandTitle');
+      const elSub = container.querySelector('#edEtIslandSubtitle');
       const elPlane = container.querySelector('#edEtPlaneMessage');
       const elSand1 = container.querySelector('#edEtSandSender');
       const elSand2 = container.querySelector('#edEtSandRecipient');
       const elPhoto = container.querySelector('#edEtCouplePhoto');
+      const elQ = container.querySelector('#edEtQuestion');
+      const elQSub = container.querySelector('#edEtQuestionSub');
+      const elYes = container.querySelector('#edEtYesBtn');
+      const elVid = container.querySelector('#edEtCenterpieceVideo');
+      if (elTitle) updated.islandTitle = elTitle.value;
+      if (elSub) updated.islandSubtitle = elSub.value;
       if (elPlane) updated.planeMessage = elPlane.value;
       if (elSand1) updated.sandSender = elSand1.value;
       if (elSand2) updated.sandRecipient = elSand2.value;
       if (elPhoto) updated.couplePhoto = elPhoto.value;
+      if (elQ) updated.proposalQuestion = elQ.value;
+      if (elQSub) updated.proposalSubtitle = elQSub.value;
+      if (elYes) updated.proposalYesBtn = elYes.value;
+      if (elVid) updated.centerpieceVideo = elVid.value;
+      const etPols = extractGenPols('et');
+      if (Array.isArray(etPols) && etPols.length > 0) {
+        updated.photos = etPols.map((p, idx) => ({
+          id: idx + 1,
+          image: p.image,
+          title: p.title || `Sunset Memory #${idx + 1}`,
+          date: 'Coastal Chapter',
+          desc: p.note || ''
+        }));
+        updated.polaroids = etPols;
+      }
     }
     else if (templateId === 'kitten_wish') {
       const elKwTitle = container.querySelector('#edKwLetterTitle');

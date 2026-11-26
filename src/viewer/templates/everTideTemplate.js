@@ -153,6 +153,45 @@ function ensureStyles() {
       outline: none;
     }
     .et-chat-input::placeholder { color: rgba(255, 255, 255, 0.55); }
+    .et-modal-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(12, 8, 22, 0.78);
+      backdrop-filter: blur(10px);
+    }
+    .et-modal-overlay.open {
+      display: flex;
+    }
+    .et-modal-card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(24, 18, 36, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 22px;
+      padding: 22px 20px;
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+    }
+    .et-modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -800,6 +839,215 @@ function scatterBeachDetails(scene) {
   return detailGroup;
 }
 
+function createPierAndCinema(scene, videoUrl, title, fallbackImage) {
+  const pierGroup = new THREE.Group();
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x6b472b, roughness: 0.9, metalness: 0.02 });
+  const darkWoodMat = new THREE.MeshStandardMaterial({ color: 0x4b311d, roughness: 0.92, metalness: 0.02 });
+  const pierX = -8;
+
+  // Planks extending from shoreline (z = -9) out over water (z = -21.5)
+  for (let z = -9; z >= -21.5; z -= 0.45) {
+    const plank = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.09, 0.36), woodMat);
+    plank.position.set(pierX, 0.22, z);
+    pierGroup.add(plank);
+  }
+  // Support beams & pilings
+  for (let side of [-1.45, 1.45]) {
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, 13.0), darkWoodMat);
+    beam.position.set(pierX + side, 0.13, -15.25);
+    pierGroup.add(beam);
+    for (let z = -9.5; z >= -21.0; z -= 2.8) {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 1.9, 8), darkWoodMat);
+      post.position.set(pierX + side, -0.35, z);
+      pierGroup.add(post);
+      // Warm pier lantern on alternating posts
+      if (Math.abs(z) > 11) {
+        const cap = new THREE.Mesh(
+          new THREE.SphereGeometry(0.11, 10, 10),
+          new THREE.MeshBasicMaterial({ color: 0xffd28a })
+        );
+        cap.position.set(pierX + side, 0.68, z);
+        pierGroup.add(cap);
+      }
+    }
+  }
+
+  // Sunset Pier Cinema frame at end of pier
+  const frameGroup = new THREE.Group();
+  frameGroup.position.set(pierX, 1.95, -21.3);
+  const framePostL = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.1, 3.3, 8), darkWoodMat);
+  framePostL.position.set(-2.35, -0.2, 0);
+  const framePostR = framePostL.clone();
+  framePostR.position.set(2.35, -0.2, 0);
+  const topBar = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.18, 0.18), darkWoodMat);
+  topBar.position.set(0, 1.45, 0);
+  const botBar = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.16, 0.18), darkWoodMat);
+  botBar.position.set(0, -1.25, 0);
+  frameGroup.add(framePostL, framePostR, topBar, botBar);
+
+  // Cinema video texture
+  const videoEl = document.createElement('video');
+  videoEl.src = videoUrl || '/video/couple_memories.mp4';
+  videoEl.crossOrigin = 'anonymous';
+  videoEl.loop = true;
+  videoEl.muted = true;
+  videoEl.playsInline = true;
+  videoEl.preload = 'metadata';
+
+  const videoTex = new THREE.VideoTexture(videoEl);
+  videoTex.colorSpace = THREE.SRGBColorSpace;
+  const screenMat = new THREE.MeshBasicMaterial({ map: videoTex, side: THREE.DoubleSide });
+  const screenMesh = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 2.45), screenMat);
+  screenMesh.position.set(0, 0.1, 0.02);
+  screenMesh.userData = { type: 'cinema' };
+  frameGroup.add(screenMesh);
+
+  // Fallback poster if video not started or unavailable
+  if (fallbackImage) {
+    const loader = new THREE.TextureLoader();
+    loader.setCrossOrigin('anonymous');
+    videoEl.addEventListener('error', () => {
+      loader.load(fallbackImage, (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        screenMat.map = tex;
+        screenMat.needsUpdate = true;
+      });
+    }, { once: true });
+  }
+
+  // Title plaque above cinema
+  const plaqueCanvas = document.createElement('canvas');
+  plaqueCanvas.width = 512;
+  plaqueCanvas.height = 96;
+  const pCtx = plaqueCanvas.getContext('2d');
+  pCtx.fillStyle = 'rgba(24,14,32,0.88)';
+  pCtx.fillRect(0, 0, 512, 96);
+  pCtx.strokeStyle = '#fbbf24';
+  pCtx.lineWidth = 4;
+  pCtx.strokeRect(4, 4, 504, 88);
+  pCtx.fillStyle = '#fff5e6';
+  pCtx.font = 'bold 30px Georgia, serif';
+  pCtx.textAlign = 'center';
+  pCtx.textBaseline = 'middle';
+  pCtx.fillText(`🎬 ${title || 'Our Sunset Horizon'}`, 256, 48);
+  const plaqueTex = new THREE.CanvasTexture(plaqueCanvas);
+  const plaqueMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.4, 0.64),
+    new THREE.MeshBasicMaterial({ map: plaqueTex, transparent: true })
+  );
+  plaqueMesh.position.set(0, 1.9, 0.05);
+  frameGroup.add(plaqueMesh);
+
+  pierGroup.add(frameGroup);
+  scene.add(pierGroup);
+
+  return {
+    pierGroup,
+    screenMesh,
+    videoEl,
+    dispose: () => {
+      videoEl.pause();
+      videoEl.removeAttribute('src');
+      videoEl.load();
+      videoTex.dispose();
+      plaqueTex.dispose();
+    },
+  };
+}
+
+function createMemoryEasels(scene, photos) {
+  const easelMeshes = [];
+  const textures = [];
+  const list = Array.isArray(photos) && photos.length > 0 ? photos.slice(0, 6) : [];
+  const spots = [
+    { x: -11.5, z: 3.5, ry: 0.9 },
+    { x: -7.5, z: 7.5, ry: 0.45 },
+    { x: -2.0, z: 9.2, ry: 0.05 },
+    { x: 4.5, z: 8.8, ry: -0.35 },
+    { x: 9.8, z: 5.5, ry: -0.8 },
+    { x: 11.8, z: 0.2, ry: -1.3 },
+  ];
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x7c5432, roughness: 0.88 });
+  const loader = new THREE.TextureLoader();
+  loader.setCrossOrigin('anonymous');
+
+  list.forEach((item, idx) => {
+    const spot = spots[idx % spots.length];
+    const g = new THREE.Group();
+    g.position.set(spot.x, 0, spot.z);
+    g.rotation.y = spot.ry;
+
+    // Driftwood easel legs
+    const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.85, 6), woodMat);
+    legL.position.set(-0.42, 0.9, 0);
+    legL.rotation.z = -0.1;
+    legL.rotation.x = -0.14;
+    const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.85, 6), woodMat);
+    legR.position.set(0.42, 0.9, 0);
+    legR.rotation.z = 0.1;
+    legR.rotation.x = -0.14;
+    const legBack = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 1.75, 6), woodMat);
+    legBack.position.set(0, 0.82, -0.36);
+    legBack.rotation.x = 0.34;
+    g.add(legL, legR, legBack);
+
+    // Polaroid frame
+    const frameBack = new THREE.Mesh(
+      new THREE.BoxGeometry(1.36, 1.56, 0.06),
+      new THREE.MeshStandardMaterial({ color: 0xfffaf0, roughness: 0.55 })
+    );
+    frameBack.position.set(0, 1.32, 0.02);
+    frameBack.rotation.x = -0.14;
+    g.add(frameBack);
+
+    const photoMat = new THREE.MeshBasicMaterial({ color: 0xfde68a });
+    const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.16, 1.12), photoMat);
+    photoMesh.position.set(0, 1.4, 0.06);
+    photoMesh.rotation.x = -0.14;
+    photoMesh.userData = { type: 'easel', index: idx, photo: item };
+    g.add(photoMesh);
+    easelMeshes.push(photoMesh);
+
+    const imgUrl = item.image || '/images/sunset.jpg';
+    loader.load(imgUrl, (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      photoMat.color.setHex(0xffffff);
+      photoMat.map = tex;
+      photoMat.needsUpdate = true;
+      textures.push(tex);
+    });
+
+    scene.add(g);
+  });
+
+  return {
+    easelMeshes,
+    dispose: () => textures.forEach(t => t.dispose()),
+  };
+}
+
+function spawnSkyLantern(scene, lanterns, x, y, z) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.24, 0.16, 0.48, 10, 1, true),
+    new THREE.MeshBasicMaterial({ color: 0xffb347, transparent: true, opacity: 0.9, side: THREE.DoubleSide })
+  );
+  const core = new THREE.Mesh(
+    new THREE.SphereGeometry(0.12, 8, 8),
+    new THREE.MeshBasicMaterial({ color: 0xfff3c4 })
+  );
+  core.position.y = -0.12;
+  g.add(body, core);
+  g.position.set(x, y, z);
+  g.userData = {
+    speedY: 0.55 + Math.random() * 0.45,
+    driftX: (Math.random() - 0.5) * 0.35,
+    phase: Math.random() * Math.PI * 2,
+  };
+  scene.add(g);
+  lanterns.push(g);
+}
+
 /* ═════════════════════════════════════════════════════════════════════
    MAIN RENDER FUNCTION
    ═════════════════════════════════════════════════════════════════════ */
@@ -811,10 +1059,31 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
 
   const sender = data.senderName || 'Daniel';
   const recipient = data.recipientName || 'Sophie';
+  const islandTitle = data.islandTitle || 'Ever Tide Island';
+  const islandSubtitle = data.islandSubtitle || 'A Private Sunset Cove Built For Us';
   const planeMessage = data.planeMessage || `${recipient}, will you marry me? ~ ${sender}`;
   const sandTextLeft = data.sandSender || sender;
   const sandTextRight = data.sandRecipient || recipient;
   const couplePhoto = data.couplePhoto || data.centerpieceImage || '/images/sunset.jpg';
+  const centerpieceTitle = data.centerpieceTitle || 'Our Sunset Horizon';
+  const centerpieceVideo = data.centerpieceVideo || '/video/couple_memories.mp4';
+  const proposalQuestion = data.proposalQuestion || 'Will you walk every shoreline of life with me?';
+  const proposalSubtitle = data.proposalSubtitle || 'From golden sunsets to starlit tides, every wave brings me closer to you.';
+  const proposalYesBtn = data.proposalYesBtn || 'Yes, Forever & Always! 💍💖';
+  const proposalCelebrateTitle = data.proposalCelebrateTitle || 'She Said YES! 💍🌅';
+  const proposalCelebrateMsg = data.proposalCelebrateMsg || 'Under the golden horizon and drifting lanterns, our forever begins.';
+  const photos = (Array.isArray(data.photos) && data.photos.length > 0)
+    ? data.photos
+    : (Array.isArray(data.polaroids) && data.polaroids.length > 0
+        ? data.polaroids.map((p, i) => ({ id: i + 1, image: p.image, title: p.title || p.caption || `Memory #${i + 1}`, date: 'Coastal Chapter', desc: p.note || '' }))
+        : [
+            { id: 1, image: '/images/sunset.jpg', title: 'Golden Horizon', date: 'First Sunset', desc: 'Standing by the tide watching the sky catch fire while talking for hours.' },
+            { id: 2, image: '/images/always_you.jpg', title: 'Salt Air & Laughter', date: 'Coastal Drive', desc: 'Windows rolled down, ocean breeze in your hair, and laughter that never fades.' },
+            { id: 3, image: '/images/pretty.jpg', title: 'Lantern Twilight', date: 'Midnight Cove', desc: 'Quiet whispers beside the shoreline bonfire under the emerging stars.' },
+            { id: 4, image: '/images/dream_girl.jpg', title: 'Breathtaking Grace', date: 'Golden Hour', desc: 'Even the brightest sunset fades beside the warmth of your smile.' },
+            { id: 5, image: '/images/vogue_cover.jpg', title: 'Island Footprints', date: 'Our Escape', desc: 'Two sets of footprints side by side along the wet shore.' },
+            { id: 6, image: '/images/queen.jpg', title: 'My Forever Tide', date: 'Always & Forever', desc: 'Like the ocean and the shore, my heart always returns to you.' },
+          ]);
 
   const slug = new URLSearchParams(window.location.search).get('s') || 'demo';
   const roomName = `evertide_${slug}`;
@@ -826,7 +1095,7 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
       <!-- Top HUD -->
       <div class="et-hud-top">
         <div style="display:flex;align-items:center;gap:8px;">
-          <span class="et-pill" id="etPeerBadge">🌅 Ever Tide • <span id="etPeerCount">1</span> online</span>
+          <span class="et-pill" id="etPeerBadge">🌅 ${islandTitle} • <span id="etPeerCount">1</span> online</span>
         </div>
         <div id="etMusicMount"></div>
       </div>
@@ -846,19 +1115,54 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
       <div class="et-hud-bottom">
         <button type="button" class="et-act-btn" id="etBtnWave">👋 Wave</button>
         <button type="button" class="et-act-btn" id="etBtnHearts">💖 Hearts</button>
+        <button type="button" class="et-act-btn" id="etBtnLanterns">🏮 Lanterns</button>
         <button type="button" class="et-act-btn" id="etBtnPropose">💍 Propose</button>
         <button type="button" class="et-act-btn" id="etBtnSit">🪑 Sit</button>
         <button type="button" class="et-act-btn" id="etBtnHoldHands">🤝 Hold Hands</button>
         <button type="button" class="et-act-btn" id="etBtnPlane">✈️ Fly Banner</button>
       </div>
 
+      <!-- Memory Lightbox Modal -->
+      <div class="et-modal-overlay" id="etMemoryModal">
+        <div class="et-modal-card">
+          <button type="button" class="et-modal-close" id="etMemoryClose">✕</button>
+          <img id="etMemoryImg" src="" alt="" style="width:100%;max-height:240px;object-fit:cover;border-radius:14px;margin-bottom:12px;" />
+          <div id="etMemoryDate" style="font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#fda4af;margin-bottom:4px;"></div>
+          <h3 id="etMemoryTitle" style="font-size:19px;font-weight:800;margin:0 0 8px;"></h3>
+          <p id="etMemoryDesc" style="font-size:13px;color:rgba(255,255,255,0.78);line-height:1.5;margin:0 0 14px;"></p>
+          <div style="display:flex;justify-content:center;gap:10px;">
+            <button type="button" class="et-act-btn" id="etMemoryPrev">← Prev</button>
+            <button type="button" class="et-act-btn" id="etMemoryNext">Next →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sunset Proposal Modal -->
+      <div class="et-modal-overlay" id="etProposalModal">
+        <div class="et-modal-card">
+          <button type="button" class="et-modal-close" id="etProposalClose">✕</button>
+          <div id="etProposalAskView">
+            <div style="font-size:38px;margin-bottom:8px;">💍🌅</div>
+            <h2 style="font-size:21px;font-weight:800;margin:0 0 8px;">${proposalQuestion}</h2>
+            <p style="font-size:13px;color:rgba(255,255,255,0.76);line-height:1.5;margin:0 0 18px;">${proposalSubtitle}</p>
+            <button type="button" id="etProposalYesBtn" style="width:100%;padding:12px 16px;border-radius:999px;border:none;background:linear-gradient(135deg,#f43f5e,#fb923c);color:#fff;font-weight:800;font-size:14px;cursor:pointer;">${proposalYesBtn}</button>
+          </div>
+          <div id="etProposalCelebrateView" style="display:none;">
+            <div style="font-size:42px;margin-bottom:8px;">🥂💖🎆</div>
+            <h2 style="font-size:22px;font-weight:800;margin:0 0 8px;color:#fde68a;">${proposalCelebrateTitle}</h2>
+            <p style="font-size:13px;color:rgba(255,255,255,0.82);line-height:1.5;margin:0 0 16px;">${proposalCelebrateMsg}</p>
+            <button type="button" class="et-act-btn active" id="etProposalDoneBtn">Back to Our Island 🌅</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Join / Avatar Picker Modal -->
       <div class="et-join-modal" id="etJoinModal">
         <div class="et-join-card">
           <div style="font-size:32px;margin-bottom:6px;">🌅✈️</div>
-          <h2 style="font-size:22px;font-weight:800;margin:0 0 6px;">Ever Tide Island</h2>
+          <h2 style="font-size:22px;font-weight:800;margin:0 0 6px;">${islandTitle}</h2>
           <p style="font-size:13px;color:rgba(255,255,255,0.72);margin:0 0 16px;">
-            Walk the sunset beach together, fly a sky banner, &amp; celebrate live.
+            ${islandSubtitle}
           </p>
           <input
             type="text"
@@ -1106,6 +1410,18 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
   // ───── BEACH DETAILS (shells, rocks, grass) ─────
   scatterBeachDetails(scene);
 
+  // ───── WOODEN PIER & SUNSET CINEMA ─────
+  const pierCinema = createPierAndCinema(scene, centerpieceVideo, centerpieceTitle, couplePhoto);
+
+  // ───── SEASIDE MEMORY EASELS ─────
+  const memoryEasels = createMemoryEasels(scene, photos);
+
+  // ───── FLOATING SKY LANTERNS ─────
+  const lanterns = [];
+  for (let i = 0; i < 4; i++) {
+    spawnSkyLantern(scene, lanterns, (Math.random() - 0.5) * 16, 2.5 + Math.random() * 4, -6 - Math.random() * 10);
+  }
+
   // ───── VOLUMETRIC CLOUDS ─────
   const cloudTex = createCloudTexture();
   const cloudMat = new THREE.SpriteMaterial({
@@ -1256,6 +1572,17 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
         if (actionData.action === 'propose' && entry) {
           entry.avatar.setKneeling(Boolean(actionData.payload?.kneeling));
         }
+        if (actionData.action === 'propose_yes') {
+          confetti({ particleCount: 70, spread: 85, origin: { y: 0.6 } });
+          for (let i = 0; i < 5; i++) {
+            spawnSkyLantern(scene, lanterns, (Math.random() - 0.5) * 10, 1.5 + Math.random() * 1.5, -2 - Math.random() * 6);
+          }
+        }
+        if (actionData.action === 'lantern') {
+          for (let i = 0; i < 5; i++) {
+            spawnSkyLantern(scene, lanterns, (Math.random() - 0.5) * 10, 1.4 + Math.random(), 1 - Math.random() * 6);
+          }
+        }
         if (actionData.action === 'plane') {
           planeX = -26;
           planeActive = true;
@@ -1272,11 +1599,13 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
     const nm = (nameInput.value || recipient).trim();
     joinModal.style.display = 'none';
     spawnLocalAndConnect(nm, selectedGender);
+    pierCinema.videoEl.play().catch(() => {});
   });
 
   if (isMakerReview) {
     joinModal.style.display = 'none';
     spawnLocalAndConnect(recipient, 'female');
+    pierCinema.videoEl.play().catch(() => {});
   }
 
   // ───── Controls: Keyboard + Touch Joystick ─────
@@ -1322,7 +1651,76 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
   joyEl.addEventListener('pointerup', resetJoy);
   joyEl.addEventListener('pointercancel', resetJoy);
 
-  // ───── Action Buttons ─────
+  // ───── Action Buttons & Modals ─────
+  const memoryModal = container.querySelector('#etMemoryModal');
+  const memoryImg = container.querySelector('#etMemoryImg');
+  const memoryDate = container.querySelector('#etMemoryDate');
+  const memoryTitle = container.querySelector('#etMemoryTitle');
+  const memoryDesc = container.querySelector('#etMemoryDesc');
+  let activeMemoryIdx = 0;
+
+  function openMemoryModal(idx) {
+    if (!photos.length) return;
+    activeMemoryIdx = (idx + photos.length) % photos.length;
+    const item = photos[activeMemoryIdx];
+    memoryImg.src = item.image || '/images/sunset.jpg';
+    memoryDate.textContent = item.date || 'Coastal Chapter';
+    memoryTitle.textContent = item.title || `Memory #${activeMemoryIdx + 1}`;
+    memoryDesc.textContent = item.desc || '';
+    memoryModal.classList.add('open');
+  }
+
+  container.querySelector('#etMemoryClose').addEventListener('click', () => memoryModal.classList.remove('open'));
+  container.querySelector('#etMemoryPrev').addEventListener('click', () => openMemoryModal(activeMemoryIdx - 1));
+  container.querySelector('#etMemoryNext').addEventListener('click', () => openMemoryModal(activeMemoryIdx + 1));
+
+  const proposalModal = container.querySelector('#etProposalModal');
+  const proposalAskView = container.querySelector('#etProposalAskView');
+  const proposalCelebrateView = container.querySelector('#etProposalCelebrateView');
+  container.querySelector('#etProposalClose').addEventListener('click', () => proposalModal.classList.remove('open'));
+  container.querySelector('#etProposalDoneBtn').addEventListener('click', () => proposalModal.classList.remove('open'));
+  container.querySelector('#etProposalYesBtn').addEventListener('click', () => {
+    proposalAskView.style.display = 'none';
+    proposalCelebrateView.style.display = 'block';
+    confetti({ particleCount: 90, spread: 95, origin: { y: 0.6 } });
+    localAvatar?.burstHearts();
+    for (let i = 0; i < 6; i++) {
+      spawnSkyLantern(scene, lanterns, (Math.random() - 0.5) * 10, 1.5 + Math.random(), -2 - Math.random() * 6);
+    }
+    planeX = -26;
+    planeActive = true;
+    multiplayer?.sendAction('propose_yes');
+  });
+
+  // Raycaster for clicking Memory Easels & Pier Cinema
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  let downPos = { x: 0, y: 0 };
+  const onCanvasDown = (e) => { downPos = { x: e.clientX, y: e.clientY }; };
+  const onCanvasUp = (e) => {
+    if (Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y) > 8) return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    const hits = raycaster.intersectObjects([...memoryEasels.easelMeshes, pierCinema.screenMesh], false);
+    if (hits.length > 0) {
+      const hitObj = hits[0].object;
+      if (hitObj.userData?.type === 'easel') {
+        openMemoryModal(hitObj.userData.index);
+      } else if (hitObj.userData?.type === 'cinema') {
+        if (pierCinema.videoEl.paused) {
+          pierCinema.videoEl.muted = false;
+          pierCinema.videoEl.play().catch(() => {});
+        } else {
+          pierCinema.videoEl.muted = !pierCinema.videoEl.muted;
+        }
+      }
+    }
+  };
+  renderer.domElement.addEventListener('pointerdown', onCanvasDown);
+  renderer.domElement.addEventListener('pointerup', onCanvasUp);
+
   container.querySelector('#etBtnWave').addEventListener('click', () => {
     if (!localAvatar) return;
     localAvatar.playGesture('wave');
@@ -1334,12 +1732,23 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
     confetti({ particleCount: 28, spread: 60, origin: { y: 0.65 } });
     multiplayer?.sendAction('hearts');
   });
+  container.querySelector('#etBtnLanterns').addEventListener('click', () => {
+    for (let i = 0; i < 5; i++) {
+      spawnSkyLantern(scene, lanterns, localPos.x + (Math.random() - 0.5) * 4, 1.4 + Math.random(), localPos.z - 2 - Math.random() * 3);
+    }
+    multiplayer?.sendAction('lantern');
+  });
   container.querySelector('#etBtnPropose').addEventListener('click', (e) => {
     if (!localAvatar) return;
     const next = !localAvatar.isKneeling();
     localAvatar.setKneeling(next);
     e.currentTarget.classList.toggle('active', next);
     multiplayer?.sendAction('propose', { kneeling: next });
+    if (next) {
+      proposalAskView.style.display = 'block';
+      proposalCelebrateView.style.display = 'none';
+      proposalModal.classList.add('open');
+    }
   });
   container.querySelector('#etBtnSit').addEventListener('click', (e) => {
     if (!localAvatar) return;
@@ -1430,6 +1839,17 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
     const glowScale = 58 + Math.sin(elapsed * 0.5) * 3;
     sunGlow.scale.set(glowScale, glowScale, 1);
 
+    // Floating sky lanterns
+    for (let i = lanterns.length - 1; i >= 0; i--) {
+      const l = lanterns[i];
+      l.position.y += l.userData.speedY * dt;
+      l.position.x += (l.userData.driftX + Math.sin(elapsed + l.userData.phase) * 0.15) * dt;
+      if (l.position.y > 38) {
+        scene.remove(l);
+        lanterns.splice(i, 1);
+      }
+    }
+
     // Local avatar movement
     let isWalking = false;
     if (localAvatar) {
@@ -1461,11 +1881,17 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
         localPos.x += (mx / len) * speed;
         localPos.z += (mz / len) * speed;
 
-        // Clamp to island radius
-        const rad = Math.hypot(localPos.x, localPos.z - 2);
-        if (rad > 19) {
-          localPos.x *= 19 / rad;
-          localPos.z = 2 + (localPos.z - 2) * (19 / rad);
+        // Clamp to island radius or wooden pier deck
+        const onPier = Math.abs(localPos.x + 8) < 1.55 && localPos.z <= -8.5 && localPos.z >= -20.5;
+        if (onPier) {
+          localPos.y = 0.25;
+        } else {
+          localPos.y = 0;
+          const rad = Math.hypot(localPos.x, localPos.z - 2);
+          if (rad > 19) {
+            localPos.x *= 19 / rad;
+            localPos.z = 2 + (localPos.z - 2) * (19 / rad);
+          }
         }
         localRotY = Math.atan2(mx, mz);
         isWalking = true;
@@ -1522,10 +1948,14 @@ export function renderEverTideTemplate(container, data = {}, isMakerReview = fal
     window.removeEventListener('resize', onResize);
     window.removeEventListener('keydown', onKeyDown);
     window.removeEventListener('keyup', onKeyUp);
+    renderer.domElement.removeEventListener('pointerdown', onCanvasDown);
+    renderer.domElement.removeEventListener('pointerup', onCanvasUp);
     multiplayer?.destroy();
     localAvatar?.dispose();
     for (const entry of peerAvatars.values()) entry.avatar.dispose();
     peerAvatars.clear();
+    pierCinema.dispose();
+    memoryEasels.dispose();
     sandNamesTex.dispose();
     bannerTex.dispose();
     sandTex.dispose();
