@@ -109,6 +109,9 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     `;
     const root = container.querySelector('#templateRoot');
     renderMuseumTemplate(root, data, isMakerReview);
+    container._museumCleanup = () => {
+      if (root && root._museumCleanup) root._museumCleanup();
+    };
     return;
   }
 

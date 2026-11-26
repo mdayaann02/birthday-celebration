@@ -17,22 +17,29 @@ import { soundFx } from '../audioSynth.js';
 import { create3DAvatar } from './museumAvatar.js';
 import { MuseumMultiplayer } from './museumMultiplayer.js';
 import { getMediaFromIndexedDB } from '../../models/siteStorage.js';
+import {
+  detectDeviceTier,
+  getOptimalPixelRatio,
+  createAdaptiveFpsScaler,
+  disposeThreeScene
+} from './threePerf.js';
 
 // Procedural Canvas Texture Generator for French Herringbone / Parquet Wood Floor
-function createParquetTexture() {
+function createParquetTexture(size = 1024) {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 1024;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext('2d');
+  const scale = size / 1024;
 
   // Warm blonde European museum oak base
   ctx.fillStyle = '#614d3b';
-  ctx.fillRect(0, 0, 1024, 1024);
+  ctx.fillRect(0, 0, size, size);
 
-  const tileW = 64;
-  const tileH = 16;
-  const rows = Math.ceil(1024 / tileH);
-  const cols = Math.ceil(1024 / tileW);
+  const tileW = Math.max(16, Math.round(64 * scale));
+  const tileH = Math.max(4, Math.round(16 * scale));
+  const rows = Math.ceil(size / tileH);
+  const cols = Math.ceil(size / tileW);
 
   // Parquet wood slats with refined tonal variations and satin finish
   for (let r = 0; r < rows; r++) {
@@ -51,7 +58,7 @@ function createParquetTexture() {
       ctx.strokeStyle = `rgba(45, 30, 18, 0.28)`;
       ctx.lineWidth = 1;
       for (let g = 0; g < 3; g++) {
-        const lineY = y + 3 + g * 4;
+        const lineY = y + Math.max(1, Math.round((3 + g * 4) * scale));
         ctx.beginPath();
         ctx.moveTo(x, lineY);
         ctx.lineTo(x + tileW, lineY);
@@ -61,11 +68,12 @@ function createParquetTexture() {
   }
 
   // Soft museum gallery polish sheen
-  const grad = ctx.createRadialGradient(512, 512, 120, 512, 512, 750);
+  const half = size / 2;
+  const grad = ctx.createRadialGradient(half, half, 120 * scale, half, half, 750 * scale);
   grad.addColorStop(0, 'rgba(255, 248, 235, 0.12)');
   grad.addColorStop(1, 'rgba(0, 0, 0, 0.18)');
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 1024, 1024);
+  ctx.fillRect(0, 0, size, size);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
@@ -295,17 +303,17 @@ function createPlacardTexture(index, title, date) {
 }
 
 // Procedural Wall Plaster / Paint texture with architectural micro-grain (Gallery White)
-function createWallTexture() {
+function createWallTexture(size = 512) {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 1024;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext('2d');
 
   // Pristine Architectural Museum Gallery White
   ctx.fillStyle = '#faf9f6';
-  ctx.fillRect(0, 0, 1024, 1024);
+  ctx.fillRect(0, 0, size, size);
 
-  const imgData = ctx.getImageData(0, 0, 1024, 1024);
+  const imgData = ctx.getImageData(0, 0, size, size);
   const d = imgData.data;
   for (let i = 0; i < d.length; i += 4) {
     const grain = (Math.random() - 0.5) * 6;
@@ -317,7 +325,7 @@ function createWallTexture() {
 
   // Very subtle vertical roller variation
   ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-  ctx.fillRect(0, 0, 1024, 1024);
+  ctx.fillRect(0, 0, size, size);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
@@ -327,6 +335,11 @@ function createWallTexture() {
 }
 
 export function renderMuseumTemplate(container, data, isMakerReview = false) {
+  if (container._museumCleanup) {
+    try { container._museumCleanup(); } catch (e) {}
+  }
+  const tier = detectDeviceTier();
+  const lowDetail = tier === 'low';
   // Extract and sanitize template data
   const recipientName = data.recipientName || 'My Love';
   const senderName = data.senderName || 'Yours Always';
@@ -782,18 +795,18 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     250
   );
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ antialias: !lowDetail, powerPreference: 'high-performance' });
   renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(getOptimalPixelRatio(tier));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.15;
   canvasContainer.appendChild(renderer.domElement);
 
   // Museum Ambient & Architectural Sky Lighting
-  const ambientLight = new THREE.AmbientLight(0xfff8ee, 0.9);
+  const ambientLight = new THREE.AmbientLight(0xfff8ee, 1.0);
   scene.add(ambientLight);
 
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xe8e2d8, 0.7);
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xe8e2d8, 0.78);
   hemiLight.position.set(0, 18, 0);
   scene.add(hemiLight);
 
@@ -808,7 +821,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   const cinemaZ = rotundaZ + 0.25;
 
   // 1. Floor Mesh (French Blonde Oak Herringbone Parquet with Satin Sheen)
-  const floorTexture = createParquetTexture();
+  const floorTexture = createParquetTexture(lowDetail ? 512 : 1024);
   const floorGeo = new THREE.PlaneGeometry(hallWidth * 2.5, hallLength + 60);
   const floorMat = new THREE.MeshStandardMaterial({
     map: floorTexture,
@@ -864,9 +877,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     scene.add(rib);
   }
 
-  // Soft Natural Daylight Downlights along center spine
-  for (let lz = 2; lz >= rotundaZ + 8; lz -= 20) {
-    const skyDownlight = new THREE.PointLight(0xfffdf7, 1.35, 38, 1.15);
+  // Soft Natural Daylight Downlights along center spine (capped for low-end GPU shaders)
+  const downlightStep = lowDetail ? 44 : 32;
+  for (let lz = 0; lz >= rotundaZ + 12; lz -= downlightStep) {
+    const skyDownlight = new THREE.PointLight(0xfffdf7, 1.5, 48, 1.1);
     skyDownlight.position.set(0, hallHeight - 0.4, lz);
     scene.add(skyDownlight);
   }
@@ -883,7 +897,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   scene.add(trackRight);
 
   // 4. White Walls (Pristine Architectural Gallery White)
-  const wallTexture = createWallTexture();
+  const wallTexture = createWallTexture(lowDetail ? 256 : 512);
   const wallMat = new THREE.MeshStandardMaterial({
     map: wallTexture,
     color: 0xffffff,
@@ -1026,25 +1040,40 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
   scene.add(entrancePlaqueGroup);
 
-  // Dual Ceiling Museum Framing Spotlights aimed at Entrance Plaque
+  // Centered Ceiling Museum Framing Spotlight aimed at Entrance Plaque (1 light instead of 2 for shader efficiency)
   const plaqueSpotTarget = new THREE.Object3D();
   plaqueSpotTarget.position.set(0, 3.6, 4.2);
   scene.add(plaqueSpotTarget);
 
-  const plaqueSpotL = new THREE.SpotLight(0xfff5e4, 4.5, 18, Math.PI / 4.8, 0.58, 1.15);
-  plaqueSpotL.position.set(-2.2, hallHeight - 0.25, 1.2);
+  const plaqueSpotL = new THREE.SpotLight(0xfff5e4, 6.2, 20, Math.PI / 4.2, 0.58, 1.1);
+  plaqueSpotL.position.set(0, hallHeight - 0.25, 0.9);
   plaqueSpotL.target = plaqueSpotTarget;
   scene.add(plaqueSpotL);
-
-  const plaqueSpotR = new THREE.SpotLight(0xfff5e4, 4.5, 18, Math.PI / 4.8, 0.58, 1.15);
-  plaqueSpotR.position.set(2.2, hallHeight - 0.25, 1.2);
-  plaqueSpotR.target = plaqueSpotTarget;
-  scene.add(plaqueSpotR);
 
   // 6. Framed Artworks along Left and Right walls
   const interactiveArtworks = [];
   const textureLoader = new THREE.TextureLoader();
   textureLoader.setCrossOrigin('anonymous');
+
+  // Shared geometries & materials for track fixtures and frames
+  const fixtureBaseGeo = new THREE.BoxGeometry(0.18, 0.06, 0.24);
+  const fixtureCylGeo = new THREE.CylinderGeometry(0.12, 0.15, 0.32, lowDetail ? 8 : 14);
+  const frameOuterGeo = new THREE.BoxGeometry(4.2, 3.1, 0.16);
+  const frameMatGeo = new THREE.BoxGeometry(4.2 - 0.35, 3.1 - 0.35, 0.18);
+  const canvasSharedGeo = new THREE.PlaneGeometry(4.2 - 0.85, 3.1 - 0.85);
+  const placardSharedGeo = new THREE.BoxGeometry(2.0, 0.55, 0.05);
+
+  // Pooled Dynamic Gallery Spotlights (tracks 4 closest artworks -> huge FPS boost on mobile!)
+  const pooledSpotCount = lowDetail ? 2 : 4;
+  const pooledSpots = [];
+  for (let s = 0; s < pooledSpotCount; s++) {
+    const tgt = new THREE.Object3D();
+    scene.add(tgt);
+    const sp = new THREE.SpotLight(0xfff8ee, 5.8, 22, Math.PI / 4.8, 0.65, 1.15);
+    sp.target = tgt;
+    scene.add(sp);
+    pooledSpots.push({ light: sp, target: tgt });
+  }
 
   // Shared frame materials
   const goldFrameMat = new THREE.MeshStandardMaterial({
@@ -1068,34 +1097,19 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     group.position.set(xPos, 3.2, zPos);
     group.rotation.y = rotY;
 
-    // Outer Grand Beveled Gold Frame (4.2m x 3.1m)
-    const frameW = 4.2;
     const frameH = 3.1;
     const frameDepth = 0.16;
-    const outerFrame = new THREE.Mesh(
-      new THREE.BoxGeometry(frameW, frameH, frameDepth),
-      goldFrameMat
-    );
+    const outerFrame = new THREE.Mesh(frameOuterGeo, goldFrameMat);
     group.add(outerFrame);
 
-    // Archival Museum White Mat Passe-partout
-    const matMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(frameW - 0.35, frameH - 0.35, frameDepth + 0.02),
-      matBorderMat
-    );
+    const matMesh = new THREE.Mesh(frameMatGeo, matBorderMat);
     group.add(matMesh);
-
-    // Canvas Image
-    const canvasW = frameW - 0.85;
-    const canvasH = frameH - 0.85;
-    const canvasGeo = new THREE.PlaneGeometry(canvasW, canvasH);
 
     const canvasMat = new THREE.MeshStandardMaterial({
       roughness: 0.38,
       metalness: 0.02
     });
 
-    // Load photo texture with robust asynchronous onLoad & fallback
     const photoTexture = textureLoader.load(
       art.image,
       (loadedTex) => {
@@ -1108,8 +1122,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         canvasMat.needsUpdate = true;
       },
       undefined,
-      (err) => {
-        console.warn('Artwork texture load error, falling back to /images/sunset.jpg:', art.image, err);
+      () => {
         textureLoader.load('/images/sunset.jpg', (fallbackTex) => {
           if ('colorSpace' in fallbackTex && THREE.SRGBColorSpace) {
             fallbackTex.colorSpace = THREE.SRGBColorSpace;
@@ -1121,46 +1134,25 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     );
     canvasMat.map = photoTexture;
 
-    const canvasMesh = new THREE.Mesh(canvasGeo, canvasMat);
+    const canvasMesh = new THREE.Mesh(canvasSharedGeo, canvasMat);
     canvasMesh.position.z = frameDepth / 2 + 0.04;
     group.add(canvasMesh);
 
-    // Brass Curatorial Placard below Frame
     const placardTex = createPlacardTexture(index, art.title, art.date);
     const placardMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(2.0, 0.55, 0.05),
+      placardSharedGeo,
       new THREE.MeshStandardMaterial({ map: placardTex, metalness: 0.72, roughness: 0.32 })
     );
     placardMesh.position.set(0, -frameH / 2 - 0.5, 0.04);
     group.add(placardMesh);
 
-    // Dedicated targets for spotlights so meshes are NEVER detached from their parent group
-    const spotTarget = new THREE.Object3D();
-    spotTarget.position.set(xPos, 3.2, zPos);
-    scene.add(spotTarget);
-
-    const placardTarget = new THREE.Object3D();
-    placardTarget.position.set(xPos, 3.2 - frameH / 2 - 0.5, zPos);
-    scene.add(placardTarget);
-
-    // Dedicated Ceiling Museum Track Projector Spotlight (30° angle down to canvas)
     const spotX = isLeft ? (-hallWidth / 2 + 3.4) : (hallWidth / 2 - 3.4);
-    const spotLight = new THREE.SpotLight(0xfff8ee, 5.5, 22, Math.PI / 5.2, 0.65, 1.15);
-    spotLight.position.set(spotX, hallHeight - 0.15, zPos);
-    spotLight.target = spotTarget;
-    scene.add(spotLight);
-
-    // Pin-spot accent on Placard
-    const pinSpot = new THREE.SpotLight(0xffedd2, 2.2, 14, Math.PI / 7, 0.5, 1.2);
-    pinSpot.position.set(spotX, hallHeight - 0.25, zPos);
-    pinSpot.target = placardTarget;
-    scene.add(pinSpot);
 
     // 3D Track Lighting Fixture Body on the ceiling rail
     const fixtureGroup = new THREE.Group();
     fixtureGroup.position.set(spotX, hallHeight - 0.08, zPos);
-    const fixtureBase = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.06, 0.24), trackMat);
-    const fixtureCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.32, 14), trackMat);
+    const fixtureBase = new THREE.Mesh(fixtureBaseGeo, trackMat);
+    const fixtureCyl = new THREE.Mesh(fixtureCylGeo, trackMat);
     fixtureCyl.rotation.z = isLeft ? -0.45 : 0.45;
     fixtureCyl.position.y = -0.15;
     fixtureGroup.add(fixtureBase);
@@ -1169,12 +1161,12 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
     scene.add(group);
 
-    // Store metadata for raycasting & interaction
     interactiveArtworks.push({
       mesh: canvasMesh,
       frameGroup: group,
       data: art,
       index,
+      spotPos: new THREE.Vector3(spotX, hallHeight - 0.15, zPos),
       lookPosition: new THREE.Vector3(
         isLeft ? xPos + 4.2 : xPos - 4.2,
         3.0,
@@ -1612,7 +1604,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     peers.forEach((peer, userId) => {
       if (!peerAvatarsMap.has(userId)) {
         try {
-          const pAvatar = create3DAvatar(peer.name, peer.gender, false);
+          const pAvatar = create3DAvatar(peer.name, peer.gender, false, { lowDetail });
           pAvatar.group.position.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
           pAvatar.group.rotation.y = peer.rotY || Math.PI;
           scene.add(pAvatar.group);
@@ -1628,6 +1620,8 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             pAvatar.group.position.set(peerBenchX, 0, benchZ);
             pAvatar.group.rotation.y = Math.PI;
             pAvatar.setSeated(true);
+          } else if (peer.isKneeling) {
+            pAvatar.setKneeling(true);
           }
           soundFx.sparkle();
         } catch (err) {
@@ -1636,11 +1630,17 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       } else {
         const rec = peerAvatarsMap.get(userId);
         rec.targetPos.set(peer.x || 0, peer.y || 0, peer.z || 3.2);
-        rec.targetRotY = peer.rotY || 0;
+        rec.targetRotY = typeof peer.rotY === 'number' ? peer.rotY : rec.targetRotY;
         rec.isWalking = Boolean(peer.isWalking);
         if (peer.isSeated) {
           peerSeatedMap.set(userId, true);
-          rec.avatar.setSeated(true);
+          if (!rec.avatar.isSeated()) rec.avatar.setSeated(true);
+        } else {
+          if (peerSeatedMap.has(userId)) peerSeatedMap.delete(userId);
+          if (rec.avatar.isSeated()) rec.avatar.setSeated(false);
+        }
+        if (Boolean(peer.isKneeling) !== rec.avatar.isKneeling()) {
+          rec.avatar.setKneeling(Boolean(peer.isKneeling));
         }
       }
     });
@@ -1785,7 +1785,7 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
 
     // Spawn 3D local avatar
     try {
-      localAvatar = create3DAvatar(userProfile.name, userProfile.gender, true);
+      localAvatar = create3DAvatar(userProfile.name, userProfile.gender, true, { lowDetail });
       localAvatar.group.position.set(0, 0, 3.2);
       localAvatar.group.rotation.y = Math.PI; // Face forward down the grand hall (-Z)
       scene.add(localAvatar.group);
@@ -2483,20 +2483,22 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   updateModeButtonUI(currentMode);
 
   // Desktop Keyboard Walk (WASD / Arrow Keys)
-  window.addEventListener('keydown', (e) => {
+  const onMuseumKeyDown = (e) => {
+    if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
     if (currentMode !== 'walk') return;
     keysDown[e.key.toLowerCase()] = true;
-  });
-
-  window.addEventListener('keyup', (e) => {
-    if (currentMode !== 'walk') return;
+  };
+  const onMuseumKeyUp = (e) => {
     keysDown[e.key.toLowerCase()] = false;
-  });
+  };
+  window.addEventListener('keydown', onMuseumKeyDown);
+  window.addEventListener('keyup', onMuseumKeyUp);
 
-  // Desktop Mouse Drag to Look
+  // Desktop Mouse Drag to Look & Wheel to Zoom
   let isPointerDragging = false;
   let prevMouseX = 0;
   let prevMouseY = 0;
+  let walkZoomDist = 4.4;
 
   canvasContainer.addEventListener('mousedown', (e) => {
     if (currentMode !== 'walk' || isSeatedOnBench) return;
@@ -2505,23 +2507,27 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     prevMouseY = e.clientY;
   });
 
-  window.addEventListener('mousemove', (e) => {
+  const onMuseumMouseMove = (e) => {
     if (!isPointerDragging || currentMode !== 'walk' || isSeatedOnBench) return;
     const dx = e.clientX - prevMouseX;
     const dy = e.clientY - prevMouseY;
     prevMouseX = e.clientX;
     prevMouseY = e.clientY;
 
-    // Moving mouse to the right rotates camera smoothly to the right
-    // Moving mouse up tilts camera up (natural non-inverted look), moving mouse down tilts down
     walkYaw -= dx * 0.0035;
     walkPitch += dy * 0.003;
     walkPitch = Math.max(-0.45, Math.min(0.65, walkPitch));
-  });
-
-  window.addEventListener('mouseup', () => {
+  };
+  const onMuseumMouseUp = () => {
     isPointerDragging = false;
-  });
+  };
+  const onMuseumWheel = (e) => {
+    if (currentMode !== 'walk' || isSeatedOnBench) return;
+    walkZoomDist = THREE.MathUtils.clamp(walkZoomDist + e.deltaY * 0.0028, 2.8, 7.2);
+  };
+  window.addEventListener('mousemove', onMuseumMouseMove);
+  window.addEventListener('mouseup', onMuseumMouseUp);
+  canvasContainer.addEventListener('wheel', onMuseumWheel, { passive: true });
 
   // Mobile Virtual Joystick & Touch Drag Look
   const joystickBase = container.querySelector('#joystickBase');
@@ -2531,6 +2537,59 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   let prevTouchLookX = 0;
   let prevTouchLookY = 0;
 
+  function handleJoystickMove(touch) {
+    if (!joystickBase) return;
+    const rect = joystickBase.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    let dx = touch.clientX - centerX;
+    let dy = touch.clientY - centerY;
+    const dist = Math.hypot(dx, dy);
+    const maxDist = rect.width / 2;
+
+    if (dist > maxDist) {
+      dx = (dx / dist) * maxDist;
+      dy = (dy / dist) * maxDist;
+    }
+
+    if (joystickStick) {
+      joystickStick.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+
+    moveDirection.right = dx / maxDist;
+    moveDirection.forward = -dy / maxDist;
+  }
+
+  const onMuseumTouchMove = (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      if (touch.identifier === joystickTouchId) {
+        handleJoystickMove(touch);
+      } else if (touch.identifier === lookTouchId && currentMode === 'walk' && !isSeatedOnBench) {
+        const dx = touch.clientX - prevTouchLookX;
+        const dy = touch.clientY - prevTouchLookY;
+        prevTouchLookX = touch.clientX;
+        prevTouchLookY = touch.clientY;
+        walkYaw -= dx * 0.0045;
+        walkPitch += dy * 0.0035;
+        walkPitch = Math.max(-0.45, Math.min(0.65, walkPitch));
+      }
+    }
+  };
+  const onMuseumTouchEnd = (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      if (touch.identifier === joystickTouchId) {
+        joystickTouchId = null;
+        moveDirection.forward = 0;
+        moveDirection.right = 0;
+        if (joystickStick) joystickStick.style.transform = `translate(0px, 0px)`;
+      } else if (touch.identifier === lookTouchId) {
+        lookTouchId = null;
+      }
+    }
+  };
+
   if (joystickBase) {
     joystickBase.addEventListener('touchstart', (e) => {
       e.preventDefault();
@@ -2538,62 +2597,10 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       joystickTouchId = touch.identifier;
       handleJoystickMove(touch);
     }, { passive: false });
-
-    window.addEventListener('touchmove', (e) => {
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        const touch = e.changedTouches[i];
-        if (touch.identifier === joystickTouchId) {
-          handleJoystickMove(touch);
-        } else if (touch.identifier === lookTouchId && currentMode === 'walk' && !isSeatedOnBench) {
-          const dx = touch.clientX - prevTouchLookX;
-          const dy = touch.clientY - prevTouchLookY;
-          prevTouchLookX = touch.clientX;
-          prevTouchLookY = touch.clientY;
-          // Swiping right rotates camera smoothly to the right
-          // Swiping up tilts camera up (natural non-inverted look), swiping down tilts down
-          walkYaw -= dx * 0.0045;
-          walkPitch += dy * 0.0035;
-          walkPitch = Math.max(-0.45, Math.min(0.65, walkPitch));
-        }
-      }
-    }, { passive: false });
-
-    window.addEventListener('touchend', (e) => {
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        const touch = e.changedTouches[i];
-        if (touch.identifier === joystickTouchId) {
-          joystickTouchId = null;
-          moveDirection.forward = 0;
-          moveDirection.right = 0;
-          if (joystickStick) joystickStick.style.transform = `translate(0px, 0px)`;
-        } else if (touch.identifier === lookTouchId) {
-          lookTouchId = null;
-        }
-      }
-    });
-
-    function handleJoystickMove(touch) {
-      const rect = joystickBase.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      let dx = touch.clientX - centerX;
-      let dy = touch.clientY - centerY;
-      const dist = Math.hypot(dx, dy);
-      const maxDist = rect.width / 2;
-
-      if (dist > maxDist) {
-        dx = (dx / dist) * maxDist;
-        dy = (dy / dist) * maxDist;
-      }
-
-      if (joystickStick) {
-        joystickStick.style.transform = `translate(${dx}px, ${dy}px)`;
-      }
-
-      moveDirection.right = dx / maxDist;
-      moveDirection.forward = -dy / maxDist;
-    }
   }
+  window.addEventListener('touchmove', onMuseumTouchMove, { passive: false });
+  window.addEventListener('touchend', onMuseumTouchEnd);
+  window.addEventListener('touchcancel', onMuseumTouchEnd);
 
   // Mobile Right Screen Touch to Look
   canvasContainer.addEventListener('touchstart', (e) => {
@@ -2853,22 +2860,56 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   }
 
   // --------------------------------------------------------------------------
-  // ANIMATION & RENDER LOOP
+  // ANIMATION & RENDER LOOP (Zero-Allocation + Pooled Spotlights + Adaptive FPS)
   // --------------------------------------------------------------------------
   let animationFrameId = null;
-  const walkSpeed = 0.09;
+  const walkSpeedPerSec = 5.4;
   let footstepTimer = 0;
+  let spotUpdateTick = 0;
+  const fpsScaler = createAdaptiveFpsScaler(renderer, tier);
+
+  const _camFwd = new THREE.Vector3();
+  const _camRight = new THREE.Vector3();
+  const _upVec = new THREE.Vector3(0, 1, 0);
+  const _moveVec = new THREE.Vector3();
+  const _desiredCamPos = new THREE.Vector3();
+  const _benchVec = new THREE.Vector3(0, 1.7, benchZ);
+  const _artSortScratch = interactiveArtworks.map((a) => ({ art: a, d: 0 }));
+
+  function updatePooledSpotlights(refPos) {
+    if (!pooledSpots.length || !_artSortScratch.length) return;
+    for (let i = 0; i < _artSortScratch.length; i++) {
+      const a = _artSortScratch[i].art;
+      const dx = a.targetLookAt.x - refPos.x;
+      const dz = a.targetLookAt.z - refPos.z;
+      _artSortScratch[i].d = dx * dx + dz * dz;
+    }
+    _artSortScratch.sort((a, b) => a.d - b.d);
+    for (let s = 0; s < pooledSpots.length; s++) {
+      const item = _artSortScratch[s % _artSortScratch.length].art;
+      pooledSpots[s].light.position.copy(item.spotPos);
+      pooledSpots[s].target.position.copy(item.targetLookAt);
+    }
+  }
+  updatePooledSpotlights(camera.position);
 
   function animate() {
     animationFrameId = requestAnimationFrame(animate);
 
     const now = performance.now();
-    const delta = Math.min((now - lastTime) / 1000, 0.1);
+    const delta = Math.min((now - lastTime) / 1000, 0.05);
     lastTime = now;
+    fpsScaler.tick(delta);
 
     // Bench movie video texture render update
     if (isPlayingBenchMovie && cinemaVideoTexture) {
       cinemaVideoTexture.needsUpdate = true;
+    }
+
+    // Reposition pooled gallery spotlights every 6 frames to nearest artworks
+    if ((spotUpdateTick++ % 6) === 0) {
+      const refPos = (currentMode === 'walk' && localAvatar) ? localAvatar.group.position : camera.position;
+      updatePooledSpotlights(refPos);
     }
 
     // Process Walk Mode (Third-Person Perspective TPP)
@@ -2877,60 +2918,51 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         let forwardDelta = 0;
         let strafeDelta = 0;
 
-        // Keyboard input
         if (keysDown['w'] || keysDown['arrowup']) forwardDelta += 1;
         if (keysDown['s'] || keysDown['arrowdown']) forwardDelta -= 1;
         if (keysDown['a'] || keysDown['arrowleft']) strafeDelta -= 1;
         if (keysDown['d'] || keysDown['arrowright']) strafeDelta += 1;
 
-        // Mobile joystick input
         forwardDelta += moveDirection.forward;
         strafeDelta += moveDirection.right;
 
         const mag = Math.hypot(forwardDelta, strafeDelta);
         const isWalking = mag > 0.08 && !localAvatar.isKneeling();
 
-        // If kneeling and player attempts to walk, stand up gracefully
         if (localAvatar.isKneeling() && mag > 0.08) {
           standFromProposal();
         }
 
         if (isWalking) {
-          const normFwd = (forwardDelta / Math.max(1, mag)) * walkSpeed;
-          const normStf = (strafeDelta / Math.max(1, mag)) * walkSpeed;
+          const step = walkSpeedPerSec * delta;
+          const normFwd = (forwardDelta / Math.max(1, mag)) * step;
+          const normStf = (strafeDelta / Math.max(1, mag)) * step;
 
-          // Camera horizontal forward direction (XZ plane: looking into gallery towards -Z when walkYaw = 0)
-          const camFwd = new THREE.Vector3(-Math.sin(walkYaw), 0, -Math.cos(walkYaw)).normalize();
-          const camRight = new THREE.Vector3().crossVectors(camFwd, new THREE.Vector3(0, 1, 0)).normalize();
+          _camFwd.set(-Math.sin(walkYaw), 0, -Math.cos(walkYaw)).normalize();
+          _camRight.crossVectors(_camFwd, _upVec).normalize();
 
-          const moveVec = new THREE.Vector3()
-            .addScaledVector(camFwd, normFwd)
-            .addScaledVector(camRight, normStf);
+          _moveVec.set(0, 0, 0).addScaledVector(_camFwd, normFwd).addScaledVector(_camRight, normStf);
+          localAvatar.group.position.add(_moveVec);
 
-          localAvatar.group.position.add(moveVec);
-
-          // Smoothly turn avatar towards movement direction
-          const targetAngle = Math.atan2(moveVec.x, moveVec.z);
+          const targetAngle = Math.atan2(_moveVec.x, _moveVec.z);
           let diffAngle = targetAngle - localAvatar.group.rotation.y;
           while (diffAngle < -Math.PI) diffAngle += Math.PI * 2;
           while (diffAngle > Math.PI) diffAngle -= Math.PI * 2;
-          localAvatar.group.rotation.y += diffAngle * 0.22;
+          localAvatar.group.rotation.y += diffAngle * (1 - Math.exp(-14 * delta));
 
-          footstepTimer += 1;
-          if (footstepTimer % 22 === 0) {
+          footstepTimer += delta;
+          if (footstepTimer >= 0.36) {
+            footstepTimer = 0;
             soundFx.pop(220);
           }
         }
 
-        // Keep inside museum bounds
         localAvatar.group.position.x = Math.max(-hallWidth / 2 + 1.8, Math.min(hallWidth / 2 - 1.8, localAvatar.group.position.x));
         localAvatar.group.position.z = Math.max(rotundaZ + 2.8, Math.min(6.5, localAvatar.group.position.z));
         localAvatar.group.position.y = 0;
 
-        // Animate local avatar limbs
         localAvatar.update(delta, isWalking, 1.0);
 
-        // Sync movement to multiplayer peers
         if (multiplayer && (isWalking || now - lastMoveBroadcastTime > 200)) {
           lastMoveBroadcastTime = now;
           multiplayer.sendMove(
@@ -2939,22 +2971,22 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
             localAvatar.group.position.z,
             localAvatar.group.rotation.y,
             isWalking,
-            isSeatedOnBench
+            isSeatedOnBench,
+            localAvatar.isKneeling()
           );
         }
 
-        // TPP Chase Camera Positioning (behind avatar, looking forward)
-        // Dynamically glide camera closer & lower when kneeling to showcase the ring box & proposal
         const isKneelingNow = localAvatar.isKneeling();
-        const camDist = isKneelingNow ? 3.2 : 4.4;
+        const camDist = isKneelingNow ? 3.2 : walkZoomDist;
         const camHeight = isKneelingNow ? 1.55 : 2.25;
         const focusY = isKneelingNow ? 1.05 : 1.5;
 
-        const desiredCamX = localAvatar.group.position.x + Math.sin(walkYaw) * Math.cos(walkPitch) * camDist;
-        const desiredCamY = localAvatar.group.position.y + camHeight + Math.sin(walkPitch) * camDist;
-        const desiredCamZ = localAvatar.group.position.z + Math.cos(walkYaw) * Math.cos(walkPitch) * camDist;
-
-        camera.position.lerp(new THREE.Vector3(desiredCamX, desiredCamY, desiredCamZ), 0.16);
+        _desiredCamPos.set(
+          localAvatar.group.position.x + Math.sin(walkYaw) * Math.cos(walkPitch) * camDist,
+          localAvatar.group.position.y + camHeight + Math.sin(walkPitch) * camDist,
+          localAvatar.group.position.z + Math.cos(walkYaw) * Math.cos(walkPitch) * camDist
+        );
+        camera.position.lerp(_desiredCamPos, 1 - Math.exp(-10 * delta));
 
         currentLookAtTarget.set(
           localAvatar.group.position.x,
@@ -2967,33 +2999,32 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
         if (multiplayer && (now - lastMoveBroadcastTime > 1500)) {
           lastMoveBroadcastTime = now;
           const myBenchX = (userProfile.gender === 'male') ? -0.75 : 0.75;
-          multiplayer.sendMove(myBenchX, 0, benchZ, Math.PI, false, true);
+          multiplayer.sendMove(myBenchX, 0, benchZ, Math.PI, false, true, false);
         }
       }
     }
 
-    // Update remote peer avatars
+    // Frame-rate-independent remote peer interpolation
+    const peerDamp = 1 - Math.exp(-12 * delta);
     peerAvatarsMap.forEach((val) => {
-      val.avatar.group.position.lerp(val.targetPos, 0.22);
+      val.avatar.group.position.lerp(val.targetPos, peerDamp);
       let dRot = val.targetRotY - val.avatar.group.rotation.y;
       while (dRot < -Math.PI) dRot += Math.PI * 2;
       while (dRot > Math.PI) dRot -= Math.PI * 2;
-      val.avatar.group.rotation.y += dRot * 0.22;
+      val.avatar.group.rotation.y += dRot * peerDamp;
       val.avatar.update(delta, val.isWalking, 1.0);
     });
 
     // Proximity checks when in walk mode
     if (currentMode === 'walk') {
-      const benchPos = new THREE.Vector3(0, 1.7, benchZ);
       const currentPos = localAvatar ? localAvatar.group.position : camera.position;
-      const distToBench = currentPos.distanceTo(benchPos);
+      const distToBench = currentPos.distanceTo(_benchVec);
       if (distToBench < 5.5 && !isSeatedOnBench) {
         if (benchPrompt) benchPrompt.style.display = 'block';
       } else {
         if (benchPrompt) benchPrompt.style.display = 'none';
       }
 
-      // Nearby artwork hint badge
       let nearArt = null;
       for (const art of interactiveArtworks) {
         const d = currentPos.distanceTo(art.targetLookAt);
@@ -3137,12 +3168,13 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
   document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
 
   // Check orientation on mount & orientation change
-  window.addEventListener('orientationchange', () => {
+  const onOrientationChange = () => {
     setTimeout(() => {
       onWindowResize();
       checkOrientationPrompt();
     }, 200);
-  });
+  };
+  window.addEventListener('orientationchange', onOrientationChange);
 
   // Initial check
   checkOrientationPrompt();
@@ -3152,6 +3184,15 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
     cancelAnimationFrame(animationFrameId);
     clearTimeout(tourAdvanceTimeout);
     window.removeEventListener('resize', onWindowResize);
+    window.removeEventListener('orientationchange', onOrientationChange);
+    window.removeEventListener('keydown', onMuseumKeyDown);
+    window.removeEventListener('keyup', onMuseumKeyUp);
+    window.removeEventListener('mousemove', onMuseumMouseMove);
+    window.removeEventListener('mouseup', onMuseumMouseUp);
+    window.removeEventListener('touchmove', onMuseumTouchMove);
+    window.removeEventListener('touchend', onMuseumTouchEnd);
+    window.removeEventListener('touchcancel', onMuseumTouchEnd);
+    canvasContainer.removeEventListener('wheel', onMuseumWheel);
     document.removeEventListener('fullscreenchange', updateFullscreenIcon);
     document.removeEventListener('webkitfullscreenchange', updateFullscreenIcon);
 
@@ -3181,6 +3222,9 @@ export function renderMuseumTemplate(container, data, isMakerReview = false) {
       cinemaVideoTexture = null;
     }
 
-    renderer.dispose();
+    disposeThreeScene(scene, renderer);
+    if (renderer.domElement.parentNode === canvasContainer) {
+      canvasContainer.removeChild(renderer.domElement);
+    }
   };
 }

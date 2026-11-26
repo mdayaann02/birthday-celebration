@@ -10,56 +10,89 @@ export class MuseumMultiplayer {
     this.onPeerAction = onPeerAction || (() => {});
     this.onPeerChat = onPeerChat || (() => {});
 
-    this.peers = new Map(); // userId -> { name, gender, x, y, z, rotY, isWalking, lastSeen }
+    this.peers = new Map(); // userId -> { name, gender, x, y, z, rotY, isWalking, isSeated, isKneeling, lastSeen, viaBc }
     this.ws = null;
     this.bc = null;
     this.isDestroyed = false;
-    this.pollingInterval = null;
+    this.pollTimeout = null;
     this.outboundActions = [];
     this.lastActionId = 0;
     this.seenActionIds = new Set();
     this.isPollingInProgress = false;
-    this.currentState = null;
+    this.currentState = {
+      name: this.userProfile.name,
+      gender: this.userProfile.gender,
+      x: 0,
+      y: 0,
+      z: 0,
+      rotY: Math.PI,
+      isWalking: false,
+      isSeated: false,
+      isKneeling: false
+    };
 
+    this._onUnload = () => this.sendLeaveBeacon();
     this.init();
   }
 
   init() {
-    // 1. Layer 1: BroadcastChannel for instant local testing across tabs/windows
+    // 1. Layer 1: BroadcastChannel for instant local sync across tabs/windows
     if (typeof BroadcastChannel !== 'undefined') {
       try {
         this.bc = new BroadcastChannel('museum_room_' + this.room);
         this.bc.onmessage = (event) => {
-          this.handleIncomingMessage(event.data);
+          this.handleIncomingMessage(event.data, true);
         };
       } catch (e) {
         console.warn('BroadcastChannel error:', e);
       }
     }
 
-    // 2. Layer 2: WebSockets to backend server (when on direct host or matching protocol)
+    // 2. Layer 2: WebSockets to backend server (only when protocol & host support WS)
     this.connectWebSocket();
 
-    // 3. Layer 3: Ultra-Fast HTTP Sync (every 300ms) with Action Queuing
-    this.pollingInterval = setInterval(() => {
-      this.pollHttpFallback();
-    }, 300);
+    // 3. Layer 3: Adaptive HTTP Sync (280ms when WS inactive, 1200ms heartbeat when WS open)
+    this.scheduleNextPoll(50);
 
-    // Announce Join
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pagehide', this._onUnload);
+      window.addEventListener('beforeunload', this._onUnload);
+    }
+
+    // Announce Join immediately
     this.broadcast({
       type: 'join',
       room: this.room,
       userId: this.userId,
-      name: this.userProfile.name,
-      gender: this.userProfile.gender
+      ...this.currentState
     });
+  }
+
+  scheduleNextPoll(delayMs = null) {
+    if (this.isDestroyed) return;
+    clearTimeout(this.pollTimeout);
+    const wsConnected = this.ws && this.ws.readyState === WebSocket.OPEN;
+    const wait = delayMs !== null ? delayMs : (wsConnected ? 1200 : 280);
+    this.pollTimeout = setTimeout(async () => {
+      await this.pollHttpFallback();
+      this.scheduleNextPoll();
+    }, wait);
   }
 
   connectWebSocket() {
     try {
       const isHttps = window.location.protocol === 'https:';
-      // If served from backend server, use same origin ws. Otherwise use Oracle VM public IP
-      const wsHost = (window.location.hostname === '155.248.255.29' || window.location.hostname === 'localhost')
+      const isDirectOracleOrLocal =
+        window.location.hostname === '155.248.255.29' ||
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1';
+
+      // Oracle backend runs HTTP/WS on port 3000 without TLS; skip broken wss:// attempts on HTTPS Vercel
+      if (isHttps && !isDirectOracleOrLocal) {
+        return;
+      }
+
+      const wsHost = isDirectOracleOrLocal
         ? `${window.location.host}/ws`
         : `155.248.255.29:3000/ws`;
 
@@ -71,15 +104,14 @@ export class MuseumMultiplayer {
           type: 'join',
           room: this.room,
           userId: this.userId,
-          name: this.userProfile.name,
-          gender: this.userProfile.gender
+          ...this.currentState
         }));
       };
 
       this.ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          this.handleIncomingMessage(data);
+          this.handleIncomingMessage(data, false);
         } catch (e) {}
       };
 
@@ -97,30 +129,47 @@ export class MuseumMultiplayer {
     }
   }
 
-  handleIncomingMessage(data) {
+  handleIncomingMessage(data, viaBc = false) {
     if (!data || data.userId === this.userId) return;
 
     if (data.type === 'move' || data.type === 'join') {
+      const prev = this.peers.get(data.userId);
       this.peers.set(data.userId, {
         userId: data.userId,
-        name: data.name || 'Visitor',
-        gender: data.gender || 'female',
-        x: data.x || 0,
-        y: data.y || 0,
-        z: data.z || 0,
-        rotY: data.rotY || 0,
+        name: data.name || prev?.name || 'Visitor',
+        gender: data.gender || prev?.gender || 'female',
+        x: typeof data.x === 'number' ? data.x : (prev?.x || 0),
+        y: typeof data.y === 'number' ? data.y : (prev?.y || 0),
+        z: typeof data.z === 'number' ? data.z : (prev?.z || 0),
+        rotY: typeof data.rotY === 'number' ? data.rotY : (prev?.rotY || 0),
         isWalking: Boolean(data.isWalking),
         isSeated: Boolean(data.isSeated),
-        lastSeen: Date.now()
+        isKneeling: Boolean(data.isKneeling),
+        lastSeen: Date.now(),
+        viaBc: viaBc || Boolean(prev?.viaBc)
       });
       this.onPeerUpdate(new Map(this.peers));
     } else if (data.type === 'action') {
+      const actKey = data._actionId || (data.userId + '_' + data.action + '_' + (data.timestamp || ''));
+      if (data.timestamp && this.seenActionIds.has(actKey)) return;
+      if (data.timestamp) {
+        this.seenActionIds.add(actKey);
+        if (this.seenActionIds.size > 200) {
+          const first = this.seenActionIds.values().next().value;
+          this.seenActionIds.delete(first);
+        }
+      }
       this.onPeerAction(data);
     } else if (data.type === 'chat') {
+      const chatKey = data._actionId || (data.userId + '_chat_' + (data.timestamp || ''));
+      if (data.timestamp && this.seenActionIds.has(chatKey)) return;
+      if (data.timestamp) this.seenActionIds.add(chatKey);
       this.onPeerChat(data);
     } else if (data.type === 'leave') {
-      this.peers.delete(data.userId);
-      this.onPeerUpdate(new Map(this.peers));
+      if (this.peers.has(data.userId)) {
+        this.peers.delete(data.userId);
+        this.onPeerUpdate(new Map(this.peers));
+      }
     }
   }
 
@@ -145,16 +194,37 @@ export class MuseumMultiplayer {
 
       if (res.ok) {
         const body = await res.json();
+        const now = Date.now();
+        let changed = false;
+
         if (body.peers && Array.isArray(body.peers)) {
+          const serverIds = new Set();
           body.peers.forEach(p => {
-            if (p.userId !== this.userId) {
+            if (p.userId && p.userId !== this.userId) {
+              serverIds.add(p.userId);
+              const existing = this.peers.get(p.userId);
               this.peers.set(p.userId, {
                 ...p,
-                lastSeen: Date.now()
+                lastSeen: now,
+                viaBc: Boolean(existing?.viaBc)
               });
+              changed = true;
             }
           });
-          this.onPeerUpdate(new Map(this.peers));
+
+          // Prune stale peers missing from server or timed out (>7.5s)
+          for (const [uid, p] of this.peers.entries()) {
+            const expired = now - (p.lastSeen || 0) > 7500;
+            const goneFromServer = !p.viaBc && !serverIds.has(uid);
+            if (expired || goneFromServer) {
+              this.peers.delete(uid);
+              changed = true;
+            }
+          }
+
+          if (changed) {
+            this.onPeerUpdate(new Map(this.peers));
+          }
         }
 
         if (body.latestActionId) {
@@ -163,21 +233,11 @@ export class MuseumMultiplayer {
 
         if (body.actions && Array.isArray(body.actions)) {
           body.actions.forEach(act => {
-            const actKey = act._actionId || (act.userId + '_' + act.action + '_' + (act.timestamp || Date.now()));
-            if (!this.seenActionIds.has(actKey)) {
-              this.seenActionIds.add(actKey);
-              if (this.seenActionIds.size > 200) {
-                const first = this.seenActionIds.values().next().value;
-                this.seenActionIds.delete(first);
-              }
-              this.handleIncomingMessage(act);
-            }
+            this.handleIncomingMessage(act, false);
           });
         }
-      } else {
-        if (actionsToSend.length > 0) {
-          this.outboundActions = [...actionsToSend, ...this.outboundActions];
-        }
+      } else if (actionsToSend.length > 0) {
+        this.outboundActions = [...actionsToSend, ...this.outboundActions];
       }
     } catch (e) {
       // Offline fallback silent
@@ -186,11 +246,11 @@ export class MuseumMultiplayer {
     }
   }
 
-  sendMove(x, y, z, rotY, isWalking, isSeated = false) {
+  sendMove(x, y, z, rotY, isWalking, isSeated = false, isKneeling = false) {
     this.currentState = {
       name: this.userProfile.name,
       gender: this.userProfile.gender,
-      x, y, z, rotY, isWalking, isSeated
+      x, y, z, rotY, isWalking, isSeated, isKneeling
     };
 
     const payload = {
@@ -215,7 +275,6 @@ export class MuseumMultiplayer {
     };
     this.broadcast(payload);
     this.outboundActions.push(payload);
-    // Immediately trigger sync for real-time delivery
     this.pollHttpFallback();
   }
 
@@ -234,13 +293,16 @@ export class MuseumMultiplayer {
     this.pollHttpFallback();
   }
 
+  sendLeaveBeacon() {
+    const leavePayload = { type: 'leave', room: this.room, userId: this.userId };
+    this.broadcast(leavePayload);
+  }
+
   broadcast(payload) {
     const str = JSON.stringify(payload);
-    // BroadcastChannel
     if (this.bc) {
       try { this.bc.postMessage(payload); } catch (e) {}
     }
-    // WebSocket
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       try { this.ws.send(str); } catch (e) {}
     }
@@ -248,10 +310,14 @@ export class MuseumMultiplayer {
 
   destroy() {
     this.isDestroyed = true;
-    clearInterval(this.pollingInterval);
+    clearTimeout(this.pollTimeout);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('pagehide', this._onUnload);
+      window.removeEventListener('beforeunload', this._onUnload);
+    }
+    this.sendLeaveBeacon();
     if (this.bc) this.bc.close();
     if (this.ws) {
-      this.broadcast({ type: 'leave', room: this.room, userId: this.userId });
       this.ws.close();
     }
     this.peers.clear();

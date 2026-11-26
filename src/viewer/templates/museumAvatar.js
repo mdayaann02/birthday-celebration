@@ -106,8 +106,40 @@ function createRadialShadowTexture() {
   return new THREE.CanvasTexture(canvas);
 }
 
-export function create3DAvatar(name, gender = 'male', isLocal = false) {
+const _sharedShadowTexCache = { tex: null };
+const _sharedEmojiTexCache = new Map();
+
+function getSharedShadowTexture() {
+  if (!_sharedShadowTexCache.tex) {
+    _sharedShadowTexCache.tex = createRadialShadowTexture();
+  }
+  return _sharedShadowTexCache.tex;
+}
+
+function getSharedEmojiTexture(emoji) {
+  if (_sharedEmojiTexCache.has(emoji)) {
+    return _sharedEmojiTexCache.get(emoji);
+  }
+  const heartCanvas = document.createElement('canvas');
+  heartCanvas.width = 96;
+  heartCanvas.height = 96;
+  const hctx = heartCanvas.getContext('2d');
+  hctx.textAlign = 'center';
+  hctx.textBaseline = 'middle';
+  hctx.font = '60px serif';
+  hctx.fillText(emoji, 48, 48);
+  const tex = new THREE.CanvasTexture(heartCanvas);
+  _sharedEmojiTexCache.set(emoji, tex);
+  return tex;
+}
+
+export function create3DAvatar(name, gender = 'male', isLocal = false, options = {}) {
   const isMale = gender === 'male' || gender === 'boy';
+  const isCoastal = options.theme === 'coastal';
+  const lowDetail = Boolean(options.lowDetail);
+  const segHi = lowDetail ? 10 : 16;
+  const segMed = lowDetail ? 8 : 14;
+  const segLow = lowDetail ? 6 : 10;
   const avatarGroup = new THREE.Group();
 
   // ============================================================================
@@ -157,30 +189,35 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   });
 
   // Outfits
-  const tuxedoColor = 0x172554; // Midnight Royal Blue
+  const tuxedoColor = isCoastal ? 0xf8f3eb : 0x172554; // Sunset Cream Linen or Midnight Royal Blue
   const tuxedoMat = new THREE.MeshStandardMaterial({
     color: tuxedoColor,
-    roughness: 0.55,
-    metalness: 0.1
+    roughness: isCoastal ? 0.72 : 0.55,
+    metalness: isCoastal ? 0.03 : 0.1
+  });
+  const trousersMat = new THREE.MeshStandardMaterial({
+    color: isCoastal ? 0x2b3a55 : 0x172554,
+    roughness: 0.6,
+    metalness: 0.06
   });
   const satinLapelMat = new THREE.MeshStandardMaterial({
-    color: 0x09090b,
-    roughness: 0.22,
-    metalness: 0.25
+    color: isCoastal ? 0xe7d8c3 : 0x09090b,
+    roughness: 0.32,
+    metalness: 0.15
   });
   const shirtWhiteMat = new THREE.MeshStandardMaterial({
     color: 0xf8fafc,
     roughness: 0.75
   });
   const bowtieMat = new THREE.MeshStandardMaterial({
-    color: 0x09090b,
+    color: isCoastal ? 0xf43f5e : 0x09090b,
     roughness: 0.35,
     metalness: 0.15
   });
 
   // Gown
-  const gownMainColor = 0xec4899;
-  const gownAccentColor = 0xf472b6;
+  const gownMainColor = isCoastal ? 0xfb7185 : 0xec4899;
+  const gownAccentColor = isCoastal ? 0xfda4af : 0xf472b6;
   const gownMat = new THREE.MeshStandardMaterial({
     color: gownMainColor,
     roughness: 0.38,
@@ -379,31 +416,32 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   headGroup.add(blushR);
 
   // --------------------------------------------------------------------------
-  // Sculpted Eyes (Sclera + Iris + Pupil + Specular Reflection Glint)
+  // Sculpted Eyes (Sclera + Iris + Pupil + Specular Reflection Glint + Blink)
   // --------------------------------------------------------------------------
+  const eyeAnchors = [];
   function createEyeMesh(isLeft) {
     const eyeAnchor = new THREE.Group();
     const sign = isLeft ? 1 : -1;
     eyeAnchor.position.set(sign * 0.068, 0.075, 0.155);
 
     // Sclera
-    const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.038, 14, 14), scleraMat);
+    const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.038, segMed, segMed), scleraMat);
     eyeAnchor.add(sclera);
 
     // Colored Iris
-    const iris = new THREE.Mesh(new THREE.CylinderGeometry(0.021, 0.021, 0.005, 14), irisMat);
+    const iris = new THREE.Mesh(new THREE.CylinderGeometry(0.021, 0.021, 0.005, segMed), irisMat);
     iris.rotation.x = Math.PI / 2;
     iris.position.set(0, 0, 0.035);
     eyeAnchor.add(iris);
 
     // Pupil
-    const pupil = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, 0.006, 12), pupilMat);
+    const pupil = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, 0.006, segLow), pupilMat);
     pupil.rotation.x = Math.PI / 2;
     pupil.position.set(0, 0, 0.036);
     eyeAnchor.add(pupil);
 
     // Sparkle Glint (Living Specular Highlight!)
-    const glint = new THREE.Mesh(new THREE.SphereGeometry(0.0055, 8, 8), glintMat);
+    const glint = new THREE.Mesh(new THREE.SphereGeometry(0.0055, segLow, segLow), glintMat);
     glint.position.set(sign * 0.008, 0.008, 0.038);
     eyeAnchor.add(glint);
 
@@ -416,6 +454,7 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
     eyelid.rotation.z = sign * -0.08;
     eyeAnchor.add(eyelid);
 
+    eyeAnchors.push(eyeAnchor);
     return eyeAnchor;
   }
 
@@ -702,8 +741,8 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
 
   // Left Thigh
   const leftThigh = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.068, 0.058, 0.32, 14),
-    isMale ? tuxedoMat : gownMat
+    new THREE.CylinderGeometry(0.068, 0.058, 0.32, segMed),
+    isMale ? trousersMat : gownMat
   );
   leftThigh.position.y = -0.16;
   leftLegGroup.add(leftThigh);
@@ -714,8 +753,8 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   leftLegGroup.add(leftCalfGroup);
 
   const leftCalf = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.058, 0.048, 0.32, 14),
-    isMale ? tuxedoMat : (isMale ? tuxedoMat : skinMat)
+    new THREE.CylinderGeometry(0.058, 0.048, 0.32, segMed),
+    isMale ? trousersMat : skinMat
   );
   leftCalf.position.y = -0.16;
   leftCalfGroup.add(leftCalf);
@@ -757,8 +796,8 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
 
   // Right Thigh
   const rightThigh = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.068, 0.058, 0.32, 14),
-    isMale ? tuxedoMat : gownMat
+    new THREE.CylinderGeometry(0.068, 0.058, 0.32, segMed),
+    isMale ? trousersMat : gownMat
   );
   rightThigh.position.y = -0.16;
   rightLegGroup.add(rightThigh);
@@ -769,8 +808,8 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   rightLegGroup.add(rightCalfGroup);
 
   const rightCalf = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.058, 0.048, 0.32, 14),
-    isMale ? tuxedoMat : skinMat
+    new THREE.CylinderGeometry(0.058, 0.048, 0.32, segMed),
+    isMale ? trousersMat : skinMat
   );
   rightCalf.position.y = -0.16;
   rightCalfGroup.add(rightCalf);
@@ -813,8 +852,8 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   nametagSprite.scale.set(1.6, 0.4, 1);
   avatarGroup.add(nametagSprite);
 
-  // Soft Radial Floor Shadow
-  const shadowTex = createRadialShadowTexture();
+  // Soft Radial Floor Shadow (shared cached texture)
+  const shadowTex = getSharedShadowTexture();
   const shadowGeo = new THREE.PlaneGeometry(1.3, 1.3);
   const shadowMat = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false });
   const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
@@ -826,12 +865,19 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   let speechSprite = null;
   let speechTimeout = null;
 
-  function showChatBubble(text) {
-    if (speechSprite) {
-      avatarGroup.remove(speechSprite);
+  function clearSpeechSprite() {
+    if (!speechSprite) return;
+    avatarGroup.remove(speechSprite);
+    if (speechSprite.material) {
+      if (speechSprite.material.map) speechSprite.material.map.dispose();
       speechSprite.material.dispose();
-      speechSprite.geometry.dispose();
     }
+    if (speechSprite.geometry) speechSprite.geometry.dispose();
+    speechSprite = null;
+  }
+
+  function showChatBubble(text) {
+    clearSpeechSprite();
     const bubbleTex = createSpeechBubbleTexture(text);
     const bubbleMat = new THREE.SpriteMaterial({ map: bubbleTex, transparent: true });
     speechSprite = new THREE.Sprite(bubbleMat);
@@ -851,32 +897,33 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
           x: 0,
           y: 0,
           duration: 0.3,
-          onComplete: () => {
-            if (speechSprite) avatarGroup.remove(speechSprite);
-            speechSprite = null;
-          }
+          onComplete: clearSpeechSprite
         });
       }
     }, 4500);
   }
 
   // ============================================================================
-  // 5. ANIMATIONS & STATE MACHINE
+  // 5. ANIMATIONS & STATE MACHINE (Frame-Rate Independent)
   // ============================================================================
   let walkCycle = 0;
   let idleTimer = 0;
+  let blinkTimer = 2.0 + Math.random() * 2.5;
   let currentAction = null;
   let actionTimer = 0;
   let isSeated = false;
   let isKneeling = false;
   let isSurprised = false;
+  let holdingHandsSide = null; // null | 'left' | 'right'
 
   function setSeated(sitting) {
-    isSeated = sitting;
-    if (sitting) {
+    isSeated = Boolean(sitting);
+    if (isSeated) {
       isKneeling = false;
       isSurprised = false;
+      holdingHandsSide = null;
       ringBoxGroup.visible = false;
+      ringLight.intensity = 0;
       currentAction = null;
     } else {
       resetLimbTransforms();
@@ -884,11 +931,12 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   }
 
   function setKneeling(kneeling) {
-    isKneeling = kneeling;
-    ringBoxGroup.visible = kneeling;
-    if (kneeling) {
+    isKneeling = Boolean(kneeling);
+    ringBoxGroup.visible = isKneeling;
+    if (isKneeling) {
       isSeated = false;
       isSurprised = false;
+      holdingHandsSide = null;
       ringLight.intensity = 2.0;
       currentAction = null;
     } else {
@@ -898,14 +946,20 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   }
 
   function setSurprise(surprise) {
-    isSurprised = surprise;
-    if (surprise) {
+    isSurprised = Boolean(surprise);
+    if (isSurprised) {
       isSeated = false;
       isKneeling = false;
+      holdingHandsSide = null;
       ringBoxGroup.visible = false;
+      ringLight.intensity = 0;
     } else {
       resetLimbTransforms();
     }
+  }
+
+  function setHoldingHands(active, side = 'right') {
+    holdingHandsSide = active ? side : null;
   }
 
   function resetLimbTransforms() {
@@ -928,19 +982,12 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   }
 
   function burstHearts(scene, targetPos = null) {
-    const heartCanvas = document.createElement('canvas');
-    heartCanvas.width = 128;
-    heartCanvas.height = 128;
-    const hctx = heartCanvas.getContext('2d');
-    hctx.textAlign = 'center';
-    hctx.textBaseline = 'middle';
-    hctx.font = '72px serif';
     const emojis = ['💖', '💕', '❤️', '✨', '🥰', '💍'];
     const chosenEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-    hctx.fillText(chosenEmoji, 64, 64);
-
-    const heartTex = new THREE.CanvasTexture(heartCanvas);
+    const heartTex = getSharedEmojiTexture(chosenEmoji);
+    const parentNode = scene || avatarGroup.parent || avatarGroup;
     const count = 7;
+
     for (let i = 0; i < count; i++) {
       const hMat = new THREE.SpriteMaterial({ map: heartTex, transparent: true, opacity: 1 });
       const hSprite = new THREE.Sprite(hMat);
@@ -950,7 +997,7 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
       hSprite.position.set(startX, startY, startZ);
       const scale = 0.35 + Math.random() * 0.25;
       hSprite.scale.set(scale, scale, 1);
-      (scene || avatarGroup.parent || avatarGroup).add(hSprite);
+      parentNode.add(hSprite);
 
       const destX = targetPos ? (targetPos.x + (Math.random() - 0.5) * 0.6) : (startX + (Math.random() - 0.5) * 1.5);
       const destY = startY + 1.2 + Math.random() * 1.0;
@@ -971,8 +1018,8 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
         duration: 0.6,
         delay: dur - 0.5 + i * 0.08,
         onComplete: () => {
-          (scene || avatarGroup.parent || avatarGroup).remove(hSprite);
-          heartTex.dispose();
+          parentNode.remove(hSprite);
+          if (hSprite.geometry) hSprite.geometry.dispose();
           hMat.dispose();
         }
       });
@@ -980,126 +1027,174 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   }
 
   function update(delta, isWalking, speed = 1) {
+    const dt = Math.min(Math.max(Number.isFinite(delta) ? delta : 0.016, 0.001), 0.1);
+    const spd = Number.isFinite(speed) ? speed : 1;
+    const damp = 1 - Math.exp(-10 * dt);
+    const dampFast = 1 - Math.exp(-13 * dt);
+
+    // Natural Eye Blink & Subtle Head Micro-Motion
+    blinkTimer -= dt;
+    let eyeScaleY = 1.0;
+    if (blinkTimer <= 0) {
+      const blinkProgress = -blinkTimer / 0.14;
+      if (blinkProgress < 1.0) {
+        eyeScaleY = Math.max(0.12, Math.abs(Math.cos(blinkProgress * Math.PI)));
+      } else {
+        blinkTimer = 3.0 + Math.random() * 2.8;
+      }
+    }
+    for (let i = 0; i < eyeAnchors.length; i++) {
+      eyeAnchors[i].scale.y = eyeScaleY;
+    }
+
     if (isKneeling) {
-      // ----------------------------------------------------------------------
       // 3D Romantic Real-Time One-Knee Proposal Pose
-      // ----------------------------------------------------------------------
-      // Right Thigh drops backward, Right Knee flexes 90° onto floor
-      rightLegGroup.rotation.x = THREE.MathUtils.lerp(rightLegGroup.rotation.x, -Math.PI / 2.3, 0.16);
-      rightLegGroup.position.y = THREE.MathUtils.lerp(rightLegGroup.position.y, 0.28, 0.16);
-      rightLegGroup.position.z = THREE.MathUtils.lerp(rightLegGroup.position.z, -0.16, 0.16);
-      rightCalfGroup.rotation.x = THREE.MathUtils.lerp(rightCalfGroup.rotation.x, 1.45, 0.16);
+      rightLegGroup.rotation.x = THREE.MathUtils.lerp(rightLegGroup.rotation.x, -Math.PI / 2.3, damp);
+      rightLegGroup.position.y = THREE.MathUtils.lerp(rightLegGroup.position.y, 0.28, damp);
+      rightLegGroup.position.z = THREE.MathUtils.lerp(rightLegGroup.position.z, -0.16, damp);
+      rightCalfGroup.rotation.x = THREE.MathUtils.lerp(rightCalfGroup.rotation.x, 1.45, damp);
 
-      // Left Thigh lifts forward, Left Foot planted flat
-      leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, 0.52, 0.16);
-      leftLegGroup.position.y = THREE.MathUtils.lerp(leftLegGroup.position.y, 0.42, 0.16);
-      leftLegGroup.position.z = THREE.MathUtils.lerp(leftLegGroup.position.z, 0.18, 0.16);
-      leftCalfGroup.rotation.x = THREE.MathUtils.lerp(leftCalfGroup.rotation.x, -0.5, 0.16);
+      leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, 0.52, damp);
+      leftLegGroup.position.y = THREE.MathUtils.lerp(leftLegGroup.position.y, 0.42, damp);
+      leftLegGroup.position.z = THREE.MathUtils.lerp(leftLegGroup.position.z, 0.18, damp);
+      leftCalfGroup.rotation.x = THREE.MathUtils.lerp(leftCalfGroup.rotation.x, -0.5, damp);
 
-      // Torso lowers gracefully to kneeling height with proud upright posture
-      torsoGroup.position.y = THREE.MathUtils.lerp(torsoGroup.position.y, 0.52, 0.16);
-      torsoGroup.position.z = THREE.MathUtils.lerp(torsoGroup.position.z, -0.04, 0.16);
-      torsoGroup.rotation.x = THREE.MathUtils.lerp(torsoGroup.rotation.x, 0.06, 0.16);
+      torsoGroup.position.y = THREE.MathUtils.lerp(torsoGroup.position.y, 0.52, damp);
+      torsoGroup.position.z = THREE.MathUtils.lerp(torsoGroup.position.z, -0.04, damp);
+      torsoGroup.rotation.x = THREE.MathUtils.lerp(torsoGroup.rotation.x, 0.06, damp);
 
-      // Right arm extends forward presenting the open velvet ring box
-      rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -Math.PI / 2.2, 0.16);
-      rightArmGroup.rotation.y = THREE.MathUtils.lerp(rightArmGroup.rotation.y, 0.1, 0.16);
-      rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.12, 0.16);
-      rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, -0.25, 0.16);
+      rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -Math.PI / 2.2, damp);
+      rightArmGroup.rotation.y = THREE.MathUtils.lerp(rightArmGroup.rotation.y, 0.1, damp);
+      rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.12, damp);
+      rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, -0.25, damp);
 
-      // Left arm rests reverently over heart
-      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -0.7, 0.16);
-      leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.55, 0.16);
-      leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, -0.55, 0.16);
+      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -0.7, damp);
+      leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.55, damp);
+      leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, -0.55, damp);
 
-      // Diamond sparkles & spins
-      diamond.rotation.y += delta * 3.5;
+      headGroup.rotation.x = THREE.MathUtils.lerp(headGroup.rotation.x, -0.14, damp);
+      headGroup.rotation.y = THREE.MathUtils.lerp(headGroup.rotation.y, 0, damp);
+      diamond.rotation.y += dt * 3.5;
       return;
     }
 
     if (isSurprised) {
-      // ----------------------------------------------------------------------
-      // Recipient Hands to Cheeks in Romantic Surprise
-      // ----------------------------------------------------------------------
-      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -1.65, 0.16);
-      leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.42, 0.16);
-      leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, -0.65, 0.16);
+      idleTimer += dt;
+      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -1.65, damp);
+      leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.42, damp);
+      leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, -0.65, damp);
 
-      rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -1.65, 0.16);
-      rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.42, 0.16);
-      rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, -0.65, 0.16);
+      rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -1.65, damp);
+      rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.42, damp);
+      rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, -0.65, damp);
 
       torsoGroup.position.y = 0.95 + Math.sin(idleTimer * 3.5) * 0.02;
+      headGroup.rotation.x = THREE.MathUtils.lerp(headGroup.rotation.x, 0.08, damp);
       return;
     }
 
     if (isSeated) {
-      // ----------------------------------------------------------------------
-      // Sitting Pose on Gallery Leather Bench
-      // ----------------------------------------------------------------------
-      leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, -Math.PI / 2 + 0.1, 0.15);
-      rightLegGroup.rotation.x = THREE.MathUtils.lerp(rightLegGroup.rotation.x, -Math.PI / 2 + 0.1, 0.15);
-      leftCalfGroup.rotation.x = THREE.MathUtils.lerp(leftCalfGroup.rotation.x, Math.PI / 2.2, 0.15);
-      rightCalfGroup.rotation.x = THREE.MathUtils.lerp(rightCalfGroup.rotation.x, Math.PI / 2.2, 0.15);
+      idleTimer += dt;
+      leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, -Math.PI / 2 + 0.1, damp);
+      rightLegGroup.rotation.x = THREE.MathUtils.lerp(rightLegGroup.rotation.x, -Math.PI / 2 + 0.1, damp);
+      leftCalfGroup.rotation.x = THREE.MathUtils.lerp(leftCalfGroup.rotation.x, Math.PI / 2.2, damp);
+      rightCalfGroup.rotation.x = THREE.MathUtils.lerp(rightCalfGroup.rotation.x, Math.PI / 2.2, damp);
 
-      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -0.32, 0.15);
-      rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -0.32, 0.15);
-      torsoGroup.position.y = THREE.MathUtils.lerp(torsoGroup.position.y, 0.58, 0.15);
+      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -0.32, damp);
+      rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -0.32, damp);
+      leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.06, damp);
+      rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.06, damp);
+      torsoGroup.position.y = THREE.MathUtils.lerp(torsoGroup.position.y, 0.58, damp);
+      torsoGroup.rotation.x = THREE.MathUtils.lerp(torsoGroup.rotation.x, -0.04, damp);
+      headGroup.rotation.y = Math.sin(idleTimer * 0.9) * 0.08;
+      headGroup.rotation.x = THREE.MathUtils.lerp(headGroup.rotation.x, 0, damp);
       return;
     }
 
     if (isWalking) {
-      walkCycle += delta * 9 * speed;
+      walkCycle += dt * 9 * spd;
 
-      // Natural Human Walk Cycle with Knee & Elbow Articulation
       const thighSwingL = Math.sin(walkCycle) * 0.58;
       const thighSwingR = -Math.sin(walkCycle) * 0.58;
 
-      leftLegGroup.rotation.x = thighSwingL;
-      rightLegGroup.rotation.x = thighSwingR;
+      leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, thighSwingL, dampFast);
+      rightLegGroup.rotation.x = THREE.MathUtils.lerp(rightLegGroup.rotation.x, thighSwingR, dampFast);
 
-      // Knees flex backwards on leg backswing
-      leftCalfGroup.rotation.x = Math.max(0, -Math.sin(walkCycle) * 0.65);
-      rightCalfGroup.rotation.x = Math.max(0, Math.sin(walkCycle) * 0.65);
+      leftCalfGroup.rotation.x = THREE.MathUtils.lerp(leftCalfGroup.rotation.x, Math.max(0, -Math.sin(walkCycle) * 0.65), dampFast);
+      rightCalfGroup.rotation.x = THREE.MathUtils.lerp(rightCalfGroup.rotation.x, Math.max(0, Math.sin(walkCycle) * 0.65), dampFast);
 
-      // Arms swing opposite legs with natural elbow bend
-      leftArmGroup.rotation.x = -Math.sin(walkCycle) * 0.48;
-      leftForearmGroup.rotation.x = Math.max(0, -Math.sin(walkCycle) * 0.25);
-
-      if (currentAction !== 'wave') {
-        rightArmGroup.rotation.x = Math.sin(walkCycle) * 0.48;
-        rightForearmGroup.rotation.x = Math.max(0, Math.sin(walkCycle) * 0.25);
+      if (holdingHandsSide === 'left') {
+        leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -0.35, damp);
+        leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.45, damp);
+        leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, -0.25, damp);
+      } else {
+        leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -Math.sin(walkCycle) * 0.48, dampFast);
+        leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.04, dampFast);
+        leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, Math.max(0, -Math.sin(walkCycle) * 0.25), dampFast);
       }
 
-      // Torso natural vertical step bounce & gentle human pelvic sway
+      if (currentAction !== 'wave') {
+        if (holdingHandsSide === 'right') {
+          rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -0.35, damp);
+          rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.45, damp);
+          rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, -0.25, damp);
+        } else {
+          rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, Math.sin(walkCycle) * 0.48, dampFast);
+          rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.04, dampFast);
+          rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, Math.max(0, Math.sin(walkCycle) * 0.25), dampFast);
+        }
+      }
+
       torsoGroup.position.y = 0.95 + Math.abs(Math.sin(walkCycle * 2)) * 0.038;
       torsoGroup.rotation.z = Math.sin(walkCycle) * 0.025;
+      torsoGroup.rotation.x = THREE.MathUtils.lerp(torsoGroup.rotation.x, 0.045, damp);
+      headGroup.rotation.x = THREE.MathUtils.lerp(headGroup.rotation.x, -0.03, damp);
+      headGroup.rotation.y = THREE.MathUtils.lerp(headGroup.rotation.y, 0, damp);
     } else {
       // Natural Idle Breathing Stance
-      leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, 0, 0.18);
-      rightLegGroup.rotation.x = THREE.MathUtils.lerp(rightLegGroup.rotation.x, 0, 0.18);
-      leftCalfGroup.rotation.x = THREE.MathUtils.lerp(leftCalfGroup.rotation.x, 0, 0.18);
-      rightCalfGroup.rotation.x = THREE.MathUtils.lerp(rightCalfGroup.rotation.x, 0, 0.18);
+      leftLegGroup.rotation.x = THREE.MathUtils.lerp(leftLegGroup.rotation.x, 0, damp);
+      rightLegGroup.rotation.x = THREE.MathUtils.lerp(rightLegGroup.rotation.x, 0, damp);
+      leftCalfGroup.rotation.x = THREE.MathUtils.lerp(leftCalfGroup.rotation.x, 0, damp);
+      rightCalfGroup.rotation.x = THREE.MathUtils.lerp(rightCalfGroup.rotation.x, 0, damp);
+      leftLegGroup.position.y = THREE.MathUtils.lerp(leftLegGroup.position.y, 0.65, damp);
+      rightLegGroup.position.y = THREE.MathUtils.lerp(rightLegGroup.position.y, 0.65, damp);
+      leftLegGroup.position.z = THREE.MathUtils.lerp(leftLegGroup.position.z, 0, damp);
+      rightLegGroup.position.z = THREE.MathUtils.lerp(rightLegGroup.position.z, 0, damp);
 
-      leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, 0, 0.18);
-      leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, 0, 0.18);
-
-      if (currentAction !== 'wave') {
-        rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, 0, 0.18);
-        rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, 0, 0.18);
-        rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, 0, 0.18);
+      if (holdingHandsSide === 'left') {
+        leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, -0.32, damp);
+        leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.45, damp);
+        leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, -0.22, damp);
+      } else {
+        leftArmGroup.rotation.x = THREE.MathUtils.lerp(leftArmGroup.rotation.x, 0, damp);
+        leftArmGroup.rotation.z = THREE.MathUtils.lerp(leftArmGroup.rotation.z, 0.04, damp);
+        leftForearmGroup.rotation.x = THREE.MathUtils.lerp(leftForearmGroup.rotation.x, 0, damp);
       }
 
-      torsoGroup.rotation.z = THREE.MathUtils.lerp(torsoGroup.rotation.z, 0, 0.18);
+      if (currentAction !== 'wave') {
+        if (holdingHandsSide === 'right') {
+          rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, -0.32, damp);
+          rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.45, damp);
+          rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, -0.22, damp);
+        } else {
+          rightArmGroup.rotation.x = THREE.MathUtils.lerp(rightArmGroup.rotation.x, 0, damp);
+          rightArmGroup.rotation.z = THREE.MathUtils.lerp(rightArmGroup.rotation.z, -0.04, damp);
+          rightForearmGroup.rotation.x = THREE.MathUtils.lerp(rightForearmGroup.rotation.x, 0, damp);
+        }
+      }
 
-      idleTimer += delta;
-      // Gentle breathing motion
+      torsoGroup.rotation.z = THREE.MathUtils.lerp(torsoGroup.rotation.z, 0, damp);
+      torsoGroup.rotation.x = THREE.MathUtils.lerp(torsoGroup.rotation.x, 0, damp);
+
+      idleTimer += dt;
       torsoGroup.position.y = 0.95 + Math.sin(idleTimer * 2.2) * 0.015;
+      headGroup.rotation.y = Math.sin(idleTimer * 0.7) * 0.05;
+      headGroup.rotation.x = Math.sin(idleTimer * 1.1) * 0.025;
     }
 
     // Action handling (Wave)
     if (currentAction === 'wave') {
-      actionTimer += delta;
+      actionTimer += dt;
       rightArmGroup.rotation.x = Math.PI - 0.25;
       rightArmGroup.rotation.z = Math.sin(actionTimer * 14) * 0.35 + 0.25;
       rightForearmGroup.rotation.x = 0.35;
@@ -1118,11 +1213,15 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
   }
 
   function dispose() {
+    clearTimeout(speechTimeout);
+    clearSpeechSprite();
     avatarGroup.traverse(child => {
       if (child.isMesh || child.isSprite) {
         if (child.geometry) child.geometry.dispose();
         if (child.material) {
-          if (child.material.map) child.material.map.dispose();
+          if (child.material.map && child.material.map !== shadowTex) {
+            child.material.map.dispose();
+          }
           child.material.dispose();
         }
       }
@@ -1141,7 +1240,9 @@ export function create3DAvatar(name, gender = 'male', isLocal = false) {
     setSeated,
     setKneeling,
     setSurprise,
+    setHoldingHands,
     isKneeling: () => isKneeling,
+    isSeated: () => isSeated,
     dispose
   };
 }
