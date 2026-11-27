@@ -761,11 +761,13 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
     icon: "🐱💌",
     description: "An adorable 3D plush kitten walks in carrying an airmail letter, asks your custom question, reacts with tears if they say no, and celebrates with confetti when they say yes!",
     defaultTheme: {
-      primary: "#8675f4",
-      bgGradient: "radial-gradient(circle at 50% 42%, #ffffff 0%, #fdf8ff 58%, #f8f0fc 100%)",
-      accent: "#f45b8c"
+      primary: "#f43f5e",
+      bgGradient: "radial-gradient(circle at 50% 38%, #fff7f0 0%, #ffe6d4 54%, #ffd0b5 100%)",
+      accent: "#fb923c"
     },
     defaultData: {
+      mode: "wish",
+      bgTheme: "peach",
       recipientName: "Lily",
       senderName: "Ethan",
       letterTitle: "A little note before I ask you something",
@@ -773,6 +775,32 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       signOff: "With love",
       question: "Will you go on a date with me?",
       yesSubtitle: "Saturday at seven. I am already smiling."
+    }
+  },
+  kitten_sorry: {
+    id: "kitten_sorry",
+    name: "Comedy Sorry Kitten",
+    badge: "Peach 3D Apology 🐱🍑",
+    icon: "🐱🥺",
+    description: "Warm peach 3D plush kitten apology: delivers an emergency comedy petition to stop being mad at you, cries 4K HD tears if she clicks 'Still mad', and wins her back with confetti & a treat coupon!",
+    defaultTheme: {
+      primary: "#fb7185",
+      bgGradient: "radial-gradient(circle at 50% 38%, #fff7f0 0%, #ffe6d4 54%, #ffd0b5 100%)",
+      accent: "#fb923c"
+    },
+    defaultData: {
+      mode: "sorry",
+      bgTheme: "peach",
+      recipientName: "Cutie",
+      senderName: "Your Certified Idiot",
+      letterTitle: "Official Petition to Stop Being Mad at Me",
+      letterText: "Cutie, I sent this very small, very dramatic kitten because I messed up and my brain clearly went on vacation without telling me.\n\nExhibit A: I am 100% an idiot. Exhibit B: Nobody else will share their fries with you AND still look at you like you're literal magic.\n\nSo please accept this tiny kitten, my formal apology, and let me make you fall for me all over again.",
+      signOff: "Forever sorry (and yours)",
+      question: "Do you forgive me & let me make you fall for me again?",
+      yesBtnLabel: "Fine, forgiven 💖",
+      noBtnLabel: "Still mad 😤",
+      yesSubtitle: "Case closed! Preparing unlimited hugs, snacks, and making you fall for me all over again.",
+      couponText: "🎟️ REDEEM: 1 Free Hug + Your Favorite Treat (No Expiry)"
     }
   },
   ever_tide: {

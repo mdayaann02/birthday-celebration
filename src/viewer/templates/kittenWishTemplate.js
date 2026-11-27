@@ -1,8 +1,40 @@
-// src/viewer/templates/kittenWishTemplate.js - 3D Plush Kitten Letter & Proposal Template
+// src/viewer/templates/kittenWishTemplate.js
+// 3D Plush Kitten Letter, Proposal & Comedy Sorry Template
 import * as THREE from 'three';
 import confetti from 'canvas-confetti';
 
 const STYLE_ID = 'kitten-wish-scoped-styles';
+
+const BG_THEMES = {
+  peach: {
+    bg: 'radial-gradient(circle at 50% 38%, #fff7f0 0%, #ffe6d4 54%, #ffd0b5 100%)',
+    shadowColor: 0xe6b89c,
+    hemiGround: 0xffeadb,
+    fillColor: 0xffd7ba,
+    accentHeart: '#fb7185'
+  },
+  lavender: {
+    bg: 'radial-gradient(circle at 50% 42%, #ffffff 0%, #fdf8ff 58%, #f3e8ff 100%)',
+    shadowColor: 0xd8c8e8,
+    hemiGround: 0xf3e8ff,
+    fillColor: 0xfce7f3,
+    accentHeart: '#a78bfa'
+  },
+  blush: {
+    bg: 'radial-gradient(circle at 50% 40%, #fff9fb 0%, #ffe4ec 56%, #fecdd3 100%)',
+    shadowColor: 0xe8bfd0,
+    hemiGround: 0xffe4ec,
+    fillColor: 0xfbcfe8,
+    accentHeart: '#f43f5e'
+  },
+  mint: {
+    bg: 'radial-gradient(circle at 50% 40%, #f7fffb 0%, #dcfce7 56%, #bbf7d0 100%)',
+    shadowColor: 0xb7dec8,
+    hemiGround: 0xdcfce7,
+    fillColor: 0xd1fae5,
+    accentHeart: '#10b981'
+  }
+};
 
 function ensureStyles() {
   if (document.getElementById(STYLE_ID)) return;
@@ -13,25 +45,40 @@ function ensureStyles() {
 
     .kw-root {
       position: relative;
-      min-height: 100vh;
+      min-height: 100dvh;
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
+      padding: 20px 16px 32px;
       box-sizing: border-box;
-      background: radial-gradient(circle at 50% 42%, #ffffff 0%, #fdf8ff 58%, #f8f0fc 100%);
       font-family: 'Nunito', system-ui, sans-serif;
       color: #2d2638;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .kw-ambient-hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
       overflow: hidden;
+      z-index: 1;
+    }
+
+    .kw-ambient-float {
+      position: absolute;
+      opacity: 0.45;
+      animation: kwFloatSlow 5.5s ease-in-out infinite;
     }
 
     .kw-stage {
       position: relative;
+      z-index: 5;
       width: 100%;
-      max-width: 620px;
-      height: 410px;
+      max-width: 580px;
+      height: clamp(320px, 48vh, 420px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -50,25 +97,25 @@ function ensureStyles() {
     .kw-airmail-border {
       position: relative;
       padding: 5px;
-      border-radius: 20px;
+      border-radius: 22px;
       background: repeating-linear-gradient(
         -45deg,
         #f26b8a 0px,
         #f26b8a 10px,
         #fffdf9 10px,
         #fffdf9 18px,
-        #6eb5ff 18px,
-        #6eb5ff 28px,
+        #fb923c 18px,
+        #fb923c 28px,
         #fffdf9 28px,
         #fffdf9 36px
       );
-      box-shadow: 0 22px 50px -12px rgba(74, 55, 98, 0.16), 0 8px 20px -6px rgba(242, 107, 138, 0.1);
+      box-shadow: 0 22px 50px -12px rgba(74, 55, 98, 0.2), 0 8px 20px -6px rgba(242, 107, 138, 0.14);
     }
 
     .kw-airmail-inner {
       background: #fffcf7;
-      border-radius: 16px;
-      padding: 28px 26px;
+      border-radius: 17px;
+      padding: 26px 24px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -85,8 +132,8 @@ function ensureStyles() {
       color: #fff;
       font-size: 16px;
       margin-bottom: 12px;
-      background: radial-gradient(circle at 32% 28%, #b3a4ff 0%, #8675f4 58%, #6d5ce6 100%);
-      box-shadow: 0 8px 18px rgba(118, 99, 238, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.55);
+      background: radial-gradient(circle at 32% 28%, #fda4af 0%, #f43f5e 60%, #e11d48 100%);
+      box-shadow: 0 8px 18px rgba(244, 63, 94, 0.32), inset 0 2px 4px rgba(255, 255, 255, 0.55);
     }
 
     .kw-badge-pink {
@@ -106,23 +153,25 @@ function ensureStyles() {
     .kw-btn-purple {
       border: none;
       border-radius: 9999px;
-      padding: 10px 28px;
+      padding: 11px 26px;
+      min-height: 44px;
       color: #fff;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 14px;
       cursor: pointer;
-      background: linear-gradient(180deg, #a799ff 0%, #8270f3 60%, #6d5be6 100%);
-      box-shadow: 0 8px 18px rgba(118, 99, 238, 0.32), inset 0 2px 3px rgba(255, 255, 255, 0.5);
+      background: linear-gradient(180deg, #fb7185 0%, #e11d48 68%, #be123c 100%);
+      box-shadow: 0 8px 18px rgba(225, 29, 72, 0.3), inset 0 2px 3px rgba(255, 255, 255, 0.45);
       transition: transform 0.16s ease, filter 0.16s ease;
     }
-    .kw-btn-purple:hover { filter: brightness(1.05); transform: translateY(-1px); }
+    .kw-btn-purple:hover { filter: brightness(1.06); transform: translateY(-1px); }
 
     .kw-btn-pink {
       border: none;
       border-radius: 9999px;
-      padding: 9px 28px;
+      padding: 10px 26px;
+      min-height: 44px;
       color: #fff;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 14px;
       cursor: pointer;
       background: linear-gradient(180deg, #ff7ea8 0%, #f44d82 60%, #e0376d 100%);
@@ -134,13 +183,14 @@ function ensureStyles() {
     .kw-btn-blue {
       border: none;
       border-radius: 9999px;
-      padding: 9px 28px;
+      padding: 10px 24px;
+      min-height: 44px;
       color: #fff;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13.5px;
       cursor: pointer;
-      background: linear-gradient(180deg, #8cc7ff 0%, #5ca6f7 60%, #448ee6 100%);
-      box-shadow: 0 8px 18px rgba(92, 166, 247, 0.32), inset 0 2px 3px rgba(255, 255, 255, 0.55);
+      background: linear-gradient(180deg, #94a3b8 0%, #64748b 65%, #475569 100%);
+      box-shadow: 0 6px 14px rgba(71, 85, 105, 0.25), inset 0 2px 3px rgba(255, 255, 255, 0.4);
       transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.16s ease;
     }
     .kw-btn-blue:hover { filter: brightness(1.05); }
@@ -161,56 +211,75 @@ function ensureStyles() {
     }
 
     .kw-card-wrap {
-      width: 100%;
-      max-width: 385px;
+      position: relative;
       z-index: 20;
+      width: 100%;
+      max-width: 410px;
       animation: kwPopIn 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
     }
 
-    .kw-question-overlay {
-      position: absolute;
+    .kw-question-below {
+      position: relative;
       z-index: 20;
-      width: 90%;
-      max-width: 350px;
-      margin-top: 38px;
+      width: 100%;
+      max-width: 390px;
+      margin-top: -10px;
       animation: kwPopIn 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;
     }
 
     .kw-final-card {
+      position: relative;
+      z-index: 20;
       width: 100%;
-      max-width: 325px;
+      max-width: 360px;
       background: rgba(255, 255, 255, 0.96);
       border-radius: 24px;
-      padding: 36px 26px;
+      padding: 34px 26px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: 0 24px 60px -15px rgba(244, 91, 140, 0.22);
-      border: 1px solid #fdf2f8;
+      box-shadow: 0 24px 60px -15px rgba(244, 91, 140, 0.25);
+      border: 1px solid #ffe4e6;
       animation: kwPopIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
     }
 
+    .kw-coupon-pill {
+      margin-top: 14px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      background: #fff7ed;
+      border: 1.5px dashed #fb923c;
+      color: #c2410c;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
     .kw-replay-btn {
-      position: absolute;
+      position: fixed;
       top: 14px;
       right: 14px;
       z-index: 30;
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid #ede9fe;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(251, 113, 133, 0.3);
       border-radius: 9999px;
-      padding: 6px 12px;
+      padding: 7px 14px;
       font-size: 12px;
       font-weight: 700;
-      color: #64748b;
+      color: #475569;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
-    .kw-replay-btn:hover { color: #6d5be6; }
+    .kw-replay-btn:hover { color: #e11d48; }
 
     @keyframes kwPopIn {
-      from { opacity: 0; transform: scale(0.9) translateY(14px); }
+      from { opacity: 0; transform: scale(0.92) translateY(14px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes kwFloatSlow {
+      0%, 100% { transform: translateY(0px) rotate(-4deg); }
+      50% { transform: translateY(-10px) rotate(4deg); }
     }
   `;
   document.head.appendChild(style);
@@ -230,37 +299,64 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   }
   ensureStyles();
 
-  const recipient = data.recipientName || 'Lily';
-  const sender = data.senderName || 'Ethan';
-  const letterTitle = data.letterTitle || 'A little note before I ask you something';
-  const letterText =
-    data.letterText ||
-    `${recipient}, I have been trying to find the right moment for weeks, so I asked a very small, very serious kitten to help me.\n\nYou make ordinary days feel like a good song on repeat. I laugh more since I met you, I notice the sky more, and I catch myself smiling at my phone like an idiot.\n\nSo here is the thing I have been too nervous to say out loud.`;
-  const signOff = data.signOff || 'With love';
-  const question = data.question || 'Will you go on a date with me?';
-  const yesSubtitle = data.yesSubtitle || 'Saturday at seven. I am already smiling.';
+  const isSorryMode = data.mode === 'sorry' || data.templateId === 'kitten_sorry';
+  const bgKey = data.bgTheme || (isSorryMode ? 'peach' : 'peach');
+  const bgTheme = BG_THEMES[bgKey] || BG_THEMES.peach;
+
+  const recipient = data.recipientName || (isSorryMode ? 'Cutie' : 'Lily');
+  const sender = data.senderName || (isSorryMode ? 'Your Certified Idiot' : 'Ethan');
+  const letterTitle = data.letterTitle || (isSorryMode
+    ? 'Official Petition to Stop Being Mad at Me'
+    : 'A little note before I ask you something');
+  const letterText = data.letterText || (isSorryMode
+    ? `${recipient}, I sent this very small, very dramatic kitten because I messed up and my brain clearly went on vacation without telling me.\n\nExhibit A: I am 100% an idiot. Exhibit B: Nobody else will share their fries with you AND still look at you like you're literal magic.\n\nSo please accept this tiny kitten, my formal apology, and let me make you fall for me all over again.`
+    : `${recipient}, I have been trying to find the right moment for weeks, so I asked a very small, very serious kitten to help me.\n\nYou make ordinary days feel like a good song on repeat. I laugh more since I met you, and I catch myself smiling at my phone like an idiot.\n\nSo here is the thing I have been too nervous to say out loud.`);
+  const signOff = data.signOff || (isSorryMode ? 'Forever sorry (and yours)' : 'With love');
+  const question = data.question || (isSorryMode
+    ? 'Do you forgive me & let me make you fall for me again?'
+    : 'Will you go on a date with me?');
+  const yesBtnLabel = data.yesBtnLabel || (isSorryMode ? 'Fine, forgiven 💖' : 'Yes ♥');
+  const noBtnLabel = data.noBtnLabel || (isSorryMode ? 'Still mad 😤' : 'No');
+  const yesSubtitle = data.yesSubtitle || (isSorryMode
+    ? 'Case closed! Preparing unlimited hugs, snacks, and making you fall for me all over again.'
+    : 'Saturday at seven. I am already smiling.');
+  const couponText = data.couponText || (isSorryMode ? '🎟️ REDEEM: 1 Free Hug + Your Favorite Treat (No Expiry)' : '');
 
   const paragraphs = letterText
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean);
 
-  const sadLines = [
-    'The little kitten looks heartbroken...',
-    'Please? Look at those tiny tears...',
-    'The kitten dropped the letter just for you...',
-    'Are you really sure? Even the star clip is drooping...',
-  ];
+  const sadLines = isSorryMode
+    ? [
+        'The kitten is literally on its knees. Look at those 4K HD tears...',
+        'Okay wow, cold-hearted. The kitten is leaving you all my hoodies in its will...',
+        'I already ordered your favorite food as emotional bribery. Please? 🍟',
+        'The kitten refuses to move until you smile. Even the star clip is crying...'
+      ]
+    : [
+        'The little kitten looks heartbroken...',
+        'Please? Look at those tiny tears...',
+        'The kitten dropped the letter just for you...',
+        'Are you really sure? Even the star clip is drooping...'
+      ];
 
   let stage = 'walking'; // walking | offering | letter | question | sad | celebrate | final
   let noCount = 0;
 
   container.innerHTML = `
-    <div class="kw-root">
+    <div class="kw-root" style="background: ${bgTheme.bg};">
+      <div class="kw-ambient-hearts" aria-hidden="true">
+        <span class="kw-ambient-float" style="top:12%;left:10%;font-size:18px;color:${bgTheme.accentHeart};">♥</span>
+        <span class="kw-ambient-float" style="top:20%;right:14%;font-size:14px;color:#fb923c;animation-delay:1s;">✦</span>
+        <span class="kw-ambient-float" style="bottom:18%;left:15%;font-size:16px;color:${bgTheme.accentHeart};animation-delay:2s;">♥</span>
+        <span class="kw-ambient-float" style="bottom:14%;right:12%;font-size:18px;color:#f59e0b;animation-delay:1.5s;">✨</span>
+      </div>
+
       ${
         isMakerReview
-          ? `<div style="position:fixed;top:12px;left:12px;z-index:40;background:rgba(255,255,255,0.92);border:1px solid #ede9fe;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:700;color:#6d5be6;">
-               🐱 Previewing Kitten Wish
+          ? `<div style="position:fixed;top:12px;left:12px;z-index:40;background:rgba(255,255,255,0.92);border:1px solid #fed7aa;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:700;color:#e11d48;">
+               🐱 Previewing ${isSorryMode ? 'Comedy Sorry Kitten' : 'Kitten Wish'}
              </div>`
           : ''
       }
@@ -268,27 +364,25 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
 
       <div class="kw-stage" id="kwStage">
         <div class="kw-canvas-mount" id="kwCanvasMount"></div>
-        <div id="kwStageOverlay"></div>
       </div>
 
-      <div id="kwCardSlot"></div>
+      <div id="kwCardSlot" style="width:100%;display:flex;justify-content:center;"></div>
     </div>
   `;
 
   const stageEl = container.querySelector('#kwStage');
   const canvasMount = container.querySelector('#kwCanvasMount');
-  const overlaySlot = container.querySelector('#kwStageOverlay');
   const cardSlot = container.querySelector('#kwCardSlot');
   const replayBtn = container.querySelector('#kwReplayBtn');
 
-  // --- Three.js Scene Setup ---
+  // --- Three.js Scene Setup (following threejs-fundamentals) ---
   const width = canvasMount.clientWidth || 540;
-  const height = canvasMount.clientHeight || 410;
+  const height = canvasMount.clientHeight || 380;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
-  camera.position.set(0, 1.15, 6.2);
-  camera.lookAt(0, 0.72, 0);
+  const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
+  camera.position.set(0, 1.15, 6.1);
+  camera.lookAt(0, 0.68, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(width, height);
@@ -296,38 +390,44 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   canvasMount.appendChild(renderer.domElement);
 
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xf3e8ff, 1.35);
+  // Studio 4-point lighting (Hemisphere + Key + Warm Fill + Rim)
+  const hemiLight = new THREE.HemisphereLight(0xffffff, bgTheme.hemiGround, 1.35);
   scene.add(hemiLight);
-  const keyLight = new THREE.DirectionalLight(0xfffaf5, 1.15);
+  const keyLight = new THREE.DirectionalLight(0xfffaf5, 1.2);
   keyLight.position.set(3.5, 5.5, 4.5);
   scene.add(keyLight);
-  const fillLight = new THREE.DirectionalLight(0xfce7f3, 0.65);
+  const fillLight = new THREE.DirectionalLight(bgTheme.fillColor, 0.72);
   fillLight.position.set(-4, 2.5, 3);
   scene.add(fillLight);
+  const rimLight = new THREE.DirectionalLight(0xe0e7ff, 0.55);
+  rimLight.position.set(0, 3, -4);
+  scene.add(rimLight);
 
-  const shadowMat = new THREE.MeshBasicMaterial({ color: 0xd8c8e8, transparent: true, opacity: 0.34 });
+  const shadowMat = new THREE.MeshBasicMaterial({ color: bgTheme.shadowColor, transparent: true, opacity: 0.36 });
   const groundShadow = new THREE.Mesh(new THREE.CircleGeometry(1.15, 36), shadowMat);
   groundShadow.rotation.x = -Math.PI / 2;
   groundShadow.scale.set(1.1, 0.45, 1);
   groundShadow.position.set(0, -0.58, 0);
   scene.add(groundShadow);
 
-  const furMat = new THREE.MeshStandardMaterial({ color: 0xfcfafb, roughness: 0.88, metalness: 0.02 });
-  const innerEarMat = new THREE.MeshStandardMaterial({ color: 0xf4c7e4, roughness: 0.82 });
-  const pawPinkMat = new THREE.MeshStandardMaterial({ color: 0xe6c1ea, roughness: 0.84 });
-  const starClipMat = new THREE.MeshStandardMaterial({ color: 0xc29ef8, roughness: 0.55 });
-  const mintBowMat = new THREE.MeshStandardMaterial({ color: 0x99dec5, roughness: 0.72 });
+  const furMat = new THREE.MeshStandardMaterial({ color: 0xfcfafb, roughness: 0.86, metalness: 0.02 });
+  const innerEarMat = new THREE.MeshStandardMaterial({ color: 0xf9b8d0, roughness: 0.8 });
+  const pawPinkMat = new THREE.MeshStandardMaterial({ color: 0xfbcfe8, roughness: 0.82 });
+  const starClipMat = new THREE.MeshStandardMaterial({ color: isSorryMode ? 0xfbbf24 : 0xc29ef8, roughness: 0.45 });
+  const bowMat = new THREE.MeshStandardMaterial({ color: isSorryMode ? 0xfb7185 : 0x99dec5, roughness: 0.68 });
+  const bellMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.28, metalness: 0.55 });
   const eyeMat = new THREE.MeshStandardMaterial({ color: 0x18151d, roughness: 0.08, metalness: 0.15 });
   const sparkleMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  const noseMat = new THREE.MeshStandardMaterial({ color: 0xf9a4c6, roughness: 0.55 });
-  const blushMat = new THREE.MeshBasicMaterial({ color: 0xf9b8d0, transparent: true, opacity: 0.65 });
-  const tearMat = new THREE.MeshStandardMaterial({ color: 0xbbe6ff, roughness: 0.1, transparent: true, opacity: 0.88 });
-  const darkLineMat = new THREE.MeshStandardMaterial({ color: 0x2c2433, roughness: 0.5 });
+  const noseMat = new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.5 });
+  const blushMat = new THREE.MeshBasicMaterial({ color: 0xfda4af, transparent: true, opacity: 0.72 });
+  const tearMat = new THREE.MeshStandardMaterial({ color: 0x93c5fd, roughness: 0.1, transparent: true, opacity: 0.9 });
+  const darkLineMat = new THREE.MeshStandardMaterial({ color: 0x3b2f3d, roughness: 0.5 });
 
   const kitty = new THREE.Group();
   scene.add(kitty);
 
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.62, 30, 22), furMat);
+  // Plush Torso
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.62, 32, 24), furMat);
   body.scale.set(1.0, 1.05, 0.92);
   body.position.set(0, 0.22, 0);
   kitty.add(body);
@@ -361,6 +461,7 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   const rightArm = makeArm(0.56);
   kitty.add(leftArm, rightArm);
 
+  // Curved Tail
   const tailCurve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 0.02, -0.45),
     new THREE.Vector3(-0.32, 0.08, -0.68),
@@ -374,42 +475,40 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   tailGroup.add(tailTip);
   kitty.add(tailGroup);
 
+  // Collar + Bow + Golden Bell
   const bowGroup = new THREE.Group();
   bowGroup.position.set(0, 0.62, 0.42);
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.075, 10, 28), mintBowMat);
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.072, 10, 28), bowMat);
   collar.rotation.x = Math.PI / 2 + 0.12;
   collar.position.set(0, 0.08, -0.38);
-  const bowKnot = new THREE.Mesh(new THREE.SphereGeometry(0.085, 14, 12), mintBowMat);
+  const bowKnot = new THREE.Mesh(new THREE.SphereGeometry(0.085, 14, 12), bowMat);
   bowKnot.scale.set(1.1, 0.9, 0.8);
-  const bowLeft = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), mintBowMat);
+  const bowLeft = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), bowMat);
   bowLeft.scale.set(1.25, 0.85, 0.55);
   bowLeft.position.set(-0.19, 0.02, 0.02);
   bowLeft.rotation.z = 0.25;
   const bowRight = bowLeft.clone();
   bowRight.position.set(0.19, 0.02, 0.02);
   bowRight.rotation.z = -0.25;
-  const ribL = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.28, 0.04), mintBowMat);
-  ribL.position.set(-0.08, -0.18, 0.01);
-  ribL.rotation.z = -0.22;
-  const ribR = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.28, 0.04), mintBowMat);
-  ribR.position.set(0.08, -0.18, 0.01);
-  ribR.rotation.z = 0.22;
-  bowGroup.add(collar, bowKnot, bowLeft, bowRight, ribL, ribR);
+  const bell = new THREE.Mesh(new THREE.SphereGeometry(0.068, 14, 12), bellMat);
+  bell.position.set(0, -0.1, 0.06);
+  bowGroup.add(collar, bowKnot, bowLeft, bowRight, bell);
   kitty.add(bowGroup);
 
+  // Head + Cheeks + Ears + Whiskers
   const headGroup = new THREE.Group();
   headGroup.position.set(0, 1.24, 0.06);
   kitty.add(headGroup);
 
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.76, 32, 24), furMat);
-  head.scale.set(1.16, 0.96, 1.02);
+  head.scale.set(1.18, 0.96, 1.02);
   headGroup.add(head);
 
   const makeEar = (side) => {
     const g = new THREE.Group();
-    g.position.set(side * 0.54, 0.6, -0.02);
+    g.position.set(side * 0.55, 0.58, -0.02);
     g.rotation.z = -side * 0.24;
-    const outer = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.52, 20), furMat);
+    const outer = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.52, 22), furMat);
     outer.scale.set(1.0, 1.0, 0.68);
     const inner = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.34, 18), innerEarMat);
     inner.scale.set(1.0, 1.0, 0.45);
@@ -421,6 +520,20 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   const rightEar = makeEar(1);
   headGroup.add(leftEar, rightEar);
 
+  // Whiskers (3 per side for authentic kitten silhouette)
+  const makeWhisker = (side, yOff, rotZ) => {
+    const w = new THREE.Mesh(new THREE.CapsuleGeometry(0.011, 0.26, 4, 8), darkLineMat);
+    w.position.set(side * 0.72, yOff, 0.52);
+    w.rotation.z = Math.PI / 2 + rotZ;
+    w.rotation.y = side * 0.25;
+    return w;
+  };
+  [-0.08, -0.15, -0.22].forEach((yOff, i) => {
+    headGroup.add(makeWhisker(-1, yOff, (i - 1) * 0.14));
+    headGroup.add(makeWhisker(1, yOff, -(i - 1) * 0.14));
+  });
+
+  // Star Hair Clip
   const starShape = new THREE.Shape();
   for (let i = 0; i < 10; i++) {
     const r = i % 2 === 0 ? 0.16 : 0.075;
@@ -439,24 +552,25 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   starClip.rotation.z = -0.3;
   headGroup.add(starClip);
 
+  // Expressive Eyes with Blink + Sad Eyelid + Tears
   const makeEye = (xPos) => {
     const g = new THREE.Group();
-    g.position.set(xPos, -0.02, 0.72);
+    g.position.set(xPos, -0.02, 0.73);
     const ball = new THREE.Mesh(new THREE.SphereGeometry(0.125, 20, 16), eyeMat);
     ball.scale.set(0.95, 1.12, 0.55);
-    const sp1 = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), sparkleMat);
+    const sp1 = new THREE.Mesh(new THREE.SphereGeometry(0.036, 10, 8), sparkleMat);
     sp1.position.set(-0.035, 0.045, 0.065);
     const sp2 = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8), sparkleMat);
     sp2.position.set(0.035, -0.03, 0.065);
-    const spHappy = new THREE.Mesh(new THREE.OctahedronGeometry(0.028, 0), sparkleMat);
+    const spHappy = new THREE.Mesh(new THREE.OctahedronGeometry(0.03, 0), sparkleMat);
     spHappy.position.set(0.03, 0.05, 0.068);
     spHappy.visible = false;
     const eyelid = new THREE.Mesh(new THREE.SphereGeometry(0.135, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.52), furMat);
     eyelid.scale.set(1.02, 1.0, 0.65);
     eyelid.rotation.z = xPos < 0 ? 0.26 : -0.26;
     eyelid.visible = false;
-    const tear = new THREE.Mesh(new THREE.SphereGeometry(0.048, 12, 10), tearMat);
-    tear.scale.set(1.3, 0.7, 0.6);
+    const tear = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 10), tearMat);
+    tear.scale.set(1.3, 0.75, 0.6);
     tear.position.set(xPos < 0 ? -0.04 : 0.04, -0.11, 0.05);
     tear.visible = false;
     g.add(ball, sp1, sp2, spHappy, eyelid, tear);
@@ -467,31 +581,31 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   headGroup.add(leftEye.g, rightEye.g);
 
   const leftBrow = new THREE.Mesh(new THREE.CapsuleGeometry(0.018, 0.14, 6, 10), darkLineMat);
-  leftBrow.position.set(-0.34, 0.18, 0.74);
+  leftBrow.position.set(-0.34, 0.18, 0.75);
   leftBrow.rotation.z = 1.18;
   leftBrow.visible = false;
   const rightBrow = new THREE.Mesh(new THREE.CapsuleGeometry(0.018, 0.14, 6, 10), darkLineMat);
-  rightBrow.position.set(0.34, 0.18, 0.74);
+  rightBrow.position.set(0.34, 0.18, 0.75);
   rightBrow.rotation.z = -1.18;
   rightBrow.visible = false;
   headGroup.add(leftBrow, rightBrow);
 
   const nose = new THREE.Mesh(new THREE.SphereGeometry(0.052, 14, 12), noseMat);
   nose.scale.set(1.25, 0.85, 0.7);
-  nose.position.set(0, -0.11, 0.78);
+  nose.position.set(0, -0.11, 0.79);
   headGroup.add(nose);
 
   const blushL = new THREE.Mesh(new THREE.CircleGeometry(0.11, 18), blushMat);
   blushL.scale.set(1.35, 0.8, 1);
-  blushL.position.set(-0.5, -0.16, 0.66);
+  blushL.position.set(-0.5, -0.16, 0.67);
   blushL.rotation.y = -0.45;
   const blushR = blushL.clone();
-  blushR.position.set(0.5, -0.16, 0.66);
+  blushR.position.set(0.5, -0.16, 0.67);
   blushR.rotation.y = 0.45;
   headGroup.add(blushL, blushR);
 
   const happyMouth = new THREE.Group();
-  happyMouth.position.set(0, -0.24, 0.75);
+  happyMouth.position.set(0, -0.24, 0.76);
   const mouthInner = new THREE.Mesh(
     new THREE.SphereGeometry(0.11, 16, 12, 0, Math.PI * 2, Math.PI * 0.45, Math.PI * 0.55),
     new THREE.MeshStandardMaterial({ color: 0x6b213a, roughness: 0.6 })
@@ -508,7 +622,7 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   headGroup.add(happyMouth);
 
   const sadMouth = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.018, 10, 18, Math.PI), darkLineMat);
-  sadMouth.position.set(0, -0.27, 0.76);
+  sadMouth.position.set(0, -0.27, 0.77);
   sadMouth.visible = false;
   headGroup.add(sadMouth);
 
@@ -534,7 +648,7 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
   hShape.bezierCurveTo(-0.11, 0.08, -0.09, -0.02, 0, -0.08);
   const heartSeal = new THREE.Mesh(
     new THREE.ExtrudeGeometry(hShape, { depth: 0.03, bevelEnabled: true, bevelThickness: 0.015, bevelSize: 0.012, bevelSegments: 2 }),
-    new THREE.MeshStandardMaterial({ color: 0xf68fb2, roughness: 0.4 })
+    new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.4 })
   );
   heartSeal.position.set(0, -0.02, 0.045);
   const envRibbon = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 8, 16), starClipMat);
@@ -547,17 +661,15 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
     const showStage = ['walking', 'offering', 'question', 'sad', 'celebrate'].includes(stage);
     stageEl.style.display = showStage ? 'flex' : 'none';
     canvasMount.classList.toggle('is-offering', stage === 'offering');
-
-    overlaySlot.innerHTML = '';
     cardSlot.innerHTML = '';
 
     if (stage === 'offering') {
-      overlaySlot.innerHTML = `
-        <button type="button" id="kwOpenLetterBtn" class="kw-btn-purple" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);white-space:nowrap;">
-          Tap to open your letter ♥
+      cardSlot.innerHTML = `
+        <button type="button" id="kwOpenLetterBtn" class="kw-btn-purple" style="margin-top:4px;">
+          ${isSorryMode ? 'Open Emergency Apology 💌' : 'Tap to open your letter ♥'}
         </button>
       `;
-      overlaySlot.querySelector('#kwOpenLetterBtn')?.addEventListener('click', () => {
+      cardSlot.querySelector('#kwOpenLetterBtn')?.addEventListener('click', () => {
         stage = 'letter';
         renderUI();
       });
@@ -566,14 +678,14 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
         <div class="kw-card-wrap">
           <div class="kw-airmail-border">
             <div class="kw-airmail-inner">
-              <div class="kw-badge-purple">♥</div>
-              <p style="font-family:'Caveat',cursive;font-size:22px;color:#f43f5e;margin:0 0 2px;">for ${esc(recipient)},</p>
+              <div class="kw-badge-purple">${isSorryMode ? '🥺' : '♥'}</div>
+              <p style="font-family:'Caveat',cursive;font-size:22px;color:#e11d48;margin:0 0 2px;">for ${esc(recipient)},</p>
               <h2 style="font-size:21px;font-weight:800;color:#1e293b;margin:0 0 16px;line-height:1.25;">${esc(letterTitle)}</h2>
-              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.6;color:#475569;">
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;line-height:1.62;color:#334155;">
                 ${paragraphs.map((p) => `<p style="margin:0 0 12px;">${esc(p)}</p>`).join('')}
               </div>
-              <p style="font-family:'Caveat',cursive;font-size:22px;color:#818cf8;margin:4px 0 0;">${esc(signOff)}, ${esc(sender)}</p>
-              <div class="kw-divider"><span class="kw-divider-line"></span><span style="color:#f472b6;font-size:10px;">♥</span><span class="kw-divider-line"></span></div>
+              <p style="font-family:'Caveat',cursive;font-size:22px;color:#fb7185;margin:4px 0 0;">${esc(signOff)}, ${esc(sender)}</p>
+              <div class="kw-divider"><span class="kw-divider-line"></span><span style="color:#f43f5e;font-size:10px;">♥</span><span class="kw-divider-line"></span></div>
               <button type="button" id="kwNextBtn" class="kw-btn-purple">Next ♡</button>
             </div>
           </div>
@@ -585,27 +697,27 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
       });
     } else if (stage === 'question') {
       const yesScale = Math.min(1.28, 1 + noCount * 0.08);
-      const noScale = Math.max(0.76, 1 - noCount * 0.06);
-      overlaySlot.innerHTML = `
-        <div class="kw-question-overlay" style="left:50%;transform:translateX(-50%);">
+      const noScale = Math.max(0.75, 1 - noCount * 0.07);
+      cardSlot.innerHTML = `
+        <div class="kw-question-below">
           <div class="kw-airmail-border">
-            <div class="kw-airmail-inner" style="padding:22px 20px;">
-              <div class="kw-badge-purple" style="width:36px;height:36px;font-size:14px;">♥</div>
-              <h2 style="font-family:'Patrick Hand','Nunito',sans-serif;font-size:22px;font-weight:700;color:#1e293b;margin:0 0 6px;line-height:1.25;">${esc(question)}</h2>
-              <div class="kw-divider" style="margin:10px 0 14px;"><span class="kw-divider-line"></span><span style="color:#f472b6;font-size:10px;">♥</span><span class="kw-divider-line"></span></div>
-              <div style="display:flex;align-items:center;justify-content:center;gap:14px;">
-                <button type="button" id="kwYesBtn" class="kw-btn-pink" style="transform:scale(${yesScale});">yes</button>
-                <button type="button" id="kwNoBtn" class="kw-btn-blue" style="transform:scale(${noScale});">no</button>
+            <div class="kw-airmail-inner" style="padding:20px 18px;">
+              <div class="kw-badge-purple" style="width:36px;height:36px;font-size:14px;">${isSorryMode ? '🙏' : '♥'}</div>
+              <h2 style="font-family:'Patrick Hand','Nunito',sans-serif;font-size:21px;font-weight:700;color:#1e293b;margin:0 0 6px;line-height:1.25;">${esc(question)}</h2>
+              <div class="kw-divider" style="margin:10px 0 14px;"><span class="kw-divider-line"></span><span style="color:#f43f5e;font-size:10px;">♥</span><span class="kw-divider-line"></span></div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;">
+                <button type="button" id="kwYesBtn" class="kw-btn-pink" style="transform:scale(${yesScale});">${esc(yesBtnLabel)}</button>
+                <button type="button" id="kwNoBtn" class="kw-btn-blue" style="transform:scale(${noScale});">${esc(noBtnLabel)}</button>
               </div>
             </div>
           </div>
         </div>
       `;
-      overlaySlot.querySelector('#kwYesBtn')?.addEventListener('click', () => {
+      cardSlot.querySelector('#kwYesBtn')?.addEventListener('click', () => {
         stage = 'celebrate';
         renderUI();
         try {
-          confetti({ particleCount: 70, spread: 75, origin: { y: 0.6 }, colors: ['#f45b8c', '#a799ff', '#99dec5', '#ffd6e7', '#bae6fd'] });
+          confetti({ particleCount: 75, spread: 80, origin: { y: 0.6 }, colors: ['#f43f5e', '#fb923c', '#fbbf24', '#ffd6e7', '#fda4af'] });
         } catch (e) {}
         setTimeout(() => {
           if (stage === 'celebrate') {
@@ -614,38 +726,41 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
           }
         }, 2300);
       });
-      overlaySlot.querySelector('#kwNoBtn')?.addEventListener('click', () => {
+      cardSlot.querySelector('#kwNoBtn')?.addEventListener('click', () => {
         noCount += 1;
         stage = 'sad';
         renderUI();
       });
     } else if (stage === 'sad') {
       const msg = sadLines[Math.min(noCount - 1, sadLines.length - 1)];
-      overlaySlot.innerHTML = `
-        <div style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);text-align:center;width:100%;">
-          <p style="font-size:13px;font-weight:600;font-style:italic;color:#64748b;margin:0 0 10px;">${esc(msg)}</p>
-          <button type="button" id="kwAskAgainBtn" class="kw-btn-purple" style="padding:8px 22px;font-size:13px;">Ask me again ♡</button>
+      cardSlot.innerHTML = `
+        <div style="text-align:center;max-width:340px;z-index:20;">
+          <p style="font-size:14px;font-weight:700;font-style:italic;color:#9f1239;margin:0 0 12px;">${esc(msg)}</p>
+          <button type="button" id="kwAskAgainBtn" class="kw-btn-purple">${isSorryMode ? 'Okay, ask me again 🥺' : 'Ask me again ♡'}</button>
         </div>
       `;
-      overlaySlot.querySelector('#kwAskAgainBtn')?.addEventListener('click', () => {
+      cardSlot.querySelector('#kwAskAgainBtn')?.addEventListener('click', () => {
         stage = 'question';
         renderUI();
       });
     } else if (stage === 'celebrate') {
-      overlaySlot.innerHTML = `
-        <div style="position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);white-space:nowrap;">
-          <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:999px;background:#fdf2f8;border:1px solid #fbcfe8;color:#db2777;font-size:13px;font-weight:700;">
-            Yay!! Happy kitten noises ♥
+      cardSlot.innerHTML = `
+        <div style="z-index:20;">
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:999px;background:#fff1f2;border:1px solid #fecdd3;color:#e11d48;font-size:13.5px;font-weight:800;">
+            ${isSorryMode ? 'Yay!! Forgiven & doing happy backflips ♥' : 'Yay!! Happy kitten noises ♥'}
           </span>
         </div>
       `;
     } else if (stage === 'final') {
       cardSlot.innerHTML = `
         <div class="kw-final-card">
-          <div class="kw-badge-pink">♥</div>
-          <h2 style="font-size:24px;font-weight:800;color:#1e293b;margin:0 0 8px;">${esc(recipient)} said yes.</h2>
-          <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.5;color:#64748b;margin:0 0 18px;max-width:230px;">${esc(yesSubtitle)}</p>
-          <p style="font-family:'Caveat',cursive;font-size:22px;color:#818cf8;margin:0;">See you soon, ${esc(recipient)} ♡</p>
+          <div class="kw-badge-pink">${isSorryMode ? '💕' : '♥'}</div>
+          <h2 style="font-size:23px;font-weight:800;color:#1e293b;margin:0 0 8px;">
+            ${isSorryMode ? `Case Closed: ${esc(recipient)} forgave you!` : `${esc(recipient)} said yes.`}
+          </h2>
+          <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;line-height:1.52;color:#475569;margin:0 0 14px;max-width:270px;">${esc(yesSubtitle)}</p>
+          ${couponText ? `<div class="kw-coupon-pill">${esc(couponText)}</div>` : ''}
+          <p style="font-family:'Caveat',cursive;font-size:22px;color:#e11d48;margin:14px 0 0;">See you soon, ${esc(recipient)} ♡</p>
         </div>
       `;
     }
@@ -679,11 +794,13 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
 
     const isSad = stage === 'sad';
     const isHappy = stage === 'celebrate';
+    // Natural blink every ~3.6 seconds when not sad
+    const isBlinking = !isSad && (t % 3.6) > 3.46;
 
     leftBrow.visible = isSad;
     rightBrow.visible = isSad;
-    leftEye.eyelid.visible = isSad;
-    rightEye.eyelid.visible = isSad;
+    leftEye.eyelid.visible = isSad || isBlinking;
+    rightEye.eyelid.visible = isSad || isBlinking;
     leftEye.tear.visible = isSad;
     rightEye.tear.visible = isSad;
     sadMouth.visible = isSad;
@@ -693,7 +810,7 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
     happyMouth.visible = isHappy;
 
     if (stage === 'walking') {
-      walkX = Math.min(0, walkX + dt * 1.45);
+      walkX = Math.min(0, walkX + dt * 1.5);
       kitty.position.x = walkX;
       kitty.rotation.y = walkX < -0.05 ? 0.32 : THREE.MathUtils.lerp(kitty.rotation.y, 0, 0.12);
       const stride = walkX < -0.02 ? Math.sin(t * 10) : 0;
@@ -703,6 +820,8 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
       rightArm.rotation.x = -0.35;
       kitty.position.y = Math.abs(stride) * 0.08;
       headGroup.rotation.z = Math.sin(t * 5) * 0.03;
+      leftEar.rotation.z = 0.24;
+      rightEar.rotation.z = -0.24;
       tailGroup.rotation.y = Math.sin(t * 6) * 0.25;
       envelopeGroup.position.set(0, 0.26 + Math.sin(t * 4) * 0.02, 0.64);
       envelopeGroup.rotation.set(0, 0, 0);
@@ -723,6 +842,8 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
       rightArm.rotation.x = -0.55;
       headGroup.rotation.x = Math.sin(t * 2) * 0.03;
       headGroup.rotation.z = Math.sin(t * 1.5) * 0.04;
+      leftEar.rotation.z = 0.24;
+      rightEar.rotation.z = -0.24;
       tailGroup.rotation.y = Math.sin(t * 4.5) * 0.25;
       envelopeGroup.position.set(0, 0.28 + Math.sin(t * 3.5) * 0.035, 0.72);
       envelopeGroup.rotation.x = -0.15;
@@ -737,6 +858,8 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
       rightArm.rotation.x = -0.2;
       headGroup.rotation.x = 0;
       headGroup.rotation.z = Math.sin(t * 1.5) * 0.03;
+      leftEar.rotation.z = 0.24;
+      rightEar.rotation.z = -0.24;
       envelopeGroup.scale.setScalar(0.001);
     } else if (stage === 'sad') {
       const droop = Math.min(0.28, 0.12 + noCount * 0.04);
@@ -749,8 +872,9 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
       rightArm.rotation.x = 0.08;
       headGroup.rotation.x = THREE.MathUtils.lerp(headGroup.rotation.x, droop, 0.1);
       headGroup.rotation.z = Math.sin(t * 2.4) * 0.04;
-      leftEar.rotation.z = 0.34;
-      rightEar.rotation.z = -0.34;
+      // Droop ears outward when sad
+      leftEar.rotation.z = 0.48;
+      rightEar.rotation.z = -0.48;
       tailGroup.rotation.y = 0;
       envelopeGroup.scale.setScalar(0.95);
       envelopeGroup.position.set(0, -0.49, 0.56);
@@ -784,7 +908,7 @@ export function renderKittenWishTemplate(container, data = {}, isMakerReview = f
 
   const onResize = () => {
     const w = canvasMount.clientWidth || 540;
-    const h = canvasMount.clientHeight || 410;
+    const h = canvasMount.clientHeight || 380;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);

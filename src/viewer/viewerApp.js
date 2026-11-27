@@ -91,10 +91,11 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     return;
   }
 
-  if (templateId === 'kitten_wish') {
-    container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
+  if (templateId === 'kitten_wish' || templateId === 'kitten_sorry') {
+    container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100dvh;"></div>';
     const root = container.querySelector('#templateRoot');
-    renderKittenWishTemplate(root, data, isMakerReview);
+    const payload = templateId === 'kitten_sorry' ? { ...data, mode: 'sorry', templateId: 'kitten_sorry' } : data;
+    renderKittenWishTemplate(root, payload, isMakerReview);
     container._cleanup = () => {
       if (root && root._cleanup) root._cleanup();
     };

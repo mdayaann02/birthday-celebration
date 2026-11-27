@@ -2065,13 +2065,24 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         emitChange();
       }
     });
-  } else if (templateId === 'kitten_wish') {
+  } else if (templateId === 'kitten_wish' || templateId === 'kitten_sorry') {
+    const isSorry = templateId === 'kitten_sorry';
+    const bgVal = data.bgTheme || 'peach';
     specificBox.innerHTML = `
-      <div style="background:rgba(134,117,244,0.08); border:1px solid rgba(134,117,244,0.28); border-radius:12px; padding:16px; margin-bottom:18px;">
-        <h4 style="color:#6d5be6; font-size:14px; font-weight:700; margin-bottom:10px;">🐱💌 Kitten Wish Letter &amp; Question</h4>
+      <div style="background:rgba(251,146,60,0.09); border:1px solid rgba(251,146,60,0.32); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#fb923c; font-size:14px; font-weight:700; margin-bottom:10px;">${isSorry ? '🐱🍑 Comedy Sorry Kitten &amp; Background' : '🐱💌 Kitten Wish Letter &amp; Background'}</h4>
+        <div class="form-group">
+          <label class="form-label">Background Color Mood</label>
+          <select class="form-select" id="edKwBgTheme">
+            <option value="peach" ${bgVal === 'peach' ? 'selected' : ''}>🍑 Warm Peach Sunset (Recommended)</option>
+            <option value="blush" ${bgVal === 'blush' ? 'selected' : ''}>🌸 Soft Blush Rose</option>
+            <option value="lavender" ${bgVal === 'lavender' ? 'selected' : ''}>💜 Lavender Cloud</option>
+            <option value="mint" ${bgVal === 'mint' ? 'selected' : ''}>🌿 Mint Cream</option>
+          </select>
+        </div>
         <div class="form-group">
           <label class="form-label">Letter Title</label>
-          <input type="text" class="form-input" id="edKwLetterTitle" value="${data.letterTitle || 'A little note before I ask you something'}" />
+          <input type="text" class="form-input" id="edKwLetterTitle" value="${(data.letterTitle || (isSorry ? 'Official Petition to Stop Being Mad at Me' : 'A little note before I ask you something')).replace(/"/g, '&quot;')}" />
         </div>
         <div class="form-group">
           <label class="form-label">Letter Paragraphs (blank line = new paragraph)</label>
@@ -2080,17 +2091,22 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <div class="editor-grid-2">
           <div class="form-group">
             <label class="form-label">Sign-off</label>
-            <input type="text" class="form-input" id="edKwSignOff" value="${data.signOff || 'With love'}" />
+            <input type="text" class="form-input" id="edKwSignOff" value="${(data.signOff || (isSorry ? 'Forever sorry (and yours)' : 'With love')).replace(/"/g, '&quot;')}" />
           </div>
           <div class="form-group">
             <label class="form-label">The Question (Yes / No)</label>
-            <input type="text" class="form-input" id="edKwQuestion" value="${data.question || 'Will you go on a date with me?'}" />
+            <input type="text" class="form-input" id="edKwQuestion" value="${(data.question || (isSorry ? 'Do you forgive me & let me make you fall for me again?' : 'Will you go on a date with me?')).replace(/"/g, '&quot;')}" />
           </div>
         </div>
-        <div class="form-group" style="margin-bottom:0;">
+        <div class="form-group">
           <label class="form-label">Celebration Note (when they click Yes)</label>
-          <input type="text" class="form-input" id="edKwYesSubtitle" value="${data.yesSubtitle || 'Saturday at seven. I am already smiling.'}" />
+          <input type="text" class="form-input" id="edKwYesSubtitle" value="${(data.yesSubtitle || (isSorry ? 'Case closed! Preparing unlimited hugs, snacks, and making you fall for me all over again.' : 'Saturday at seven. I am already smiling.')).replace(/"/g, '&quot;')}" />
         </div>
+        ${isSorry ? `
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Bribe / Hug Coupon Text</label>
+          <input type="text" class="form-input" id="edKwCoupon" value="${(data.couponText || '🎟️ REDEEM: 1 Free Hug + Your Favorite Treat (No Expiry)').replace(/"/g, '&quot;')}" />
+        </div>` : ''}
       </div>
     `;
   } else if (templateId === 'kintsugi_apology') {
@@ -3502,17 +3518,22 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         updated.polaroids = etPols;
       }
     }
-    else if (templateId === 'kitten_wish') {
+    else if (templateId === 'kitten_wish' || templateId === 'kitten_sorry') {
+      const elKwBg = container.querySelector('#edKwBgTheme');
       const elKwTitle = container.querySelector('#edKwLetterTitle');
       const elKwText = container.querySelector('#edKwLetterText');
       const elKwSign = container.querySelector('#edKwSignOff');
       const elKwQuestion = container.querySelector('#edKwQuestion');
       const elKwYesSub = container.querySelector('#edKwYesSubtitle');
+      const elKwCoupon = container.querySelector('#edKwCoupon');
+      if (templateId === 'kitten_sorry') updated.mode = 'sorry';
+      if (elKwBg) updated.bgTheme = elKwBg.value;
       if (elKwTitle) updated.letterTitle = elKwTitle.value;
       if (elKwText) updated.letterText = elKwText.value;
       if (elKwSign) updated.signOff = elKwSign.value;
       if (elKwQuestion) updated.question = elKwQuestion.value;
       if (elKwYesSub) updated.yesSubtitle = elKwYesSub.value;
+      if (elKwCoupon) updated.couponText = elKwCoupon.value;
     }
     else if (templateId === 'kintsugi_apology') {
       const elHook = container.querySelector('#edKaOpeningHook');

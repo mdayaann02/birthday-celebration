@@ -29,6 +29,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
     birthday_paigaam: [{ icon: 'mail', label: 'Interactive Envelope' }, { icon: 'image', label: 'Scrapbook' }],
     wedding_invite: [{ icon: 'gem', label: 'Countdown + .ICS' }, { icon: 'calendar', label: 'RSVP & Events' }],
     kitten_wish: [{ icon: 'mail', label: '3D Kitten Letter' }, { icon: 'sparkles', label: 'Yes/No Story' }],
+    kitten_sorry: [{ icon: 'heart-crack', label: 'Comedy Sorry' }, { icon: 'sparkles', label: 'Peach 3D Kitten' }],
     ever_tide: [{ icon: 'globe', label: '3D Island' }, { icon: 'sparkles', label: 'Sky Banner' }]
   };
 
@@ -37,7 +38,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
     if (['our_museum'].includes(tid)) return 'museum';
     if (['long_romance', 'tree', 'blossom', 'bloom_reveal', 'kitten_wish', 'ever_tide'].includes(tid)) return 'romance';
     if (['birthday', 'birthday_paigaam', 'paigaam'].includes(tid)) return 'birthday';
-    if (['sorry', 'kintsugi_apology'].includes(tid)) return 'sorry';
+    if (['sorry', 'kintsugi_apology', 'kitten_sorry'].includes(tid)) return 'sorry';
     return 'all';
   }
 
