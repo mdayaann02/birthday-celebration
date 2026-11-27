@@ -2,19 +2,21 @@
 
 import { 
   createIcons,
-  Sparkles, Palette, Music, Image, Heart, Calendar, Lock, Share2, Save, Eye, 
+  Sparkles, Palette, Music, Image, Heart, HeartCrack, Calendar, Lock, Share2, Save, Eye, 
   Compass, BookOpen, Wand2, Sliders, CheckCircle2, RotateCcw, UploadCloud, 
-  GripVertical, Play, Square, Volume2, Smartphone, Tablet, Monitor, 
-  ChevronDown, ChevronRight, Copy, ExternalLink, X, Plus, Trash2, ArrowRight,
-  Sparkle, ShieldCheck, HelpCircle, Layers, Check, Camera, Moon, Sun, Grid
+  GripVertical, Play, Square, Volume2, VolumeX, Smartphone, Tablet, Monitor, 
+  ChevronDown, ChevronRight, ChevronLeft, Copy, ExternalLink, X, Plus, Trash2, ArrowRight, ArrowLeft,
+  Sparkle, ShieldCheck, HelpCircle, Layers, Check, Camera, Moon, Sun, Grid,
+  Gem, Landmark, Cake, Mail, Key, RefreshCw, Globe, MessageCircle, Zap, MoreHorizontal
 } from 'lucide';
 
 export const STUDIO_ICONS = {
-  Sparkles, Palette, Music, Image, Heart, Calendar, Lock, Share2, Save, Eye, 
+  Sparkles, Palette, Music, Image, Heart, HeartCrack, Calendar, Lock, Share2, Save, Eye, 
   Compass, BookOpen, Wand2, Sliders, CheckCircle2, RotateCcw, UploadCloud, 
-  GripVertical, Play, Square, Volume2, Smartphone, Tablet, Monitor, 
-  ChevronDown, ChevronRight, Copy, ExternalLink, X, Plus, Trash2, ArrowRight,
-  Sparkle, ShieldCheck, HelpCircle, Layers, Check, Camera, Moon, Sun, Grid
+  GripVertical, Play, Square, Volume2, VolumeX, Smartphone, Tablet, Monitor, 
+  ChevronDown, ChevronRight, ChevronLeft, Copy, ExternalLink, X, Plus, Trash2, ArrowRight, ArrowLeft,
+  Sparkle, ShieldCheck, HelpCircle, Layers, Check, Camera, Moon, Sun, Grid,
+  Gem, Landmark, Cake, Mail, Key, RefreshCw, Globe, MessageCircle, Zap, MoreHorizontal
 };
 
 export function renderStudioIcons(root = document) {

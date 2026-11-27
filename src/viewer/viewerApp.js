@@ -28,6 +28,19 @@ export function renderViewerApp(container, templateId, data, isMakerReviewParam 
   const lockStatus = checkCountdownLock(data);
   const isMakerReview = isMakerReviewParam || lockStatus.isMakerReview || false;
 
+  // Persistent floating "Back to Editor" pill when opened as standalone Recipient View from studio
+  const isStandaloneViewer = typeof window !== 'undefined' && !window.isCelebrationEditorMode && !container.closest('.studio-preview-pane');
+  const existingBackPill = document.getElementById('floatingBackToEditorPill');
+  if (existingBackPill) existingBackPill.remove();
+  if (isStandaloneViewer && isMakerReview) {
+    const backPill = document.createElement('a');
+    backPill.id = 'floatingBackToEditorPill';
+    backPill.href = `/?template=${encodeURIComponent(templateId)}&edit=true`;
+    backPill.className = 'floating-creator-back-pill';
+    backPill.innerHTML = '<span>← Back to Editor</span>';
+    document.body.appendChild(backPill);
+  }
+
   if (lockStatus.isLocked && !isMakerReview) {
     // Show countdown lock gate
     renderCountdownGate(container, data, (unlockedReview) => {

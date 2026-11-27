@@ -303,9 +303,14 @@ export function renderVisualEditor(container, templateId, data, onChange) {
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Audio URL / Upload MP3</label>
+            <label class="form-label">Soundtrack Preset or Upload MP3</label>
+            <div class="asset-picker-row" style="margin-bottom:8px;">
+              <button type="button" class="asset-thumb-chip btn-audio-preset ${(data.audioSrc || '/audio/alfaaz.mp3') === '/audio/alfaaz.mp3' ? 'active' : ''}" data-src="/audio/alfaaz.mp3" data-title="Alfaaz - Hamza Malik" data-sub="ROMANTIC SOUNDTRACK">Alfaaz</button>
+              <button type="button" class="asset-thumb-chip btn-audio-preset ${data.audioSrc === '/audio/blossom_song.mp3' ? 'active' : ''}" data-src="/audio/blossom_song.mp3" data-title="Blossom Symphony" data-sub="SOFT INSTRUMENTAL">Blossom Symphony</button>
+              <button type="button" class="asset-thumb-chip btn-audio-preset ${data.audioSrc === '/audio/song.mp3' ? 'active' : ''}" data-src="/audio/song.mp3" data-title="Birthday Acoustic" data-sub="CELEBRATION THEME">Birthday Acoustic</button>
+            </div>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <input type="text" class="form-input" id="edAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" placeholder="/audio/alfaaz.mp3 or https://..." style="flex:1; min-width:0;" />
+              <input type="text" class="form-input" id="edAudioSrc" value="${data.audioSrc || '/audio/alfaaz.mp3'}" placeholder="Custom audio URL or upload MP3" style="flex:1; min-width:0;" />
               <label class="btn-file-upload" style="flex-shrink:0;">
                 <i data-lucide="upload-cloud"></i>
                 <span>Upload MP3</span>
@@ -2074,12 +2079,12 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         <h4 style="color:#55653f; font-size:14px; font-weight:700; margin-bottom:10px;">📅 Wedding Muhurat, Venue & Scratch Card</h4>
         <div class="editor-grid-2">
           <div class="form-group">
-            <label class="form-label">Muhurat ISO Date & Time (for Countdown & .ics)</label>
-            <input type="datetime-local" class="form-input" id="edWeddingEventDate" value="${(data.eventDate || '2027-02-13T18:00').substring(0, 16)}" />
+            <label class="form-label">Muhurat Date &amp; Time (auto-fills display &amp; scratch card)</label>
+            <input type="datetime-local" class="form-input" id="edWeddingEventDate" value="${(data.eventDate || '2027-02-21T19:00').substring(0, 16)}" />
           </div>
           <div class="form-group">
-            <label class="form-label">Wedding Display Date</label>
-            <input type="text" class="form-input" id="edWeddingDateDisplay" value="${data.weddingDateDisplay || 'Saturday, 13th February 2027'}" />
+            <label class="form-label">Wedding Display Date (optional override)</label>
+            <input type="text" class="form-input" id="edWeddingDateDisplay" value="${data.weddingDateDisplay || 'Sunday, 21st February 2027'}" />
           </div>
         </div>
         <div class="editor-grid-2">
@@ -2107,15 +2112,15 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           <input type="text" class="form-input" id="edWeddingVenueAddress" value="${data.venueAddress || 'Haridas Ji Ki Magri, Mulla Talai, Udaipur, Rajasthan 313001'}" />
         </div>
 
-        <div style="font-size:12px; font-weight:700; color:#55653f; margin-top:12px; margin-bottom:6px;">Scratch Card Date Elements:</div>
+        <div style="font-size:12px; font-weight:700; color:#55653f; margin-top:12px; margin-bottom:6px;">Scratch Card Date Elements (auto-synced, editable):</div>
         <div class="editor-grid-4" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px;">
           <div class="form-group" style="margin-bottom:0;">
             <label class="form-label" style="font-size:10px;">Day</label>
-            <input type="text" class="form-input" id="edWeddingSaveDay" value="${data.saveDateDay || 'Saturday'}" />
+            <input type="text" class="form-input" id="edWeddingSaveDay" value="${data.saveDateDay || 'Sunday'}" />
           </div>
           <div class="form-group" style="margin-bottom:0;">
             <label class="form-label" style="font-size:10px;">Date Num</label>
-            <input type="text" class="form-input" id="edWeddingSaveNum" value="${data.saveDateNum || '13'}" />
+            <input type="text" class="form-input" id="edWeddingSaveNum" value="${data.saveDateNum || '21'}" />
           </div>
           <div class="form-group" style="margin-bottom:0;">
             <label class="form-label" style="font-size:10px;">Month</label>
@@ -3370,6 +3375,50 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     } catch (err) {
       console.warn('Sortable init error:', err);
     }
+  });
+
+  // Soundtrack preset chips
+  container.querySelectorAll('.btn-audio-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = btn.getAttribute('data-src');
+      const title = btn.getAttribute('data-title');
+      const sub = btn.getAttribute('data-sub');
+      const inpSrc = container.querySelector('#edAudioSrc');
+      const inpTitle = container.querySelector('#edAudioTitle');
+      const inpSub = container.querySelector('#edAudioSub');
+      if (inpSrc && src) inpSrc.value = src;
+      if (inpTitle && title && !inpTitle.value) inpTitle.value = title;
+      if (inpSub && sub && !inpSub.value) inpSub.value = sub;
+      container.querySelectorAll('.btn-audio-preset').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      emitChange();
+    });
+  });
+
+  // Auto-derive Wedding Display Date & Scratch Card fields from single Muhurat date picker
+  const weddingIsoInp = container.querySelector('#edWeddingEventDate');
+  weddingIsoInp?.addEventListener('change', () => {
+    const dt = new Date(weddingIsoInp.value);
+    if (Number.isNaN(dt.getTime())) return;
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const dayName = weekdays[dt.getDay()];
+    const dayNum = dt.getDate();
+    const monthName = months[dt.getMonth()];
+    const yearNum = String(dt.getFullYear());
+    const ord = (n) => (n % 10 === 1 && n !== 11 ? 'st' : n % 10 === 2 && n !== 12 ? 'nd' : n % 10 === 3 && n !== 13 ? 'rd' : 'th');
+
+    const elDisp = container.querySelector('#edWeddingDateDisplay');
+    const elDay = container.querySelector('#edWeddingSaveDay');
+    const elNum = container.querySelector('#edWeddingSaveNum');
+    const elMon = container.querySelector('#edWeddingSaveMonth');
+    const elYr = container.querySelector('#edWeddingSaveYear');
+    if (elDisp) elDisp.value = `${dayName}, ${dayNum}${ord(dayNum)} ${monthName} ${yearNum}`;
+    if (elDay) elDay.value = dayName;
+    if (elNum) elNum.value = String(dayNum);
+    if (elMon) elMon.value = monthName;
+    if (elYr) elYr.value = yearNum;
+    emitChange();
   });
 
   // Song preview snippet toggle

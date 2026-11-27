@@ -24,10 +24,149 @@ export function renderStudioApp(root) {
   const hash = window.location.hash.replace(/^#/, '');
   const rawUrlTid = searchParams.get('template') || (hash.startsWith('template=') ? hash.substring(9) : null) || (TEMPLATES[hash] ? hash : null);
   const urlTid = (rawUrlTid === 'wedding' || rawUrlTid === 'shubh_weds') ? 'wedding_invite' : rawUrlTid;
+  const isExplicitEdit = searchParams.get('edit') === 'true';
+  const uniqueTemplates = Array.from(new Map(Object.values(TEMPLATES).map(t => [t.id, t])).values());
+  const templateCount = uniqueTemplates.length;
+
   let activeTemplateId = (urlTid && TEMPLATES[urlTid]) ? urlTid : "wedding_invite";
   let activeData = getActiveCelebrationData(activeTemplateId);
   let currentMobileTab = "editor"; // "editor" | "preview"
   let currentViewport = "mobile"; // "mobile" | "tablet" | "desktop"
+  let previewMuted = false;
+
+  const savedTheme = localStorage.getItem('celebration_studio_editor_theme') || 'dark';
+  let activeTheme = savedTheme;
+
+  function renderFullScreenLandingPreview(tid) {
+    window.isCelebrationEditorMode = false;
+    document.body.classList.remove('is-editor-mode');
+    const previewData = getActiveCelebrationData(tid);
+    root.innerHTML = `<div id="landingPreviewMount" style="width:100%; min-height:100dvh;"></div>`;
+    const mount = root.querySelector('#landingPreviewMount');
+    renderViewerApp(mount, tid, previewData, false);
+
+    const backBtn = document.createElement('button');
+    backBtn.type = 'button';
+    backBtn.className = 'floating-creator-back-pill';
+    backBtn.innerHTML = '<span>← All Themes</span>';
+    backBtn.addEventListener('click', () => {
+      backBtn.remove();
+      custBtn.remove();
+      if (mount._cleanup) { try { mount._cleanup(); } catch {} }
+      renderLanding();
+    });
+
+    const custBtn = document.createElement('button');
+    custBtn.type = 'button';
+    custBtn.className = 'floating-creator-back-pill';
+    custBtn.style.left = 'auto';
+    custBtn.style.right = '16px';
+    custBtn.style.background = '#d9385a';
+    custBtn.style.borderColor = '#d9385a';
+    custBtn.innerHTML = '<span>Customize This Theme →</span>';
+    custBtn.addEventListener('click', () => {
+      backBtn.remove();
+      custBtn.remove();
+      if (mount._cleanup) { try { mount._cleanup(); } catch {} }
+      activeTemplateId = tid;
+      activeData = getActiveCelebrationData(tid);
+      renderEditorWorkspace();
+    });
+
+    document.body.appendChild(backBtn);
+    document.body.appendChild(custBtn);
+  }
+
+  function renderLanding() {
+    window.isCelebrationEditorMode = true;
+    document.body.classList.add('is-editor-mode');
+    root.innerHTML = `
+      <div class="studio-landing studio-theme-${activeTheme}" id="studioLanding">
+        <header class="landing-nav">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="studio-brand-gem" style="width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:var(--accent-primary); color:#fff;">
+              <i data-lucide="sparkles"></i>
+            </div>
+            <div>
+              <div style="font-weight:800; font-size:15px; color:var(--text-primary);">Celebration Studio</div>
+              <div style="font-size:11.5px; color:var(--text-secondary);">${templateCount} Interactive Themes · 100% Free</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" class="btn-nav-glass" id="btnLandingTheme" style="padding:8px 12px; border-radius:10px; background:var(--bg-subtle); border:1px solid var(--border-subtle); color:var(--text-primary); display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; font-weight:600;">
+              <i data-lucide="${activeTheme === 'dark' ? 'sun' : 'moon'}"></i>
+              <span>${activeTheme === 'dark' ? 'Light' : 'Dark'}</span>
+            </button>
+            <button type="button" id="btnLandingStart" style="padding:8px 14px; border-radius:10px; background:var(--accent-primary); border:none; color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+              <i data-lucide="wand-2"></i>
+              <span>Open Studio</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="landing-hero">
+          <div class="landing-badge">
+            <i data-lucide="sparkles" style="width:13px; height:13px;"></i>
+            <span>100% Free · No Sign-up Required</span>
+          </div>
+          <h1 class="landing-title">Create a handcrafted celebration site in 60 seconds — 100% free</h1>
+          <p class="landing-sub">
+            Choose an interactive theme for weddings, birthdays, anniversaries, or heartfelt apologies. Personalize photos, music, and letters, then share a clean link on WhatsApp.
+          </p>
+        </section>
+
+        <section class="landing-gallery-wrap">
+          <div id="landingGalleryMount"></div>
+        </section>
+
+        <footer class="landing-footer">
+          Celebration Studio · Handcrafted interactive wishes, invitations &amp; 3D keepsakes.
+        </footer>
+      </div>
+    `;
+    renderStudioIcons(root);
+
+    const landingEl = root.querySelector('#studioLanding');
+    root.querySelector('#btnLandingTheme')?.addEventListener('click', () => {
+      activeTheme = activeTheme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('celebration_studio_editor_theme', activeTheme);
+      if (landingEl) {
+        landingEl.classList.remove('studio-theme-dark', 'studio-theme-light');
+        landingEl.classList.add(`studio-theme-${activeTheme}`);
+      }
+      const btn = root.querySelector('#btnLandingTheme');
+      if (btn) {
+        btn.innerHTML = `<i data-lucide="${activeTheme === 'dark' ? 'sun' : 'moon'}"></i><span>${activeTheme === 'dark' ? 'Light' : 'Dark'}</span>`;
+        renderStudioIcons(btn);
+      }
+    });
+
+    root.querySelector('#btnLandingStart')?.addEventListener('click', () => {
+      renderEditorWorkspace();
+    });
+
+    const galleryMount = root.querySelector('#landingGalleryMount');
+    renderTemplateSelector(galleryMount, activeTemplateId, (tid, action) => {
+      if (action === 'preview') {
+        renderFullScreenLandingPreview(tid);
+      } else {
+        activeTemplateId = tid;
+        activeData = getActiveCelebrationData(tid);
+        renderEditorWorkspace();
+      }
+    });
+  }
+
+  if (!urlTid && !isExplicitEdit) {
+    renderLanding();
+    return;
+  }
+
+  renderEditorWorkspace();
+
+  function renderEditorWorkspace() {
+    window.isCelebrationEditorMode = true;
+    document.body.classList.add('is-editor-mode');
 
   root.innerHTML = `
     <div class="studio-layout">
@@ -38,26 +177,26 @@ export function renderStudioApp(root) {
         <div class="mesh-orb mesh-orb-3"></div>
       </div>
 
-      <!-- 1. NEUMORPHIC TOP NAVBAR (Sticky) -->
+      <!-- 1. TOP NAVBAR (Sticky) -->
       <header class="studio-navbar-glass neu-navbar" id="studioNavbar">
         <div class="navbar-glass-inner neu-raised-card">
           <!-- Left Group: Brand Mark + Active Occasion Switcher -->
           <div class="navbar-left-group">
-            <a href="/" class="studio-brand-link">
+            <a href="/" class="studio-brand-link" id="btnBrandHome" title="Back to all themes">
               <div class="studio-brand-gem neu-convex-gem">
                 <i data-lucide="sparkles"></i>
               </div>
               <div class="studio-brand-meta">
                 <div class="brand-title-row">
                   <span class="brand-name">Celebration Studio</span>
-                  <span class="badge-free-pill neu-badge-pill">Studio Editor</span>
+                  <span class="badge-free-pill neu-badge-pill">Step <span id="headerStepNum">2</span> of 4</span>
                 </div>
                 <span class="brand-subtext">Interactive Wishing Workstation</span>
               </div>
             </a>
 
             <!-- Active Occasion Quick Badge & Switcher Button (Desktop & Tablet) -->
-            <button type="button" class="btn-nav-glass btn-nav-active-tmpl neu-btn" id="btnNavbarOccasions" title="Browse all 14 celebration occasions">
+            <button type="button" class="btn-nav-glass btn-nav-active-tmpl neu-btn" id="btnNavbarOccasions" title="Browse all ${templateCount} celebration occasions">
               <span class="nav-tmpl-icon" id="navTmplIcon">🌸</span>
               <span class="nav-tmpl-name" id="navTmplName">Long Romance</span>
               <i data-lucide="chevron-down" style="width:13px; height:13px; opacity:0.7;"></i>
@@ -66,7 +205,7 @@ export function renderStudioApp(root) {
 
           <!-- Primary Actions Group (Right Aligned) -->
           <div class="navbar-actions-group">
-            <button type="button" class="btn-nav-glass btn-theme-toggle neu-btn" id="btnEditorThemeToggle" title="Toggle Soft UI Light / Dark Mode">
+            <button type="button" class="btn-nav-glass btn-theme-toggle neu-btn" id="btnEditorThemeToggle" title="Toggle Light / Dark Mode">
               <i data-lucide="moon" id="themeToggleIcon"></i>
               <span class="hide-mobile" id="themeToggleLabel">Theme</span>
             </button>
@@ -74,7 +213,7 @@ export function renderStudioApp(root) {
               <i data-lucide="compass"></i>
               <span class="hide-mobile">Guide</span>
             </button>
-            <a href="/?mode=view" target="_blank" rel="noopener noreferrer" class="btn-nav-glass btn-nav-recipient neu-btn" title="Open recipient preview in new tab">
+            <a href="/?template=${encodeURIComponent(activeTemplateId)}&mode=view&review=true" class="btn-nav-glass btn-nav-recipient neu-btn" id="btnRecipientViewLink" title="Open full-screen recipient preview">
               <i data-lucide="eye"></i>
               <span class="hide-mobile">Recipient View</span>
             </a>
@@ -121,11 +260,19 @@ export function renderStudioApp(root) {
                 </div>
                 <button type="button" class="btn-browse-all-occasions neu-btn-pill" id="btnOpenOccasionModal">
                   <i data-lucide="grid"></i>
-                  <span>All 14 Themes</span>
+                  <span>All ${templateCount} Themes</span>
                 </button>
               </div>
-              <div class="occ-quick-pills-row" id="occQuickPillsRow" role="tablist" aria-label="Celebration Themes">
-                <!-- Populated dynamically -->
+              <div class="occ-pills-scroller">
+                <button type="button" class="occ-scroll-btn" id="btnOccScrollLeft" aria-label="Scroll themes left">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <div class="occ-quick-pills-row" id="occQuickPillsRow" role="tablist" aria-label="Celebration Themes">
+                  <!-- Populated dynamically -->
+                </div>
+                <button type="button" class="occ-scroll-btn" id="btnOccScrollRight" aria-label="Scroll themes right">
+                  <i data-lucide="chevron-right"></i>
+                </button>
               </div>
             </div>
 
@@ -165,12 +312,10 @@ export function renderStudioApp(root) {
                 </button>
               </div>
 
-              <span class="preview-url-bar neu-inset-pill" id="previewUrlBar">
-                <i data-lucide="lock" style="width:11px; height:11px; color:#10b981;"></i>
-                <span class="url-text">celebration.live/#preview</span>
-              </span>
-
               <div class="preview-device-actions">
+                <button type="button" class="btn-preview-audio neu-btn-icon" id="btnPreviewMute" title="Mute or unmute preview audio" aria-label="Toggle preview audio">
+                  <i data-lucide="volume-2"></i>
+                </button>
                 <button type="button" class="btn-preview-reload neu-btn-icon" id="btnPreviewReload" title="Reload celebration physics">
                   <i data-lucide="rotate-ccw"></i>
                 </button>
@@ -194,7 +339,7 @@ export function renderStudioApp(root) {
               <div class="neu-modal-gem neu-convex-gem"><i data-lucide="palette"></i></div>
               <div>
                 <h3 class="neu-modal-title">Select Celebration Occasion</h3>
-                <p class="neu-modal-subtitle">14 handcrafted themes for Romance, Birthdays, Family & Friends</p>
+                <p class="neu-modal-subtitle">${templateCount} handcrafted themes for Romance, Birthdays, Family & Friends</p>
               </div>
             </div>
             <button type="button" class="btn-neu-icon btn-close-modal" id="btnCloseOccasionModal" aria-label="Close modal">
@@ -283,8 +428,6 @@ export function renderStudioApp(root) {
   });
 
   // --- Dark / Light Mode Controller (Editor Mode Only) ---
-  const savedTheme = localStorage.getItem('celebration_studio_editor_theme') || 'dark';
-  let activeTheme = savedTheme;
   const studioLayoutEl = root.querySelector('.studio-layout');
 
   function applyEditorTheme(theme) {
@@ -351,6 +494,36 @@ export function renderStudioApp(root) {
     }, 2800);
   }
 
+  // Quick-switcher horizontal scroll controls & preview mute toggle
+  const occScrollLeft = root.querySelector('#btnOccScrollLeft');
+  const occScrollRight = root.querySelector('#btnOccScrollRight');
+  const occPillsRow = root.querySelector('#occQuickPillsRow');
+  occScrollLeft?.addEventListener('click', () => {
+    occPillsRow?.scrollBy({ left: -200, behavior: 'smooth' });
+  });
+  occScrollRight?.addEventListener('click', () => {
+    occPillsRow?.scrollBy({ left: 200, behavior: 'smooth' });
+  });
+
+  const btnPreviewMute = root.querySelector('#btnPreviewMute');
+  btnPreviewMute?.addEventListener('click', () => {
+    previewMuted = !previewMuted;
+    if (previewContainer) {
+      previewContainer.querySelectorAll('audio, video').forEach(m => {
+        m.muted = previewMuted;
+      });
+    }
+    btnPreviewMute.innerHTML = `<i data-lucide="${previewMuted ? 'volume-x' : 'volume-2'}"></i>`;
+    renderStudioIcons(btnPreviewMute);
+  });
+
+  function resetStudioScrollPositions() {
+    if (sidebarEl) sidebarEl.scrollTop = 0;
+    if (previewContainer) previewContainer.scrollTop = 0;
+    const recLink = root.querySelector('#btnRecipientViewLink');
+    if (recLink) recLink.href = `/?template=${encodeURIComponent(activeTemplateId)}&mode=view&review=true`;
+  }
+
   function updateNavbarOccasionBadge() {
     const tmpl = TEMPLATES[activeTemplateId] || TEMPLATES.long_romance;
     const elIcon = root.querySelector('#navTmplIcon');
@@ -384,6 +557,7 @@ export function renderStudioApp(root) {
         if (tid && tid !== activeTemplateId) {
           activeTemplateId = tid;
           activeData = getActiveCelebrationData(activeTemplateId);
+          resetStudioScrollPositions();
           renderQuickOccasionStrip();
           updateNavbarOccasionBadge();
           mountTemplateSelector();
@@ -543,6 +717,7 @@ export function renderStudioApp(root) {
       activeTemplateId = newTid;
       activeData = getActiveCelebrationData(activeTemplateId);
       closeOccasionModal();
+      resetStudioScrollPositions();
       mountTemplateSelector();
       mountEditor();
       schedulePreviewUpdate(true);
@@ -634,13 +809,6 @@ export function renderStudioApp(root) {
     switchMobileTab('editor');
   }
 
-  // Start editor by prompting creator to choose the occasion first if not specified in URL
-  if (!urlTid) {
-    setTimeout(() => {
-      openOccasionModal();
-    }, 150);
-  }
-
   let lastWidth = window.innerWidth;
   window.addEventListener('resize', () => {
     const isMobileNow = window.innerWidth <= 900;
@@ -657,4 +825,5 @@ export function renderStudioApp(root) {
       }
     }
   });
+  }
 }

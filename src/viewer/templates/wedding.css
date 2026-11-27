@@ -691,7 +691,7 @@ html { scroll-behavior: smooth; }
 .invitation {
   position: relative;
   overflow: clip;
-  padding: clamp(52px, 13vw, 88px) 6px clamp(28px, 7vw, 56px);
+  padding: clamp(20px, 4vw, 38px) 6px clamp(28px, 7vw, 56px);
   container-type: inline-size;
 }
 
@@ -745,7 +745,7 @@ html { scroll-behavior: smooth; }
 /* The first line sits up in the dome where it has opened wide enough
    (y = 280); the venue ends in the straight part, just above the base, so
    the base keeps an open margin below the words. */
-.arch > :first-child { margin-top: calc(-280 * var(--a)); }
+.arch > :first-child { margin-top: calc(-335 * var(--a)); }
 .arch > :last-child { margin-bottom: calc(-115 * var(--a)); }
 
 /* The jhumars hang in front of the arch's shoulders on chains that run off

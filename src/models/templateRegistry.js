@@ -1,5 +1,11 @@
 // src/models/templateRegistry.js - Templates Registry & Schema
 
+function getFutureIsoDate(daysAhead = 14) {
+  const d = new Date(Date.now() + daysAhead * 86400000);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T18:00`;
+}
+
 export const TEMPLATES = {
   long_romance: {
     id: "long_romance",
@@ -351,47 +357,47 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       accent: "#fbbf24"
     },
     defaultData: {
-      recipientName: "My Special One",
-      recipientPersona: "special",
-      senderName: "Yours Truly",
-      eventDate: "2026-11-25T00:00",
-      enableCountdownLock: true,
-      passcode: "1234",
-      audioTitle: "Alfaaz - Hamza Malik & Zain Zohaib",
+      recipientName: "Alex",
+      recipientPersona: "friend",
+      senderName: "Maya",
+      eventDate: getFutureIsoDate(14),
+      enableCountdownLock: false,
+      passcode: "",
+      audioTitle: "Happy Birthday Acoustic",
       audioSubtitle: "BIRTHDAY PLAYLIST",
-      audioSrc: "/audio/alfaaz.mp3",
-      age: "15",
+      audioSrc: "/audio/song.mp3",
+      age: "21",
       heroTitle: "Happy Birthday",
-      heroSubtitle: "To the most special girl in my universe ✨",
+      heroSubtitle: "Wishing you a year full of joy, laughter, and unforgettable memories ✨",
       polaroids: [
-        { title: "Baddie 😎", image: "/images/baddie.jpg", note: "You have that effortless aura and confidence that turns heads everywhere! 🌟" },
-        { title: "Always You 🫶", image: "/images/always_you.jpg", note: "Is butterfly ki tarah meri har khushi ka raasta bhi aakhir tum tak hi aakar rukta hai. 🫶" },
-        { title: "Pretty ✨", image: "/images/pretty.jpg", note: "No poetry in this world can ever truly capture how breathtaking you look when you're just being yourself. 🌸" },
-        { title: "Beautiful 🌸", image: "/images/beautiful.jpg", note: "Your heart is even more radiant than your smile, and that's saying a lot! ☀️" },
-        { title: "Dream Girl 💫", image: "/images/dream_girl.jpg", note: "Before I met you, I thought perfection only existed in storybooks. 💖" },
-        { title: "Queen 👑", image: "/images/queen.jpg", note: "May you always wear your invisible crown with happiness, peace, and endless love! 👑" }
+        { title: "Golden Hour 🌅", image: "/images/sunset.jpg", note: "Here's to chasing more sunsets and making every weekend count!" },
+        { title: "Best Laughs 🫶", image: "/images/always_you.jpg", note: "Some memories never get old — thank you for every single laugh!" },
+        { title: "Main Character ✨", image: "/images/vogue_cover.jpg", note: "Stepping into a brand new chapter with confidence and style." },
+        { title: "Pure Joy 🌸", image: "/images/pretty.jpg", note: "May this year bring you calm mornings, big wins, and great company." },
+        { title: "Dream Big 💫", image: "/images/dream_girl.jpg", note: "Every goal you set this year is yours for the taking!" },
+        { title: "Cheers to You 👑", image: "/images/queen.jpg", note: "Wishing you health, peace, and endless reasons to celebrate!" }
       ],
       magazine: {
-        title: "VOGUE SPECIAL EDITION",
-        quote: "Being with you makes every ordinary day feel like the sweetest dream come true.",
+        title: "BIRTHDAY SPECIAL EDITION",
+        quote: "Another trip around the sun — brighter, bolder, and better than ever.",
         photo: "/images/sunset.jpg",
         reasons: [
-          "Mesmerizing Eyes that freeze time",
-          "Sweetest smile that melts away worries",
-          "Pure heart that cares for everyone",
-          "Infectious laughter that brightens the room",
-          "My safest haven and happiest thought",
-          "Unconditional love that heals my soul"
+          "Always brings genuine warmth to every room",
+          "The friend everyone can count on",
+          "Contagious laugh that lifts the whole table",
+          "Turns ordinary days into favorite memories",
+          "Quietly kind, resilient, and inspiring",
+          "Deserves the absolute best year ahead"
         ]
       },
       scratchWish: {
         title: "Happy Birthday!",
-        message: "Wishing you the happiest year ahead filled with laughter, dreams achieved, and infinite love. You deserve the galaxy! 🎂✨"
+        message: "Wishing you a year filled with laughter, big milestones, and everything you've been hoping for! 🎂✨"
       },
       chatMessages: [
-        "Happppyeeee birthday! ❤️🎂",
-        "ik last bday pr ek problem hogyi thi isliye ye wala bilkul special banaya! 🎁✨",
-        "Hope this brings the biggest smile to your face today! 🥰"
+        "Happy Birthday!! 🎂🎉",
+        "Put together this little interactive celebration page for your big day!",
+        "Make a wish and blow out the candles! ✨"
       ]
     }
   },
@@ -649,8 +655,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       familiesLine: "the Kapoor and Shah families",
       hashtag: "#VihaanWedsAnaya",
       
-      eventDate: "2027-02-13T18:00",
-      weddingDateDisplay: "Saturday, 13th February 2027",
+      eventDate: "2027-02-21T19:00",
+      weddingDateDisplay: "Sunday, 21st February 2027",
       ceremonyTitle: "Shubh Vivah",
       venueName: "The Oberoi Udaivilas",
       venueCity: "Udaipur, Rajasthan",
@@ -663,8 +669,8 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       blessingIntro: "With the blessings of Lord Ganesha",
       invitationKicker: "we request the honour of your presence at the wedding celebration of",
       
-      saveDateDay: "Saturday",
-      saveDateNum: "13",
+      saveDateDay: "Sunday",
+      saveDateNum: "21",
       saveDateMonth: "February",
       saveDateYear: "2027",
       

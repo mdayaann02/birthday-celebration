@@ -6,14 +6,31 @@ import { renderStudioIcons } from './icons.js';
 export function renderTemplateSelector(container, activeTemplateId, onSelectTemplate, initialCategory = 'all') {
   let activeFilter = initialCategory;
 
+  const uniqueAll = Array.from(new Map(Object.values(TEMPLATES).map(t => [t.id, t])).values());
+
   const categories = [
-    { id: 'all', icon: 'sparkles', label: `All (${Object.keys(TEMPLATES).length})` },
-    { id: 'wedding', icon: 'gem', label: 'Wedding 💍' },
+    { id: 'all', icon: 'sparkles', label: `All (${uniqueAll.length})` },
+    { id: 'wedding', icon: 'gem', label: 'Wedding' },
     { id: 'museum', icon: 'landmark', label: '3D Museum' },
     { id: 'romance', icon: 'heart', label: 'Romance' },
-    { id: 'birthday', icon: 'calendar', label: 'Birthday' },
+    { id: 'birthday', icon: 'cake', label: 'Birthday' },
     { id: 'sorry', icon: 'heart-crack', label: 'Apology' }
   ];
+
+  const TEMPLATE_META_TAGS = {
+    long_romance: [{ icon: 'sparkles', label: 'Cupid + Tree' }, { icon: 'image', label: 'Photo Polaroids' }],
+    tree: [{ icon: 'wand-2', label: '4-Act Film' }, { icon: 'heart', label: 'Tap Blossoms' }],
+    blossom: [{ icon: 'sparkles', label: 'Blossom Story' }, { icon: 'music', label: 'CD Player' }],
+    birthday: [{ icon: 'cake', label: 'Wish Cake' }, { icon: 'image', label: 'Photo Polaroids' }],
+    sorry: [{ icon: 'heart-crack', label: 'Peace Treaty' }, { icon: 'sparkles', label: '3D Lanterns' }],
+    kintsugi_apology: [{ icon: 'layers', label: '5-Act WebGL' }, { icon: 'volume-2', label: 'Rain to Dawn' }],
+    our_museum: [{ icon: 'landmark', label: '3D Gallery' }, { icon: 'globe', label: 'Multiplayer' }],
+    bloom_reveal: [{ icon: 'lock', label: 'Passcode Gate' }, { icon: 'sparkles', label: 'Bloom Reveal' }],
+    birthday_paigaam: [{ icon: 'mail', label: 'Interactive Envelope' }, { icon: 'image', label: 'Scrapbook' }],
+    wedding_invite: [{ icon: 'gem', label: 'Countdown + .ICS' }, { icon: 'calendar', label: 'RSVP & Events' }],
+    kitten_wish: [{ icon: 'mail', label: '3D Kitten Letter' }, { icon: 'sparkles', label: 'Yes/No Story' }],
+    ever_tide: [{ icon: 'globe', label: '3D Island' }, { icon: 'sparkles', label: 'Sky Banner' }]
+  };
 
   function getTemplateCategory(tid) {
     if (['wedding_invite', 'wedding', 'shubh_weds'].includes(tid)) return 'wedding';
@@ -65,8 +82,9 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
                 </div>
 
                 <div class="tmpl-card-meta">
-                  <span class="tmpl-meta-tag"><i data-lucide="sparkles" style="width:11px; height:11px;"></i> 60FPS Physics</span>
-                  <span class="tmpl-meta-tag"><i data-lucide="music" style="width:11px; height:11px;"></i> Audio Soundtrack</span>
+                  ${(TEMPLATE_META_TAGS[tmpl.id] || [{ icon: 'sparkles', label: 'Interactive' }, { icon: 'music', label: 'Custom Audio' }]).map(m => `
+                    <span class="tmpl-meta-tag"><i data-lucide="${m.icon}" style="width:11px; height:11px;"></i> ${m.label}</span>
+                  `).join('')}
                 </div>
 
                 <div class="tmpl-card-actions">

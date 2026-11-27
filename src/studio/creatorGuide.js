@@ -27,8 +27,8 @@ export function startStudioTour({ onSwitchTab, onOpenShare, onFocusEditor } = {}
         {
           element: '#occQuickStripWrap',
           popover: {
-            title: '🎨 1. Choose Occasion & Template',
-            description: 'Pick who this celebration is for: Long Romance Masterpiece, Cupid & Tree, Birthday, Anniversary, Sorry, and more.',
+            title: '1. Choose Occasion & Theme',
+            description: 'Pick from Weddings, Birthdays, Romance, 3D Museum, Kitten Wish, Ever Tide Island, or our Kintsugi Apology.',
             side: 'bottom',
             align: 'start'
           }
@@ -82,8 +82,8 @@ export function renderCreatorGuide(container, { onSwitchTab, onOpenShare, onFocu
       tab: "templates",
       icon: "palette",
       shortLabel: "1. Occasion",
-      title: "Step 1: Choose Occasion & Template",
-      desc: "Pick who this special celebration is for: Romantic Blossom Love, Birthday, Sorry / Apology, Anniversary, Valentine, or for Mother, Father, Brother, Sister & Friends.",
+      title: "Step 1: Choose Occasion & Theme",
+      desc: "Pick from Royal Weddings, Birthday Celebrations, Romantic Stories, 3D Virtual Museum, Kitten Wish, Ever Tide Island, or Apology Sanctuaries.",
       actionLabel: "Choose Occasion 🎨",
       action: () => {
         if (onSwitchTab) onSwitchTab('templates');

@@ -86,6 +86,10 @@ export function getOccasionWhatsAppMessage(templateId, data, safeUrl) {
     return `Hey ${recipientName}, I made you a special birthday surprise! 🎂💌✨\n\nYou'll need the secret passcode to unlock it: *${pin}*\n\nTap here to unwrap your surprise:\n${safeUrl}\n\nMade with all my love! ♡`;
   }
 
+  if (tid === 'wedding_invite' || tid === 'wedding' || tid === 'shubh_weds') {
+    return `You are warmly invited to the wedding celebration of ${recipientName}! 💍✨\n\nTap below to view the ceremony schedule, venue directions, and RSVP:\n${safeUrl}`;
+  }
+
   // Default fallback
   return `I made something very special just for you, ${recipientName}! ❤️✨\n\nOpen your surprise celebration website here:\n${safeUrl}`;
 }
@@ -129,28 +133,32 @@ export function openShareModal(templateId, data) {
 
       <div class="share-modal-body">
         <p class="share-info-text">
-          Share this link with <strong>${recipientName}</strong>. 
-          ${isLocked ? `It is locked with a romantic countdown until <strong>${dateStr}</strong>!` : 'It will open immediately with your music, photos & animations!'}
+          ${['wedding_invite', 'wedding', 'shubh_weds'].includes(templateId)
+            ? `Share this invitation with your guests for <strong>${recipientName}</strong>.`
+            : `Share this link with <strong>${recipientName}</strong>.`}
+          ${isLocked ? `It is locked with a countdown until <strong>${dateStr}</strong>.` : 'It opens immediately with your music, photos & animations.'}
         </p>
 
         <!-- Link Type Selector / Tabs -->
         <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
           <button type="button" class="btn-link-tab active neu-tab-btn" id="tabVercelLink">
-            ⚡ Vercel HTTPS (Recommended)
+            <i data-lucide="zap" style="width:13px; height:13px;"></i>
+            <span>Vercel HTTPS (Recommended)</span>
           </button>
           <button type="button" class="btn-link-tab neu-tab-btn" id="tabCloudLink">
-            🌐 Cloud Server (155.248.255.29)
+            <i data-lucide="globe" style="width:13px; height:13px;"></i>
+            <span>Cloud Sync (Instant Link)</span>
           </button>
         </div>
 
         <!-- Clean Recipient Link -->
         <div class="share-link-group neu-inset-well" style="padding:14px 16px; border-radius:18px; margin-bottom:16px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
             <label class="share-link-label" style="margin-bottom:0;">
-              🎁 Recipient Celebration Link <span id="lblLinkType" style="color:#10b981;">(Creating short link...)</span>
+              Recipient Link <span id="lblLinkType" style="color:#10b981;">(Creating short link...)</span>
             </label>
-            <span style="font-size:10px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); color:#10b981; padding:2px 7px; border-radius:10px; font-weight:800;">
-              WhatsApp Hyperlink Active ✓
+            <span style="font-size:10px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); color:#10b981; padding:2px 8px; border-radius:10px; font-weight:700; white-space:nowrap;">
+              WhatsApp Preview Ready
             </span>
           </div>
 
@@ -196,8 +204,11 @@ export function openShareModal(templateId, data) {
               <span>Copy</span>
             </button>
           </div>
-          <div class="share-sub-hint" style="margin-top:6px; font-size:11px; color:var(--text-dim);">
-            Use this to verify your surprise before the event countdown ends. (Maker Passcode: <strong>${data.passcode || '1234'}</strong>)
+          <div class="share-sub-hint" style="margin-top:8px; font-size:11.5px; color:var(--text-dim); display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+            <span>Use this link to review your site before the countdown ends.</span>
+            <button type="button" id="btnGenRandomPin" style="background:transparent; border:1px solid var(--border-subtle, rgba(255,255,255,0.2)); color:inherit; border-radius:8px; padding:3px 9px; font-size:11px; font-weight:600; cursor:pointer;">
+              ${data.passcode ? `PIN: ${data.passcode}` : 'Generate Optional PIN'}
+            </button>
           </div>
         </div>
       </div>
@@ -206,6 +217,14 @@ export function openShareModal(templateId, data) {
 
   document.body.appendChild(overlay);
   renderStudioIcons(overlay);
+
+  const btnGenPin = overlay.querySelector('#btnGenRandomPin');
+  btnGenPin?.addEventListener('click', () => {
+    const pin = String(Math.floor(1000 + Math.random() * 9000));
+    data.passcode = pin;
+    btnGenPin.textContent = `PIN: ${pin}`;
+    try { navigator.clipboard?.writeText(pin); } catch {}
+  });
 
   confetti({
     particleCount: 75,
