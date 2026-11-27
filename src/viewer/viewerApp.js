@@ -177,12 +177,9 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     return;
   }
 
-  const rootStyle = templateId === 'long_romance'
-    ? 'width:100%; height:100%; min-height:100dvh; overflow:hidden;'
-    : '';
   container.innerHTML = `
     ${renderReviewBanner()}
-    <div id="templateRoot"${rootStyle ? ` style="${rootStyle}"` : ''}></div>
+    <div id="templateRoot"></div>
   `;
 
   const root = container.querySelector('#templateRoot');

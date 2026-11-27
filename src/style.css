@@ -3363,12 +3363,6 @@ select option {
 }
 
 /* Strict Container Isolation: Keep template fixed/absolute scenes trapped inside chassis */
-.preview-frame-container #templateRoot:has(.tree-film-stage) {
-  height: 100% !important;
-  min-height: 100% !important;
-  overflow: hidden !important;
-}
-
 .preview-frame-container .tree-film-stage,
 .preview-frame-container .tree-film-stage.scene,
 .preview-frame-container .romance-fullscreen-scene,
@@ -3387,10 +3381,6 @@ select option {
   max-width: 100% !important;
   max-height: 100% !important;
   box-sizing: border-box !important;
-}
-
-.preview-frame-container .hero__hint {
-  bottom: 72px !important;
 }
 
 .preview-frame-container .corner-fullscreen-btn,

@@ -638,6 +638,7 @@
   .preview-frame-container {
     width: 100% !important;
     max-width: 100% !important;
+    height: calc(100dvh - 175px) !important;
     min-height: calc(100dvh - 175px) !important;
     border-radius: 0 !important;
     border: none !important;
