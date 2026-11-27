@@ -112,22 +112,22 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
 
   const gallery = (data.gallery && data.gallery.length > 0) ? data.gallery : [
     {
-      src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp',
+      src: '/images/sunset.jpg',
       caption: 'Where it all began',
       focus: '50% 32%'
     },
     {
-      src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-02.webp',
+      src: '/images/always_you.jpg',
       caption: 'Hand in hand',
       focus: '55% 45%'
     },
     {
-      src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-03.webp',
+      src: '/images/pretty.jpg',
       caption: 'Our little world',
       focus: '50% 50%'
     },
     {
-      src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-04.webp',
+      src: '/images/queen.jpg',
       caption: 'Forever starts here',
       focus: '45% 50%'
     }
@@ -468,7 +468,7 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
             <div class="album__viewer reveal is-visible">
               <div class="album__stage" id="albumStage" tabindex="0" role="button" aria-haspopup="dialog" aria-label="View photo full screen">
                 <div class="album__window">
-                  <img class="album__photo is-on" id="albumCurrentPhoto" src="${gallery[0]?.src || ''}" alt="${gallery[0]?.caption || ''}" style="object-position: ${gallery[0]?.focus || '50% 30%'};">
+                  <img class="album__photo is-on" id="albumCurrentPhoto" src="${gallery[0]?.src || ''}" alt="${gallery[0]?.caption || ''}" style="object-position: ${gallery[0]?.focus || '50% 30%'};" onerror="this.src='/images/sunset.jpg'">
                 </div>
                 <img class="album__art" src="https://media.shubhweds.in/template-6/gallery-frame-rect.webp" width="900" height="1180" alt="" aria-hidden="true">
               </div>
@@ -493,7 +493,7 @@ export function renderWeddingTemplate(container, data = {}, isMakerReview = fals
               ${gallery.map((item, i) => `
                 <button class="thumb ${i===0 ? 'is-on' : ''}" data-idx="${i}" type="button" aria-label="Photo ${i+1}">
                   <span class="thumb__window">
-                    <img src="${item.src}" alt="${item.caption || ''}" style="object-position: ${item.focus || '50% 30%'};">
+                    <img src="${item.src}" alt="${item.caption || ''}" style="object-position: ${item.focus || '50% 30%'};" onerror="this.src='/images/sunset.jpg'">
                   </span>
                   <img class="thumb__art" src="https://media.shubhweds.in/template-6/gallery-frame-arch.webp" width="270" height="381" alt="" aria-hidden="true">
                 </button>

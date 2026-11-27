@@ -34,10 +34,10 @@ export default async function handler(req, res) {
   return res.status(oracleStatus === "connected" ? 200 : 502).json({
     ok: oracleStatus === "connected",
     architecture: {
-      frontend: "Vercel Edge Network (birthday-website-phi-one.vercel.app)",
+      frontend: "Vercel Edge Network (celebration-studio-02.vercel.app)",
       backend: "Oracle Cloud VM Server (155.248.255.29:3000)",
       storage: "Oracle Cloud Persistent Disk (/data/sites.json & /uploads)",
-      repository: "GitHub (mdayaann02/birthday-celebration)"
+      repository: "GitHub (mdayaann02/celebration-studio)"
     },
     interconnection: {
       status: oracleStatus,

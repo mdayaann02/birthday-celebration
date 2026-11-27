@@ -738,22 +738,22 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
       
       gallery: [
         {
-          src: "https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp",
+          src: "/images/sunset.jpg",
           caption: "Where our journey began",
           note: "A serendipitous meeting that turned into a lifetime promise."
         },
         {
-          src: "https://shubhweds.in/demo/template-6/assets/media/gallery-photo-02.webp",
+          src: "/images/always_you.jpg",
           caption: "Hand in hand towards forever",
           note: "Through every sunset, laughter, and adventure."
         },
         {
-          src: "https://shubhweds.in/demo/template-6/assets/media/gallery-photo-03.webp",
+          src: "/images/pretty.jpg",
           caption: "Our little world of joy",
           note: "Every moment with you feels like home."
         },
         {
-          src: "https://shubhweds.in/demo/template-6/assets/media/gallery-photo-04.webp",
+          src: "/images/queen.jpg",
           caption: "Forever begins here",
           note: "Looking ahead to a lifetime of love and togetherness."
         }

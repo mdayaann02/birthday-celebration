@@ -384,7 +384,6 @@ export function renderStudioApp(root) {
   const selectorMount = root.querySelector('#templateSelectorMount');
   const editorMount = root.querySelector('#visualEditorMount');
   const previewContainer = root.querySelector('#previewContainer');
-  const occasionBannerMount = root.querySelector('#studioOccasionBanner');
   const studioWorkspace = root.querySelector('#studioWorkspace');
   const floatingToast = root.querySelector('#studioFloatingToast');
   const sidebarEl = root.querySelector('#studioSidebar');
@@ -455,22 +454,9 @@ export function renderStudioApp(root) {
     applyEditorTheme(activeTheme === 'dark' ? 'light' : 'dark');
   });
 
-  // Initialize Lenis smooth scroll on desktop sidebar (native touch on mobile for zero lag)
-  let lenisInstance = null;
-  if (sidebarEl && window.innerWidth > 900) {
-    try {
-      lenisInstance = new Lenis({
-        wrapper: sidebarEl,
-        content: sidebarEl.firstElementChild,
-        smoothWheel: true,
-        syncTouch: false
-      });
-      function raf(time) {
-        lenisInstance?.raf(time);
-        requestAnimationFrame(raf);
-      }
-      requestAnimationFrame(raf);
-    } catch (_) {}
+  // Native smooth momentum scroll on sidebar (avoids Lenis clipping to firstElementChild)
+  if (sidebarEl) {
+    sidebarEl.style.scrollBehavior = 'smooth';
   }
 
   function showToast(title = "Website Saved!", subtitle = "Your custom celebration is saved.") {
@@ -536,7 +522,7 @@ export function renderStudioApp(root) {
     const stripRow = root.querySelector('#occQuickPillsRow');
     if (!stripRow) return;
 
-    stripRow.innerHTML = Object.values(TEMPLATES).map(t => {
+    stripRow.innerHTML = uniqueTemplates.map(t => {
       const isSel = t.id === activeTemplateId;
       const cleanName = t.name
         .replace(/ Masterpiece| Celebration| Tribute| Sincere | & Tree| Surprise/g, '')
@@ -687,12 +673,21 @@ export function renderStudioApp(root) {
           try { previewContainer._cleanup(); } catch {}
           previewContainer._cleanup = null;
         }
-        previewContainer.querySelectorAll('audio').forEach(a => {
+        if (previewContainer._museumCleanup) {
+          try { previewContainer._museumCleanup(); } catch {}
+          previewContainer._museumCleanup = null;
+        }
+        previewContainer.querySelectorAll('audio, video').forEach(a => {
           try { a.pause(); a.currentTime = 0; } catch {}
         });
         previewContainer.innerHTML = '';
       }
       renderViewerApp(previewContainer, activeTemplateId, activeData);
+      if (previewContainer && previewMuted) {
+        previewContainer.querySelectorAll('audio, video').forEach(m => {
+          m.muted = true;
+        });
+      }
     } catch (err) {
       console.error('Error rendering live preview:', err);
     } finally {

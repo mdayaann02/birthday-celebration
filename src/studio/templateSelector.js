@@ -64,15 +64,18 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
         <div class="template-cards-bento-grid">
           ${list.map(tmpl => {
             const isSel = tmpl.id === activeTemplateId;
+            const accent = tmpl.defaultTheme?.primary || '#f43f5e';
+            const bgGrad = tmpl.defaultTheme?.bgGradient || 'linear-gradient(135deg, #1a1d26, #212530)';
             return `
-              <div class="template-bento-card ${isSel ? 'selected' : ''}" data-tid="${tmpl.id}">
-                <div class="tmpl-card-header">
+              <div class="template-bento-card ${isSel ? 'selected' : ''}" data-tid="${tmpl.id}" style="--card-accent:${accent};">
+                <div class="tmpl-card-banner" style="background:${bgGrad};">
+                  <span class="tmpl-banner-glow" style="background:${accent};"></span>
                   <span class="tmpl-badge">${tmpl.badge}</span>
                   ${isSel ? '<span class="tmpl-active-badge"><i data-lucide="check-circle-2"></i> Selected</span>' : ''}
                 </div>
 
                 <div class="tmpl-card-main">
-                  <div class="tmpl-icon-gem">
+                  <div class="tmpl-icon-gem" style="border-color:${accent}44;">
                     <span class="tmpl-icon">${tmpl.icon}</span>
                   </div>
                   <div class="tmpl-card-text">

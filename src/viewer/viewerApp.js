@@ -9,6 +9,7 @@ import { initPlayfulDock } from './playfulDock.js';
 
 import { renderTreeTemplate } from './templates/treeTemplate.js';
 import { renderBlossomTemplate } from './templates/blossomTemplate.js';
+import { renderBlossomReelTemplate } from './templates/blossomReelTemplate.js';
 import { renderBloomRevealTemplate } from './templates/bloomRevealTemplate.js';
 import { renderBirthdayTemplate } from './templates/birthdayTemplate.js';
 import { renderSorryTemplate } from './templates/sorryTemplate.js';
@@ -18,6 +19,20 @@ import { renderWeddingTemplate } from './templates/weddingTemplate.js';
 import { renderKittenWishTemplate } from './templates/kittenWishTemplate.js';
 import { renderEverTideTemplate } from './templates/everTideTemplate.js';
 import { renderKintsugiApologyTemplate } from './templates/kintsugiApologyTemplate.js';
+
+function cleanupContainer(container) {
+  if (!container) return;
+  if (container._cleanup) {
+    try { container._cleanup(); } catch (e) {}
+    container._cleanup = null;
+  }
+  if (container._museumCleanup) {
+    try { container._museumCleanup(); } catch (e) {}
+    container._museumCleanup = null;
+  }
+  const existingDock = document.getElementById('playfulReactionDock');
+  if (existingDock) existingDock.remove();
+}
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
   if (data?.primaryColor) {
@@ -29,7 +44,7 @@ export function renderViewerApp(container, templateId, data, isMakerReviewParam 
   const isMakerReview = isMakerReviewParam || lockStatus.isMakerReview || false;
 
   // Persistent floating "Back to Editor" pill when opened as standalone Recipient View from studio
-  const isStandaloneViewer = typeof window !== 'undefined' && !window.isCelebrationEditorMode && !container.closest('.studio-preview-pane');
+  const isStandaloneViewer = typeof window !== 'undefined' && !window.isCelebrationEditorMode && !container.closest('.studio-preview-pane') && !container.closest('#landingPreviewMount');
   const existingBackPill = document.getElementById('floatingBackToEditorPill');
   if (existingBackPill) existingBackPill.remove();
   if (isStandaloneViewer && isMakerReview) {
@@ -43,6 +58,7 @@ export function renderViewerApp(container, templateId, data, isMakerReviewParam 
 
   if (lockStatus.isLocked && !isMakerReview) {
     // Show countdown lock gate
+    cleanupContainer(container);
     renderCountdownGate(container, data, (unlockedReview) => {
       renderUnlockedWebsite(container, templateId, data, unlockedReview);
     });
@@ -53,10 +69,19 @@ export function renderViewerApp(container, templateId, data, isMakerReviewParam 
 }
 
 function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
+  cleanupContainer(container);
+
+  const editHref = `/?template=${encodeURIComponent(templateId)}&edit=true`;
+  const renderReviewBanner = (label = 'You are viewing the unlocked website.') => isMakerReview ? `
+    <div class="maker-review-banner" id="makerReviewBanner">
+      <div class="maker-banner-content">
+        <span>👁️ <strong>Creator Preview Active:</strong> ${label}</span>
+        <a href="${editHref}" class="btn-banner-edit">✏️ Studio Editor</a>
+      </div>
+    </div>
+  ` : '';
+
   if (templateId === 'ever_tide') {
-    if (container._cleanup) {
-      try { container._cleanup(); } catch (e) {}
-    }
     container.innerHTML = '<div id="templateRoot" style="width:100%; height:100vh; overflow:hidden;"></div>';
     const root = container.querySelector('#templateRoot');
     renderEverTideTemplate(root, data, isMakerReview);
@@ -67,9 +92,6 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   }
 
   if (templateId === 'kitten_wish') {
-    if (container._cleanup) {
-      try { container._cleanup(); } catch (e) {}
-    }
     container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
     const root = container.querySelector('#templateRoot');
     renderKittenWishTemplate(root, data, isMakerReview);
@@ -83,13 +105,13 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
     const root = container.querySelector('#templateRoot');
     renderWeddingTemplate(root, data, isMakerReview);
+    container._cleanup = () => {
+      if (root && root._cleanup) root._cleanup();
+    };
     return;
   }
 
   if (templateId === 'birthday_paigaam' || templateId === 'paigaam') {
-    if (container._cleanup) {
-      try { container._cleanup(); } catch (e) {}
-    }
     container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
     const root = container.querySelector('#templateRoot');
     renderPaigaamTemplate(root, data, isMakerReview);
@@ -102,20 +124,20 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   if (templateId === 'bloom_reveal') {
     container.innerHTML = '<div id="templateRoot" style="width:100%; min-height:100vh;"></div>';
     const root = container.querySelector('#templateRoot');
-    renderBloomRevealTemplate(root, data, isMakerReview);
+    const cleanup = renderBloomRevealTemplate(root, data, isMakerReview);
+    container._cleanup = () => {
+      if (typeof cleanup === 'function') cleanup();
+    };
     return;
   }
 
   if (templateId === 'our_museum') {
-    if (container._museumCleanup) {
-      try { container._museumCleanup(); } catch (e) {}
-    }
     container.innerHTML = `
       ${isMakerReview ? `
         <div class="maker-review-banner" id="makerReviewBanner" style="position:fixed; top:0; left:0; width:100%; z-index:999999;">
           <div class="maker-banner-content">
             <span>👁️ <strong>Creator Preview Active:</strong> You are viewing the 3D Museum.</span>
-            <a href="?edit=true" class="btn-banner-edit">✏️ Studio Editor</a>
+            <a href="${editHref}" class="btn-banner-edit">✏️ Studio Editor</a>
           </div>
         </div>
       ` : ''}
@@ -130,18 +152,8 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   }
 
   if (templateId === 'kintsugi_apology') {
-    if (container._cleanup) {
-      try { container._cleanup(); } catch (e) {}
-    }
     container.innerHTML = `
-      ${isMakerReview ? `
-        <div class="maker-review-banner" id="makerReviewBanner">
-          <div class="maker-banner-content">
-            <span>👁️ <strong>Creator Preview Active:</strong> You are viewing the unlocked website.</span>
-            <a href="?edit=true" class="btn-banner-edit">✏️ Studio Editor</a>
-          </div>
-        </div>
-      ` : ''}
+      ${renderReviewBanner()}
       <div id="templateRoot" style="width:100%; height:100dvh; overflow:hidden;"></div>
     `;
     const root = container.querySelector('#templateRoot');
@@ -153,18 +165,8 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   }
 
   if (templateId === 'sorry') {
-    if (container._cleanup) {
-      try { container._cleanup(); } catch (e) {}
-    }
     container.innerHTML = `
-      ${isMakerReview ? `
-        <div class="maker-review-banner" id="makerReviewBanner">
-          <div class="maker-banner-content">
-            <span>👁️ <strong>Creator Preview Active:</strong> You are viewing the unlocked website.</span>
-            <a href="?edit=true" class="btn-banner-edit">✏️ Studio Editor</a>
-          </div>
-        </div>
-      ` : ''}
+      ${renderReviewBanner()}
       <div id="templateRoot" style="width:100%; min-height:100vh;"></div>
     `;
     const root = container.querySelector('#templateRoot');
@@ -176,35 +178,33 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
   }
 
   container.innerHTML = `
-    ${isMakerReview ? `
-      <div class="maker-review-banner" id="makerReviewBanner">
-        <div class="maker-banner-content">
-          <span>👁️ <strong>Creator Preview Active:</strong> You are viewing the unlocked website.</span>
-          <a href="?edit=true" class="btn-banner-edit">✏️ Studio Editor</a>
-        </div>
-      </div>
-    ` : ''}
+    ${renderReviewBanner()}
     <div id="templateRoot"></div>
   `;
 
   const root = container.querySelector('#templateRoot');
+  let tmplCleanup = null;
 
   switch (templateId) {
     case 'long_romance':
+      tmplCleanup = renderBlossomTemplate(root, data, isMakerReview);
+      break;
     case 'blossom':
-      renderBlossomTemplate(root, data, isMakerReview);
+      tmplCleanup = renderBlossomReelTemplate(root, data, isMakerReview);
       break;
     case 'tree':
-      renderTreeTemplate(root, data, isMakerReview);
-      break;
-    case 'sorry':
-      renderSorryTemplate(root, data);
+      tmplCleanup = renderTreeTemplate(root, data, isMakerReview);
       break;
     case 'birthday':
     default:
-      renderBirthdayTemplate(root, data);
+      tmplCleanup = renderBirthdayTemplate(root, data);
       break;
   }
+
+  container._cleanup = () => {
+    if (typeof tmplCleanup === 'function') tmplCleanup();
+    if (root && root._cleanup) root._cleanup();
+  };
 
   // Initialize Playful Micro-Interactions & Tactile Suite across all templates
   try {

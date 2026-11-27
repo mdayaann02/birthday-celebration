@@ -164,7 +164,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       </div>
 
       <!-- Section A2: Luxury Theme & Color Styling -->
-      <div class="editor-section" id="secStyling">
+      <div class="editor-section collapsed" id="secStyling">
         <div class="editor-section-header">
           <div class="section-title">
             <i data-lucide="palette"></i>
@@ -194,7 +194,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       </div>
 
       <!-- Section B: Countdown Lock & Event Date -->
-      <div class="editor-section highlight-section" id="secCountdown">
+      <div class="editor-section highlight-section collapsed" id="secCountdown">
         <div class="editor-section-header">
           <div class="section-title">
             <i data-lucide="calendar"></i>
@@ -1013,30 +1013,100 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       { image: "/images/always_you.jpg", caption: "You are the brightest light in my world 🫶", note: "Even on my gloomiest days, one smile from you fixes everything." },
       { image: "/images/pretty.jpg", caption: "I never want to see you hurt ever again ✨", note: "You deserve the gentlest, sweetest love in the universe." }
     ];
+    const reasonsText = (Array.isArray(data.reasonsToForgive) && data.reasonsToForgive.length > 0)
+      ? data.reasonsToForgive.join('\n')
+      : [
+          "Because our bond is bigger and more precious than any silly mistake.",
+          "Because I am genuinely learning and committed to being better for you.",
+          "Because life is too short to let misunderstandings steal our joy.",
+          "Because your smile is my favorite thing in the universe, and I miss it."
+        ].join('\n');
+    const promisesText = (Array.isArray(data.promises) && data.promises.length > 0)
+      ? data.promises.join('\n')
+      : [
+          "To listen first and understand before reacting.",
+          "To never take your patience and love for granted.",
+          "To communicate openly with gentleness and honesty."
+        ].join('\n');
+    const penancesText = (Array.isArray(data.penances) && data.penances.length > 0)
+      ? data.penances.join('\n')
+      : [
+          "Buy your favorite Iced Boba / Treat right now 🧋",
+          "30-minute soothing massage whenever you ask 💆‍♀️",
+          "Order whatever food you are craving tonight, my treat 🍕",
+          "Watch 3 chick flicks / K-dramas with zero groaning 🍿"
+        ].join('\n');
+    const treatyText = (Array.isArray(data.treatyClauses) && data.treatyClauses.length > 0)
+      ? data.treatyClauses.join('\n')
+      : [
+          "Party A is officially declared 100% Right in all past, present, and future disputes.",
+          "Party B must deliver hugs, forehead kisses, and warm comfort upon demand.",
+          "Permanent hoodie and jacket theft rights are granted with zero retaliation.",
+          "No going to sleep angry ever again — dessert & comfort come first."
+        ].join('\n');
+    const creatorImg = data.creatorPhoto || '/images/always_you.jpg';
 
     specificBox.innerHTML = `
-      <div class="section-title">🕊️ Heartfelt Apology & Reconciliation Sanctuary</div>
+      <div class="section-title">🕊️ Moonlit Sanctuary Apology Customization</div>
 
       <div class="form-group">
         <label class="form-label">Hero Headline</label>
-        <input type="text" class="form-input" id="edSorryHeroTitle" value="${data.heroTitle || "I'm So Sorry, My Love"}" placeholder="e.g. I'm So Sorry, My Love" />
+        <input type="text" class="form-input" id="edSorryHeroTitle" value="${(data.heroTitle || "I'm Really Sorry").replace(/"/g, '&quot;')}" placeholder="e.g. I'm Really Sorry" />
       </div>
 
       <div class="form-group">
         <label class="form-label">Hero Subtitle</label>
-        <input type="text" class="form-input" id="edSorryHeroSub" value="${data.heroSubtitle || "My world feels heavy and quiet when you are hurt 🥺"}" placeholder="Subtitle..." />
+        <input type="text" class="form-input" id="edSorryHeroSub" value="${(data.heroSubtitle || "My world feels heavy and quiet when you are hurt 🥺").replace(/"/g, '&quot;')}" placeholder="Subtitle..." />
       </div>
-      
+
       <div class="form-group">
-        <label class="form-label">Sincere Apology Message (Letter)</label>
-        <div class="editor-help-text" style="margin-bottom:6px;">Your heartfelt letter that slides out of the wax-sealed parchment:</div>
+        <label class="form-label">Sincere Confession Letter</label>
+        <div class="editor-help-text" style="margin-bottom:6px;">Illuminates word-by-word when they unseal the wax envelope:</div>
         <textarea rows="5" class="form-textarea" id="edSorryMsg">${data.apologyMessage || ''}</textarea>
+      </div>
+
+      <!-- Vent Room Photo -->
+      <div class="sub-card-editor" style="margin-bottom:14px;">
+        <div class="bcard-top-row">
+          <div class="bcard-thumb-wrap">
+            <img src="${creatorImg}" class="bcard-thumb" id="sorryCreatorThumb" onerror="this.src='/images/always_you.jpg'" />
+            <label class="btn-thumb-upload" title="Upload Your Photo for Vent Room">
+              <i data-lucide="camera"></i>
+              <input type="file" id="fileUploadSorryCreator" accept="image/*" style="display:none;" />
+            </label>
+          </div>
+          <div class="bcard-caption-col">
+            <span class="bcard-num-badge">🥊 Vent Room Target Photo</span>
+            <input type="text" class="form-input" id="edSorryCreatorPhoto" value="${creatorImg.replace(/"/g, '&quot;')}" placeholder="Your photo URL for the Vent Room" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Why Us / Reasons to Forgive (1 per line)</label>
+        <textarea rows="4" class="form-textarea" id="edSorryReasons">${reasonsText}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">My Sacred Promises (1 per line)</label>
+        <textarea rows="3" class="form-textarea" id="edSorryPromises">${promisesText}</textarea>
+      </div>
+
+      <div class="editor-grid-2">
+        <div class="form-group">
+          <label class="form-label">Claimable Penances (1 per line)</label>
+          <textarea rows="4" class="form-textarea" id="edSorryPenances">${penancesText}</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Peace Treaty Clauses (1 per line)</label>
+          <textarea rows="4" class="form-textarea" id="edSorryTreaty">${treatyText}</textarea>
+        </div>
       </div>
 
       <!-- Memory Polaroids -->
       <div style="margin-top:16px;">
         <label class="form-label" style="font-weight:700; color:var(--primary);">📸 Cherished Reconciliation Memories:</label>
-        <div class="editor-help-text" style="margin-bottom:8px;">Lovable cascading polaroids with 3D flip card notes:</div>
+        <div class="editor-help-text" style="margin-bottom:8px;">Interactive 3D flip polaroids with secret back notes:</div>
         <div id="sorryPolsList">
           ${sorryPols.map((p, i) => `
             <div class="sub-card-editor sorry-pol-row" data-i="${i}">
@@ -1044,17 +1114,17 @@ export function renderVisualEditor(container, templateId, data, onChange) {
                 <div class="bcard-thumb-wrap">
                   <img src="${p.image}" class="bcard-thumb" id="sorryPolThumb_${i}" onerror="this.src='/images/sunset.jpg'" />
                   <label class="btn-thumb-upload" title="Upload Photo">
-                    📷
+                    <i data-lucide="camera"></i>
                     <input type="file" class="file-upload-sorry-photo" data-i="${i}" accept="image/*" style="display:none;" />
                   </label>
                 </div>
                 <div class="bcard-caption-col">
                   <span class="bcard-num-badge">📸 Memory #${i+1}</span>
-                  <input type="text" class="form-input sorry-pol-cap" data-i="${i}" value="${p.caption || ''}" placeholder="Front Caption (e.g. Our favorite sunset walk)" />
+                  <input type="text" class="form-input sorry-pol-cap" data-i="${i}" value="${(p.caption || '').replace(/"/g, '&quot;')}" placeholder="Front Caption (e.g. Our favorite sunset walk)" />
                 </div>
               </div>
-              <input type="text" class="form-input sorry-pol-note" data-i="${i}" style="margin-top:6px;" value="${p.note || ''}" placeholder="Secret Note on Back of Polaroid" />
-              <input type="text" class="form-input sorry-pol-img" data-i="${i}" style="margin-top:6px;" value="${p.image}" placeholder="Image URL (or tap 📷 to upload)" />
+              <input type="text" class="form-input sorry-pol-note" data-i="${i}" style="margin-top:6px;" value="${(p.note || '').replace(/"/g, '&quot;')}" placeholder="Secret Note on Back of Polaroid" />
+              <input type="text" class="form-input sorry-pol-img" data-i="${i}" style="margin-top:6px;" value="${(p.image || '').replace(/"/g, '&quot;')}" placeholder="Image URL (or tap camera to upload)" />
             </div>
           `).join('')}
         </div>
@@ -1984,10 +2054,10 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     ];
 
     const gal = (data.gallery && data.gallery.length > 0) ? data.gallery : [
-      { src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp', caption: 'Where our journey began', note: 'A serendipitous meeting that turned into a lifetime promise.' },
-      { src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-02.webp', caption: 'Hand in hand towards forever', note: 'Through every sunset, laughter, and adventure.' },
-      { src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-03.webp', caption: 'Our little world of joy', note: 'Every moment with you feels like home.' },
-      { src: 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-04.webp', caption: 'Forever begins here', note: 'Looking ahead to a lifetime of love and togetherness.' }
+      { src: '/images/sunset.jpg', caption: 'Where our journey began', note: 'A serendipitous meeting that turned into a lifetime promise.' },
+      { src: '/images/always_you.jpg', caption: 'Hand in hand towards forever', note: 'Through every sunset, laughter, and adventure.' },
+      { src: '/images/pretty.jpg', caption: 'Our little world of joy', note: 'Every moment with you feels like home.' },
+      { src: '/images/queen.jpg', caption: 'Forever begins here', note: 'Looking ahead to a lifetime of love and togetherness.' }
     ];
 
     const blessingsList = (data.blessings && data.blessings.length > 0) ? data.blessings.join('\n') : [
@@ -2212,7 +2282,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
           ${gal.map((g, i) => `
             <div class="sub-card-editor wedding-gal-card" data-idx="${i}" style="margin-bottom:10px; background:rgba(255,255,255,0.7); border:1px solid rgba(205,177,126,0.4); border-radius:8px; padding:10px;">
               <div style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
-                <img src="${g.src}" style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid #cdb17e;" id="wgalThumb_${i}" onerror="this.src='https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp'\" />
+                <img src="${g.src}" style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid #cdb17e;" id="wgalThumb_${i}" onerror="this.src='/images/sunset.jpg' />
                 <div style="flex:1;">
                   <input type="text" class="form-input wgal-caption" value="${g.caption || ''}" placeholder="Caption (e.g. Where it all began)" style="font-size:12px; margin-bottom:4px;" />
                   <input type="text" class="form-input wgal-src" value="${g.src}" placeholder="Image URL" style="font-size:11px;" />
@@ -2769,7 +2839,7 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     const list = [];
     cards.forEach(c => {
       list.push({
-        src: c.querySelector('.wgal-src')?.value || 'https://shubhweds.in/demo/template-6/assets/media/gallery-photo-01.webp',
+        src: c.querySelector('.wgal-src')?.value || '/images/sunset.jpg',
         caption: c.querySelector('.wgal-caption')?.value || '',
         note: c.querySelector('.wgal-note')?.value || ''
       });
@@ -2964,9 +3034,19 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       const elSorry = container.querySelector('#edSorryMsg');
       const elSorryTitle = container.querySelector('#edSorryHeroTitle');
       const elSorrySub = container.querySelector('#edSorryHeroSub');
+      const elCreatorPhoto = container.querySelector('#edSorryCreatorPhoto');
+      const elReasons = container.querySelector('#edSorryReasons');
+      const elPromises = container.querySelector('#edSorryPromises');
+      const elPenances = container.querySelector('#edSorryPenances');
+      const elTreaty = container.querySelector('#edSorryTreaty');
       if (elSorry) updated.apologyMessage = elSorry.value;
       if (elSorryTitle) updated.heroTitle = elSorryTitle.value;
       if (elSorrySub) updated.heroSubtitle = elSorrySub.value;
+      if (elCreatorPhoto && elCreatorPhoto.value.trim()) updated.creatorPhoto = elCreatorPhoto.value.trim();
+      if (elReasons) updated.reasonsToForgive = elReasons.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (elPromises) updated.promises = elPromises.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (elPenances) updated.penances = elPenances.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (elTreaty) updated.treatyClauses = elTreaty.value.split('\n').map(s => s.trim()).filter(Boolean);
 
       const sorryPols = [];
       container.querySelectorAll('.sorry-pol-row').forEach(row => {

@@ -34,7 +34,7 @@ export function startStudioTour({ onSwitchTab, onOpenShare, onFocusEditor } = {}
           }
         },
         {
-          element: '#tabEditorSection',
+          element: '#visualEditorMount',
           popover: {
             title: '✏️ 2. Customize & Drag-and-Drop',
             description: 'Upload real polaroid photos, reorder them by dragging, choose background songs, and write heartfelt love letters.',

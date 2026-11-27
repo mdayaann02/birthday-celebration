@@ -51,6 +51,8 @@ export function initInteractiveSparkles(container = document.body) {
 
   let lastSpawn = 0;
   function handlePointer(e) {
+    if (window.isCelebrationEditorMode) return;
+    if (e.target && e.target.closest && e.target.closest('.studio-layout, .studio-landing')) return;
     const now = Date.now();
     if (now - lastSpawn < 35) return; // limit rate for silky 60fps
     lastSpawn = now;

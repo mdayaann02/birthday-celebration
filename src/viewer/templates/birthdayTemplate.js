@@ -17,10 +17,15 @@ import { initPhoneChat } from '../../components/phoneChat.js';
 export function renderBirthdayTemplate(container, data) {
   const recipientName = data.recipientName || "My Special One";
 
-  // Synthesize Web Audio Chimes & Celebration Tones
+  // Synthesize Web Audio Chimes & Celebration Tones (shared AudioContext to avoid browser limit)
+  let sharedAudioCtx = null;
   function playBdayTone(type = 'chime') {
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!sharedAudioCtx) sharedAudioCtx = new AudioCtx();
+      if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume();
+      const ctx = sharedAudioCtx;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
@@ -369,16 +374,19 @@ export function renderBirthdayTemplate(container, data) {
   // 60FPS BACKGROUND BALLOONS & CONFETTI CANVAS ANIMATION
   // =========================================================================
   const animCanvas = container.querySelector('#bdayAnimCanvas');
+  let bdayAnimId = null;
+  let onBdayResize = null;
   if (animCanvas) {
     const aCtx = animCanvas.getContext('2d');
     let cw = (animCanvas.width = window.innerWidth);
     let ch = (animCanvas.height = window.innerHeight);
 
-    window.addEventListener('resize', () => {
+    onBdayResize = () => {
       if (!animCanvas) return;
       cw = animCanvas.width = window.innerWidth;
       ch = animCanvas.height = window.innerHeight;
-    });
+    };
+    window.addEventListener('resize', onBdayResize);
 
     const balloonColors = ['#f43f5e', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899'];
     const balloons = [];
@@ -411,7 +419,6 @@ export function renderBirthdayTemplate(container, data) {
       });
     }
 
-    let bdayAnimId = null;
     function renderBdayCanvas() {
       aCtx.clearRect(0, 0, cw, ch);
 
@@ -633,4 +640,13 @@ export function renderBirthdayTemplate(container, data) {
       "May this year bring you unstoppable success, joy, and peace! 🥂🎉"
     ]
   });
+
+  return () => {
+    if (bdayAnimId) cancelAnimationFrame(bdayAnimId);
+    if (onBdayResize) window.removeEventListener('resize', onBdayResize);
+    if (sharedAudioCtx && sharedAudioCtx.state !== 'closed') {
+      sharedAudioCtx.close().catch(() => {});
+      sharedAudioCtx = null;
+    }
+  };
 }
