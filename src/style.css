@@ -10915,7 +10915,7 @@ select option {
 
 /* ---- the draw / release hint ---- */
 .hero__hint{
-  position:absolute; bottom:11.5%; left:0; right:0;
+  position:absolute; bottom:8.5%; left:0; right:0;
   text-align:center;
   font-family:"Cormorant Garamond", Georgia, serif !important;
   font-weight:600 !important; font-style:italic !important;
@@ -10924,10 +10924,6 @@ select option {
   color:#b06a7c !important;
   text-shadow:none !important;
   opacity:0;                          /* GSAP reveals */
-  pointer-events:none;
-}
-#treeHero .hero__hint {
-  bottom: 72px;
 }
 .hero__ring{ display:none; }
 

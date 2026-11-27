@@ -2096,36 +2096,13 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (serving) serving.setAttribute('cy', y);
   }
 
-  let rigRetryRAF = 0;
-  function measureStageBounds() {
-    const ref = hero || stage || canvas || container;
-    const r = ref?.getBoundingClientRect ? ref.getBoundingClientRect() : null;
-    const w = (r && r.width > 10 ? r.width : 0) || stage?.clientWidth || canvas?.clientWidth || window.innerWidth || 375;
-    const h = (r && r.height > 10 ? r.height : 0) || stage?.clientHeight || canvas?.clientHeight || window.innerHeight || 667;
-    return { w, h };
-  }
-
   function refreshRig() {
-    if (!archery || !bow || !arrow || !serving || !hero) return;
-    if (rigRetryRAF) {
-      cancelAnimationFrame(rigRetryRAF);
-      rigRetryRAF = 0;
-    }
-
-    const bounds = measureStageBounds();
-    const hW = bounds.w;
-    const hH = bounds.h;
-    W = hW;
-    H = hH;
-
-    // Scale target heart and bow cleanly relative to actual stage dimensions (works in mobile chassis & desktop)
-    const bowW = Math.round(clamp(Math.min(hW * 0.24, hH * 0.21), 88, 152));
-    archery.style.width = `${bowW}px`;
-    archery.style.maxWidth = `${bowW}px`;
-    if (target) {
-      const targetW = Math.round(clamp(Math.min(hW * 0.34, hH * 0.28), 116, 208));
-      target.style.width = `${targetW}px`;
-    }
+    if (!archery || !bow || !arrow || !serving) return;
+    const gripX = W * 0.24, gripY = H * 0.76;
+    const heartX = W * 0.5, heartY = H * 0.33;
+    const aimRad = Math.atan2(heartX - gripX, gripY - heartY);
+    pullUX = -Math.sin(aimRad);
+    pullUY = Math.cos(aimRad);
 
     nockProxy.val = REST_NOCK;
     applyNock();
@@ -2134,56 +2111,23 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     archery.style.top = '0px';
     gsap.set(arrow, { x: 0, y: 0 });
 
-    const hR = hero.getBoundingClientRect();
     const aR = archery.getBoundingClientRect();
     const bR = bow.getBoundingClientRect();
     const sR = serving.getBoundingClientRect();
     const rR = arrow.getBoundingClientRect();
-
-    // If hero/stage has 0 layout bounds (e.g. hidden preview tab), defer one animation frame
-    if (hR.width < 10 || bR.width < 10) {
-      rigRetryRAF = requestAnimationFrame(() => {
-        rigRetryRAF = 0;
-        refreshRig();
-        setDraw(curDraw);
-      });
-      return;
-    }
-
-    const tR = target?.getBoundingClientRect();
-    const heartX = tR && tR.width > 0 ? (tR.left - hR.left + tR.width * 0.5) : hW * 0.5;
-    const heartY = tR && tR.height > 0 ? (tR.top - hR.top + tR.height * 0.46) : hH * 0.33;
-
-    // Anchor Cupid cleanly in the lower-left diagonal lane above the bottom controls
-    const isPortrait = hW < 540;
-    const gripX = isPortrait
-      ? hW * 0.34
-      : Math.max(hW * 0.30, hW * 0.5 - Math.min(hW, hH) * 0.26);
-    const minGripY = heartY + Math.max(120, (tR?.height || 120) * 0.72);
-    const maxGripY = Math.max(minGripY, hH - Math.max(138, bR.height * 1.45));
-    const gripY = clamp(hH * 0.64, minGripY, maxGripY);
-
-    const aimRad = Math.atan2(heartX - gripX, gripY - heartY);
-    pullUX = -Math.sin(aimRad);
-    pullUY = Math.cos(aimRad);
-
-    svgScale = (bR.width || bowW) / 460;
+    svgScale = (bR.width || 120) / 460;
     const gripLX = bR.left - aR.left + 0.5 * bR.width;
     const gripLY = bR.top - aR.top + (240 / 300) * bR.height;
-    const nockLX = sR.width > 0
-      ? (sR.left - aR.left + 0.5 * sR.width)
-      : (bR.left - aR.left + 0.5 * bR.width);
-    const nockLY = sR.height > 0
-      ? (sR.top - aR.top + 0.5 * sR.height)
-      : (bR.top - aR.top + (REST_NOCK / 300) * bR.height);
+    const nockLX = sR.left - aR.left + 0.5 * sR.width;
+    const nockLY = sR.top - aR.top + 0.5 * sR.height;
     arrowBaseX = nockLX - (rR.left - aR.left + 0.5 * rR.width);
     arrowBaseY = nockLY - (rR.top - aR.top + (205 / 220) * rR.height);
 
-    archery.style.left = `${gripX - gripLX}px`;
-    archery.style.top = `${gripY - gripLY}px`;
+    archery.style.left = gripX - gripLX + 'px';
+    archery.style.top = gripY - gripLY + 'px';
     gsap.set(archery, { transformOrigin: `${gripLX}px ${gripLY}px`, rotation: (aimRad * 180) / Math.PI });
     gsap.set(arrow, { x: arrowBaseX, y: arrowBaseY });
-    maxDraw = clamp(Math.min(bR.height * 0.72, hH * 0.14, 110), 48, 110);
+    maxDraw = Math.min(bR.height * 0.72, H * 0.16, 132);
     curDraw = 0;
   }
 
@@ -2267,28 +2211,23 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   }
 
   function shotGeom() {
-    const hr = hero?.getBoundingClientRect() || { left: 0, top: 0, width: W || 375, height: H || 667 };
-    const hW = hr.width || W || 375;
-    const hH = hr.height || H || 667;
     const tipR = tip.getBoundingClientRect();
     const tRect = target.getBoundingClientRect();
-    const tipX = tipR.left - hr.left + tipR.width / 2;
-    const tipY = tipR.top - hr.top + tipR.height / 2;
-    const tcx = tRect.left - hr.left + tRect.width / 2;
-    const tcy = tRect.top - hr.top + tRect.height / 2;
+    const tipX = tipR.left + tipR.width / 2, tipY = tipR.top + tipR.height / 2;
+    const tcx = tRect.left + tRect.width / 2, tcy = tRect.top + tRect.height / 2;
     const flightDist = Math.hypot(tcx - tipX, tcy - tipY);
-    const fallPx = Math.min(hH * 0.26, hH - tcy - tRect.height * 0.4);
+    const fallPx = Math.min(H * 0.26, H - tcy - tRect.height * 0.4);
     const impactX = tcx, impactY = tcy + fallPx;
-    const distC = Math.hypot(Math.max(impactX, hW - impactX), Math.max(impactY, hH - impactY));
-    const reach = Math.hypot(hW / 2, hH / 2);
+    const distC = Math.hypot(Math.max(impactX, W - impactX), Math.max(impactY, H - impactY));
+    const reach = Math.hypot(W / 2, H / 2);
 
     return {
       arrowStartY: arrowBaseY + curDraw,
       arrowFlyY: arrowBaseY + curDraw - flightDist,
       drawnNock: REST_NOCK + curDraw / svgScale,
       fallPx,
-      fx: impactX - hW / 2,
-      fy: impactY - hH / 2,
+      fx: impactX - W / 2,
+      fy: impactY - H / 2,
       floodScale: (distC * 1.12) / 70,
       bloomScale: (reach * 1.2) / 30,
     };
@@ -2453,22 +2392,11 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
     setActiveDockChip('cupid');
     gsap.set(hero, { autoAlpha: 1 });
-    const bounds = measureStageBounds();
-    if (Math.abs(bounds.w - W) > 2 || Math.abs(bounds.h - H) > 2) {
-      resize();
-    } else {
-      refreshRig();
-      setDraw(0);
-    }
-    requestAnimationFrame(() => {
-      if (!played && currentScene === 2) {
-        refreshRig();
-        setDraw(curDraw);
-      }
-    });
+    refreshRig();
+    setDraw(0);
     gsap.set([eyebrow, hint], { opacity: 0, y: 14 });
     gsap.set(target, { opacity: 0, y: 10, scaleX: 0.9, scaleY: 0.9 });
-    gsap.set(archery, { opacity: 0, scale: 0.92 });
+    gsap.set(archery, { opacity: 0, scale: 0.85 });
     gsap.set(heartGlow, { opacity: 0, scale: 1 });
     gsap.set(arrow, { opacity: 1 });
 
@@ -2507,9 +2435,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }, 6000);
   }
 
-  function resetAll(showHero = true) {
+  function resetAll() {
     gateOpened = false;
-    if (viralFlowerBtn) viralFlowerBtn.classList.remove('bloomed');
     treeStop();
     showWish(false);
     replayArmed = false;
@@ -2528,17 +2455,14 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     gsap.set(field, { autoAlpha: 0 });
     gsap.set(arrow, { opacity: 1, scaleY: 1 });
     played = false;
-    if (showHero) enterHero();
+    enterHero();
   }
-
-  let master3D = null;
 
   // Sizing & Canvas Init
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const bounds = measureStageBounds();
-    W = bounds.w;
-    H = bounds.h;
+    W = canvas.clientWidth || window.innerWidth;
+    H = canvas.clientHeight || window.innerHeight;
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -2554,9 +2478,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       refreshRig();
       setDraw(0);
     }
-    if (typeof master3D !== 'undefined' && master3D && typeof master3D.resize === 'function') {
-      master3D.resize(W, H);
-    }
   }
 
   let resizeRAF = 0;
@@ -2568,17 +2489,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     });
   };
   window.addEventListener('resize', onResize);
-
-  let stageResizeObserver = null;
-  if (typeof ResizeObserver !== 'undefined' && stage) {
-    stageResizeObserver = new ResizeObserver(() => {
-      const bounds = measureStageBounds();
-      if (Math.abs(bounds.w - W) > 1 || Math.abs(bounds.h - H) > 1) {
-        onResize();
-      }
-    });
-    stageResizeObserver.observe(stage);
-  }
 
   resize();
   buildMotes();
@@ -2639,19 +2549,18 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
   function openGate(e) {
     if (gateOpened) return;
     gateOpened = true;
-
-    // Auto-enter full screen only in standalone viewer (not inside studio editor preview)
-    const inEditorPreview = Boolean(document.querySelector('.studio-layout')) ||
-                            Boolean(container.closest('.preview-frame-container'));
-    if (!inEditorPreview) {
-      try {
-        const docEl = document.documentElement;
-        const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-        if (fn && !document.fullscreenElement && !document.webkitFullscreenElement) {
-          fn.call(docEl).catch(() => {});
-        }
-      } catch (_) {}
+    if (e && e.cancelable && e.type === 'touchstart') {
+      try { e.preventDefault(); } catch (_) {}
     }
+
+    // Auto-enter full screen immediately on opening the celebration
+    try {
+      const docEl = document.documentElement;
+      const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      if (fn && !document.fullscreenElement && !document.webkitFullscreenElement) {
+        fn.call(docEl).catch(() => {});
+      }
+    } catch (_) {}
 
     try {
       chime(660, 880);
@@ -2718,11 +2627,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }, 550);
   }
 
-  viralFlowerBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    openGate(e);
-  });
+  viralFlowerBtn?.addEventListener('click', openGate);
+  viralFlowerBtn?.addEventListener('pointerdown', openGate);
+  viralFlowerBtn?.addEventListener('touchstart', openGate, { passive: true });
   gate?.addEventListener('click', openGate);
+  gate?.addEventListener('pointerdown', openGate);
+  gate?.addEventListener('touchstart', openGate, { passive: true });
   gate?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -2734,7 +2644,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     setTimeout(openGate, 600);
   }
 
-  replay?.addEventListener('click', () => resetAll(true));
+  replay?.addEventListener('click', resetAll);
 
   // Love note click on tree canvas
   let loveNoteTimer = 0;
@@ -2772,19 +2682,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     setMode: () => {},
     dollyForward: (cb) => { if (cb) cb(); },
     releaseLanterns: () => {},
-    resize: () => {},
     destroy: () => {}
   };
 
   function initRomanceMaster3D(canvas) {
     if (!canvas || typeof window === 'undefined') return fallbackMaster3D;
     try {
-      const initBounds = measureStageBounds();
-      let w = initBounds.w || canvas.clientWidth || window.innerWidth || 400;
-      let h = initBounds.h || canvas.clientHeight || window.innerHeight || 700;
+      let w = window.innerWidth || 400;
+      let h = window.innerHeight || 700;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, w / Math.max(1, h), 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000);
     camera.position.set(0, 0, 50);
 
     const renderer = new THREE.WebGLRenderer({
@@ -2793,7 +2701,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       antialias: true,
       powerPreference: 'high-performance'
     });
-    renderer.setSize(w, h, false);
+    renderer.setSize(w, h);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
     // 1. 3D Sakura Petals System (100 textured 3D petals with physics)
@@ -2919,18 +2827,12 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
     window.addEventListener('pointermove', onPointerMove, { passive: true });
 
-    function onResize(nw, nh) {
-      if (typeof nw === 'number' && typeof nh === 'number' && nw > 10 && nh > 10) {
-        w = nw;
-        h = nh;
-      } else {
-        const b = measureStageBounds();
-        w = b.w || window.innerWidth || 400;
-        h = b.h || window.innerHeight || 700;
-      }
-      camera.aspect = w / Math.max(1, h);
+    function onResize() {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h, false);
+      renderer.setSize(w, h);
     }
     window.addEventListener('resize', onResize);
 
@@ -3030,9 +2932,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
           });
         }
       },
-      resize(nw, nh) {
-        onResize(nw, nh);
-      },
       destroy() {
         if (rafId) cancelAnimationFrame(rafId);
         window.removeEventListener('pointermove', onPointerMove);
@@ -3052,7 +2951,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
   }
 
-  master3D = initRomanceMaster3D(master3DCanvas) || fallbackMaster3D;
+  const master3D = initRomanceMaster3D(master3DCanvas) || fallbackMaster3D;
   if (master3D && typeof master3D.setMode === 'function') {
     master3D.setMode('ambient');
   }
@@ -3105,18 +3004,14 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (isTransitioning || targetScene === currentScene) return;
     if (targetScene < 1 || targetScene > 9) return;
 
-    // Ensure edge-to-edge full screen only in standalone viewer (not inside studio editor preview)
-    const inEditorPreview = Boolean(document.querySelector('.studio-layout')) ||
-                            Boolean(container.closest('.preview-frame-container'));
-    if (!inEditorPreview) {
-      try {
-        const docEl = document.documentElement;
-        const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-        if (fn && !document.fullscreenElement && !document.webkitFullscreenElement) {
-          fn.call(docEl).catch(() => {});
-        }
-      } catch (_) {}
-    }
+    // Ensure edge-to-edge full screen on scene progression
+    try {
+      const docEl = document.documentElement;
+      const fn = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      if (fn && !document.fullscreenElement && !document.webkitFullscreenElement) {
+        fn.call(docEl).catch(() => {});
+      }
+    } catch (_) {}
 
     clearAllSceneTimers();
     isTransitioning = true;
@@ -3169,19 +3064,17 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       if (scIdx !== targetScene) {
         sc.classList.remove('active');
         sc.style.display = 'none';
-        sc.style.visibility = 'hidden';
-        sc.style.pointerEvents = 'none';
         gsap.set(sc, { opacity: 0 });
       }
     });
 
     if (targetScene === 1) {
       gate.classList.remove('is-open');
-      gsap.set(gate, { opacity: 1, visibility: 'visible', pointerEvents: 'auto' });
+      gsap.set(gate, { opacity: 1, pointerEvents: 'auto' });
       gsap.set(hero, { autoAlpha: 0 });
       gsap.set(canvas, { opacity: 0 });
       treeStop();
-      resetAll(false);
+      resetAll();
       currentScene = 1;
       isTransitioning = false;
     } else if (targetScene === 2) {
@@ -3210,8 +3103,6 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
       const nextEl = container.querySelector(`.romance-fullscreen-scene[data-scene="${targetScene}"]`);
       if (nextEl) {
         nextEl.style.display = 'flex';
-        nextEl.style.visibility = 'visible';
-        nextEl.style.pointerEvents = 'auto';
         nextEl.classList.add('active');
         nextEl.scrollTop = 0;
         gsap.fromTo(nextEl,
@@ -3220,8 +3111,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
             opacity: 1,
             scale: 1,
             duration: 0.48,
-            ease: 'power3.out',
-            delay: 0.08,
+            ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+            delay: 0.1,
             onComplete: () => {
               currentScene = targetScene;
               isTransitioning = false;
@@ -3277,9 +3168,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   function resizeConstCanvas() {
     if (!constellationCanvas) return;
-    const b = measureStageBounds();
-    cW = b.w || window.innerWidth || 400;
-    cH = b.h || window.innerHeight || 700;
+    cW = window.innerWidth || 400;
+    cH = window.innerHeight || 700;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     constellationCanvas.width = cW * dpr;
     constellationCanvas.height = cH * dpr;
@@ -4891,31 +4781,10 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
 
   return function cleanup() {
     window.removeEventListener('resize', onResize);
-    window.removeEventListener('pointermove', handlePointerMove);
-    window.removeEventListener('touchmove', handlePointerMove);
-    window.removeEventListener('pointerup', handlePointerUp);
-    window.removeEventListener('touchend', handlePointerUp);
-    document.removeEventListener('fullscreenchange', updateFsButton);
-    document.removeEventListener('webkitfullscreenchange', updateFsButton);
-    if (stageResizeObserver) {
-      try { stageResizeObserver.disconnect(); } catch (_) {}
-      stageResizeObserver = null;
-    }
-    if (resizeRAF) cancelAnimationFrame(resizeRAF);
-    if (rigRetryRAF) cancelAnimationFrame(rigRetryRAF);
-    if (aviRafId) cancelAnimationFrame(aviRafId);
-    if (sparksAnimId) cancelAnimationFrame(sparksAnimId);
-    if (pillTimer) clearTimeout(pillTimer);
-    if (loveNoteTimer) clearTimeout(loveNoteTimer);
-    try { clearAllSceneTimers(); } catch (_) {}
     try { treeStop(); } catch (_) {}
     try { stopBeat(); } catch (_) {}
     if (filmTL) try { filmTL.kill(); } catch (_) {}
     if (audioEl) try { audioEl.pause(); } catch (_) {}
-    if (audioCtx) {
-      try { audioCtx.close(); } catch (_) {}
-      audioCtx = null;
-    }
     try { destroyLenisScroll(); } catch (_) {}
     if (constRafId) cancelAnimationFrame(constRafId);
     if (zoomInstance) {
