@@ -177,6 +177,20 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     return;
   }
 
+  if (templateId === 'birthday') {
+    container.innerHTML = `
+      ${renderReviewBanner()}
+      <div id="templateRoot" style="width:100%; min-height:100dvh;"></div>
+    `;
+    const root = container.querySelector('#templateRoot');
+    const cleanup = renderBirthdayTemplate(root, data, isMakerReview);
+    container._cleanup = () => {
+      if (typeof cleanup === 'function') cleanup();
+      if (root && root._cleanup) root._cleanup();
+    };
+    return;
+  }
+
   container.innerHTML = `
     ${renderReviewBanner()}
     <div id="templateRoot"></div>

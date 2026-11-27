@@ -3,6 +3,7 @@
 import { uploadFile } from '../models/siteStorage.js';
 import Sortable from 'sortablejs';
 import { renderStudioIcons } from './icons.js';
+import { RELATIONSHIP_CATEGORIES, RELATIONSHIP_THEMES, getRelationshipTheme } from '../viewer/templates/birthdayThemes.js';
 
 let activePreviewAudio = null;
 let activePreviewBtn = null;
@@ -920,44 +921,136 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       </div>
     `;
   } else if (templateId === 'birthday') {
-    const bdayPolaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : [
-      { title: "Baddie 😎", image: "/images/baddie.jpg", note: "You have that effortless aura and confidence that turns heads everywhere! 🌟" },
-      { title: "Always You 🫶", image: "/images/always_you.jpg", note: "Is butterfly ki tarah meri har khushi ka raasta bhi aakhir tum tak hi aakar rukta hai. 🫶" },
-      { title: "Pretty ✨", image: "/images/pretty.jpg", note: "No poetry in this world can ever truly capture how breathtaking you look when you're just being yourself. 🌸" },
-      { title: "Beautiful 🌸", image: "/images/beautiful.jpg", note: "Your heart is even more radiant than your smile, and that's saying a lot! ☀️" },
-      { title: "Dream Girl 💫", image: "/images/dream_girl.jpg", note: "Before I met you, I thought perfection only existed in storybooks. 💖" },
-      { title: "Queen 👑", image: "/images/queen.jpg", note: "May you always wear your invisible crown with happiness, peace, and endless love! 👑" }
-    ];
+    const activeRel = getRelationshipTheme(data.relationship || data.recipientPersona || 'best-friend');
+    const relDefaults = activeRel.defaults;
+    const heroNotes = (Array.isArray(data.heroNotes) && data.heroNotes.length > 0) ? data.heroNotes : relDefaults.heroNotes;
+    const milestones = (Array.isArray(data.milestones) && data.milestones.length > 0) ? data.milestones : relDefaults.milestones;
+    const bdayPolaroids = (data.polaroids && data.polaroids.length > 0) ? data.polaroids : relDefaults.photos.map(p => ({
+      title: p.category || 'Memory',
+      date: p.date || 'Moment',
+      category: p.category || 'Moments',
+      image: p.image,
+      note: p.caption || ''
+    }));
+    const appreciationText = (Array.isArray(data.appreciationReasons) && data.appreciationReasons.length > 0)
+      ? data.appreciationReasons.join('\n')
+      : relDefaults.appreciationReasons.join('\n');
+    const lanternText = (Array.isArray(data.lanternWishes) && data.lanternWishes.length > 0)
+      ? data.lanternWishes.join('\n')
+      : relDefaults.lanternWishes.join('\n');
 
     specificBox.innerHTML = `
-      <div class="section-title">🎂 Birthday Special Content & Themes</div>
+      <div class="section-title">🎂 Relationship-Adaptive Birthday Studio</div>
 
-      <!-- Recipient Persona Theme Selector -->
-      <div class="form-group" style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 14px; padding: 14px; margin-bottom: 18px;">
-        <label class="form-label" style="font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
-          <span>🎭 Recipient Theme Persona (Adaptive Styling & Messages)</span>
-        </label>
-        <div class="editor-help-text" style="margin-bottom: 10px;">
-          Select who you are sending this to! The website dynamically adapts colors, quotes, magazine chapter, scratch surprise, and VIP pass based on the persona:
+      <!-- Categorized Relationship Selector -->
+      <div class="form-group" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14); border-radius: 16px; padding: 14px; margin-bottom: 18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+          <label class="form-label" style="margin:0; font-weight:800; color:#fbbf24;">🎭 Who Are You Wishing?</label>
+          <label style="display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:rgba(255,255,255,0.8); cursor:pointer;">
+            <input type="checkbox" id="edPreserveBdayText" />
+            <span>Preserve already-edited text</span>
+          </label>
         </div>
-        <select class="form-select" id="edRecipientPersona" style="width: 100%; font-size: 13.5px; padding: 10px 12px; border-radius: 10px; background: rgba(20, 16, 26, 0.9); color: #fff; border: 1px solid rgba(255, 255, 255, 0.22);">
-          <option value="bestfriend_female" ${data.recipientPersona === 'bestfriend_female' ? 'selected' : ''}>👯‍♀️ Best Female Friend (Soul Sister • Blossom Rose & Gold)</option>
-          <option value="bestfriend" ${data.recipientPersona === 'bestfriend' ? 'selected' : ''}>🤜🤛 Best Friend / Bro (Bro Bestie • Electric Cyan & Slate)</option>
-          <option value="brother" ${data.recipientPersona === 'brother' ? 'selected' : ''}>👦 Brother (Bhai / Legend • Royal Cobalt & Amber)</option>
-          <option value="sister" ${data.recipientPersona === 'sister' ? 'selected' : ''}>👧 Sister (Behna • Lavender Silk & Peach)</option>
-          <option value="teacher" ${data.recipientPersona === 'teacher' ? 'selected' : ''}>🎓 Teacher / Mentor (Scholarly Emerald, Warm Parchment & Regal Gold)</option>
-          <option value="mother" ${data.recipientPersona === 'mother' ? 'selected' : ''}>👩 Mother (Maa / Queen • Soft Rose & Warm Pearl)</option>
-          <option value="father" ${data.recipientPersona === 'father' ? 'selected' : ''}>👨 Father (Papa / Hero • Classic Navy & Bronze Gold)</option>
-          <option value="special" ${(!data.recipientPersona || data.recipientPersona === 'special') ? 'selected' : ''}>💖 Special Someone / Romantic (Velvet Rose & Champagne Gold)</option>
-        </select>
+        <input type="hidden" id="edRecipientPersona" value="${activeRel.id}" />
+        ${RELATIONSHIP_CATEGORIES.map(cat => {
+          const items = Object.values(RELATIONSHIP_THEMES).filter(t => t.category === cat.id);
+          return `
+            <div style="margin-bottom:12px;">
+              <div style="font-size:11px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:rgba(255,255,255,0.62); margin-bottom:6px;">${cat.icon} ${cat.label}</div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(125px, 1fr)); gap:8px;">
+                ${items.map(t => {
+                  const isSel = t.id === activeRel.id;
+                  return `
+                    <button type="button" class="bday-rel-card" data-rel-id="${t.id}" style="text-align:left; padding:9px 10px; border-radius:12px; border:1.5px solid ${isSel ? t.palette.primary : 'rgba(255,255,255,0.12)'}; background:${isSel ? 'rgba(255,255,255,0.12)' : 'rgba(15,16,28,0.65)'}; color:#fff; cursor:pointer;">
+                      <div style="display:flex; align-items:center; gap:6px; font-weight:700; font-size:12.5px;">
+                        <span>${t.emoji}</span><span>${t.label}</span>
+                      </div>
+                      <div style="font-size:10px; color:rgba(255,255,255,0.62); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.mood}</div>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Identity & Theme Overrides -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label class="form-label">Nickname (Optional)</label>
+          <input type="text" class="form-input" id="edBdayNickname" value="${(data.nickname ?? relDefaults.nickname ?? '').replace(/"/g, '&quot;')}" placeholder="e.g. Day One, Sunshine" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Age / Milestone (Optional)</label>
+          <input type="text" class="form-input" id="edAge" value="${(data.age || '').replace(/"/g, '&quot;')}" placeholder="e.g. 21, 30th" />
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label class="form-label">Accent Override (Optional)</label>
+          <input type="color" class="form-input" id="edBdayAccentColor" value="${data.accentColor || activeRel.palette.accent}" style="height:40px; padding:4px;" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Font Mood</label>
+          <select class="form-select" id="edBdayFontMood">
+            <option value="'Playfair Display', Georgia, serif" ${(!data.fontMood || data.fontMood.includes('Playfair')) ? 'selected' : ''}>Classic Editorial Serif</option>
+            <option value="'Cormorant Garamond', Georgia, serif" ${(data.fontMood && data.fontMood.includes('Cormorant')) ? 'selected' : ''}>Calligraphic Storybook</option>
+            <option value="'Plus Jakarta Sans', system-ui, sans-serif" ${(data.fontMood && data.fontMood.includes('Jakarta')) ? 'selected' : ''}>Modern Clean Display</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Interactive Hero Notes -->
+      <div class="section-title" style="margin-top:16px;">✦ Interactive Hero Notes (5–8 Tappable Wishes)</div>
+      <div id="bdayHeroNotesList">
+        ${heroNotes.map((n, i) => `
+          <div class="sub-card-editor bday-hero-note-row" data-i="${i}" style="display:grid; grid-template-columns:1fr 2fr auto; gap:8px; align-items:center;">
+            <input type="text" class="form-input bday-hn-label" value="${(n.label || '').replace(/"/g, '&quot;')}" placeholder="Node Label" />
+            <input type="text" class="form-input bday-hn-text" value="${(n.text || '').replace(/"/g, '&quot;')}" placeholder="Wish revealed on tap..." />
+            <button type="button" class="btn-remove-bday-row" title="Remove" style="background:rgba(239,68,68,0.18); color:#fca5a5; border:none; border-radius:8px; padding:8px 10px; cursor:pointer;">✕</button>
+          </div>
+        `).join('')}
+      </div>
+      <button type="button" class="btn-file-upload" id="btnAddBdayHeroNote" style="margin:6px 0 14px; width:auto; font-size:12.5px;">➕ Add Hero Note</button>
+
+      <!-- Timeline Milestones -->
+      <div class="section-title">📍 Timeline Milestones (Act III)</div>
+      <div id="bdayMilestonesList">
+        ${milestones.map((m, i) => `
+          <div class="sub-card-editor bday-ms-row" data-i="${i}">
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; margin-bottom:6px;">
+              <input type="text" class="form-input bday-ms-tag" value="${(m.tag || '').replace(/"/g, '&quot;')}" placeholder="Tag (e.g. DAY ONE)" />
+              <input type="text" class="form-input bday-ms-date" value="${(m.date || '').replace(/"/g, '&quot;')}" placeholder="Date / Era" />
+              <input type="text" class="form-input bday-ms-title" value="${(m.title || '').replace(/"/g, '&quot;')}" placeholder="Title" />
+              <button type="button" class="btn-remove-bday-row" title="Remove" style="background:rgba(239,68,68,0.18); color:#fca5a5; border:none; border-radius:8px; padding:6px 10px; cursor:pointer;">✕</button>
+            </div>
+            <input type="text" class="form-input bday-ms-desc" value="${(m.desc || '').replace(/"/g, '&quot;')}" placeholder="Milestone story..." />
+          </div>
+        `).join('')}
+      </div>
+      <button type="button" class="btn-file-upload" id="btnAddBdayMilestone" style="margin:6px 0 14px; width:auto; font-size:12.5px;">➕ Add Milestone</button>
+
+      <!-- Soundtrack Links & Appreciation Reasons -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label class="form-label">Spotify Playlist URL (Optional)</label>
+          <input type="text" class="form-input" id="edBdaySpotify" value="${(data.spotifyUrl || '').replace(/"/g, '&quot;')}" placeholder="https://open.spotify.com/..." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">YouTube Track URL (Optional)</label>
+          <input type="text" class="form-input" id="edBdayYoutube" value="${(data.youtubeUrl || '').replace(/"/g, '&quot;')}" placeholder="https://youtube.com/..." />
+        </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Age / Milestone Number</label>
-        <input type="text" class="form-input" id="edAge" value="${data.age || '15'}" />
+        <label class="form-label">Appreciation Reasons (One per line, Act IV)</label>
+        <textarea rows="4" class="form-textarea" id="edBdayAppreciation">${appreciationText}</textarea>
       </div>
-      
-      <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 16px 0 8px;">📸 Polaroid Photo Cards (Upload or Quick Pick):</div>
+
+      <!-- Memory Reel Photos -->
+      <div style="font-weight:700; font-size:13px; color:var(--primary); margin: 16px 0 8px;">📸 Memory Reel Photos (3D Carousel & Book View):</div>
       <div id="polaroidCardsList">
         ${bdayPolaroids.map((p, i) => `
           <div class="sub-card-editor bday-polaroid-row" data-i="${i}">
@@ -971,21 +1064,55 @@ export function renderVisualEditor(container, templateId, data, onChange) {
                 </label>
               </div>
               <div class="bcard-caption-col">
-                <span class="bcard-num-badge">📸 Polaroid #${i+1}</span>
-                <input type="text" class="form-input pol-t" data-i="${i}" value="${p.title}" placeholder="Caption (e.g. Sunset Glow)" />
+                <span class="bcard-num-badge">📸 Memory #${i+1}</span>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                  <input type="text" class="form-input pol-t" data-i="${i}" value="${(p.category || p.title || 'Moments').replace(/"/g, '&quot;')}" placeholder="Category Tag" />
+                  <input type="text" class="form-input pol-date" data-i="${i}" value="${(p.date || 'Golden Hour').replace(/"/g, '&quot;')}" placeholder="Date" />
+                </div>
               </div>
             </div>
             <div class="bcard-presets-chips">
               <span class="preset-chip-label">Quick Pick:</span>
               <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/always_you.jpg"><img src="/images/always_you.jpg" class="preset-chip-img" /> Always You</button>
               <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/sunset.jpg"><img src="/images/sunset.jpg" class="preset-chip-img" /> Sunset</button>
-              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/dream_girl.jpg"><img src="/images/dream_girl.jpg" class="preset-chip-img" /> Dream Girl</button>
-              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/beautiful.jpg"><img src="/images/beautiful.jpg" class="preset-chip-img" /> Beautiful</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/dream_girl.jpg"><img src="/images/dream_girl.jpg" class="preset-chip-img" /> Dream</button>
+              <button type="button" class="btn-quick-pol-preset" data-i="${i}" data-src="/images/beautiful.jpg"><img src="/images/beautiful.jpg" class="preset-chip-img" /> Radiant</button>
             </div>
             <input type="text" class="form-input pol-img" data-i="${i}" value="${p.image}" placeholder="Image URL (or tap camera to upload)" />
-            <input type="text" class="form-input pol-n" data-i="${i}" style="margin-top:6px;" value="${p.note}" placeholder="Secret Note on Click (e.g. My favorite memory)" />
+            <input type="text" class="form-input pol-n" data-i="${i}" style="margin-top:6px;" value="${(p.note || p.caption || '').replace(/"/g, '&quot;')}" placeholder="Memory caption..." />
           </div>
         `).join('')}
+      </div>
+
+      <!-- Sealed Birthday Letter -->
+      <div class="section-title" style="margin-top:18px;">✉️ Sealed Birthday Letter (Act VI)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label class="form-label">Salutation</label>
+          <input type="text" class="form-input" id="edBdayLetterSal" value="${(data.letterSalutation || relDefaults.letterSalutation).replace(/"/g, '&quot;')}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sign-off</label>
+          <input type="text" class="form-input" id="edBdayLetterSign" value="${(data.letterSignoff || relDefaults.letterSignoff).replace(/"/g, '&quot;')}" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Letter Body</label>
+        <textarea rows="4" class="form-textarea" id="edBdayLetterBody">${data.letterBody || relDefaults.letterBody}</textarea>
+      </div>
+
+      <!-- Sky Lanterns & Closing Pact -->
+      <div class="form-group">
+        <label class="form-label">Sky Lantern Wishes (One per line, Act VII)</label>
+        <textarea rows="3" class="form-textarea" id="edBdayLanterns">${lanternText}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Closing Pact / Certificate Title</label>
+        <input type="text" class="form-input" id="edBdayPactTitle" value="${(data.pactTitle || relDefaults.pactTitle).replace(/"/g, '&quot;')}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Closing Pact / Certificate Wording</label>
+        <textarea rows="2" class="form-textarea" id="edBdayPactVow">${data.pactVow || relDefaults.pactVow}</textarea>
       </div>
     `;
   } else if (templateId === 'anniversary') {
@@ -2471,6 +2598,87 @@ export function renderVisualEditor(container, templateId, data, onChange) {
     });
   });
 
+  // Birthday Relationship-Adaptive Studio events
+  if (templateId === 'birthday') {
+    container.querySelectorAll('.bday-rel-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const relId = card.getAttribute('data-rel-id');
+        const nextTheme = getRelationshipTheme(relId);
+        const preserve = container.querySelector('#edPreserveBdayText')?.checked;
+        const hiddenInp = container.querySelector('#edRecipientPersona');
+        if (hiddenInp) hiddenInp.value = nextTheme.id;
+
+        container.querySelectorAll('.bday-rel-card').forEach(c => {
+          const isMe = c.getAttribute('data-rel-id') === nextTheme.id;
+          c.style.borderColor = isMe ? nextTheme.palette.primary : 'rgba(255,255,255,0.12)';
+          c.style.background = isMe ? 'rgba(255,255,255,0.12)' : 'rgba(15,16,28,0.65)';
+        });
+
+        const accentInp = container.querySelector('#edBdayAccentColor');
+        if (accentInp) accentInp.value = nextTheme.palette.accent;
+
+        if (!preserve) {
+          const nd = nextTheme.defaults;
+          const setVal = (sel, val) => { const el = container.querySelector(sel); if (el) el.value = val; };
+          setVal('#edBdayNickname', nd.nickname || '');
+          setVal('#edBdayAppreciation', (nd.appreciationReasons || []).join('\n'));
+          setVal('#edBdayLetterSal', nd.letterSalutation || '');
+          setVal('#edBdayLetterSign', nd.letterSignoff || '');
+          setVal('#edBdayLetterBody', nd.letterBody || '');
+          setVal('#edBdayLanterns', (nd.lanternWishes || []).join('\n'));
+          setVal('#edBdayPactTitle', nd.pactTitle || '');
+          setVal('#edBdayPactVow', nd.pactVow || '');
+          setVal('#edHeroSubtitle', nextTheme.acts.act2Tagline || '');
+        }
+        emitChange();
+      });
+    });
+
+    container.querySelector('#btnAddBdayHeroNote')?.addEventListener('click', () => {
+      const list = container.querySelector('#bdayHeroNotesList');
+      if (!list) return;
+      const row = document.createElement('div');
+      row.className = 'sub-card-editor bday-hero-note-row';
+      row.style.cssText = 'display:grid; grid-template-columns:1fr 2fr auto; gap:8px; align-items:center;';
+      row.innerHTML = `
+        <input type="text" class="form-input bday-hn-label" value="New Wish" placeholder="Node Label" />
+        <input type="text" class="form-input bday-hn-text" value="Wishing you the brightest year ahead!" placeholder="Wish revealed on tap..." />
+        <button type="button" class="btn-remove-bday-row" title="Remove" style="background:rgba(239,68,68,0.18); color:#fca5a5; border:none; border-radius:8px; padding:8px 10px; cursor:pointer;">✕</button>
+      `;
+      list.appendChild(row);
+      emitChange();
+    });
+
+    container.querySelector('#btnAddBdayMilestone')?.addEventListener('click', () => {
+      const list = container.querySelector('#bdayMilestonesList');
+      if (!list) return;
+      const row = document.createElement('div');
+      row.className = 'sub-card-editor bday-ms-row';
+      row.innerHTML = `
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; margin-bottom:6px;">
+          <input type="text" class="form-input bday-ms-tag" value="MEMORY" placeholder="Tag" />
+          <input type="text" class="form-input bday-ms-date" value="Special Day" placeholder="Date / Era" />
+          <input type="text" class="form-input bday-ms-title" value="New Milestone" placeholder="Title" />
+          <button type="button" class="btn-remove-bday-row" title="Remove" style="background:rgba(239,68,68,0.18); color:#fca5a5; border:none; border-radius:8px; padding:6px 10px; cursor:pointer;">✕</button>
+        </div>
+        <input type="text" class="form-input bday-ms-desc" value="A cherished chapter worth celebrating." placeholder="Milestone story..." />
+      `;
+      list.appendChild(row);
+      emitChange();
+    });
+
+    container.addEventListener('click', (e) => {
+      const rmBtn = e.target.closest('.btn-remove-bday-row');
+      if (rmBtn) {
+        const row = rmBtn.closest('.sub-card-editor');
+        if (row) {
+          row.remove();
+          emitChange();
+        }
+      }
+    });
+  }
+
   // Bind photo preset selects
   container.querySelectorAll('.select-bcard-preset').forEach(sel => {
     sel.addEventListener('change', () => {
@@ -3008,20 +3216,68 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       }
     } else if (templateId === 'birthday') {
       const elAge = container.querySelector('#edAge');
-      if (elAge) updated.age = elAge.value;
+      if (elAge) updated.age = elAge.value.trim();
       const elPersona = container.querySelector('#edRecipientPersona');
-      if (elPersona) updated.recipientPersona = elPersona.value;
+      if (elPersona) {
+        updated.recipientPersona = elPersona.value;
+        updated.relationship = elPersona.value;
+      }
+      const elNick = container.querySelector('#edBdayNickname');
+      if (elNick) updated.nickname = elNick.value.trim();
+      const elAccent = container.querySelector('#edBdayAccentColor');
+      if (elAccent) updated.accentColor = elAccent.value;
+      const elFont = container.querySelector('#edBdayFontMood');
+      if (elFont) updated.fontMood = elFont.value;
+      const elSpot = container.querySelector('#edBdaySpotify');
+      if (elSpot) updated.spotifyUrl = elSpot.value.trim();
+      const elYt = container.querySelector('#edBdayYoutube');
+      if (elYt) updated.youtubeUrl = elYt.value.trim();
+      const elApprec = container.querySelector('#edBdayAppreciation');
+      if (elApprec) updated.appreciationReasons = elApprec.value.split('\n').map(s => s.trim()).filter(Boolean);
+      const elLetSal = container.querySelector('#edBdayLetterSal');
+      if (elLetSal) updated.letterSalutation = elLetSal.value.trim();
+      const elLetSign = container.querySelector('#edBdayLetterSign');
+      if (elLetSign) updated.letterSignoff = elLetSign.value.trim();
+      const elLetBody = container.querySelector('#edBdayLetterBody');
+      if (elLetBody) updated.letterBody = elLetBody.value;
+      const elLant = container.querySelector('#edBdayLanterns');
+      if (elLant) updated.lanternWishes = elLant.value.split('\n').map(s => s.trim()).filter(Boolean);
+      const elPactTitle = container.querySelector('#edBdayPactTitle');
+      if (elPactTitle) updated.pactTitle = elPactTitle.value.trim();
+      const elPactVow = container.querySelector('#edBdayPactVow');
+      if (elPactVow) updated.pactVow = elPactVow.value.trim();
+
+      const hnRows = container.querySelectorAll('.bday-hero-note-row');
+      if (hnRows.length > 0) {
+        updated.heroNotes = Array.from(hnRows).map(r => ({
+          label: r.querySelector('.bday-hn-label')?.value.trim() || 'Wish',
+          text: r.querySelector('.bday-hn-text')?.value.trim() || ''
+        })).filter(n => n.text);
+      }
+
+      const msRows = container.querySelectorAll('.bday-ms-row');
+      if (msRows.length > 0) {
+        updated.milestones = Array.from(msRows).map((r, idx) => ({
+          num: String(idx + 1).padStart(2, '0'),
+          tag: r.querySelector('.bday-ms-tag')?.value.trim() || 'MILESTONE',
+          date: r.querySelector('.bday-ms-date')?.value.trim() || '',
+          title: r.querySelector('.bday-ms-title')?.value.trim() || '',
+          desc: r.querySelector('.bday-ms-desc')?.value.trim() || ''
+        })).filter(m => m.title || m.desc);
+      }
 
       const polRows = container.querySelectorAll('.bday-polaroid-row');
       if (polRows.length > 0) {
         const newPols = [];
         polRows.forEach(row => {
-          const title = row.querySelector('.pol-t')?.value || '';
+          const cat = row.querySelector('.pol-t')?.value || 'Moments';
+          const date = row.querySelector('.pol-date')?.value || 'Memory';
           const image = row.querySelector('.pol-img')?.value || '/images/always_you.jpg';
           const note = row.querySelector('.pol-n')?.value || '';
-          newPols.push({ title, image, note });
+          newPols.push({ title: cat, category: cat, date, image, note, caption: note });
         });
         updated.polaroids = newPols;
+        updated.photos = newPols.map(p => ({ image: p.image, date: p.date, category: p.category, caption: p.caption }));
       }
     } else if (templateId === 'anniversary') {
       const elAnniStart = container.querySelector('#edAnniStart');

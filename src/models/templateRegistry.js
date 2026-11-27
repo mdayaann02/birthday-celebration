@@ -347,57 +347,38 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
 
   birthday: {
     id: "birthday",
-    name: "Birthday Celebration",
-    badge: "Most Popular 🎂",
+    name: "Relationship-Adaptive Birthday Studio",
+    badge: "Cinematic Multi-Act 🎂✨",
     icon: "🎂",
-    description: "Floating sky lanterns, 3D age milestone, photo loop ribbon, polaroid notes, Vogue flipbook, scratch card, VIP lanyard, and iMessage chat.",
+    description: "Relationship-adaptive 8-act interactive celebration: tactile two-stage unwrap, SVG hero notes, glowing milestone timeline, retro cassette player, 3D photo carousel, wax-seal letter, sky lanterns & golden-ink keepsake pact.",
     defaultTheme: {
-      primary: "#f59e0b",
-      bgGradient: "radial-gradient(circle at 50% 12%, #1e1938 0%, #111124 55%, #080812 100%)",
+      primary: "#fb7185",
+      bgGradient: "radial-gradient(circle at 50% 15%, #1f234d 0%, #12142d 68%, #070811 100%)",
       accent: "#fbbf24"
     },
     defaultData: {
+      relationship: "best-friend",
+      recipientPersona: "best-friend",
       recipientName: "Alex",
-      recipientPersona: "friend",
+      nickname: "Day One",
       senderName: "Maya",
       eventDate: getFutureIsoDate(14),
       enableCountdownLock: false,
       passcode: "",
-      audioTitle: "Happy Birthday Acoustic",
-      audioSubtitle: "BIRTHDAY PLAYLIST",
+      audioTitle: "Golden Birthday Acoustic",
+      audioSubtitle: "BIRTHDAY MIXTAPE",
       audioSrc: "/audio/song.mp3",
-      age: "21",
+      spotifyUrl: "https://open.spotify.com/",
+      youtubeUrl: "https://www.youtube.com/",
+      age: "",
       heroTitle: "Happy Birthday",
-      heroSubtitle: "Wishing you a year full of joy, laughter, and unforgettable memories ✨",
+      heroSubtitle: "Thank you for turning ordinary days into legendary core memories.",
       polaroids: [
-        { title: "Golden Hour 🌅", image: "/images/sunset.jpg", note: "Here's to chasing more sunsets and making every weekend count!" },
-        { title: "Best Laughs 🫶", image: "/images/always_you.jpg", note: "Some memories never get old — thank you for every single laugh!" },
-        { title: "Main Character ✨", image: "/images/vogue_cover.jpg", note: "Stepping into a brand new chapter with confidence and style." },
-        { title: "Pure Joy 🌸", image: "/images/pretty.jpg", note: "May this year bring you calm mornings, big wins, and great company." },
-        { title: "Dream Big 💫", image: "/images/dream_girl.jpg", note: "Every goal you set this year is yours for the taking!" },
-        { title: "Cheers to You 👑", image: "/images/queen.jpg", note: "Wishing you health, peace, and endless reasons to celebrate!" }
-      ],
-      magazine: {
-        title: "BIRTHDAY SPECIAL EDITION",
-        quote: "Another trip around the sun — brighter, bolder, and better than ever.",
-        photo: "/images/sunset.jpg",
-        reasons: [
-          "Always brings genuine warmth to every room",
-          "The friend everyone can count on",
-          "Contagious laugh that lifts the whole table",
-          "Turns ordinary days into favorite memories",
-          "Quietly kind, resilient, and inspiring",
-          "Deserves the absolute best year ahead"
-        ]
-      },
-      scratchWish: {
-        title: "Happy Birthday!",
-        message: "Wishing you a year filled with laughter, big milestones, and everything you've been hoping for! 🎂✨"
-      },
-      chatMessages: [
-        "Happy Birthday!! 🎂🎉",
-        "Put together this little interactive celebration page for your big day!",
-        "Make a wish and blow out the candles! ✨"
+        { title: "Golden Hour 🌅", date: "Golden Hour", category: "Milestones", image: "/images/sunset.jpg", note: "Chasing sunlit horizons and unforgettable evenings together." },
+        { title: "Pure Joy 🫶", date: "Pure Joy", category: "Candid", image: "/images/always_you.jpg", note: "The kind of laughter that makes time stand completely still." },
+        { title: "Brightest Day ✨", date: "Brightest Day", category: "Portraits", image: "/images/pretty.jpg", note: "A radiant spirit that brings warmth into every single room." },
+        { title: "Adventures 💫", date: "Adventures", category: "Travel", image: "/images/dream_girl.jpg", note: "Every journey feels lighter and brighter with you around." },
+        { title: "Celebration 👑", date: "Celebration", category: "Special", image: "/images/queen.jpg", note: "Here is to another year of strength, grace, and big wins." }
       ]
     }
   },
