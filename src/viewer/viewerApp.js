@@ -17,6 +17,7 @@ import { renderPaigaamTemplate } from './templates/paigaamTemplate.js';
 import { renderWeddingTemplate } from './templates/weddingTemplate.js';
 import { renderKittenWishTemplate } from './templates/kittenWishTemplate.js';
 import { renderEverTideTemplate } from './templates/everTideTemplate.js';
+import { renderKintsugiApologyTemplate } from './templates/kintsugiApologyTemplate.js';
 
 export function renderViewerApp(container, templateId, data, isMakerReviewParam = false) {
   if (data?.primaryColor) {
@@ -111,6 +112,29 @@ function renderUnlockedWebsite(container, templateId, data, isMakerReview) {
     renderMuseumTemplate(root, data, isMakerReview);
     container._museumCleanup = () => {
       if (root && root._museumCleanup) root._museumCleanup();
+    };
+    return;
+  }
+
+  if (templateId === 'kintsugi_apology') {
+    if (container._cleanup) {
+      try { container._cleanup(); } catch (e) {}
+    }
+    container.innerHTML = `
+      ${isMakerReview ? `
+        <div class="maker-review-banner" id="makerReviewBanner">
+          <div class="maker-banner-content">
+            <span>👁️ <strong>Creator Preview Active:</strong> You are viewing the unlocked website.</span>
+            <a href="?edit=true" class="btn-banner-edit">✏️ Studio Editor</a>
+          </div>
+        </div>
+      ` : ''}
+      <div id="templateRoot" style="width:100%; height:100dvh; overflow:hidden;"></div>
+    `;
+    const root = container.querySelector('#templateRoot');
+    renderKintsugiApologyTemplate(root, data, isMakerReview);
+    container._cleanup = () => {
+      if (root && root._cleanup) root._cleanup();
     };
     return;
   }

@@ -66,6 +66,10 @@ export function getOccasionWhatsAppMessage(templateId, data, safeUrl) {
     return `Dearest ${recipientName}, I am so truly sorry... 🥺💔\n\nMy universe feels heavy and incomplete without you. I made this sincere multi-stage apology website for you — you can vent your anger at me, assign me any punishments you want, and sign our official peace treaty.\n\nPlease hear my confession here:\n${safeUrl}\n\nI love you more than anything, please forgive me 🫶🥺`;
   }
 
+  if (tid === 'kintsugi_apology') {
+    return `Hey ${recipientName},\n\nI messed up, and you deserve more than a quick text. I put together something quiet and honest for you — no pressure, take all the time you need:\n${safeUrl}`;
+  }
+
   // 5. Our Museum 3D Virtual Gallery
   if (tid === 'our_museum') {
     return `To my beloved ${recipientName}... 🏛️✨\n\nI built a 3D virtual art museum dedicated to our love. Stroll down the quiet marble and oak halls hung with our framed memories under golden spotlights, take a seat on the gallery bench, and experience the grand centerpiece cinema waiting at the end for you.\n\nStep into our museum here:\n${safeUrl}\n\nDedicated to you, forever & always! 💍💖`;

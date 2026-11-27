@@ -1,0 +1,730 @@
+/* src/viewer/templates/kintsugi.css */
+/* "After the Rain / Kintsugi" — 5-Act Flagship Apology Experience */
+
+.ka-stage {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100vh;
+  overflow: hidden;
+  color: #f4f1ee;
+  font-family: 'Montserrat', 'Nunito', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(160deg, #0a0f1a 0%, #151e2e 100%);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Act-level ambient gradient backdrop (also serves as graceful WebGL fallback) */
+.ka-stage[data-act="0"] {
+  background: radial-gradient(120% 90% at 50% 15%, #151e2e 0%, #0a0f1a 72%);
+}
+.ka-stage[data-act="1"] {
+  background: radial-gradient(120% 90% at 50% 25%, #1c2233 0%, #0f1522 75%);
+}
+.ka-stage[data-act="2"] {
+  background: radial-gradient(120% 90% at 50% 30%, #231e2c 0%, #121420 75%);
+}
+.ka-stage[data-act="3"] {
+  background: radial-gradient(120% 90% at 50% 25%, #2b1f33 0%, #171422 78%);
+}
+.ka-stage[data-act="4"] {
+  background: radial-gradient(120% 90% at 50% 20%, #3a2628 0%, #1b1626 78%);
+}
+
+.ka-stage.ka-dawn-talk[data-act="4"] {
+  background: radial-gradient(120% 90% at 50% 20%, #4b2e2b 0%, #241926 78%);
+}
+.ka-stage.ka-dawn-time[data-act="4"] {
+  background: radial-gradient(120% 90% at 50% 20%, #241d30 0%, #12101c 80%);
+}
+
+.ka-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+/* Layered CSS fallback when WebGL is unavailable */
+.ka-fallback-shimmer {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 25% 30%, rgba(229, 184, 122, 0.12), transparent 45%),
+    radial-gradient(circle at 75% 70%, rgba(217, 155, 155, 0.1), transparent 50%);
+  animation: kaFallbackPulse 12s ease-in-out infinite alternate;
+}
+.ka-stage.ka-webgl-fallback .ka-fallback-shimmer {
+  display: block;
+}
+@keyframes kaFallbackPulse {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.06); }
+}
+
+/* Subtle vignette */
+.ka-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, transparent 52%, rgba(5, 8, 15, 0.55) 100%);
+}
+
+/* Topbar: Act progress & Audio pill */
+.ka-topbar {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  left: 14px;
+  right: 14px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none;
+}
+.ka-topbar > * {
+  pointer-events: auto;
+}
+.ka-stage.ka-has-maker-banner .ka-topbar {
+  top: 52px;
+}
+
+.ka-act-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: rgba(12, 17, 29, 0.58);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(244, 241, 238, 0.82);
+}
+
+.ka-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.ka-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.24);
+  cursor: pointer;
+  transition: width 0.35s ease, background 0.35s ease;
+}
+.ka-dot.active {
+  width: 20px;
+  background: #e5b87a;
+}
+
+.ka-audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: rgba(12, 17, 29, 0.58);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(244, 241, 238, 0.88);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.ka-audio-btn:hover {
+  border-color: rgba(229, 184, 122, 0.45);
+}
+.ka-audio-btn.playing {
+  border-color: rgba(229, 184, 122, 0.55);
+  color: #f6dcb2;
+}
+.ka-audio-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Main Viewport */
+.ka-acts-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+
+.ka-act {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 68px 18px 82px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.ka-act::-webkit-scrollbar {
+  display: none;
+}
+.ka-act.active {
+  display: flex;
+}
+.ka-stage.ka-has-maker-banner .ka-act {
+  padding-top: 104px;
+}
+
+.ka-act-inner {
+  width: 100%;
+  max-width: 620px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Frosted Liquid-Glass Card */
+.ka-glass {
+  width: 100%;
+  background: rgba(15, 21, 34, 0.52);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 32px 28px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+}
+
+.ka-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #e5b87a;
+  margin-bottom: 10px;
+}
+
+.ka-serif-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.85rem, 5vw, 2.75rem);
+  line-height: 1.16;
+  color: #faf6f0;
+  margin: 0 0 14px;
+  letter-spacing: -0.01em;
+}
+
+.ka-body-copy {
+  font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+  line-height: 1.7;
+  color: rgba(244, 241, 238, 0.84);
+  margin: 0;
+}
+
+/* ACT 1: Hold to Open */
+.ka-hold-wrap {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ka-hold-btn {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 1px solid rgba(229, 184, 122, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #faf6f0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  touch-action: none;
+}
+.ka-hold-btn:hover {
+  border-color: rgba(229, 184, 122, 0.65);
+}
+.ka-hold-btn.holding {
+  transform: scale(0.95);
+  box-shadow: 0 0 32px rgba(229, 184, 122, 0.28);
+}
+
+.ka-hold-ring {
+  position: absolute;
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.ka-hold-ring circle {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.ka-hold-ring .ka-ring-bg {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+.ka-hold-ring .ka-ring-fg {
+  stroke: #e5b87a;
+  stroke-dasharray: 295.3;
+  stroke-dashoffset: 295.3;
+  transition: stroke-dashoffset 0.05s linear;
+}
+
+.ka-hold-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e5b87a;
+}
+
+.ka-tap-fallback {
+  background: none;
+  border: none;
+  color: rgba(244, 241, 238, 0.52);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 10px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+.ka-tap-fallback:hover {
+  color: rgba(244, 241, 238, 0.9);
+}
+
+/* ACT 2: Acknowledgment Lines */
+.ka-ack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.ka-ack-item {
+  text-align: left;
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(244, 241, 238, 0.88);
+  font-size: 0.96rem;
+  line-height: 1.55;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: border-color 0.35s ease, background 0.35s ease, transform 0.25s ease;
+}
+.ka-ack-item:hover {
+  border-color: rgba(229, 184, 122, 0.42);
+  background: rgba(229, 184, 122, 0.06);
+}
+.ka-ack-item.lit {
+  border-color: rgba(229, 184, 122, 0.65);
+  background: rgba(229, 184, 122, 0.11);
+  box-shadow: 0 0 24px rgba(229, 184, 122, 0.14);
+}
+.ka-ack-seam {
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+.ka-ack-item.lit .ka-ack-seam {
+  background: #e5b87a;
+  box-shadow: 0 0 10px #e5b87a;
+}
+
+.ka-ack-hint {
+  margin-top: 14px;
+  font-size: 12px;
+  color: rgba(229, 184, 122, 0.78);
+  letter-spacing: 0.04em;
+}
+
+/* ACT 3: The Unfiltered Letter */
+.ka-letter-card {
+  padding: 0;
+  overflow: hidden;
+  max-height: min(68dvh, 520px);
+  display: flex;
+  flex-direction: column;
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out;
+}
+
+.ka-letter-progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+.ka-letter-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #d99b9b, #e5b87a);
+  box-shadow: 0 0 10px rgba(229, 184, 122, 0.6);
+  transition: width 0.12s ease-out;
+}
+
+.ka-letter-scroll {
+  padding: 26px 28px 30px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(229, 184, 122, 0.35) transparent;
+}
+.ka-letter-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.ka-letter-scroll::-webkit-scrollbar-thumb {
+  background: rgba(229, 184, 122, 0.35);
+  border-radius: 999px;
+}
+
+.ka-letter-body {
+  font-size: 1rem;
+  line-height: 1.82;
+  color: rgba(248, 245, 240, 0.9);
+  user-select: text;
+}
+.ka-letter-body p {
+  margin: 0 0 16px;
+}
+.ka-letter-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ACT 4: Promises Carousel & Optional Photos */
+.ka-promise-stage {
+  width: 100%;
+  position: relative;
+  perspective: 1000px;
+  margin-top: 14px;
+}
+
+.ka-promise-card {
+  width: 100%;
+  min-height: 210px;
+  padding: 28px 26px;
+  border-radius: 22px;
+  background: rgba(22, 19, 34, 0.58);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.38);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  box-sizing: border-box;
+  transform-style: preserve-3d;
+  transition: border-color 0.3s ease;
+}
+.ka-promise-card:hover {
+  border-color: rgba(229, 184, 122, 0.45);
+}
+
+.ka-promise-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ka-promise-index {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #e5b87a;
+}
+.ka-promise-pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(229, 184, 122, 0.14);
+  border: 1px solid rgba(229, 184, 122, 0.3);
+  color: #f6dcb2;
+}
+
+.ka-promise-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.45rem, 4vw, 1.9rem);
+  font-weight: 600;
+  color: #faf6f0;
+  margin: 0;
+  line-height: 1.25;
+}
+.ka-promise-detail {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(244, 241, 238, 0.84);
+  margin: 0;
+}
+
+.ka-promise-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 14px;
+  gap: 10px;
+}
+.ka-promise-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #faf6f0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.ka-promise-btn:hover {
+  background: rgba(229, 184, 122, 0.15);
+  border-color: rgba(229, 184, 122, 0.45);
+}
+
+/* Optional Photos Strip (gracefully omitted when empty) */
+.ka-photos-strip {
+  margin-top: 16px;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.ka-photos-strip::-webkit-scrollbar {
+  display: none;
+}
+.ka-photo-thumb {
+  flex: 0 0 auto;
+  width: 92px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(15, 21, 34, 0.6);
+}
+.ka-photo-thumb img {
+  width: 92px;
+  height: 76px;
+  object-fit: cover;
+  display: block;
+}
+.ka-photo-cap {
+  font-size: 10px;
+  padding: 5px 6px;
+  color: rgba(244, 241, 238, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ACT 5: Respectful Closing */
+.ka-signature {
+  margin-top: 18px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1.45rem;
+  color: #e5b87a;
+}
+
+.ka-choice-group {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.ka-choice-primary {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(229, 184, 122, 0.55);
+  background: linear-gradient(135deg, rgba(229, 184, 122, 0.24), rgba(217, 155, 155, 0.18));
+  color: #fff8ee;
+  font-size: 0.96rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+.ka-choice-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(229, 184, 122, 0.22);
+}
+
+.ka-choice-secondary {
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(244, 241, 238, 0.86);
+  font-size: 0.94rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.ka-choice-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.ka-outcome-box {
+  margin-top: 22px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(229, 184, 122, 0.35);
+  text-align: center;
+}
+.ka-reply-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #e5b87a;
+  color: #15121c;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.ka-reply-link:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+/* Bottom Navigation Dock */
+.ka-bottom-nav {
+  position: absolute;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgba(12, 17, 29, 0.62);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ka-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: rgba(244, 241, 238, 0.86);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+.ka-nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+}
+.ka-nav-btn:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+.ka-nav-btn.primary {
+  background: rgba(229, 184, 122, 0.18);
+  color: #f6dcb2;
+  border: 1px solid rgba(229, 184, 122, 0.35);
+}
+.ka-nav-btn.primary:hover:not(:disabled) {
+  background: rgba(229, 184, 122, 0.28);
+}
+.ka-nav-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Small Mobile (375x667) Guardrails */
+@media (max-width: 480px) {
+  .ka-act {
+    padding: 62px 14px 76px;
+  }
+  .ka-glass {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+  .ka-letter-scroll {
+    padding: 20px 20px 24px;
+  }
+  .ka-letter-card {
+    max-height: min(64dvh, 460px);
+  }
+  .ka-promise-card {
+    padding: 22px 20px;
+    min-height: 190px;
+  }
+  .ka-hold-btn {
+    width: 86px;
+    height: 86px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ka-stage,
+  .ka-dot,
+  .ka-ack-item,
+  .ka-hold-btn,
+  .ka-letter-card {
+    transition-duration: 0.15s !important;
+  }
+  .ka-fallback-shimmer {
+    animation: none;
+  }
+}

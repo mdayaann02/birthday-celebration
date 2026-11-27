@@ -1891,6 +1891,85 @@ export function renderVisualEditor(container, templateId, data, onChange) {
         </div>
       </div>
     `;
+  } else if (templateId === 'kintsugi_apology') {
+    const ackLines = Array.isArray(data.acknowledgmentLines) && data.acknowledgmentLines.length > 0
+      ? data.acknowledgmentLines
+      : [
+          'I let my pride speak louder than my care for you, and that was unfair.',
+          'You deserved patience, honesty, and to feel genuinely heard.',
+          'I am not here to make excuses — only to own the hurt I caused.'
+        ];
+    const promises = Array.isArray(data.promises) && data.promises.length > 0
+      ? data.promises
+      : [
+          { title: 'Listen Before Reacting', detail: 'When things feel tense, I will pause, breathe, and truly hear your side first.' },
+          { title: 'Own My Mistakes Early', detail: 'No defensiveness or silence — I will take responsibility the moment I slip up.' },
+          { title: 'Protect Your Peace', detail: 'Your feelings matter more than winning an argument. I will guard our calm.' },
+          { title: 'Show Up Consistently', detail: 'Not just in grand apologies, but in the small, everyday ways you deserve.' }
+        ];
+    const optPhotos = Array.isArray(data.optionalPhotos)
+      ? data.optionalPhotos.map(p => ({ title: p.caption || '', image: p.image || '', note: '' }))
+      : [];
+
+    specificBox.innerHTML = `
+      <div class="section-title">🌧️✨ After the Rain · Kintsugi Apology</div>
+      <div class="editor-help-text" style="margin-bottom:14px;">
+        5-Act WebGL apology journey with midnight rain, Kintsugi gold-veined 3D heart repair, distraction-free letter, and no-pressure closing.
+      </div>
+
+      <div style="background:rgba(229,184,122,0.08); border:1px solid rgba(229,184,122,0.28); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#e5b87a; font-size:14px; font-weight:700; margin-bottom:10px;">🕯️ Opening &amp; Visual Mood</h4>
+        <div class="form-group">
+          <label class="form-label">Act 1 Opening Hook</label>
+          <input type="text" class="form-input" id="edKaOpeningHook" value="${data.openingHook || 'I messed up, and you deserve more than a quick text.'}" />
+        </div>
+        <div class="editor-grid-2">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Accent Mood</label>
+            <select class="form-select" id="edKaMood">
+              <option value="Midnight Rain" ${(data.accentMood || 'Midnight Rain') === 'Midnight Rain' ? 'selected' : ''}>Midnight Rain</option>
+              <option value="Warm Kintsugi" ${data.accentMood === 'Warm Kintsugi' ? 'selected' : ''}>Warm Kintsugi</option>
+              <option value="Soft Rose Dusk" ${data.accentMood === 'Soft Rose Dusk' ? 'selected' : ''}>Soft Rose Dusk</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Optional WhatsApp Number (for Reply button)</label>
+            <input type="text" class="form-input" id="edKaWhatsapp" value="${data.whatsappNumber || ''}" placeholder="e.g. 919876543210" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:10px; margin-bottom:0;">
+          <label class="form-label">Optional Custom Reply Link (overrides WhatsApp if set)</label>
+          <input type="text" class="form-input" id="edKaReplyLink" value="${data.replyLink || ''}" placeholder="https://..." />
+        </div>
+      </div>
+
+      <div style="background:rgba(217,155,155,0.08); border:1px solid rgba(217,155,155,0.28); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#d99b9b; font-size:14px; font-weight:700; margin-bottom:10px;">📜 Act 2 &amp; 3 · Acknowledgment &amp; Letter</h4>
+        <div class="form-group">
+          <label class="form-label">Acknowledgment Lines (1 per line, 2–3 recommended)</label>
+          <textarea rows="3" class="form-textarea" id="edKaAckLines">${ackLines.join('\n')}</textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Heartfelt Letter Body (blank line = new paragraph)</label>
+          <textarea rows="6" class="form-textarea" id="edKaLetterBody">${data.letterBody || ''}</textarea>
+        </div>
+      </div>
+
+      <div style="background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.28); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <h4 style="color:#c4b5fd; font-size:14px; font-weight:700; margin-bottom:10px;">🤝 Act 4 · Concrete Promises (up to 4)</h4>
+        ${[0, 1, 2, 3].map((i) => {
+          const pr = promises[i] || { title: '', detail: '' };
+          return `
+            <div class="sub-card-editor ka-promise-row" data-i="${i}" style="margin-bottom:10px;">
+              <input type="text" class="form-input ka-promise-title-inp" data-i="${i}" value="${pr.title || ''}" placeholder="Promise #${i + 1} Title" style="margin-bottom:6px;" />
+              <textarea rows="2" class="form-textarea ka-promise-detail-inp" data-i="${i}" placeholder="Promise #${i + 1} Detail">${pr.detail || ''}</textarea>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      ${renderGenPolaroidsBlock('ka', 'Optional Shared Photos (leave empty to hide)', optPhotos)}
+    `;
   } else if (templateId === 'wedding_invite' || templateId === 'wedding' || templateId === 'shubh_weds') {
     const fns = (data.functions && data.functions.length > 0) ? data.functions : [
       { id: 'haldi', name: 'Haldi', subtitle: 'Mangal Snanam', time: '10:00 AM - 1:00 PM', date: 'Friday, 19th February 2027', venueName: 'Poolside Courtyard', venueAddress: 'The Palace Lawns, Udaipur', mapUrl: 'https://maps.google.com/?q=The+Palace+Lawns+Udaipur', dressCode: 'Shades of Yellow', accent: '#E8B85C', image: 'https://media.shubhweds.in/template-6/function-haldi.webp' },
@@ -3093,6 +3172,38 @@ export function renderVisualEditor(container, templateId, data, onChange) {
       if (elKwSign) updated.signOff = elKwSign.value;
       if (elKwQuestion) updated.question = elKwQuestion.value;
       if (elKwYesSub) updated.yesSubtitle = elKwYesSub.value;
+    }
+    else if (templateId === 'kintsugi_apology') {
+      const elHook = container.querySelector('#edKaOpeningHook');
+      const elMood = container.querySelector('#edKaMood');
+      const elWa = container.querySelector('#edKaWhatsapp');
+      const elReply = container.querySelector('#edKaReplyLink');
+      const elAck = container.querySelector('#edKaAckLines');
+      const elLetter = container.querySelector('#edKaLetterBody');
+      if (elHook) updated.openingHook = elHook.value;
+      if (elMood) updated.accentMood = elMood.value;
+      if (elWa) updated.whatsappNumber = elWa.value.trim();
+      if (elReply) updated.replyLink = elReply.value.trim();
+      if (elAck) {
+        updated.acknowledgmentLines = elAck.value
+          .split('\n')
+          .map(s => s.trim())
+          .filter(Boolean);
+      }
+      if (elLetter) updated.letterBody = elLetter.value;
+
+      const kaPromises = [];
+      container.querySelectorAll('.ka-promise-row').forEach(row => {
+        const title = row.querySelector('.ka-promise-title-inp')?.value.trim() || '';
+        const detail = row.querySelector('.ka-promise-detail-inp')?.value.trim() || '';
+        if (title || detail) kaPromises.push({ title, detail });
+      });
+      if (kaPromises.length > 0) updated.promises = kaPromises;
+
+      const kaPols = extractGenPols('ka');
+      updated.optionalPhotos = Array.isArray(kaPols)
+        ? kaPols.filter(p => p && p.image).map(p => ({ image: p.image, caption: p.title || '' }))
+        : [];
     }
     else if (templateId === 'wedding_invite' || templateId === 'wedding' || templateId === 'shubh_weds') {
       const elGroom = container.querySelector('#edWeddingGroom');

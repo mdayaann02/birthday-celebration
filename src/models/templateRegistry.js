@@ -827,6 +827,51 @@ I love you darlzzzz please be with mee chelloo 🥺 🤌`
         { id: 6, image: "/images/queen.jpg", title: "My Forever Tide", date: "Always & Forever", desc: "Like the ocean and the shore, my heart always returns to you." }
       ]
     }
+  },
+  kintsugi_apology: {
+    id: "kintsugi_apology",
+    name: "After the Rain · Kintsugi",
+    badge: "5-Act 3D Apology 🌧️✨",
+    icon: "🌧️✨",
+    description: "An intimate, emotionally restrained 5-Act WebGL apology journey: midnight rain, Kintsugi gold-veined 3D heart repair, distraction-free letter, interactive promise cards, and a respectful no-pressure closing.",
+    defaultTheme: {
+      primary: "#e5b87a",
+      bgGradient: "linear-gradient(160deg, #0a0f1a 0%, #151e2e 55%, #3a2628 100%)",
+      accent: "#d99b9b"
+    },
+    defaultData: {
+      recipientName: "Maya",
+      senderName: "Alex",
+      openingHook: "I messed up, and you deserve more than a quick text.",
+      acknowledgmentLines: [
+        "I let my pride speak louder than my care for you, and that was unfair.",
+        "You deserved patience, honesty, and to feel genuinely heard.",
+        "I am not here to make excuses — only to own the hurt I caused."
+      ],
+      letterBody: "I've been sitting with the quiet since we last spoke, replaying how I handled things and wishing I had paused before speaking.\n\nYou mean far too much to me to leave things heavy between us. Even when I fall short, my care for you has never wavered.\n\nI don't expect an instant fix. I just wanted to put my heart somewhere calm, with no pressure and no noise — only the truth of how sorry I am.",
+      promises: [
+        {
+          title: "Listen Before Reacting",
+          detail: "When things feel tense, I will pause, breathe, and truly hear your side first."
+        },
+        {
+          title: "Own My Mistakes Early",
+          detail: "No defensiveness or silence — I will take responsibility the moment I slip up."
+        },
+        {
+          title: "Protect Your Peace",
+          detail: "Your feelings matter more than winning an argument. I will guard our calm."
+        },
+        {
+          title: "Show Up Consistently",
+          detail: "Not just in grand apologies, but in the small, everyday ways you deserve."
+        }
+      ],
+      optionalPhotos: [],
+      replyLink: "",
+      whatsappNumber: "",
+      accentMood: "Midnight Rain"
+    }
   }
 };
 

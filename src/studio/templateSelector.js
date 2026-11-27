@@ -20,7 +20,7 @@ export function renderTemplateSelector(container, activeTemplateId, onSelectTemp
     if (['our_museum'].includes(tid)) return 'museum';
     if (['long_romance', 'tree', 'blossom', 'bloom_reveal', 'kitten_wish', 'ever_tide'].includes(tid)) return 'romance';
     if (['birthday', 'birthday_paigaam', 'paigaam'].includes(tid)) return 'birthday';
-    if (['sorry'].includes(tid)) return 'sorry';
+    if (['sorry', 'kintsugi_apology'].includes(tid)) return 'sorry';
     return 'all';
   }
 
