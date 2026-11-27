@@ -10783,10 +10783,18 @@ select option {
 /* ============================================================
    ACT 1 — THE INVITATION
    ============================================================ */
-.hero{
+.hero,
+.tree-film-stage .hero{
   position:absolute; inset:0;
+  width:100%; height:100%;
+  display:block;
+  transform:none;
+  pointer-events:auto;
   z-index:3;
   overflow:hidden;
+}
+.tree-film-stage .hero::before{
+  content:none;
 }
 /* the warm field the heart sits on */
 .hero__bg{

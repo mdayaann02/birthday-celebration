@@ -314,7 +314,7 @@ button { font: inherit; color: inherit; }
 
 /* The open sky between the curtains and above the trees runs from about 12%
    to 65% of the film's height; the words are centred in it. */
-.hero {
+.wedding-site .hero {
   position: absolute;
   top: 12%;
   bottom: 35%;
@@ -331,7 +331,7 @@ button { font: inherit; color: inherit; }
 }
 
 /* a soft ivory light behind the words, so they read on the blush wall */
-.hero::before {
+.wedding-site .hero::before {
   content: "";
   position: absolute;
   inset: -4% -12%;
@@ -341,7 +341,7 @@ button { font: inherit; color: inherit; }
   transition: opacity 1.6s ease;
 }
 
-.hero > * { margin: 0; }
+.wedding-site .hero > * { margin: 0; }
 
 .hero__lead {
   font-family: var(--serif);
