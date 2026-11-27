@@ -2531,6 +2531,8 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     if (showHero) enterHero();
   }
 
+  let master3D = null;
+
   // Sizing & Canvas Init
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -3050,7 +3052,7 @@ I love you endlessly, today, tomorrow, and through all our years to come. ♡`;
     }
   }
 
-  const master3D = initRomanceMaster3D(master3DCanvas) || fallbackMaster3D;
+  master3D = initRomanceMaster3D(master3DCanvas) || fallbackMaster3D;
   if (master3D && typeof master3D.setMode === 'function') {
     master3D.setMode('ambient');
   }
