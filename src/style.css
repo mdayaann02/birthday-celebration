@@ -3363,6 +3363,12 @@ select option {
 }
 
 /* Strict Container Isolation: Keep template fixed/absolute scenes trapped inside chassis */
+.preview-frame-container #templateRoot:has(.tree-film-stage) {
+  height: 100% !important;
+  min-height: 100% !important;
+  overflow: hidden !important;
+}
+
 .preview-frame-container .tree-film-stage,
 .preview-frame-container .tree-film-stage.scene,
 .preview-frame-container .romance-fullscreen-scene,
@@ -3381,6 +3387,10 @@ select option {
   max-width: 100% !important;
   max-height: 100% !important;
   box-sizing: border-box !important;
+}
+
+.preview-frame-container .hero__hint {
+  bottom: 72px !important;
 }
 
 .preview-frame-container .corner-fullscreen-btn,
@@ -10905,7 +10915,7 @@ select option {
 
 /* ---- the draw / release hint ---- */
 .hero__hint{
-  position:absolute; bottom:8.5%; left:0; right:0;
+  position:absolute; bottom:11.5%; left:0; right:0;
   text-align:center;
   font-family:"Cormorant Garamond", Georgia, serif !important;
   font-weight:600 !important; font-style:italic !important;
@@ -10914,6 +10924,10 @@ select option {
   color:#b06a7c !important;
   text-shadow:none !important;
   opacity:0;                          /* GSAP reveals */
+  pointer-events:none;
+}
+#treeHero .hero__hint {
+  bottom: 72px;
 }
 .hero__ring{ display:none; }
 
